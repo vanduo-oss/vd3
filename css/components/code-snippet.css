@@ -1,0 +1,578 @@
+/**
+ * Vanduo Framework - Code Snippet Component
+ * Copyable code blocks with tabs and syntax highlighting
+ */
+
+:root {
+  /* Code Snippet Sizing - Fibonacci */
+  --vd-code-padding-x: 1.3125rem;        /* 21px - fib */
+  --vd-code-padding-y: 0.8125rem;        /* 13px - fib */
+  --vd-code-border-radius: var(--vd-radius-fib-5, 8px);
+  --vd-code-tab-gap: 0.5rem;             /* 8px - fib */
+  --vd-code-header-height: 2.75rem;      /* 44px - touch target */
+  --vd-code-line-height: 1.618;          /* Golden ratio */
+  --vd-code-font-size: 0.875rem;         /* 14px */
+  
+  /* Code Snippet Colors - Light Mode */
+  --vd-code-bg: var(--vd-color-gray-50, #f8fafc);
+  --vd-code-header-bg: var(--vd-color-gray-100, #f1f5f9);
+  --vd-code-border: var(--vd-border-color, #e2e8f0);
+  --vd-code-text: var(--vd-text-primary, #1e293b);
+  --vd-code-text-muted: var(--vd-text-secondary, #64748b);
+  --vd-code-tab-text: var(--vd-text-secondary, #64748b);
+  --vd-code-tab-active: var(--vd-color-primary, #3b82f6);
+  --vd-code-tab-hover-bg: var(--vd-color-gray-200, #e2e8f0);
+  --vd-code-copy-success: var(--vd-color-success, #22c55e);
+  --vd-code-line-number: var(--vd-text-tertiary, #94a3b8);
+  --vd-code-line-highlight: rgba(59, 130, 246, 0.1);
+  
+  /* Syntax Highlighting Colors - Light Mode */
+  --vd-code-tag: #e11d48;                /* HTML tags - rose */
+  --vd-code-attr: #7c3aed;               /* Attributes - violet */
+  --vd-code-string: #16a34a;             /* Strings - green */
+  --vd-code-comment: #64748b;            /* Comments - slate */
+  --vd-code-selector: #e11d48;           /* CSS selectors - rose */
+  --vd-code-property: #2563eb;           /* CSS properties - blue */
+  --vd-code-value: #16a34a;              /* CSS values - green */
+  --vd-code-unit: #d97706;               /* Units - amber */
+  --vd-code-keyword: #7c3aed;            /* JS keywords - violet */
+  --vd-code-function: #2563eb;           /* JS functions - blue */
+  --vd-code-number: #d97706;             /* Numbers - amber */
+  --vd-code-operator: #64748b;           /* Operators - slate */
+  --vd-code-punctuation: #64748b;        /* Punctuation - slate */
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-code-bg: var(--vd-color-gray-900, #0f172a);
+  --vd-code-header-bg: var(--vd-color-gray-800, #1e293b);
+  --vd-code-border: var(--vd-color-gray-700, #334155);
+  --vd-code-tab-hover-bg: var(--vd-color-gray-700, #334155);
+  --vd-code-line-highlight: rgba(59, 130, 246, 0.15);
+  
+  /* Syntax Highlighting - Dark Mode */
+  --vd-code-tag: #fb7185;                /* HTML tags - rose */
+  --vd-code-attr: #a78bfa;               /* Attributes - violet */
+  --vd-code-string: #4ade80;             /* Strings - green */
+  --vd-code-comment: #64748b;            /* Comments - slate */
+  --vd-code-selector: #fb7185;           /* CSS selectors - rose */
+  --vd-code-property: #60a5fa;           /* CSS properties - blue */
+  --vd-code-value: #4ade80;              /* CSS values - green */
+  --vd-code-unit: #fbbf24;               /* Units - amber */
+  --vd-code-keyword: #a78bfa;            /* JS keywords - violet */
+  --vd-code-function: #60a5fa;           /* JS functions - blue */
+  --vd-code-number: #fbbf24;             /* Numbers - amber */
+  --vd-code-operator: #94a3b8;           /* Operators - slate */
+  --vd-code-punctuation: #94a3b8;        /* Punctuation - slate */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-code-bg: var(--vd-color-gray-900, #0f172a);
+    --vd-code-header-bg: var(--vd-color-gray-800, #1e293b);
+    --vd-code-border: var(--vd-color-gray-700, #334155);
+    --vd-code-tab-hover-bg: var(--vd-color-gray-700, #334155);
+    --vd-code-line-highlight: rgba(59, 130, 246, 0.15);
+    
+    --vd-code-tag: #fb7185;
+    --vd-code-attr: #a78bfa;
+    --vd-code-string: #4ade80;
+    --vd-code-comment: #64748b;
+    --vd-code-selector: #fb7185;
+    --vd-code-property: #60a5fa;
+    --vd-code-value: #4ade80;
+    --vd-code-unit: #fbbf24;
+    --vd-code-keyword: #a78bfa;
+    --vd-code-function: #60a5fa;
+    --vd-code-number: #fbbf24;
+    --vd-code-operator: #94a3b8;
+    --vd-code-punctuation: #94a3b8;
+  }
+}
+
+/* ==========================================================================
+   Base Code Snippet Container
+   ========================================================================== */
+
+.vd-code-snippet {
+  position: relative;
+  margin: 1rem 0;
+  border-radius: var(--vd-code-border-radius);
+  border: 1px solid var(--vd-code-border);
+  background-color: var(--vd-code-bg);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Collapsible Toggle Button
+   ========================================================================== */
+
+.vd-code-snippet-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: var(--vd-code-padding-y) var(--vd-code-padding-x);
+  background-color: var(--vd-code-header-bg);
+  border: none;
+  color: var(--vd-code-text-muted);
+  font-size: var(--vd-code-font-size);
+  font-weight: var(--vd-font-weight-medium, 500);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  text-align: left;
+}
+
+.vd-code-snippet-toggle:hover {
+  color: var(--vd-code-text);
+  background-color: var(--vd-code-tab-hover-bg);
+}
+
+.vd-code-snippet-toggle:focus-visible {
+  outline: 2px solid var(--vd-code-tab-active);
+  outline-offset: -2px;
+}
+
+/* Toggle Icon (chevron) */
+.vd-code-snippet-toggle-icon {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.vd-code-snippet-toggle-icon::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  margin: auto;
+}
+
+/* Expanded state */
+.vd-code-snippet[data-expanded="true"] .vd-code-snippet-toggle-icon::before {
+  transform: rotate(45deg);
+}
+
+.vd-code-snippet[data-expanded="true"] .vd-code-snippet-toggle {
+  border-bottom: 1px solid var(--vd-code-border);
+}
+
+/* ==========================================================================
+   Collapsible Content
+   ========================================================================== */
+
+.vd-code-snippet-content {
+  display: none;
+}
+
+.vd-code-snippet-content[data-visible="true"],
+.vd-code-snippet:not([data-collapsible]) .vd-code-snippet-content {
+  display: block;
+}
+
+/* Non-collapsible variant */
+.vd-code-snippet:not([data-collapsible]) .vd-code-snippet-toggle {
+  display: none;
+}
+
+/* ==========================================================================
+   Header with Tabs and Copy Button
+   ========================================================================== */
+
+.vd-code-snippet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--vd-code-header-height);
+  padding: 0 var(--vd-code-padding-x);
+  background-color: var(--vd-code-header-bg);
+  border-bottom: 1px solid var(--vd-code-border);
+}
+
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
+
+.vd-code-snippet-tabs {
+  display: flex;
+  gap: var(--vd-code-tab-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vd-code-snippet-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--vd-code-font-size);
+  font-weight: var(--vd-font-weight-medium, 500);
+  color: var(--vd-code-tab-text);
+  background: transparent;
+  border: none;
+  border-radius: var(--vd-code-border-radius);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.vd-code-snippet-tab:hover {
+  color: var(--vd-code-text);
+  background-color: var(--vd-code-tab-hover-bg);
+}
+
+.vd-code-snippet-tab:focus-visible {
+  outline: 2px solid var(--vd-code-tab-active);
+  outline-offset: -2px;
+}
+
+.vd-code-snippet-tab.is-active {
+  color: var(--vd-code-tab-active);
+  background-color: var(--vd-code-bg);
+}
+
+/* Language labels */
+.vd-code-snippet-tab[data-lang="html"]::before { content: ''; }
+.vd-code-snippet-tab[data-lang="css"]::before { content: ''; }
+.vd-code-snippet-tab[data-lang="js"]::before { content: ''; }
+
+/* ==========================================================================
+   Copy Button
+   ========================================================================== */
+
+.vd-code-snippet-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--vd-code-font-size);
+  font-weight: var(--vd-font-weight-medium, 500);
+  color: var(--vd-code-tab-text);
+  background: transparent;
+  border: 1px solid var(--vd-code-border);
+  border-radius: var(--vd-code-border-radius);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.vd-code-snippet-copy:hover {
+  color: var(--vd-code-text);
+  background-color: var(--vd-code-tab-hover-bg);
+}
+
+.vd-code-snippet-copy:focus-visible {
+  outline: 2px solid var(--vd-code-tab-active);
+  outline-offset: 2px;
+}
+
+/* Copy Icon */
+.vd-code-snippet-copy-icon {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+}
+
+.vd-code-snippet-copy-icon::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Success state */
+.vd-code-snippet-copy.is-copied {
+  color: var(--vd-code-copy-success);
+  border-color: var(--vd-code-copy-success);
+}
+
+.vd-code-snippet-copy.is-copied .vd-code-snippet-copy-icon::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+.vd-code-snippet-copy.is-copied .vd-code-snippet-copy-text::after {
+  content: 'd!';
+  font-size: var(--vd-code-font-size);
+}
+
+.vd-code-snippet-copy.is-copied .vd-code-snippet-copy-text {
+  font-size: 0;
+}
+
+.vd-code-snippet-copy.is-copied .vd-code-snippet-copy-text::before {
+  content: 'Copie';
+  font-size: var(--vd-code-font-size);
+}
+
+/* ==========================================================================
+   Code Body
+   ========================================================================== */
+
+.vd-code-snippet-body {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Code Panes
+   ========================================================================== */
+
+.vd-code-snippet-pane {
+  display: none;
+  margin: 0;
+  padding: var(--vd-code-padding-y) var(--vd-code-padding-x);
+  background-color: var(--vd-code-bg);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vd-code-snippet-pane.is-active {
+  display: block;
+}
+
+.vd-code-snippet-pane code {
+  display: block;
+  font-family: var(--vd-font-family-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
+  font-size: var(--vd-code-font-size);
+  line-height: var(--vd-code-line-height);
+  color: var(--vd-code-text);
+  white-space: pre;
+  tab-size: 2;
+}
+
+/* ==========================================================================
+   Line Numbers (Optional)
+   ========================================================================== */
+
+.vd-code-snippet-pane.has-line-numbers {
+  padding-left: 0;
+}
+
+.vd-code-snippet-pane.has-line-numbers code {
+  display: flex;
+}
+
+.vd-code-snippet-line-numbers {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--vd-code-padding-x);
+  margin-right: var(--vd-code-padding-x);
+  border-right: 1px solid var(--vd-code-border);
+  color: var(--vd-code-line-number);
+  text-align: right;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.vd-code-snippet-line-numbers span {
+  line-height: var(--vd-code-line-height);
+}
+
+.vd-code-snippet-code {
+  flex: 1;
+  overflow-x: auto;
+}
+
+/* Line highlighting */
+.code-line-highlight {
+  display: block;
+  background-color: var(--vd-code-line-highlight);
+  margin: 0 calc(-1 * var(--vd-code-padding-x));
+  padding: 0 var(--vd-code-padding-x);
+}
+
+/* ==========================================================================
+   Syntax Highlighting Classes
+   ========================================================================== */
+
+/* HTML Syntax */
+.code-tag { color: var(--vd-code-tag); }
+.code-attr { color: var(--vd-code-attr); }
+.code-string { color: var(--vd-code-string); }
+.code-comment { color: var(--vd-code-comment); font-style: italic; }
+
+/* CSS Syntax */
+.code-selector { color: var(--vd-code-selector); }
+.code-property { color: var(--vd-code-property); }
+.code-value { color: var(--vd-code-value); }
+.code-unit { color: var(--vd-code-unit); }
+
+/* JavaScript Syntax */
+.code-keyword { color: var(--vd-code-keyword); }
+.code-function { color: var(--vd-code-function); }
+.code-number { color: var(--vd-code-number); }
+.code-operator { color: var(--vd-code-operator); }
+.code-punctuation { color: var(--vd-code-punctuation); }
+
+/* ==========================================================================
+   Single Language Variant (No Tabs)
+   ========================================================================== */
+
+.vd-code-snippet-single .vd-code-snippet-header {
+  justify-content: flex-end;
+}
+
+.vd-code-snippet-single .vd-code-snippet-tabs {
+  display: none;
+}
+
+/* ==========================================================================
+   Inline Variant
+   ========================================================================== */
+
+.vd-code-snippet-inline {
+  display: inline-flex;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.vd-code-snippet-inline .vd-code-snippet-header {
+  display: none;
+}
+
+.vd-code-snippet-inline .vd-code-snippet-pane {
+  display: block;
+  padding: 0.125rem 0.375rem;
+}
+
+.vd-code-snippet-inline .vd-code-snippet-pane code {
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Compact Variant
+   ========================================================================== */
+
+.vd-code-snippet-compact .vd-code-snippet-header {
+  min-height: auto;
+  padding: 0.25rem 0.5rem;
+}
+
+.vd-code-snippet-compact .vd-code-snippet-tab {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.vd-code-snippet-compact .vd-code-snippet-copy {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.vd-code-snippet-compact .vd-code-snippet-pane {
+  padding: 0.5rem;
+}
+
+.vd-code-snippet-compact .vd-code-snippet-pane code {
+  font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .vd-code-snippet-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .vd-code-snippet-tabs {
+    order: 2;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .vd-code-snippet-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .vd-code-snippet-copy {
+    order: 1;
+    margin-left: auto;
+  }
+  
+  .vd-code-snippet-pane {
+    padding: 0.75rem;
+  }
+  
+  .vd-code-snippet-pane code {
+    font-size: 0.8125rem;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .vd-code-snippet {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+  }
+  
+  .vd-code-snippet-toggle,
+  .vd-code-snippet-copy {
+    display: none !important;
+  }
+  
+  .vd-code-snippet-content {
+    display: block !important;
+  }
+  
+  .vd-code-snippet-pane {
+    display: block !important;
+    page-break-inside: avoid;
+  }
+  
+  .vd-code-snippet-pane::before {
+    content: attr(data-lang) ':';
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-code-snippet-toggle,
+  .vd-code-snippet-toggle-icon,
+  .vd-code-snippet-tab,
+  .vd-code-snippet-copy {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue VdCodeSnippet <pre> (additive; added in 1.6.1)
+   VdCodeSnippet renders `figure.vd-code-snippet > pre.vd-code-snippet-pre > code`.
+   ========================================================================== */
+.vd-code-snippet-pre {
+  margin: 0;
+  padding: var(--vd-code-padding-y) var(--vd-code-padding-x);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--vd-code-bg);
+  font-family: var(--vd-font-family-mono, 'JetBrains Mono', 'Fira Code', 'Consolas', monospace);
+  font-size: var(--vd-code-font-size);
+  line-height: var(--vd-code-line-height);
+  color: var(--vd-code-text);
+}
+
+.vd-code-snippet-pre code {
+  font: inherit;
+  color: inherit;
+  white-space: pre;
+  tab-size: 2;
+}

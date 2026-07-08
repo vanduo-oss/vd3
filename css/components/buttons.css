@@ -1,0 +1,583 @@
+/**
+ * Vanduo Framework - Buttons
+ * Button component with variants, sizes, and states
+ */
+
+:root {
+  /* Button Padding (Fibonacci pairs: x/y ratio ~ phi)
+   * sm:  13px/8px  = 1.625 ~ phi
+   * base: 21px/13px = 1.615 ~ phi
+   * lg:  34px/21px = 1.619 ~ phi */
+  --vd-btn-padding-x-sm: 0.8125rem;
+  /* 13px - fib */
+  --vd-btn-padding-y-sm: 0.5rem;
+  /* 8px  - fib */
+  --vd-btn-padding-x: 1.3125rem;
+  /* 21px - fib */
+  --vd-btn-padding-y: 0.8125rem;
+  /* 13px - fib */
+  --vd-btn-padding-x-lg: 2.125rem;
+  /* 34px - fib */
+  --vd-btn-padding-y-lg: 1.3125rem;
+  /* 21px - fib */
+
+  /* Button Font Sizes */
+  --vd-btn-font-size-sm: var(--vd-font-size-sm);
+  --vd-btn-font-size: var(--vd-font-size-base);
+  --vd-btn-font-size-lg: var(--vd-font-size-lg);
+
+  /* Button Border Radius (Fibonacci) */
+  --vd-btn-border-radius: var(--vd-radius-fib-5);
+  /* 5px */
+  --vd-btn-border-radius-sm: var(--vd-radius-fib-3);
+  /* 3px */
+  --vd-btn-border-radius-lg: var(--vd-radius-fib-8);
+  /* 8px */
+
+  /* Button Transitions */
+  --vd-btn-transition: all 0.2s ease-in-out;
+}
+
+/* Base Button */
+.vd-btn {
+  display: inline-block;
+  padding: var(--vd-btn-padding-y) var(--vd-btn-padding-x);
+  font-family: var(--vd-font-family-sans);
+  font-size: var(--vd-btn-font-size);
+  font-weight: var(--vd-font-weight-medium);
+  line-height: var(--vd-line-height-normal);
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: var(--vd-btn-border-radius);
+  transition: var(--vd-btn-transition);
+  background-color: transparent;
+  color: var(--vd-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Button spacing when adjacent */
+.vd-btn+.vd-btn {
+  margin-left: 0.5rem;
+}
+
+/* Reset margin for vertical groups */
+.vd-btn-group-vertical>.vd-btn+.vd-btn {
+  margin-left: 0;
+  margin-top: -1px;
+}
+
+/* Reset bottom margin in flush contexts */
+.vd-modal-footer .vd-btn,
+.vd-card-footer .vd-btn {
+  margin-bottom: 0;
+}
+
+.vd-btn:focus-visible {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+}
+
+.vd-btn:disabled,
+.vd-btn.disabled,
+.vd-btn.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Button Variants - Primary */
+.vd-btn-primary {
+  background-color: var(--vd-color-primary);
+  border-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-primary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary-dark);
+  border-color: var(--vd-color-primary-dark);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-primary:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary-dark);
+  border-color: var(--vd-color-primary-dark);
+  transform: translateY(1px);
+}
+
+/* Button Variants - Secondary */
+.vd-btn-secondary {
+  background-color: var(--vd-color-secondary);
+  border-color: var(--vd-color-secondary);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-secondary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-secondary-dark);
+  border-color: var(--vd-color-secondary-dark);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-secondary:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-secondary-dark);
+  border-color: var(--vd-color-secondary-dark);
+  transform: translateY(1px);
+}
+
+/* Button Variants - Success */
+.vd-btn-success {
+  background-color: var(--vd-color-success);
+  border-color: var(--vd-color-success);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-success:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-success-dark);
+  border-color: var(--vd-color-success-dark);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-success:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-success-dark);
+  border-color: var(--vd-color-success-dark);
+  transform: translateY(1px);
+}
+
+/* Button Variants - Warning */
+.vd-btn-warning {
+  background-color: var(--vd-color-warning);
+  border-color: var(--vd-color-warning);
+  color: var(--vd-color-black);
+}
+
+.vd-btn-warning:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-warning-dark);
+  border-color: var(--vd-color-warning-dark);
+  color: var(--vd-color-black);
+}
+
+.vd-btn-warning:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-warning-dark);
+  border-color: var(--vd-color-warning-dark);
+  transform: translateY(1px);
+}
+
+/* Button Variants - Danger (unified) / Error (alias) */
+.vd-btn-error,
+.vd-btn-danger {
+  background-color: var(--vd-color-error);
+  border-color: var(--vd-color-error);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-error:hover:not(:disabled):not(.disabled):not(.is-disabled),
+.vd-btn-danger:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-error-dark);
+  border-color: var(--vd-color-error-dark);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-error:active:not(:disabled):not(.disabled):not(.is-disabled),
+.vd-btn-danger:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-error-dark);
+  border-color: var(--vd-color-error-dark);
+  transform: translateY(1px);
+}
+
+/* Button Variants - Info */
+.vd-btn-info {
+  background-color: var(--vd-color-info);
+  border-color: var(--vd-color-info);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-info:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-info-dark);
+  border-color: var(--vd-color-info-dark);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-info:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-info-dark);
+  border-color: var(--vd-color-info-dark);
+  transform: translateY(1px);
+}
+
+/* Button Variants - Outline */
+.vd-btn-outline {
+  background-color: transparent;
+  border-color: var(--vd-color-primary);
+  color: var(--vd-color-primary);
+}
+
+.vd-btn-outline:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary);
+  border-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-outline-primary {
+  background-color: transparent;
+  border-color: var(--vd-color-primary);
+  color: var(--vd-color-primary);
+}
+
+.vd-btn-outline-primary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary);
+  border-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-outline-secondary {
+  background-color: transparent;
+  border-color: var(--vd-color-secondary);
+  color: var(--vd-color-secondary);
+}
+
+.vd-btn-outline-secondary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-secondary);
+  border-color: var(--vd-color-secondary);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-outline-success {
+  background-color: transparent;
+  border-color: var(--vd-color-success);
+  color: var(--vd-color-success);
+}
+
+.vd-btn-outline-success:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-success);
+  border-color: var(--vd-color-success);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-outline-warning {
+  background-color: transparent;
+  border-color: var(--vd-color-warning);
+  color: var(--vd-color-warning);
+}
+
+.vd-btn-outline-warning:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-warning);
+  border-color: var(--vd-color-warning);
+  color: var(--vd-color-black);
+}
+
+.vd-btn-outline-error,
+.vd-btn-outline-danger {
+  background-color: transparent;
+  border-color: var(--vd-color-error);
+  color: var(--vd-color-error);
+}
+
+.vd-btn-outline-error:hover:not(:disabled):not(.disabled):not(.is-disabled),
+.vd-btn-outline-danger:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-error);
+  border-color: var(--vd-color-error);
+  color: var(--vd-color-white);
+}
+
+.vd-btn-outline-info {
+  background-color: transparent;
+  border-color: var(--vd-color-info);
+  color: var(--vd-color-info);
+}
+
+.vd-btn-outline-info:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-info);
+  border-color: var(--vd-color-info);
+  color: var(--vd-color-white);
+}
+
+/* Button Variants - Ghost/Text */
+.vd-btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-primary);
+}
+
+.vd-btn-ghost:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary-alpha-10);
+  color: var(--vd-color-primary-dark);
+}
+
+.vd-btn-ghost:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary-alpha-20);
+  transform: translateY(1px);
+}
+
+/* Ghost Button Variants */
+.vd-btn-ghost-primary {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-primary);
+}
+
+.vd-btn-ghost-primary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary-alpha-10);
+  color: var(--vd-color-primary-dark);
+}
+
+.vd-btn-ghost-primary:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-primary-alpha-20);
+  color: var(--vd-color-primary-active);
+}
+
+.vd-btn-ghost-secondary {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-secondary);
+}
+
+.vd-btn-ghost-secondary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-secondary-alpha-10);
+  color: var(--vd-color-secondary-dark);
+}
+
+.vd-btn-ghost-secondary:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-secondary-alpha-20);
+  color: var(--vd-color-secondary-active);
+}
+
+.vd-btn-ghost-success {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-success);
+}
+
+.vd-btn-ghost-success:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-success-alpha-10);
+  color: var(--vd-color-success-dark);
+}
+
+.vd-btn-ghost-success:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-success-alpha-20);
+  color: var(--vd-color-success-active);
+}
+
+.vd-btn-ghost-warning {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-warning);
+}
+
+.vd-btn-ghost-warning:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-warning-alpha-10);
+  color: var(--vd-color-warning-dark);
+}
+
+.vd-btn-ghost-warning:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-warning-alpha-20);
+  color: var(--vd-color-warning-active);
+}
+
+.vd-btn-ghost-error,
+.vd-btn-ghost-danger {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-error);
+}
+
+.vd-btn-ghost-error:hover:not(:disabled):not(.disabled):not(.is-disabled),
+.vd-btn-ghost-danger:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-error-alpha-10);
+  color: var(--vd-color-error-dark);
+}
+
+.vd-btn-ghost-error:active:not(:disabled):not(.disabled):not(.is-disabled),
+.vd-btn-ghost-danger:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-error-alpha-20);
+  color: var(--vd-color-error-active);
+}
+
+.vd-btn-ghost-info {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--vd-color-info);
+}
+
+.vd-btn-ghost-info:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-info-alpha-10);
+  color: var(--vd-color-info-dark);
+}
+
+.vd-btn-ghost-info:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-color-info-alpha-20);
+  color: var(--vd-color-info-active);
+}
+
+/* Ghost Button with Border (Subtle) */
+.vd-btn-ghost-subtle {
+  background-color: transparent;
+  border: 1px solid var(--vd-border-color);
+  color: var(--vd-text-secondary);
+}
+
+.vd-btn-ghost-subtle:hover:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-gray-0);
+  border-color: var(--vd-gray-4);
+  color: var(--vd-text-primary);
+}
+
+.vd-btn-ghost-subtle:active:not(:disabled):not(.disabled):not(.is-disabled) {
+  background-color: var(--vd-gray-1);
+  border-color: var(--vd-gray-5);
+}
+
+/* Button Sizes - Small */
+.vd-btn-sm {
+  padding: var(--vd-btn-padding-y-sm) var(--vd-btn-padding-x-sm);
+  font-size: var(--vd-btn-font-size-sm);
+  border-radius: var(--vd-btn-border-radius-sm);
+}
+
+/* Button Sizes - Large */
+.vd-btn-lg {
+  padding: var(--vd-btn-padding-y-lg) var(--vd-btn-padding-x-lg);
+  font-size: var(--vd-btn-font-size-lg);
+  border-radius: var(--vd-btn-border-radius-lg);
+}
+
+/* Full Width Button */
+.vd-btn-block,
+.vd-btn-full {
+  display: block;
+  width: 100%;
+}
+
+/* Icon Button Support (Fibonacci squares) */
+.vd-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--vd-btn-padding-y);
+  width: auto;
+  min-width: 2.125rem;
+  /* 34px - fib */
+  height: 2.125rem;
+  /* 34px - fib */
+}
+
+.vd-btn-icon.vd-btn-sm {
+  min-width: 2.125rem;
+  /* 34px - fib */
+  height: 2.125rem;
+  /* 34px - fib */
+  padding: var(--vd-btn-padding-y-sm);
+}
+
+.vd-btn-icon.vd-btn-lg {
+  min-width: 3.4375rem;
+  /* 55px - fib */
+  height: 3.4375rem;
+  /* 55px - fib */
+  padding: var(--vd-btn-padding-y-lg);
+}
+
+/* Button with Icon Spacing */
+.vd-btn>*+* {
+  margin-left: 0.5rem;
+}
+
+.vd-btn>*:first-child {
+  margin-left: 0;
+}
+
+/* Link as Button */
+a.vd-btn {
+  text-decoration: none;
+}
+
+a.vd-btn:hover {
+  text-decoration: none;
+}
+
+/* Loading State */
+.vd-btn.is-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.vd-btn.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  margin: -0.5em 0 0 -0.5em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spinner 0.6s linear infinite;
+}
+
+.vd-btn-primary.is-loading::after,
+.vd-btn-secondary.is-loading::after,
+.vd-btn-success.is-loading::after,
+.vd-btn-error.is-loading::after,
+.vd-btn-danger.is-loading::after,
+.vd-btn-info.is-loading::after {
+  border-color: var(--vd-color-white);
+  border-right-color: transparent;
+}
+
+.vd-btn-warning.is-loading::after {
+  border-color: var(--vd-color-black);
+  border-right-color: transparent;
+}
+
+@keyframes btn-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue VdButton spinner (additive; added in 1.6.1)
+   VdButton renders a real `<span class="vd-btn-spinner">` while loading (the
+   button also gets .is-loading). Style the real element and suppress the legacy
+   ::after so only one spinner is shown.
+   ========================================================================== */
+.vd-btn.is-loading:has(.vd-btn-spinner)::after {
+  content: none;
+}
+
+.vd-btn-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  margin: -0.5em 0 0 -0.5em;
+  border: 2px solid var(--vd-color-primary);
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spinner 0.6s linear infinite;
+}
+
+.vd-btn-primary .vd-btn-spinner,
+.vd-btn-secondary .vd-btn-spinner,
+.vd-btn-success .vd-btn-spinner,
+.vd-btn-danger .vd-btn-spinner,
+.vd-btn-error .vd-btn-spinner,
+.vd-btn-info .vd-btn-spinner {
+  border-color: var(--vd-color-white);
+  border-right-color: transparent;
+}
+
+.vd-btn-warning .vd-btn-spinner {
+  border-color: var(--vd-color-black);
+  border-right-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-btn-spinner {
+    animation-duration: 1.2s;
+  }
+}

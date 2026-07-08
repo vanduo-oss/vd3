@@ -1,0 +1,113 @@
+/**
+ * Vanduo Framework - Parallax Effects
+ * Parallax scroll effects
+ */
+
+:root {
+  /* Parallax Settings */
+  --vd-parallax-speed-slow: 0.5;
+  --vd-parallax-speed-medium: 1;
+  --vd-parallax-speed-fast: 1.5;
+}
+
+/* Base Parallax Container */
+.vd-parallax {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Parallax Layer */
+.vd-parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Parallax Content */
+.vd-parallax-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Parallax Speed Variants */
+.vd-parallax-slow {
+  --vd-parallax-speed: var(--vd-parallax-speed-slow);
+}
+
+.vd-parallax-medium {
+  --vd-parallax-speed: var(--vd-parallax-speed-medium);
+}
+
+.vd-parallax-fast {
+  --vd-parallax-speed: var(--vd-parallax-speed-fast);
+}
+
+/* Parallax Direction */
+.vd-parallax-horizontal .vd-parallax-layer {
+  /* Horizontal parallax will be handled by JS */
+}
+
+/* Parallax Image */
+.vd-parallax-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* Parallax Background */
+.vd-parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%; /* Extra height for parallax effect */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+/* Parallax Container Heights (Fibonacci) */
+.vd-parallax-sm {
+  min-height: 377px; /* fib */
+}
+
+.vd-parallax-md {
+  min-height: 610px; /* fib */
+}
+
+.vd-parallax-lg {
+  min-height: 987px; /* fib */
+}
+
+.vd-parallax-full {
+  min-height: 100vh;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .vd-parallax-layer,
+  .vd-parallax-bg,
+  .vd-parallax-image {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+/* Mobile Optimization (disable parallax on small screens) */
+@media (max-width: 767.98px) {
+  .vd-parallax-disable-mobile .vd-parallax-layer,
+  .vd-parallax-disable-mobile .vd-parallax-bg,
+  .vd-parallax-disable-mobile .vd-parallax-image {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+

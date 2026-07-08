@@ -1,0 +1,323 @@
+/**
+ * Vanduo Framework - Draggable Component
+ * CSS styles for draggable elements and drop zones
+ */
+
+:root {
+  /* Draggable Colors */
+  --vd-draggable-bg: var(--vd-color-white);
+  --vd-draggable-border-color: var(--vd-border-color);
+  --vd-draggable-hover-bg: var(--vd-bg-secondary);
+  --vd-draggable-hover-border-color: var(--vd-color-primary);
+  --vd-draggable-dragging-bg: var(--vd-bg-secondary);
+  --vd-draggable-dragging-border-color: var(--vd-color-primary);
+  --vd-draggable-dragging-shadow: var(--vd-shadow-lg);
+  
+  /* Drop Zone Colors */
+  --vd-drop-zone-bg: var(--vd-color-primary-alpha-5);
+  --vd-drop-zone-border-color: var(--vd-color-primary-alpha-30);
+  --vd-drop-zone-hover-bg: var(--vd-color-primary-alpha-10);
+  --vd-drop-zone-hover-border-color: var(--vd-color-primary);
+  --vd-drop-zone-active-bg: var(--vd-color-primary-alpha-15);
+  --vd-drop-zone-active-border-color: var(--vd-color-primary);
+  
+  /* Spacing */
+  --vd-draggable-padding: 0.8125rem; /* 13px - fib */
+  --vd-draggable-margin: 0.5rem; /* 8px - fib */
+  --vd-drop-zone-padding: 1.3125rem; /* 21px - fib */
+  
+  /* Transitions */
+  --vd-draggable-transition: all var(--vd-transition-duration-base) var(--vd-transition-ease);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-draggable-bg: var(--vd-bg-secondary);
+  --vd-draggable-hover-bg: var(--vd-bg-primary);
+  --vd-draggable-dragging-bg: var(--vd-bg-primary);
+  --vd-drop-zone-bg: var(--vd-color-primary-alpha-10);
+  --vd-drop-zone-border-color: var(--vd-color-primary-alpha-40);
+  --vd-drop-zone-hover-bg: var(--vd-color-primary-alpha-15);
+  --vd-drop-zone-active-bg: var(--vd-color-primary-alpha-20);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-draggable-bg: var(--vd-bg-secondary);
+    --vd-draggable-hover-bg: var(--vd-bg-primary);
+    --vd-draggable-dragging-bg: var(--vd-bg-primary);
+    --vd-drop-zone-bg: var(--vd-color-primary-alpha-10);
+    --vd-drop-zone-border-color: var(--vd-color-primary-alpha-40);
+    --vd-drop-zone-hover-bg: var(--vd-color-primary-alpha-15);
+    --vd-drop-zone-active-bg: var(--vd-color-primary-alpha-20);
+  }
+}
+
+/* Base Draggable Element */
+.vd-draggable {
+  position: relative;
+  display: inline-block;
+  padding: var(--vd-draggable-padding);
+  margin: var(--vd-draggable-margin);
+  background-color: var(--vd-draggable-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--vd-draggable-border-color);
+  border-radius: var(--vd-btn-border-radius);
+  cursor: grab;
+  user-select: none;
+  transition: var(--vd-draggable-transition);
+  touch-action: none;
+}
+
+.vd-draggable:hover {
+  background-color: var(--vd-draggable-hover-bg);
+  border-color: var(--vd-draggable-hover-border-color);
+}
+
+.vd-draggable:active {
+  cursor: grabbing;
+}
+
+.vd-draggable[draggable="true"] {
+  cursor: grab;
+}
+
+.vd-draggable[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+/* Dragging State */
+.vd-draggable.is-dragging {
+  opacity: 0.7;
+  transform: scale(1.02);
+  background-color: var(--vd-draggable-dragging-bg);
+  border-color: var(--vd-draggable-dragging-border-color);
+  box-shadow: var(--vd-draggable-dragging-shadow);
+  cursor: grabbing;
+  z-index: 1000;
+}
+
+/* Draggable Handle */
+.vd-draggable-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem; /* 20px */
+  height: 1.25rem; /* 20px */
+  margin-right: 0.5rem; /* 8px */
+  color: var(--vd-text-muted);
+  cursor: grab;
+  transition: var(--vd-draggable-transition);
+}
+
+.vd-draggable-handle:hover {
+  color: var(--vd-text-primary);
+}
+
+.vd-draggable:active .vd-draggable-handle {
+  cursor: grabbing;
+}
+
+/* Drop Zone */
+.vd-drop-zone {
+  position: relative;
+  min-height: 3rem; /* 48px */
+  padding: var(--vd-drop-zone-padding);
+  margin: var(--vd-draggable-margin);
+  background-color: var(--vd-drop-zone-bg);
+  background-clip: padding-box;
+  border: 2px dashed var(--vd-drop-zone-border-color);
+  border-radius: var(--vd-btn-border-radius);
+  transition: var(--vd-draggable-transition);
+}
+
+.vd-drop-zone:hover {
+  background-color: var(--vd-drop-zone-hover-bg);
+  border-color: var(--vd-drop-zone-hover-border-color);
+}
+
+.vd-drop-zone.is-drag-over {
+  background-color: var(--vd-drop-zone-active-bg);
+  border-color: var(--vd-drop-zone-active-border-color);
+  border-style: solid;
+  transform: scale(1.01);
+}
+
+/* Empty drop zone placeholder */
+.vd-drop-zone:empty::after {
+  content: 'Drag items here';
+  display: block;
+  text-align: center;
+  padding: 1rem;
+  color: var(--vd-text-muted);
+  font-style: italic;
+}
+
+.vd-drop-zone.is-drag-over::before {
+  content: 'Drop here';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: var(--vd-font-weight-medium);
+  color: var(--vd-color-primary);
+  pointer-events: none;
+}
+
+/* Draggable Container */
+.vd-draggable-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vd-draggable-margin);
+  padding: var(--vd-draggable-padding);
+  background-color: var(--vd-bg-secondary);
+  background-clip: padding-box;
+  border: 1px solid var(--vd-border-color);
+  border-radius: var(--vd-btn-border-radius);
+}
+
+.vd-draggable-container.vd-draggable-container-vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Draggable Item */
+.vd-draggable-item {
+  flex: 0 0 auto;
+  min-width: 8rem; /* 128px */
+  padding: var(--vd-draggable-padding);
+  background-color: var(--vd-draggable-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--vd-draggable-border-color);
+  border-radius: var(--vd-btn-border-radius);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: var(--vd-draggable-transition);
+}
+
+.vd-draggable-item:hover {
+  background-color: var(--vd-draggable-hover-bg);
+  border-color: var(--vd-draggable-hover-border-color);
+}
+
+.vd-draggable-item.is-dragging {
+  opacity: 0.7;
+  transform: scale(1.02);
+  background-color: var(--vd-draggable-dragging-bg);
+  border-color: var(--vd-draggable-dragging-border-color);
+  box-shadow: var(--vd-draggable-dragging-shadow);
+  cursor: grabbing;
+  z-index: 1000;
+}
+
+.vd-draggable-item:active {
+  cursor: grabbing;
+}
+
+/* Keyboard-activated grab state (via aria-grabbed) */
+.vd-draggable[aria-grabbed="true"],
+.vd-draggable-item[aria-grabbed="true"] {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+  background-color: var(--vd-draggable-dragging-bg);
+  border-color: var(--vd-draggable-dragging-border-color);
+}
+
+/* Drag Feedback */
+.vd-drag-feedback {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.9;
+  transform: none;
+  transition: opacity 0.2s ease;
+}
+
+.vd-drag-feedback.hidden {
+  opacity: 0;
+}
+
+/* Disabled State */
+.vd-draggable.is-disabled,
+.vd-draggable[disabled],
+.vd-draggable-item.is-disabled,
+.vd-draggable-item[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Responsive Behavior */
+@media (max-width: 575.98px) {
+  .vd-draggable-container {
+    padding: 0.5rem; /* 8px */
+  }
+  
+  .vd-draggable-item {
+    min-width: 100%;
+  }
+  
+  .vd-draggable {
+    display: block;
+    margin: 0.5rem 0;
+  }
+  
+  .vd-drop-zone {
+    padding: 1rem; /* 16px */
+    min-height: 2.5rem; /* 40px */
+  }
+}
+
+/* Accessibility */
+.vd-draggable:focus-visible,
+.vd-draggable-item:focus-visible {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+}
+
+/* Animation for dropping */
+@keyframes vd-drag-drop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.vd-draggable.is-dropped,
+.vd-draggable-item.is-dropped {
+  animation: vd-drag-drop 0.3s ease;
+}
+
+/* High Contrast / Forced Colors Mode */
+@media (forced-colors: active) {
+  .vd-draggable,
+  .vd-draggable-item {
+    border: 2px solid ButtonText;
+  }
+
+  .vd-draggable.is-dragging,
+  .vd-draggable-item.is-dragging {
+    border-color: Highlight;
+    outline: 2px solid Highlight;
+  }
+
+  .vd-drop-zone {
+    border: 2px dashed ButtonText;
+  }
+
+  .vd-drop-zone.is-drag-over {
+    border-color: Highlight;
+    border-style: solid;
+  }
+
+  .vd-draggable:focus-visible,
+  .vd-draggable-item:focus-visible {
+    outline: 2px solid Highlight;
+  }
+}

@@ -1,0 +1,285 @@
+/**
+ * Vanduo Framework - Flow (Carousel/Slider)
+ * Content carousel with slide/fade transitions, touch support
+ * Primary: .vd-flow | Alias: .vd-carousel
+ */
+
+:root {
+  /* Flow Dimensions */
+  --vd-flow-height: auto;
+  --vd-flow-min-height: 13rem;          /* 208px - fib */
+
+  /* Flow Spacing (Fibonacci) */
+  --vd-flow-padding: 0;
+  --vd-flow-gap: 0;
+  --vd-flow-indicator-size: 0.5rem;     /* 8px - fib */
+  --vd-flow-indicator-gap: 0.5rem;      /* 8px - fib */
+  --vd-flow-control-size: 2.5rem;       /* 40px */
+  --vd-flow-control-offset: 0.8125rem;  /* 13px - fib */
+
+  /* Flow Colors */
+  --vd-flow-bg: var(--vd-bg-primary, #fff);
+  --vd-flow-indicator-bg: rgba(255, 255, 255, 0.5);
+  --vd-flow-indicator-active-bg: #fff;
+  --vd-flow-control-bg: rgba(0, 0, 0, 0.3);
+  --vd-flow-control-hover-bg: rgba(0, 0, 0, 0.5);
+  --vd-flow-control-color: #fff;
+
+  /* Flow Transitions */
+  --vd-flow-transition-duration: 0.5s;
+  --vd-flow-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Flow Border */
+  --vd-flow-border-radius: var(--vd-border-radius, 0.5rem);
+
+  /* Flow Z-index */
+  --vd-flow-z-controls: 10;
+  --vd-flow-z-indicators: 10;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --vd-flow-bg: var(--vd-bg-primary, #1a1a2e);
+  --vd-flow-control-bg: rgba(255, 255, 255, 0.2);
+  --vd-flow-control-hover-bg: rgba(255, 255, 255, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-flow-bg: var(--vd-bg-primary, #1a1a2e);
+    --vd-flow-control-bg: rgba(255, 255, 255, 0.2);
+    --vd-flow-control-hover-bg: rgba(255, 255, 255, 0.35);
+  }
+}
+
+/* ========== Base ========== */
+
+.vd-flow,
+.vd-carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: var(--vd-flow-min-height);
+  height: var(--vd-flow-height);
+  background-color: var(--vd-flow-bg);
+  border-radius: var(--vd-flow-border-radius);
+}
+
+/* ========== Track ========== */
+
+.vd-flow-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--vd-flow-transition-duration) var(--vd-flow-transition-timing);
+  will-change: transform;
+}
+
+.vd-flow.is-dragging .vd-flow-track {
+  transition: none;
+  cursor: grabbing;
+}
+
+/* ========== Slides ========== */
+
+.vd-flow-slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  min-height: var(--vd-flow-min-height);
+  overflow: hidden;
+}
+
+.vd-flow-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fade transition variant */
+.vd-flow-fade .vd-flow-track {
+  transition: none;
+}
+
+.vd-flow-fade .vd-flow-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity var(--vd-flow-transition-duration) var(--vd-flow-transition-timing);
+  pointer-events: none;
+}
+
+.vd-flow-fade .vd-flow-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
+}
+
+/* ========== Controls ========== */
+
+.vd-flow-prev,
+.vd-flow-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: var(--vd-flow-z-controls);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vd-flow-control-size);
+  height: var(--vd-flow-control-size);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--vd-flow-control-bg);
+  color: var(--vd-flow-control-color);
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+  opacity: 0;
+}
+
+.vd-flow:hover .vd-flow-prev,
+.vd-flow:hover .vd-flow-next,
+.vd-flow:focus-within .vd-flow-prev,
+.vd-flow:focus-within .vd-flow-next {
+  opacity: 1;
+}
+
+.vd-flow-prev:hover,
+.vd-flow-next:hover {
+  background: var(--vd-flow-control-hover-bg);
+}
+
+.vd-flow-prev:focus-visible,
+.vd-flow-next:focus-visible {
+  outline: 2px solid var(--vd-flow-control-color);
+  outline-offset: 2px;
+}
+
+.vd-flow-prev {
+  left: var(--vd-flow-control-offset);
+}
+
+.vd-flow-next {
+  right: var(--vd-flow-control-offset);
+}
+
+/* ========== Indicators ========== */
+
+.vd-flow-indicators {
+  position: absolute;
+  bottom: 0.8125rem; /* 13px - fib */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--vd-flow-z-indicators);
+  display: flex;
+  gap: var(--vd-flow-indicator-gap);
+  padding: 0.3125rem 0.5rem; /* 5px 8px - fib */
+  margin: 0;
+  list-style: none;
+  border-radius: 1rem;
+}
+
+.vd-flow-indicator {
+  width: var(--vd-flow-indicator-size);
+  height: var(--vd-flow-indicator-size);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--vd-flow-indicator-bg);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.vd-flow-indicator:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.vd-flow-indicator.is-active {
+  background: var(--vd-flow-indicator-active-bg);
+  transform: scale(1.3);
+}
+
+.vd-flow-indicator:focus-visible {
+  outline: 2px solid var(--vd-flow-indicator-active-bg);
+  outline-offset: 2px;
+}
+
+/* ========== Slide Content Overlay ========== */
+
+.vd-flow-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.3125rem 1.3125rem 2.625rem; /* 21px 21px 42px - fib */
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  color: #fff;
+}
+
+.vd-flow-caption h3,
+.vd-flow-caption .vd-flow-title {
+  margin: 0 0 0.3125rem; /* 5px - fib */
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.vd-flow-caption p,
+.vd-flow-caption .vd-flow-description {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* ========== Size Variants ========== */
+
+.vd-flow-compact {
+  --vd-flow-min-height: 8rem;
+  --vd-flow-control-size: 2rem;
+}
+
+.vd-flow-lg {
+  --vd-flow-min-height: 21rem; /* 336px - fib×16 */
+  --vd-flow-control-size: 3rem;
+}
+
+.vd-flow-fullscreen {
+  --vd-flow-min-height: 100vh;
+  --vd-flow-border-radius: 0;
+}
+
+/* ========== Responsive ========== */
+
+@media (max-width: 768px) {
+  .vd-flow-prev,
+  .vd-flow-next {
+    opacity: 1;
+    --vd-flow-control-size: 2rem;
+  }
+
+  .vd-flow-caption {
+    padding: 0.8125rem 0.8125rem 2rem;
+  }
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue VdFlow inline controls (additive; added in 1.6.1)
+   VdFlow renders a `.vd-flow-controls` bar with prev/next buttons and a
+   `.vd-flow-position` "n / total" label below the track.
+   ========================================================================== */
+.vd-flow-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.8125rem;
+}
+
+.vd-flow-position {
+  min-width: 4ch;
+  font-size: var(--vd-font-size-sm);
+  color: var(--vd-text-secondary);
+  text-align: center;
+}

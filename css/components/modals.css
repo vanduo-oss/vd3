@@ -1,0 +1,371 @@
+/**
+ * Vanduo Framework - Modals
+ * Modal dialog component
+ */
+
+:root {
+  /* Modal Colors */
+  --vd-modal-bg: var(--vd-color-white);
+  --vd-modal-backdrop-bg: rgba(0, 0, 0, 0.5);
+  --vd-modal-border-color: var(--vd-border-color);
+  
+  /* Modal Spacing (Fibonacci: 21px) */
+  --vd-modal-padding: 1.3125rem;
+  --vd-modal-header-padding: 1.3125rem;
+  --vd-modal-body-padding: 1.3125rem;
+  --vd-modal-footer-padding: 1.3125rem;
+
+  /* Modal Sizes (all Fibonacci numbers) */
+  --vd-modal-width-sm: 233px;   /* fib(13) */
+  --vd-modal-width: 377px;      /* fib(14) */
+  --vd-modal-width-lg: 610px;   /* fib(15) */
+  --vd-modal-width-xl: 987px;   /* fib(16) */
+  
+  /* Modal Z-index */
+  --vd-modal-z-index: 1050;
+  --vd-modal-backdrop-z-index: 1040;
+  
+  /* Modal Transitions */
+  --vd-modal-transition: opacity var(--vd-transition-duration-base) var(--vd-transition-ease);
+  --vd-modal-dialog-transition: transform var(--vd-transition-duration-base) var(--vd-transition-ease);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-modal-bg: var(--vd-bg-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-modal-bg: var(--vd-bg-secondary);
+  }
+}
+
+/* Modal Backdrop */
+.vd-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--vd-modal-backdrop-z-index);
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--vd-modal-backdrop-bg);
+  opacity: 0;
+  transition: var(--vd-modal-transition);
+  pointer-events: none;
+}
+
+.vd-modal-backdrop.vd-modal-glass-backdrop {
+  backdrop-filter: blur(calc(var(--vd-glass-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--vd-glass-blur) * 0.5));
+}
+
+.vd-modal-backdrop.is-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Base Modal */
+.vd-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--vd-modal-z-index);
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  opacity: 0;
+  transition: var(--vd-modal-transition);
+  --vd-modal-dialog-max-width: var(--vd-modal-width);
+}
+
+.vd-modal.is-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+/* Modal Dialog */
+.vd-modal-dialog {
+  position: relative;
+  width: min(calc(100% - 3.5rem), var(--vd-modal-dialog-max-width));
+  margin: 1.75rem auto;
+  max-width: var(--vd-modal-dialog-max-width);
+  pointer-events: none;
+  transform: scale(0.95);
+  transition: var(--vd-modal-dialog-transition);
+  z-index: 1060;
+}
+
+.vd-modal.is-open .vd-modal-dialog {
+  transform: scale(1);
+}
+
+/* Modal Content */
+.vd-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: var(--vd-modal-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--vd-modal-border-color);
+  border-radius: var(--vd-btn-border-radius-lg);
+  box-shadow: var(--vd-shadow-2xl);
+  outline: 0;
+}
+
+.vd-modal-glass .vd-modal-content {
+  background: var(--vd-glass-bg-light);
+  border-color: var(--vd-glass-border-light);
+  box-shadow: var(--vd-glass-shadow);
+  backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+}
+
+/* Modal Header */
+.vd-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--vd-modal-header-padding);
+  border-bottom: 1px solid var(--vd-modal-border-color);
+  border-top-left-radius: calc(var(--vd-btn-border-radius-lg) - 1px);
+  border-top-right-radius: calc(var(--vd-btn-border-radius-lg) - 1px);
+}
+
+.vd-modal-title {
+  margin-bottom: 0;
+  line-height: var(--vd-line-height-normal);
+  font-size: var(--vd-font-size-xl);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-text-primary);
+}
+
+/* Modal Close Button */
+.vd-modal-close {
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+  background: transparent;
+  border: 0;
+  border-radius: var(--vd-btn-border-radius);
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: var(--vd-font-weight-bold);
+  line-height: 1;
+  color: var(--vd-text-secondary);
+  text-shadow: 0 1px 0 var(--vd-color-white);
+  transition: var(--vd-transition-opacity);
+  user-select: none;
+}
+
+.vd-modal-close:hover,
+.vd-modal-close:focus {
+  color: var(--vd-text-primary);
+  text-decoration: none;
+  opacity: 0.75;
+  outline: none;
+}
+
+.vd-modal-close:focus {
+  outline: 2px solid var(--vd-input-focus-border-color);
+  outline-offset: 2px;
+}
+
+/* Modal Body */
+.vd-modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: var(--vd-modal-body-padding);
+}
+
+/* Modal Footer */
+.vd-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--vd-modal-footer-padding);
+  border-top: 1px solid var(--vd-modal-border-color);
+  border-bottom-left-radius: calc(var(--vd-btn-border-radius-lg) - 1px);
+  border-bottom-right-radius: calc(var(--vd-btn-border-radius-lg) - 1px);
+  gap: 0.5rem;
+}
+
+.vd-modal-footer > * {
+  margin: 0;
+}
+
+/* Modal Sizes */
+.vd-modal-dialog.vd-modal-sm,
+.vd-modal-sm .vd-modal-dialog {
+  --vd-modal-dialog-max-width: var(--vd-modal-width-sm);
+}
+
+.vd-modal-dialog.vd-modal-lg,
+.vd-modal-lg .vd-modal-dialog {
+  --vd-modal-dialog-max-width: var(--vd-modal-width-lg);
+}
+
+.vd-modal-dialog.vd-modal-xl,
+.vd-modal-xl .vd-modal-dialog {
+  --vd-modal-dialog-max-width: var(--vd-modal-width-xl);
+}
+
+.vd-modal-fullscreen .vd-modal-dialog {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+
+.vd-modal-fullscreen .vd-modal-content {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Modal Positioning */
+.vd-modal-top .vd-modal-dialog {
+  margin-top: 0;
+  margin-bottom: auto;
+}
+
+.vd-modal-bottom .vd-modal-dialog {
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+/* Modal Scrollable */
+.vd-modal-scrollable .vd-modal-body {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+/* Modal Centered */
+.vd-modal-centered .vd-modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 3.5rem);
+}
+
+/* Responsive Behavior */
+@media (max-width: 575.98px) {
+  .vd-modal-dialog {
+    margin: 0.5rem;
+    width: calc(100% - 1rem);
+    max-width: calc(100% - 1rem);
+  }
+  
+  .vd-modal-fullscreen-sm-down {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100%;
+    margin: 0;
+  }
+  
+  .vd-modal-fullscreen-sm-down .vd-modal-content {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+/* Modal Animation Variants */
+.vd-modal-fade .vd-modal-dialog {
+  transform: translateY(-50px);
+}
+
+.vd-modal.is-open.vd-modal-fade .vd-modal-dialog {
+  transform: translateY(0);
+}
+
+.vd-modal-zoom .vd-modal-dialog {
+  transform: scale(0.8);
+}
+
+.vd-modal.is-open.vd-modal-zoom .vd-modal-dialog {
+  transform: scale(1);
+}
+
+/* Body Scroll Lock */
+.body-modal-open {
+  overflow: hidden;
+  padding-right: 0;
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue panel-based modal markup (additive; added in 1.6.1)
+   VdModal renders `.vd-modal.vd-modal-open > .vd-modal-backdrop +
+   .vd-modal-panel.vd-modal-panel-{sm|md|lg}` with header/body/footer directly
+   inside the panel (no .vd-modal-dialog / .vd-modal-content split, and the
+   backdrop carries no .is-visible state). These aliases style that DOM without
+   touching the legacy .is-open / .vd-modal-dialog / .vd-modal-content rules.
+   ========================================================================== */
+
+/* Container open state (mirror of .vd-modal.is-open) */
+.vd-modal.vd-modal-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+/* Backdrop becomes visible when the container is open (mirror of .is-visible) */
+.vd-modal-open .vd-modal-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Panel merges .vd-modal-dialog (sizing/positioning) + .vd-modal-content (box) */
+.vd-modal-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(calc(100% - 3.5rem), var(--vd-modal-dialog-max-width));
+  max-width: var(--vd-modal-dialog-max-width);
+  margin: 1.75rem auto;
+  pointer-events: auto;
+  background-color: var(--vd-modal-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--vd-modal-border-color);
+  border-radius: var(--vd-btn-border-radius-lg);
+  box-shadow: var(--vd-shadow-2xl);
+  outline: 0;
+  transform: scale(0.95);
+  transition: var(--vd-modal-dialog-transition);
+  z-index: 1060;
+}
+
+.vd-modal.vd-modal-open .vd-modal-panel {
+  transform: scale(1);
+}
+
+/* Panel sizes (md = default width) */
+.vd-modal-panel-sm { --vd-modal-dialog-max-width: var(--vd-modal-width-sm); }
+.vd-modal-panel-md { --vd-modal-dialog-max-width: var(--vd-modal-width); }
+.vd-modal-panel-lg { --vd-modal-dialog-max-width: var(--vd-modal-width-lg); }
+
+/* Glass variant parity with .vd-modal-glass .vd-modal-content */
+.vd-modal-glass .vd-modal-panel {
+  background: var(--vd-glass-bg-light);
+  border-color: var(--vd-glass-border-light);
+  box-shadow: var(--vd-glass-shadow);
+  backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+}
+
+@media (max-width: 575.98px) {
+  .vd-modal-panel {
+    margin: 0.5rem;
+    width: calc(100% - 1rem);
+    max-width: calc(100% - 1rem);
+  }
+}

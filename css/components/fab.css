@@ -1,0 +1,239 @@
+/**
+ * Vanduo Framework - FAB (Floating Action Button)
+ * Elevated circular action button with optional fixed positioning and speed-dial menu
+ */
+
+:root {
+  /* FAB Dimensions (Fibonacci) */
+  --vd-fab-size: 3.5rem;           /* 56px */
+  --vd-fab-size-sm: 2.5rem;        /* 40px */
+  --vd-fab-size-lg: 4.5rem;        /* 72px */
+  --vd-fab-icon-size: 1.5rem;
+
+  /* FAB Colors */
+  --vd-fab-bg: var(--vd-color-primary, #0d6efd);
+  --vd-fab-color: #fff;
+  --vd-fab-hover-bg: var(--vd-color-primary-dark, #0b5ed7);
+  --vd-fab-shadow: 0 3px 8px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --vd-fab-hover-shadow: 0 5px 13px rgba(0, 0, 0, 0.3), 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  /* FAB Position */
+  --vd-fab-offset: 1.3125rem;      /* 21px - fib */
+  --vd-fab-z-index: 1030;
+
+  /* FAB Menu */
+  --vd-fab-menu-gap: 0.8125rem;    /* 13px - fib */
+}
+
+[data-theme="dark"] {
+  --vd-fab-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --vd-fab-hover-shadow: 0 5px 13px rgba(0, 0, 0, 0.6), 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-fab-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --vd-fab-hover-shadow: 0 5px 13px rgba(0, 0, 0, 0.6), 0 2px 5px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ========== Base ========== */
+
+.vd-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vd-fab-size);
+  height: var(--vd-fab-size);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--vd-fab-bg);
+  color: var(--vd-fab-color);
+  font-size: var(--vd-fab-icon-size);
+  box-shadow: var(--vd-fab-shadow);
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.vd-fab-glass {
+  background: var(--vd-glass-bg-light);
+  color: var(--vd-text-primary);
+  border: 1px solid var(--vd-glass-border-light);
+  box-shadow: var(--vd-glass-shadow);
+  backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+}
+
+.vd-fab:hover {
+  background: var(--vd-fab-hover-bg);
+  box-shadow: var(--vd-fab-hover-shadow);
+  transform: scale(1.05);
+}
+
+.vd-fab-glass:hover {
+  background: var(--vd-glass-bg-light);
+  box-shadow: var(--vd-glass-float-shadow, var(--vd-glass-shadow));
+}
+
+.vd-fab:active {
+  transform: scale(0.95);
+}
+
+.vd-fab:focus-visible {
+  outline: 2px solid var(--vd-fab-bg);
+  outline-offset: 3px;
+}
+
+/* ========== Sizes ========== */
+
+.vd-fab-sm {
+  width: var(--vd-fab-size-sm);
+  height: var(--vd-fab-size-sm);
+  font-size: 1.125rem;
+}
+
+.vd-fab-lg {
+  width: var(--vd-fab-size-lg);
+  height: var(--vd-fab-size-lg);
+  font-size: 2rem;
+}
+
+/* ========== Extended (with label) ========== */
+
+.vd-fab-extended {
+  border-radius: 1.75rem;
+  width: auto;
+  padding: 0 1.3125rem; /* 21px - fib */
+  gap: 0.5rem;
+}
+
+/* ========== Fixed Positioning ========== */
+
+.vd-fab-fixed {
+  position: fixed;
+  bottom: var(--vd-fab-offset);
+  right: var(--vd-fab-offset);
+  z-index: var(--vd-fab-z-index);
+}
+
+/* ========== Position Variants (all include position: fixed) ========== */
+
+.vd-fab-bottom-left {
+  position: fixed;
+  z-index: var(--vd-fab-z-index);
+  bottom: var(--vd-fab-offset);
+  right: auto;
+  left: var(--vd-fab-offset);
+}
+
+.vd-fab-top-right {
+  position: fixed;
+  z-index: var(--vd-fab-z-index);
+  bottom: auto;
+  right: var(--vd-fab-offset);
+  top: var(--vd-fab-offset);
+}
+
+.vd-fab-top-left {
+  position: fixed;
+  z-index: var(--vd-fab-z-index);
+  bottom: auto;
+  right: auto;
+  top: var(--vd-fab-offset);
+  left: var(--vd-fab-offset);
+}
+
+.vd-fab-center {
+  position: fixed;
+  z-index: var(--vd-fab-z-index);
+  bottom: var(--vd-fab-offset);
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.vd-fab-center:hover {
+  transform: translateX(50%) scale(1.05);
+}
+
+/* ========== Color Variants ========== */
+
+.vd-fab-secondary {
+  --vd-fab-bg: var(--vd-color-gray-600, #6c757d);
+  --vd-fab-hover-bg: var(--vd-color-gray-700, #5c636a);
+}
+
+.vd-fab-success {
+  --vd-fab-bg: var(--vd-color-success, #198754);
+  --vd-fab-hover-bg: #157347;
+}
+
+.vd-fab-danger {
+  --vd-fab-bg: var(--vd-color-danger, #dc3545);
+  --vd-fab-hover-bg: #bb2d3b;
+}
+
+/* ========== Speed Dial Menu ========== */
+
+.vd-fab-menu {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: var(--vd-fab-menu-gap);
+}
+
+.vd-fab-menu .vd-fab-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--vd-fab-menu-gap);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.vd-fab-menu.is-open .vd-fab-actions {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.vd-fab-menu.vd-fab-fixed {
+  position: fixed;
+  bottom: var(--vd-fab-offset);
+  right: var(--vd-fab-offset);
+  z-index: var(--vd-fab-z-index);
+}
+
+.vd-fab-menu .vd-fab-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vd-fab-size-sm);
+  height: var(--vd-fab-size-sm);
+  border: none;
+  border-radius: 50%;
+  background: var(--vd-fab-bg);
+  color: var(--vd-fab-color);
+  font-size: 1rem;
+  box-shadow: var(--vd-fab-shadow);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.vd-fab-menu .vd-fab-action:hover {
+  transform: scale(1.1);
+  background: var(--vd-fab-hover-bg);
+}
+
+/* Staggered entrance for action buttons */
+.vd-fab-menu.is-open .vd-fab-actions .vd-fab:nth-child(1),
+.vd-fab-menu.is-open .vd-fab-action:nth-child(1) { transition-delay: 0s; }
+.vd-fab-menu.is-open .vd-fab-actions .vd-fab:nth-child(2),
+.vd-fab-menu.is-open .vd-fab-action:nth-child(2) { transition-delay: 0.05s; }
+.vd-fab-menu.is-open .vd-fab-actions .vd-fab:nth-child(3),
+.vd-fab-menu.is-open .vd-fab-action:nth-child(3) { transition-delay: 0.1s; }
+.vd-fab-menu.is-open .vd-fab-actions .vd-fab:nth-child(4),
+.vd-fab-menu.is-open .vd-fab-action:nth-child(4) { transition-delay: 0.15s; }

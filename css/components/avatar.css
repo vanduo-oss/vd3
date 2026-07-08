@@ -1,0 +1,288 @@
+/**
+ * Vanduo Framework - Avatar
+ * User profile images and placeholders
+ */
+
+:root {
+  /* Avatar Sizes (Fibonacci) */
+  --vd-avatar-size-xs: 1.3125rem;  /* 21px - fib */
+  --vd-avatar-size-sm: 2.125rem;   /* 34px - fib */
+  --vd-avatar-size-md: 3.4375rem;  /* 55px - fib */
+  --vd-avatar-size: 3.4375rem;     /* 55px - fib (default / md) */
+  --vd-avatar-size-lg: 5.5625rem;  /* 89px - fib */
+  --vd-avatar-size-xl: 9rem;       /* 144px - fib */
+  --vd-avatar-size-2xl: 14.5625rem;/* 233px - fib */
+
+  /* Avatar Colors */
+  --vd-avatar-bg: var(--vd-color-gray-300);
+  --vd-avatar-text: var(--vd-color-gray-700);
+  --vd-avatar-border: var(--vd-color-white);
+  --vd-avatar-status-online: var(--vd-color-success);
+  --vd-avatar-status-offline: var(--vd-color-gray-400);
+  --vd-avatar-status-busy: var(--vd-color-error);
+  --vd-avatar-status-away: var(--vd-color-warning);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-avatar-bg: var(--vd-color-gray-600);
+  --vd-avatar-text: var(--vd-color-gray-200);
+  --vd-avatar-border: var(--vd-color-gray-800);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-avatar-bg: var(--vd-color-gray-600);
+    --vd-avatar-text: var(--vd-color-gray-200);
+    --vd-avatar-border: var(--vd-color-gray-800);
+  }
+}
+
+/* Base Avatar */
+.vd-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vd-avatar-size);
+  height: var(--vd-avatar-size);
+  border-radius: 50%;
+  background-color: var(--vd-avatar-bg);
+  color: var(--vd-avatar-text);
+  font-weight: var(--vd-font-weight-medium);
+  font-size: calc(var(--vd-avatar-size) * 0.4);
+  line-height: 1;
+  overflow: hidden;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* Avatar Image */
+.vd-avatar img,
+.vd-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Avatar Initials (fallback) */
+.vd-avatar-initials {
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* Avatar Sizes */
+.vd-avatar-xs {
+  width: var(--vd-avatar-size-xs);
+  height: var(--vd-avatar-size-xs);
+  font-size: calc(var(--vd-avatar-size-xs) * 0.4);
+}
+
+.vd-avatar-sm {
+  width: var(--vd-avatar-size-sm);
+  height: var(--vd-avatar-size-sm);
+  font-size: calc(var(--vd-avatar-size-sm) * 0.4);
+}
+
+.vd-avatar-md {
+  width: var(--vd-avatar-size-md);
+  height: var(--vd-avatar-size-md);
+  font-size: calc(var(--vd-avatar-size-md) * 0.4);
+}
+
+.vd-avatar-lg {
+  width: var(--vd-avatar-size-lg);
+  height: var(--vd-avatar-size-lg);
+  font-size: calc(var(--vd-avatar-size-lg) * 0.4);
+}
+
+.vd-avatar-xl {
+  width: var(--vd-avatar-size-xl);
+  height: var(--vd-avatar-size-xl);
+  font-size: calc(var(--vd-avatar-size-xl) * 0.4);
+}
+
+.vd-avatar-2xl {
+  width: var(--vd-avatar-size-2xl);
+  height: var(--vd-avatar-size-2xl);
+  font-size: calc(var(--vd-avatar-size-2xl) * 0.4);
+}
+
+/* Avatar Shapes */
+.vd-avatar-rounded {
+  border-radius: var(--vd-btn-border-radius);
+}
+
+.vd-avatar-square {
+  border-radius: 0;
+}
+
+/* Avatar Status Indicator */
+.vd-avatar-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25%;
+  height: 25%;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--vd-avatar-border);
+  background-color: var(--vd-avatar-status-offline);
+}
+
+.vd-avatar.vd-avatar-status-online,
+.vd-avatar.vd-avatar-status-offline,
+.vd-avatar.vd-avatar-status-busy,
+.vd-avatar.vd-avatar-status-away {
+  overflow: visible;
+}
+
+.vd-avatar.vd-avatar-status-online::after,
+.vd-avatar.vd-avatar-status-offline::after,
+.vd-avatar.vd-avatar-status-busy::after,
+.vd-avatar.vd-avatar-status-away::after {
+  content: '';
+  position: absolute;
+  bottom: 2%;
+  right: 2%;
+  width: 25%;
+  height: 25%;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--vd-avatar-border);
+}
+
+.vd-avatar.vd-avatar-status-online::after  { background-color: var(--vd-avatar-status-online); }
+.vd-avatar.vd-avatar-status-offline::after { background-color: var(--vd-avatar-status-offline); }
+.vd-avatar.vd-avatar-status-busy::after    { background-color: var(--vd-avatar-status-busy); }
+.vd-avatar.vd-avatar-status-away::after    { background-color: var(--vd-avatar-status-away); }
+
+/* Avatar with Ring/Border */
+.vd-avatar-ring {
+  box-shadow: 0 0 0 3px var(--vd-avatar-border), 0 0 0 5px var(--vd-color-primary);
+}
+
+.vd-avatar-ring-success {
+  box-shadow: 0 0 0 3px var(--vd-avatar-border), 0 0 0 5px var(--vd-color-success);
+}
+
+.vd-avatar-ring-warning {
+  box-shadow: 0 0 0 3px var(--vd-avatar-border), 0 0 0 5px var(--vd-color-warning);
+}
+
+.vd-avatar-ring-error {
+  box-shadow: 0 0 0 3px var(--vd-avatar-border), 0 0 0 5px var(--vd-color-error);
+}
+
+/* Avatar Group (stacked avatars) */
+.vd-avatar-group {
+  display: inline-flex;
+  flex-direction: row-reverse;
+}
+
+.vd-avatar-group .vd-avatar {
+  border: 2px solid var(--vd-avatar-border);
+  margin-left: -0.75rem;
+}
+
+.vd-avatar-group .vd-avatar:last-child {
+  margin-left: 0;
+}
+
+.vd-avatar-group .vd-avatar:hover {
+  z-index: 1;
+}
+
+/* Avatar Group Sizes */
+.vd-avatar-group-sm .vd-avatar {
+  margin-left: -0.5rem;
+}
+
+.vd-avatar-group-lg .vd-avatar {
+  margin-left: -1rem;
+}
+
+/* Avatar Group with Counter */
+.vd-avatar-group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vd-avatar-size);
+  height: var(--vd-avatar-size);
+  border-radius: 50%;
+  background-color: var(--vd-color-gray-200);
+  color: var(--vd-text-primary);
+  font-size: var(--vd-font-size-sm);
+  font-weight: var(--vd-font-weight-medium);
+  border: 2px solid var(--vd-avatar-border);
+  margin-left: -0.75rem;
+}
+
+[data-theme="dark"] .vd-avatar-group-count {
+  background-color: var(--vd-color-gray-700);
+}
+
+/* Color Variants */
+.vd-avatar-primary {
+  background-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+.vd-avatar-secondary {
+  background-color: var(--vd-color-secondary);
+  color: var(--vd-color-white);
+}
+
+.vd-avatar-success {
+  background-color: var(--vd-color-success);
+  color: var(--vd-color-white);
+}
+
+.vd-avatar-warning {
+  background-color: var(--vd-color-warning);
+  color: var(--vd-color-gray-900);
+}
+
+.vd-avatar-error {
+  background-color: var(--vd-color-error);
+  color: var(--vd-color-white);
+}
+
+.vd-avatar-info {
+  background-color: var(--vd-color-info);
+  color: var(--vd-color-white);
+}
+
+/* Clickable Avatar */
+a.vd-avatar,
+button.vd-avatar {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.vd-avatar:hover,
+button.vd-avatar:hover {
+  transform: scale(1.05);
+}
+
+a.vd-avatar:focus-visible,
+button.vd-avatar:focus-visible {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  a.vd-avatar,
+  button.vd-avatar {
+    transition: none;
+  }
+
+  a.vd-avatar:hover,
+  button.vd-avatar:hover {
+    transform: none;
+  }
+}

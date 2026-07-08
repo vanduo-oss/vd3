@@ -1,0 +1,231 @@
+/**
+ * Vanduo Framework - Badges
+ * Status indicator badges
+ */
+
+:root {
+  /* Badge Padding (x/y ratio ~ phi) */
+  --vd-badge-padding-y: 0.3em;
+  --vd-badge-padding-x: 0.48em;     /* 0.48/0.3 = 1.6 ~ phi */
+  --vd-badge-padding-y-sm: 0.18em;
+  --vd-badge-padding-x-sm: 0.3em;   /* 0.3/0.18 = 1.67 ~ phi */
+  --vd-badge-padding-y-lg: 0.42em;
+  --vd-badge-padding-x-lg: 0.65em;    /* 0.65/0.42 = 1.55 ~ phi */
+  
+  /* Badge Font */
+  --vd-badge-font-size: 0.8125em;
+  --vd-badge-font-size-sm: 0.7em;
+  --vd-badge-font-size-lg: 0.9375em;
+  --vd-badge-font-weight: var(--vd-font-weight-semibold);
+  --vd-badge-line-height: 1;
+  
+  /* Badge Border Radius */
+  --vd-badge-border-radius: var(--vd-btn-border-radius-sm);
+  --vd-badge-pill-border-radius: 50rem;
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  /* Invert light/dark badge colors for visibility */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    /* Invert light/dark badge colors for visibility */
+  }
+}
+
+/* Dark Theme - Light badge needs different colors */
+[data-theme="dark"] .vd-badge-light {
+  background-color: var(--vd-color-gray-700);
+  color: var(--vd-color-gray-100);
+}
+
+[data-theme="dark"] .vd-badge-outlined.vd-badge-light {
+  color: var(--vd-color-gray-300);
+  border-color: var(--vd-color-gray-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .vd-badge-light {
+    background-color: var(--vd-color-gray-700);
+    color: var(--vd-color-gray-100);
+  }
+
+  :root:not([data-theme]) .vd-badge-outlined.vd-badge-light {
+    color: var(--vd-color-gray-300);
+    border-color: var(--vd-color-gray-500);
+  }
+}
+
+/* Base Badge */
+.vd-badge {
+  display: inline-block;
+  padding: var(--vd-badge-padding-y) var(--vd-badge-padding-x);
+  font-size: var(--vd-badge-font-size);
+  font-weight: var(--vd-badge-font-weight);
+  line-height: var(--vd-badge-line-height);
+  color: var(--vd-color-white);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: var(--vd-badge-border-radius);
+  background-color: var(--vd-color-secondary);
+}
+
+/* Badge Variants */
+.vd-badge-primary {
+  background-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+.vd-badge-secondary {
+  background-color: var(--vd-color-secondary);
+  color: var(--vd-color-white);
+}
+
+.vd-badge-success {
+  background-color: var(--vd-color-success);
+  color: var(--vd-color-white);
+}
+
+.vd-badge-warning {
+  background-color: var(--vd-color-warning);
+  color: var(--vd-color-gray-900);
+}
+
+.vd-badge-error,
+.vd-badge-danger {
+  background-color: var(--vd-color-error);
+  color: var(--vd-color-white);
+}
+
+.vd-badge-info {
+  background-color: var(--vd-color-info);
+  color: var(--vd-color-white);
+}
+
+.vd-badge-light {
+  background-color: var(--vd-color-gray-100);
+  color: var(--vd-color-gray-900);
+}
+
+.vd-badge-dark {
+  background-color: var(--vd-color-gray-800);
+  color: var(--vd-color-white);
+}
+
+/* Badge Sizes */
+.vd-badge-sm {
+  padding: var(--vd-badge-padding-y-sm) var(--vd-badge-padding-x-sm);
+  font-size: var(--vd-badge-font-size-sm);
+}
+
+.vd-badge-lg {
+  padding: var(--vd-badge-padding-y-lg) var(--vd-badge-padding-x-lg);
+  font-size: var(--vd-badge-font-size-lg);
+}
+
+/* Badge Styles */
+.vd-badge-pill {
+  padding-right: var(--vd-badge-padding-x);
+  padding-left: var(--vd-badge-padding-x);
+  border-radius: var(--vd-badge-pill-border-radius);
+}
+
+.vd-badge-outlined {
+  background-color: transparent;
+  border: 1px solid currentColor;
+}
+
+.vd-badge-outlined.vd-badge-primary {
+  color: var(--vd-color-primary);
+  border-color: var(--vd-color-primary);
+}
+
+.vd-badge-outlined.vd-badge-secondary {
+  color: var(--vd-color-secondary);
+  border-color: var(--vd-color-secondary);
+}
+
+.vd-badge-outlined.vd-badge-success {
+  color: var(--vd-color-success);
+  border-color: var(--vd-color-success);
+}
+
+.vd-badge-outlined.vd-badge-warning {
+  color: var(--vd-color-warning);
+  border-color: var(--vd-color-warning);
+}
+
+.vd-badge-outlined.vd-badge-error {
+  color: var(--vd-color-error);
+  border-color: var(--vd-color-error);
+}
+
+.vd-badge-outlined.vd-badge-info {
+  color: var(--vd-color-info);
+  border-color: var(--vd-color-info);
+}
+
+.vd-badge-outlined.vd-badge-light {
+  color: var(--vd-color-gray-600);
+  border-color: var(--vd-color-gray-300);
+}
+
+.vd-badge-outlined.vd-badge-dark {
+  color: var(--vd-color-gray-800);
+  border-color: var(--vd-color-gray-800);
+}
+
+/* Badge Positioning (for use with buttons, avatars, etc.) */
+.vd-badge-top-right,
+.vd-badge-top-left,
+.vd-badge-bottom-right,
+.vd-badge-bottom-left {
+  position: absolute;
+  z-index: 1;
+  transform: translate(50%, -50%);
+}
+
+.vd-badge-top-right {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.vd-badge-top-left {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.vd-badge-bottom-right {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+}
+
+.vd-badge-bottom-left {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
+}
+
+/* Badge in Buttons */
+.vd-btn .vd-badge {
+  position: relative;
+  top: -1px;
+}
+
+/* Badge in Headings */
+h1 .vd-badge,
+h2 .vd-badge,
+h3 .vd-badge,
+h4 .vd-badge,
+h5 .vd-badge,
+h6 .vd-badge {
+  font-size: 0.6em;
+  vertical-align: middle;
+}
+

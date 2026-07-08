@@ -1,0 +1,87 @@
+/**
+ * Vanduo Framework - Preloader Component
+ * Legacy preloader aliases and preloader layout helpers.
+ *
+ * Spinner visuals live in spinner.css. Progress bars live in progress.css.
+ */
+
+/* Legacy preloader spinner alias */
+.vd-preloader {
+  display: inline-block;
+  width: var(--vd-spinner-size, 2rem);
+  height: var(--vd-spinner-size, 2rem);
+  border: var(--vd-spinner-border-width, 3px) solid var(--vd-border-color, #e9ecef);
+  border-top-color: var(--vd-spinner-color, var(--vd-color-primary));
+  border-radius: 50%;
+  animation: spinner-rotate var(--vd-spinner-speed, 0.65s) linear infinite;
+}
+
+/* Preloader Sizes */
+.vd-preloader-xs { --vd-spinner-size: 1rem; --vd-spinner-border-width: 2px; }
+.vd-preloader-sm { --vd-spinner-size: 1.5rem; --vd-spinner-border-width: 2px; }
+.vd-preloader-lg { --vd-spinner-size: 3rem; --vd-spinner-border-width: 4px; }
+.vd-preloader-xl { --vd-spinner-size: 4rem; --vd-spinner-border-width: 5px; }
+
+/* Preloader Colors */
+.vd-preloader-primary { --vd-spinner-color: var(--vd-color-primary); }
+.vd-preloader-secondary { --vd-spinner-color: var(--vd-color-secondary); }
+.vd-preloader-success { --vd-spinner-color: var(--vd-color-success); }
+.vd-preloader-warning { --vd-spinner-color: var(--vd-color-warning); }
+.vd-preloader-error { --vd-spinner-color: var(--vd-color-error); }
+.vd-preloader-info { --vd-spinner-color: var(--vd-color-info); }
+.vd-preloader-light { --vd-spinner-color: #fff; }
+.vd-preloader-dark { --vd-spinner-color: var(--vd-text-primary); }
+
+/* Preloader Container */
+.vd-preloader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 1rem;
+}
+
+.vd-preloader-text {
+  color: var(--vd-text-secondary);
+  font-size: var(--vd-font-size-sm);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .vd-preloader {
+    animation-duration: 1.5s;
+  }
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue VdPreloader nested spinner (additive; added in 1.6.1)
+   VdPreloader nests `.vd-preloader > .vd-preloader-spinner`; when the inner
+   element is present the spinner visual moves to it (legacy bare .vd-preloader
+   keeps spinning on its own). Size/color vars set on .vd-preloader inherit down.
+   ========================================================================== */
+.vd-preloader:has(.vd-preloader-spinner) {
+  width: auto;
+  height: auto;
+  border: none;
+  border-radius: 0;
+  animation: none;
+  display: inline-flex;
+}
+
+.vd-preloader-spinner {
+  display: inline-block;
+  width: var(--vd-spinner-size, 2rem);
+  height: var(--vd-spinner-size, 2rem);
+  border: var(--vd-spinner-border-width, 3px) solid var(--vd-border-color, #e9ecef);
+  border-top-color: var(--vd-spinner-color, var(--vd-color-primary));
+  border-radius: 50%;
+  animation: spinner-rotate var(--vd-spinner-speed, 0.65s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-preloader-spinner {
+    animation-duration: 1.5s;
+  }
+}
+

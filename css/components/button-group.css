@@ -1,0 +1,82 @@
+/**
+ * Vanduo Framework - Button Group Component
+ * Toolbar-style button grouping
+ */
+
+/* Button Group - Horizontal */
+.vd-btn-group {
+  display: inline-flex;
+  position: relative;
+  vertical-align: middle;
+}
+
+.vd-btn-group>.vd-btn {
+  position: relative;
+  flex: 0 1 auto;
+  margin-bottom: 0;
+}
+
+/* Remove inner border-radius for adjacent buttons */
+.vd-btn-group>.vd-btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
+.vd-btn-group>.vd-btn:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Ensure z-index for focus/active states */
+.vd-btn-group>.vd-btn:hover,
+.vd-btn-group>.vd-btn:focus,
+.vd-btn-group>.vd-btn:active,
+.vd-btn-group>.vd-btn.is-active {
+  z-index: 1;
+}
+
+/* Button Group - Vertical */
+.vd-btn-group-vertical {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.vd-btn-group-vertical>.vd-btn {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.vd-btn-group-vertical>.vd-btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: -1px;
+}
+
+.vd-btn-group-vertical>.vd-btn:not(:last-child) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Sizing - inherit from button sizes */
+.vd-btn-group-sm>.vd-btn {
+  font-size: var(--vd-font-size-sm);
+  padding: 0.3125rem 0.625rem;
+}
+
+.vd-btn-group-lg>.vd-btn {
+  font-size: var(--vd-font-size-lg);
+  padding: 0.625rem 1.25rem;
+}
+
+/* Full Width */
+.vd-btn-group-full {
+  display: flex;
+  width: 100%;
+}
+
+.vd-btn-group-full>.vd-btn {
+  flex: 1 1 auto;
+}

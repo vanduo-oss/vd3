@@ -1,0 +1,284 @@
+/**
+ * Vanduo Framework — Expanding flex cards
+ *
+ * Adapted from MIT-licensed CodePen "Expanding flex cards" by Zed Dash:
+ * https://codepen.io/z-/pen/OBPJKK
+ *
+ * Usage:
+ *   <div class="vd-expanding-cards" data-vd-expanding-cards>
+ *     <div class="vd-expanding-card is-active" style="--vd-expanding-card-bg: url(...)">
+ *       <div class="vd-expanding-card-shadow"></div>
+ *       <div class="vd-expanding-card-label">...</div>
+ *     </div>
+ *   </div>
+ */
+
+.vd-expanding-cards {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  overflow: hidden;
+  min-width: 600px;
+  max-width: 900px;
+  width: calc(100% - 100px);
+  height: 400px;
+}
+
+.vd-expanding-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 60px;
+  margin: 10px;
+  flex-grow: 1;
+  border-radius: 30px;
+  cursor: pointer;
+  background: var(--vd-expanding-card-bg, var(--vd-expanding-card-bg-default, #e6e9ed));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
+}
+
+.vd-expanding-card:nth-child(1) {
+  --vd-expanding-card-bg-default: #ed5565;
+}
+
+.vd-expanding-card:nth-child(2) {
+  --vd-expanding-card-bg-default: #fc6e51;
+}
+
+.vd-expanding-card:nth-child(3) {
+  --vd-expanding-card-bg-default: #ffce54;
+}
+
+.vd-expanding-card:nth-child(4) {
+  --vd-expanding-card-bg-default: #2ecc71;
+}
+
+.vd-expanding-card:nth-child(5) {
+  --vd-expanding-card-bg-default: #5d9cec;
+}
+
+.vd-expanding-card:nth-child(6) {
+  --vd-expanding-card-bg-default: #ac92ec;
+}
+
+.vd-expanding-card.is-active {
+  flex-grow: 10000;
+  transform: scale(1);
+  max-width: 600px;
+  margin: 0;
+  border-radius: 40px;
+}
+
+.vd-expanding-card.is-active .vd-expanding-card-shadow {
+  box-shadow:
+    inset 0 -120px 120px -120px black,
+    inset 0 -120px 120px -100px black;
+}
+
+.vd-expanding-card.is-active .vd-expanding-card-label {
+  bottom: 20px;
+  left: 20px;
+}
+
+.vd-expanding-card.is-active .vd-expanding-card-info > div {
+  left: 0;
+  opacity: 1;
+}
+
+.vd-expanding-card:not(.is-active) {
+  flex-grow: 1;
+  border-radius: 30px;
+}
+
+.vd-expanding-card:not(.is-active) .vd-expanding-card-shadow {
+  bottom: -40px;
+  box-shadow:
+    inset 0 -120px 0 -120px black,
+    inset 0 -120px 0 -100px black;
+}
+
+.vd-expanding-card:not(.is-active) .vd-expanding-card-label {
+  bottom: 10px;
+  left: 10px;
+}
+
+.vd-expanding-card:not(.is-active) .vd-expanding-card-info > div {
+  left: 20px;
+  opacity: 0;
+}
+
+.vd-expanding-card-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
+}
+
+.vd-expanding-card-label {
+  display: flex;
+  position: absolute;
+  right: 0;
+  height: 40px;
+  transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
+}
+
+.vd-expanding-card-icon {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background-color: #fff;
+  color: var(--vd-expanding-card-bg-default, var(--vd-color-primary, #3b82f6));
+}
+
+.vd-expanding-card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
+  color: #fff;
+  white-space: pre;
+}
+
+.vd-expanding-card-info > div {
+  position: relative;
+  transition:
+    0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95),
+    opacity 0.5s ease-out;
+}
+
+.vd-expanding-card-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.vd-expanding-card-subtitle {
+  transition-delay: 0.1s;
+}
+
+/* Mobile: vertical stack, expand in place (mirrors desktop flex-grow model) */
+@media screen and (max-width: 767.98px) {
+  .vd-expanding-cards {
+    --vd-expanding-card-mobile-stripe: 56px;
+    --vd-expanding-card-mobile-active: clamp(200px, 55vw, 280px);
+    --vd-expanding-card-mobile-gap: 8px;
+
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    height: min(
+      72vh,
+      calc(
+        var(--vd-expanding-card-mobile-active) +
+          5 * (var(--vd-expanding-card-mobile-stripe) + var(--vd-expanding-card-mobile-gap))
+      )
+    );
+    gap: var(--vd-expanding-card-mobile-gap);
+  }
+
+  .vd-expanding-card {
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    flex: 1 1 var(--vd-expanding-card-mobile-stripe);
+    min-height: var(--vd-expanding-card-mobile-stripe);
+    transition:
+      flex 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95),
+      min-height 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95),
+      border-radius 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95),
+      margin 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
+  }
+
+  .vd-expanding-card.is-active {
+    flex: 10000 1 var(--vd-expanding-card-mobile-active);
+    min-height: var(--vd-expanding-card-mobile-active);
+    max-width: none;
+    border-radius: 32px;
+  }
+
+  .vd-expanding-card:not(.is-active) {
+    flex: 1 1 var(--vd-expanding-card-mobile-stripe);
+    min-height: var(--vd-expanding-card-mobile-stripe);
+    border-radius: 28px;
+  }
+
+  .vd-expanding-card.is-active .vd-expanding-card-shadow {
+    box-shadow:
+      inset 0 -120px 120px -120px black,
+      inset 0 -120px 120px -100px black;
+  }
+
+  .vd-expanding-card:not(.is-active) .vd-expanding-card-shadow {
+    bottom: 0;
+    height: 100%;
+    box-shadow: inset 0 0 80px 0 rgb(0 0 0 / 35%);
+  }
+
+  .vd-expanding-card.is-active .vd-expanding-card-label {
+    bottom: 20px;
+    left: 20px;
+    top: auto;
+    transform: none;
+    align-items: flex-end;
+  }
+
+  .vd-expanding-card:not(.is-active) .vd-expanding-card-label {
+    bottom: 8px;
+    left: 12px;
+    top: auto;
+    right: auto;
+    height: 40px;
+    transform: none;
+    align-items: center;
+  }
+
+  .vd-expanding-card:not(.is-active) .vd-expanding-card-info {
+    min-width: 0;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .vd-expanding-card:not(.is-active) .vd-expanding-card-info > div {
+    left: 0;
+    opacity: 1;
+  }
+
+  .vd-expanding-card:not(.is-active) .vd-expanding-card-subtitle {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .vd-expanding-card.is-active .vd-expanding-card-subtitle {
+    opacity: 1;
+    max-height: 2em;
+  }
+
+  .vd-expanding-card:not(.is-active) .vd-expanding-card-title {
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-expanding-card,
+  .vd-expanding-card-shadow,
+  .vd-expanding-card-label,
+  .vd-expanding-card-info > div {
+    transition: none !important;
+  }
+}

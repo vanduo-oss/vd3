@@ -32,7 +32,8 @@
     "README.md",
     "SKILL.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "THIRD-PARTY-LICENSES"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -49,12 +50,15 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "vite build && vue-tsc -p tsconfig.build.json",
+    "build": "node scripts/clean-dist.mjs && node scripts/build-tokens.mjs && node scripts/build-css.mjs && vite build && vue-tsc -p tsconfig.build.json",
+    "build:tokens": "node scripts/build-tokens.mjs",
+    "build:css": "node scripts/build-css.mjs",
+    "gen:fib": "node scripts/generate-fib-palette.mjs",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.{ts,vue}\" \"tests/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.{ts,vue}\" \"tests/**/*.ts\"",
-    "stylelint": "stylelint \"css/**/*.css\" --allow-empty-input",
+    "format": "prettier --write \"src/**/*.{ts,vue}\" \"tests/**/*.ts\" \"scripts/**/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,vue}\" \"tests/**/*.ts\" \"scripts/**/*.mjs\"",
+    "stylelint": "stylelint \"css/**/*.css\"",
     "test": "vitest run"
   },
   "peerDependencies": {
@@ -62,6 +66,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@types/node": "26.1.0",
     "@typescript-eslint/parser": "8.62.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/coverage-v8": "^4.1.9",

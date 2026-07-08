@@ -14,7 +14,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "useDefineForClassFields": true,
-    "types": []
+    // Node types for the build-contract specs (node:fs/node:child_process);
+    // the published library declarations stay node-free via tsconfig.build.json.
+    "types": ["node"]
   },
   "include": ["src/**/*.ts", "src/**/*.vue", "tests/**/*.ts"]
 }

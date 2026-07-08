@@ -1,0 +1,59 @@
+{
+  "$description": "Canonical semantic color tokens (the public --vd-* API), aliased to primitives.",
+  "color": {
+    "primary": { "$type": "color", "$value": "{primary.5}" },
+    "primary-light": { "$type": "color", "$value": "{primary.3}" },
+    "primary-dark": { "$type": "color", "$value": "{primary.7}" },
+    "primary-hover": { "$type": "color", "$value": "{primary.6}" },
+    "primary-active": { "$type": "color", "$value": "{primary.7}" },
+    "secondary": { "$type": "color", "$value": "{secondary.5}" },
+    "secondary-light": { "$type": "color", "$value": "{secondary.3}" },
+    "secondary-dark": { "$type": "color", "$value": "{secondary.7}" },
+    "secondary-hover": { "$type": "color", "$value": "{secondary.6}" },
+    "secondary-active": { "$type": "color", "$value": "{secondary.7}" },
+    "accent": { "$type": "color", "$value": "{color.primary}" },
+    "success": { "$type": "color", "$value": "{success.6}" },
+    "success-light": { "$type": "color", "$value": "{success.4}" },
+    "success-dark": { "$type": "color", "$value": "{success.7}" },
+    "warning": { "$type": "color", "$value": "{warning.6}" },
+    "warning-light": { "$type": "color", "$value": "{warning.4}" },
+    "warning-dark": { "$type": "color", "$value": "{warning.7}" },
+    "error": { "$type": "color", "$value": "{danger.6}" },
+    "error-light": { "$type": "color", "$value": "{danger.4}" },
+    "error-dark": { "$type": "color", "$value": "{danger.7}" },
+    "info": { "$type": "color", "$value": "{info.6}" },
+    "info-light": { "$type": "color", "$value": "{info.4}" },
+    "info-dark": { "$type": "color", "$value": "{info.7}" },
+    "white": { "$type": "color", "$value": "#ffffff" },
+    "black": { "$type": "color", "$value": "#000000" },
+    "gray-50": { "$type": "color", "$value": "{gray.0}" },
+    "gray-100": { "$type": "color", "$value": "{gray.2}" },
+    "gray-200": { "$type": "color", "$value": "{gray.3}" },
+    "gray-300": { "$type": "color", "$value": "{gray.4}" },
+    "gray-400": { "$type": "color", "$value": "{gray.5}" },
+    "gray-500": { "$type": "color", "$value": "{gray.6}" },
+    "gray-600": { "$type": "color", "$value": "{gray.7}" },
+    "gray-700": { "$type": "color", "$value": "{gray.8}" },
+    "gray-800": { "$type": "color", "$value": "{gray.9}" },
+    "gray-900": { "$type": "color", "$value": "#1a1d20" }
+  },
+  "bg": {
+    "primary": { "$type": "color", "$value": "{color.white}" },
+    "secondary": { "$type": "color", "$value": "{color.gray-100}" },
+    "tertiary": { "$type": "color", "$value": "{color.gray-200}" },
+    "dark": { "$type": "color", "$value": "{color.gray-800}" },
+    "darker": { "$type": "color", "$value": "{color.gray-900}" }
+  },
+  "text": {
+    "primary": { "$type": "color", "$value": "{color.gray-900}" },
+    "secondary": { "$type": "color", "$value": "{color.gray-600}" },
+    "muted": { "$type": "color", "$value": "{color.gray-500}" },
+    "light": { "$type": "color", "$value": "{color.gray-400}" },
+    "inverse": { "$type": "color", "$value": "{color.white}" }
+  },
+  "border": {
+    "color": { "$type": "color", "$value": "{color.gray-300}" },
+    "color-light": { "$type": "color", "$value": "{color.gray-200}" },
+    "color-dark": { "$type": "color", "$value": "{color.gray-400}" }
+  }
+}

@@ -10,6 +10,10 @@ import { fileURLToPath, URL } from "node:url";
 export default defineConfig({
   plugins: [vue()],
   build: {
+    // dist/ already holds the token + CSS artifacts emitted earlier in the
+    // build chain; cleaning is owned by scripts/clean-dist.mjs (see
+    // openspec/changes/vd3-token-css-foundation/design.md).
+    emptyOutDir: false,
     sourcemap: true,
     lib: {
       entry: fileURLToPath(new URL("./src/index.ts", import.meta.url)),

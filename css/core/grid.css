@@ -1,0 +1,1694 @@
+/**
+ * Vanduo Framework - Grid System
+ * Responsive grid system using CSS Grid and Flexbox
+ */
+
+:root {
+  /* Container (Fibonacci: 987px) */
+  --vd-container-max-width: 987px;
+  --vd-container-max-width-wide: 1597px;
+  /* next Fibonacci */
+  --vd-container-padding: 0.8125rem;
+  /* 13px - fib */
+
+  /* Breakpoints */
+  --vd-breakpoint-sm: 576px;
+  --vd-breakpoint-md: 768px;
+  --vd-breakpoint-lg: 992px;
+  --vd-breakpoint-xl: 1200px;
+  --vd-breakpoint-2xl: 1400px;
+
+  /* Grid Gutter (Fibonacci: 13px) */
+  --vd-grid-gutter: 0.8125rem;
+
+  /* Fibonacci Gap Scale */
+  --vd-gap-fib-2: 0.125rem;
+  /* 2px */
+  --vd-gap-fib-3: 0.1875rem;
+  /* 3px */
+  --vd-gap-fib-5: 0.3125rem;
+  /* 5px */
+  --vd-gap-fib-8: 0.5rem;
+  /* 8px */
+  --vd-gap-fib-13: 0.8125rem;
+  /* 13px */
+  --vd-gap-fib-21: 1.3125rem;
+  /* 21px */
+
+  /* Responsive Container Widths (Fibonacci-derived)
+   * Using Fibonacci: 377, 610, 987, 1597
+   * Lucas numbers (related to Fibonacci): 521, 843, 1364 for intermediate sizes */
+  --vd-container-sm: 521px;
+  /* Lucas - between fib 377 and 610 */
+  --vd-container-md: 610px;
+  /* Fibonacci */
+  --vd-container-lg: 987px;
+  /* Fibonacci - matches --vd-container-max-width */
+  --vd-container-xl: 1364px;
+  /* Lucas - between fib 987 and 1597 */
+  --vd-container-2xl: 1597px;
+  /* Fibonacci - matches --vd-container-max-width-wide */
+}
+
+/* Container */
+.vd-container {
+  width: 100%;
+  max-width: var(--vd-container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+.vd-container-fluid {
+  width: 100%;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+/* Container XL - Intermediate size (1364px Lucas number) */
+.vd-container-xl {
+  width: 100%;
+  max-width: var(--vd-container-xl);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+/* Container Wide - Full Fibonacci wide (1597px) */
+.vd-container-wide {
+  width: 100%;
+  max-width: var(--vd-container-max-width-wide);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+/* Container Responsive - Grows with viewport at XL+ breakpoints */
+.vd-container-responsive {
+  width: 100%;
+  max-width: var(--vd-container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+@media (min-width: 1200px) {
+  .vd-container-responsive {
+    max-width: var(--vd-container-xl);
+  }
+}
+
+@media (min-width: 1400px) {
+  .vd-container-responsive {
+    max-width: var(--vd-container-2xl);
+  }
+}
+
+/* Row */
+.vd-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--vd-grid-gutter) * -0.5);
+  margin-right: calc(var(--vd-grid-gutter) * -0.5);
+}
+
+/* Columns */
+[class*="col-"] {
+  flex: 1 0 0%;
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+/* Column Sizes - Mobile First (12-column system) */
+.vd-col-1 {
+  flex: 0 0 auto;
+  width: 8.333333%;
+}
+
+.vd-col-2 {
+  flex: 0 0 auto;
+  width: 16.666667%;
+}
+
+.vd-col-3 {
+  flex: 0 0 auto;
+  width: 25%;
+}
+
+.vd-col-4 {
+  flex: 0 0 auto;
+  width: 33.333333%;
+}
+
+.vd-col-5 {
+  flex: 0 0 auto;
+  width: 41.666667%;
+}
+
+.vd-col-6 {
+  flex: 0 0 auto;
+  width: 50%;
+}
+
+.vd-col-7 {
+  flex: 0 0 auto;
+  width: 58.333333%;
+}
+
+.vd-col-8 {
+  flex: 0 0 auto;
+  width: 66.666667%;
+}
+
+.vd-col-9 {
+  flex: 0 0 auto;
+  width: 75%;
+}
+
+.vd-col-10 {
+  flex: 0 0 auto;
+  width: 83.333333%;
+}
+
+.vd-col-11 {
+  flex: 0 0 auto;
+  width: 91.666667%;
+}
+
+.vd-col-12 {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+.vd-col-auto {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+/* Responsive Columns - Small (sm) */
+@media (min-width: 576px) {
+  .vd-col-sm-1 {
+    flex: 0 0 auto;
+    width: 8.333333%;
+  }
+
+  .vd-col-sm-2 {
+    flex: 0 0 auto;
+    width: 16.666667%;
+  }
+
+  .vd-col-sm-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+
+  .vd-col-sm-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+
+  .vd-col-sm-5 {
+    flex: 0 0 auto;
+    width: 41.666667%;
+  }
+
+  .vd-col-sm-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+
+  .vd-col-sm-7 {
+    flex: 0 0 auto;
+    width: 58.333333%;
+  }
+
+  .vd-col-sm-8 {
+    flex: 0 0 auto;
+    width: 66.666667%;
+  }
+
+  .vd-col-sm-9 {
+    flex: 0 0 auto;
+    width: 75%;
+  }
+
+  .vd-col-sm-10 {
+    flex: 0 0 auto;
+    width: 83.333333%;
+  }
+
+  .vd-col-sm-11 {
+    flex: 0 0 auto;
+    width: 91.666667%;
+  }
+
+  .vd-col-sm-12 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .vd-col-sm-auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+/* Responsive Columns - Medium (md) */
+@media (min-width: 768px) {
+  .vd-col-md-1 {
+    flex: 0 0 auto;
+    width: 8.333333%;
+  }
+
+  .vd-col-md-2 {
+    flex: 0 0 auto;
+    width: 16.666667%;
+  }
+
+  .vd-col-md-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+
+  .vd-col-md-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+
+  .vd-col-md-5 {
+    flex: 0 0 auto;
+    width: 41.666667%;
+  }
+
+  .vd-col-md-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+
+  .vd-col-md-7 {
+    flex: 0 0 auto;
+    width: 58.333333%;
+  }
+
+  .vd-col-md-8 {
+    flex: 0 0 auto;
+    width: 66.666667%;
+  }
+
+  .vd-col-md-9 {
+    flex: 0 0 auto;
+    width: 75%;
+  }
+
+  .vd-col-md-10 {
+    flex: 0 0 auto;
+    width: 83.333333%;
+  }
+
+  .vd-col-md-11 {
+    flex: 0 0 auto;
+    width: 91.666667%;
+  }
+
+  .vd-col-md-12 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .vd-col-md-auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+/* Responsive Columns - Large (lg) */
+@media (min-width: 992px) {
+  .vd-col-lg-1 {
+    flex: 0 0 auto;
+    width: 8.333333%;
+  }
+
+  .vd-col-lg-2 {
+    flex: 0 0 auto;
+    width: 16.666667%;
+  }
+
+  .vd-col-lg-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+
+  .vd-col-lg-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+
+  .vd-col-lg-5 {
+    flex: 0 0 auto;
+    width: 41.666667%;
+  }
+
+  .vd-col-lg-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+
+  .vd-col-lg-7 {
+    flex: 0 0 auto;
+    width: 58.333333%;
+  }
+
+  .vd-col-lg-8 {
+    flex: 0 0 auto;
+    width: 66.666667%;
+  }
+
+  .vd-col-lg-9 {
+    flex: 0 0 auto;
+    width: 75%;
+  }
+
+  .vd-col-lg-10 {
+    flex: 0 0 auto;
+    width: 83.333333%;
+  }
+
+  .vd-col-lg-11 {
+    flex: 0 0 auto;
+    width: 91.666667%;
+  }
+
+  .vd-col-lg-12 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .vd-col-lg-auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+/* Responsive Columns - Extra Large (xl) */
+@media (min-width: 1200px) {
+  .vd-col-xl-1 {
+    flex: 0 0 auto;
+    width: 8.333333%;
+  }
+
+  .vd-col-xl-2 {
+    flex: 0 0 auto;
+    width: 16.666667%;
+  }
+
+  .vd-col-xl-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+
+  .vd-col-xl-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+
+  .vd-col-xl-5 {
+    flex: 0 0 auto;
+    width: 41.666667%;
+  }
+
+  .vd-col-xl-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+
+  .vd-col-xl-7 {
+    flex: 0 0 auto;
+    width: 58.333333%;
+  }
+
+  .vd-col-xl-8 {
+    flex: 0 0 auto;
+    width: 66.666667%;
+  }
+
+  .vd-col-xl-9 {
+    flex: 0 0 auto;
+    width: 75%;
+  }
+
+  .vd-col-xl-10 {
+    flex: 0 0 auto;
+    width: 83.333333%;
+  }
+
+  .vd-col-xl-11 {
+    flex: 0 0 auto;
+    width: 91.666667%;
+  }
+
+  .vd-col-xl-12 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .vd-col-xl-auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+/* Responsive Columns - Extra Extra Large (2xl) */
+@media (min-width: 1400px) {
+  .vd-col-2xl-1 {
+    flex: 0 0 auto;
+    width: 8.333333%;
+  }
+
+  .vd-col-2xl-2 {
+    flex: 0 0 auto;
+    width: 16.666667%;
+  }
+
+  .vd-col-2xl-3 {
+    flex: 0 0 auto;
+    width: 25%;
+  }
+
+  .vd-col-2xl-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+
+  .vd-col-2xl-5 {
+    flex: 0 0 auto;
+    width: 41.666667%;
+  }
+
+  .vd-col-2xl-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+
+  .vd-col-2xl-7 {
+    flex: 0 0 auto;
+    width: 58.333333%;
+  }
+
+  .vd-col-2xl-8 {
+    flex: 0 0 auto;
+    width: 66.666667%;
+  }
+
+  .vd-col-2xl-9 {
+    flex: 0 0 auto;
+    width: 75%;
+  }
+
+  .vd-col-2xl-10 {
+    flex: 0 0 auto;
+    width: 83.333333%;
+  }
+
+  .vd-col-2xl-11 {
+    flex: 0 0 auto;
+    width: 91.666667%;
+  }
+
+  .vd-col-2xl-12 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .vd-col-2xl-auto {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+/* Offset Utilities */
+.vd-offset-0 {
+  margin-left: 0;
+}
+
+.vd-offset-1 {
+  margin-left: 8.333333%;
+}
+
+.vd-offset-2 {
+  margin-left: 16.666667%;
+}
+
+.vd-offset-3 {
+  margin-left: 25%;
+}
+
+.vd-offset-4 {
+  margin-left: 33.333333%;
+}
+
+.vd-offset-5 {
+  margin-left: 41.666667%;
+}
+
+.vd-offset-6 {
+  margin-left: 50%;
+}
+
+.vd-offset-7 {
+  margin-left: 58.333333%;
+}
+
+.vd-offset-8 {
+  margin-left: 66.666667%;
+}
+
+.vd-offset-9 {
+  margin-left: 75%;
+}
+
+.vd-offset-10 {
+  margin-left: 83.333333%;
+}
+
+.vd-offset-11 {
+  margin-left: 91.666667%;
+}
+
+/* Responsive Offsets - sm */
+@media (min-width: 576px) {
+  .vd-offset-sm-0 {
+    margin-left: 0;
+  }
+
+  .vd-offset-sm-1 {
+    margin-left: 8.333333%;
+  }
+
+  .vd-offset-sm-2 {
+    margin-left: 16.666667%;
+  }
+
+  .vd-offset-sm-3 {
+    margin-left: 25%;
+  }
+
+  .vd-offset-sm-4 {
+    margin-left: 33.333333%;
+  }
+
+  .vd-offset-sm-5 {
+    margin-left: 41.666667%;
+  }
+
+  .vd-offset-sm-6 {
+    margin-left: 50%;
+  }
+
+  .vd-offset-sm-7 {
+    margin-left: 58.333333%;
+  }
+
+  .vd-offset-sm-8 {
+    margin-left: 66.666667%;
+  }
+
+  .vd-offset-sm-9 {
+    margin-left: 75%;
+  }
+
+  .vd-offset-sm-10 {
+    margin-left: 83.333333%;
+  }
+
+  .vd-offset-sm-11 {
+    margin-left: 91.666667%;
+  }
+}
+
+/* Responsive Offsets - md */
+@media (min-width: 768px) {
+  .vd-offset-md-0 {
+    margin-left: 0;
+  }
+
+  .vd-offset-md-1 {
+    margin-left: 8.333333%;
+  }
+
+  .vd-offset-md-2 {
+    margin-left: 16.666667%;
+  }
+
+  .vd-offset-md-3 {
+    margin-left: 25%;
+  }
+
+  .vd-offset-md-4 {
+    margin-left: 33.333333%;
+  }
+
+  .vd-offset-md-5 {
+    margin-left: 41.666667%;
+  }
+
+  .vd-offset-md-6 {
+    margin-left: 50%;
+  }
+
+  .vd-offset-md-7 {
+    margin-left: 58.333333%;
+  }
+
+  .vd-offset-md-8 {
+    margin-left: 66.666667%;
+  }
+
+  .vd-offset-md-9 {
+    margin-left: 75%;
+  }
+
+  .vd-offset-md-10 {
+    margin-left: 83.333333%;
+  }
+
+  .vd-offset-md-11 {
+    margin-left: 91.666667%;
+  }
+}
+
+/* Responsive Offsets - lg */
+@media (min-width: 992px) {
+  .vd-offset-lg-0 {
+    margin-left: 0;
+  }
+
+  .vd-offset-lg-1 {
+    margin-left: 8.333333%;
+  }
+
+  .vd-offset-lg-2 {
+    margin-left: 16.666667%;
+  }
+
+  .vd-offset-lg-3 {
+    margin-left: 25%;
+  }
+
+  .vd-offset-lg-4 {
+    margin-left: 33.333333%;
+  }
+
+  .vd-offset-lg-5 {
+    margin-left: 41.666667%;
+  }
+
+  .vd-offset-lg-6 {
+    margin-left: 50%;
+  }
+
+  .vd-offset-lg-7 {
+    margin-left: 58.333333%;
+  }
+
+  .vd-offset-lg-8 {
+    margin-left: 66.666667%;
+  }
+
+  .vd-offset-lg-9 {
+    margin-left: 75%;
+  }
+
+  .vd-offset-lg-10 {
+    margin-left: 83.333333%;
+  }
+
+  .vd-offset-lg-11 {
+    margin-left: 91.666667%;
+  }
+}
+
+/* Responsive Offsets - xl */
+@media (min-width: 1200px) {
+  .vd-offset-xl-0 {
+    margin-left: 0;
+  }
+
+  .vd-offset-xl-1 {
+    margin-left: 8.333333%;
+  }
+
+  .vd-offset-xl-2 {
+    margin-left: 16.666667%;
+  }
+
+  .vd-offset-xl-3 {
+    margin-left: 25%;
+  }
+
+  .vd-offset-xl-4 {
+    margin-left: 33.333333%;
+  }
+
+  .vd-offset-xl-5 {
+    margin-left: 41.666667%;
+  }
+
+  .vd-offset-xl-6 {
+    margin-left: 50%;
+  }
+
+  .vd-offset-xl-7 {
+    margin-left: 58.333333%;
+  }
+
+  .vd-offset-xl-8 {
+    margin-left: 66.666667%;
+  }
+
+  .vd-offset-xl-9 {
+    margin-left: 75%;
+  }
+
+  .vd-offset-xl-10 {
+    margin-left: 83.333333%;
+  }
+
+  .vd-offset-xl-11 {
+    margin-left: 91.666667%;
+  }
+}
+
+/* Responsive Offsets - 2xl */
+@media (min-width: 1400px) {
+  .vd-offset-2xl-0 {
+    margin-left: 0;
+  }
+
+  .vd-offset-2xl-1 {
+    margin-left: 8.333333%;
+  }
+
+  .vd-offset-2xl-2 {
+    margin-left: 16.666667%;
+  }
+
+  .vd-offset-2xl-3 {
+    margin-left: 25%;
+  }
+
+  .vd-offset-2xl-4 {
+    margin-left: 33.333333%;
+  }
+
+  .vd-offset-2xl-5 {
+    margin-left: 41.666667%;
+  }
+
+  .vd-offset-2xl-6 {
+    margin-left: 50%;
+  }
+
+  .vd-offset-2xl-7 {
+    margin-left: 58.333333%;
+  }
+
+  .vd-offset-2xl-8 {
+    margin-left: 66.666667%;
+  }
+
+  .vd-offset-2xl-9 {
+    margin-left: 75%;
+  }
+
+  .vd-offset-2xl-10 {
+    margin-left: 83.333333%;
+  }
+
+  .vd-offset-2xl-11 {
+    margin-left: 91.666667%;
+  }
+}
+
+/* ===================================================
+ * Order Utilities
+ * Control visual order of flex/grid items
+ * =================================================== */
+
+.vd-order-first {
+  order: -1;
+}
+
+.vd-order-last {
+  order: 13;
+}
+
+.vd-order-0 {
+  order: 0;
+}
+
+.vd-order-1 {
+  order: 1;
+}
+
+.vd-order-2 {
+  order: 2;
+}
+
+.vd-order-3 {
+  order: 3;
+}
+
+.vd-order-4 {
+  order: 4;
+}
+
+.vd-order-5 {
+  order: 5;
+}
+
+.vd-order-6 {
+  order: 6;
+}
+
+.vd-order-7 {
+  order: 7;
+}
+
+.vd-order-8 {
+  order: 8;
+}
+
+.vd-order-9 {
+  order: 9;
+}
+
+.vd-order-10 {
+  order: 10;
+}
+
+.vd-order-11 {
+  order: 11;
+}
+
+.vd-order-12 {
+  order: 12;
+}
+
+/* Responsive Order - sm */
+@media (min-width: 576px) {
+  .vd-order-sm-first {
+    order: -1;
+  }
+
+  .vd-order-sm-last {
+    order: 13;
+  }
+
+  .vd-order-sm-0 {
+    order: 0;
+  }
+
+  .vd-order-sm-1 {
+    order: 1;
+  }
+
+  .vd-order-sm-2 {
+    order: 2;
+  }
+
+  .vd-order-sm-3 {
+    order: 3;
+  }
+
+  .vd-order-sm-4 {
+    order: 4;
+  }
+
+  .vd-order-sm-5 {
+    order: 5;
+  }
+
+  .vd-order-sm-6 {
+    order: 6;
+  }
+
+  .vd-order-sm-7 {
+    order: 7;
+  }
+
+  .vd-order-sm-8 {
+    order: 8;
+  }
+
+  .vd-order-sm-9 {
+    order: 9;
+  }
+
+  .vd-order-sm-10 {
+    order: 10;
+  }
+
+  .vd-order-sm-11 {
+    order: 11;
+  }
+
+  .vd-order-sm-12 {
+    order: 12;
+  }
+}
+
+/* Responsive Order - md */
+@media (min-width: 768px) {
+  .vd-order-md-first {
+    order: -1;
+  }
+
+  .vd-order-md-last {
+    order: 13;
+  }
+
+  .vd-order-md-0 {
+    order: 0;
+  }
+
+  .vd-order-md-1 {
+    order: 1;
+  }
+
+  .vd-order-md-2 {
+    order: 2;
+  }
+
+  .vd-order-md-3 {
+    order: 3;
+  }
+
+  .vd-order-md-4 {
+    order: 4;
+  }
+
+  .vd-order-md-5 {
+    order: 5;
+  }
+
+  .vd-order-md-6 {
+    order: 6;
+  }
+
+  .vd-order-md-7 {
+    order: 7;
+  }
+
+  .vd-order-md-8 {
+    order: 8;
+  }
+
+  .vd-order-md-9 {
+    order: 9;
+  }
+
+  .vd-order-md-10 {
+    order: 10;
+  }
+
+  .vd-order-md-11 {
+    order: 11;
+  }
+
+  .vd-order-md-12 {
+    order: 12;
+  }
+}
+
+/* Responsive Order - lg */
+@media (min-width: 992px) {
+  .vd-order-lg-first {
+    order: -1;
+  }
+
+  .vd-order-lg-last {
+    order: 13;
+  }
+
+  .vd-order-lg-0 {
+    order: 0;
+  }
+
+  .vd-order-lg-1 {
+    order: 1;
+  }
+
+  .vd-order-lg-2 {
+    order: 2;
+  }
+
+  .vd-order-lg-3 {
+    order: 3;
+  }
+
+  .vd-order-lg-4 {
+    order: 4;
+  }
+
+  .vd-order-lg-5 {
+    order: 5;
+  }
+
+  .vd-order-lg-6 {
+    order: 6;
+  }
+
+  .vd-order-lg-7 {
+    order: 7;
+  }
+
+  .vd-order-lg-8 {
+    order: 8;
+  }
+
+  .vd-order-lg-9 {
+    order: 9;
+  }
+
+  .vd-order-lg-10 {
+    order: 10;
+  }
+
+  .vd-order-lg-11 {
+    order: 11;
+  }
+
+  .vd-order-lg-12 {
+    order: 12;
+  }
+}
+
+/* Responsive Order - xl */
+@media (min-width: 1200px) {
+  .vd-order-xl-first {
+    order: -1;
+  }
+
+  .vd-order-xl-last {
+    order: 13;
+  }
+
+  .vd-order-xl-0 {
+    order: 0;
+  }
+
+  .vd-order-xl-1 {
+    order: 1;
+  }
+
+  .vd-order-xl-2 {
+    order: 2;
+  }
+
+  .vd-order-xl-3 {
+    order: 3;
+  }
+
+  .vd-order-xl-4 {
+    order: 4;
+  }
+
+  .vd-order-xl-5 {
+    order: 5;
+  }
+
+  .vd-order-xl-6 {
+    order: 6;
+  }
+
+  .vd-order-xl-7 {
+    order: 7;
+  }
+
+  .vd-order-xl-8 {
+    order: 8;
+  }
+
+  .vd-order-xl-9 {
+    order: 9;
+  }
+
+  .vd-order-xl-10 {
+    order: 10;
+  }
+
+  .vd-order-xl-11 {
+    order: 11;
+  }
+
+  .vd-order-xl-12 {
+    order: 12;
+  }
+}
+
+/* Responsive Order - 2xl */
+@media (min-width: 1400px) {
+  .vd-order-2xl-first {
+    order: -1;
+  }
+
+  .vd-order-2xl-last {
+    order: 13;
+  }
+
+  .vd-order-2xl-0 {
+    order: 0;
+  }
+
+  .vd-order-2xl-1 {
+    order: 1;
+  }
+
+  .vd-order-2xl-2 {
+    order: 2;
+  }
+
+  .vd-order-2xl-3 {
+    order: 3;
+  }
+
+  .vd-order-2xl-4 {
+    order: 4;
+  }
+
+  .vd-order-2xl-5 {
+    order: 5;
+  }
+
+  .vd-order-2xl-6 {
+    order: 6;
+  }
+
+  .vd-order-2xl-7 {
+    order: 7;
+  }
+
+  .vd-order-2xl-8 {
+    order: 8;
+  }
+
+  .vd-order-2xl-9 {
+    order: 9;
+  }
+
+  .vd-order-2xl-10 {
+    order: 10;
+  }
+
+  .vd-order-2xl-11 {
+    order: 11;
+  }
+
+  .vd-order-2xl-12 {
+    order: 12;
+  }
+}
+
+/* ===================================================
+ * Golden Ratio Grid Layouts
+ * Two-column split: 38.2% / 61.8% (minor / major)
+ * Fibonacci column ratios: 2:3:5, 3:5:8, 5:8
+ * =================================================== */
+
+/* Fibonacci-number container widths */
+.vd-container-fib-610 {
+  max-width: 610px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+.vd-container-fib-987 {
+  max-width: 987px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+.vd-container-fib-1597 {
+  max-width: 1597px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+/* ===================================================
+ * Responsive Containers
+ * Fluid below their breakpoint, fixed max-width above
+ * =================================================== */
+
+.vd-container-sm,
+.vd-container-md,
+.vd-container-lg,
+.vd-container-xl,
+.vd-container-2xl {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+@media (min-width: 576px) {
+  .vd-container-sm {
+    max-width: var(--vd-container-sm);
+  }
+}
+
+@media (min-width: 768px) {
+  .vd-container-sm {
+    max-width: var(--vd-container-md);
+  }
+
+  .vd-container-md {
+    max-width: var(--vd-container-md);
+  }
+}
+
+@media (min-width: 992px) {
+  .vd-container-sm {
+    max-width: var(--vd-container-lg);
+  }
+
+  .vd-container-md {
+    max-width: var(--vd-container-lg);
+  }
+
+  .vd-container-lg {
+    max-width: var(--vd-container-lg);
+  }
+}
+
+@media (min-width: 1200px) {
+  .vd-container-sm {
+    max-width: var(--vd-container-xl);
+  }
+
+  .vd-container-md {
+    max-width: var(--vd-container-xl);
+  }
+
+  .vd-container-lg {
+    max-width: var(--vd-container-xl);
+  }
+
+  .vd-container-xl {
+    max-width: var(--vd-container-xl);
+  }
+}
+
+@media (min-width: 1400px) {
+  .vd-container-sm {
+    max-width: var(--vd-container-2xl);
+  }
+
+  .vd-container-md {
+    max-width: var(--vd-container-2xl);
+  }
+
+  .vd-container-lg {
+    max-width: var(--vd-container-2xl);
+  }
+
+  .vd-container-xl {
+    max-width: var(--vd-container-2xl);
+  }
+
+  .vd-container-2xl {
+    max-width: var(--vd-container-2xl);
+  }
+}
+
+/* Golden Ratio Two-Column (flexbox) */
+.vd-row-golden {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--vd-grid-gutter) * -0.5);
+  margin-right: calc(var(--vd-grid-gutter) * -0.5);
+}
+
+.vd-row-golden>.vd-col-golden-minor {
+  flex: 0 0 auto;
+  width: 38.196601%;
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-golden>.vd-col-golden-major {
+  flex: 0 0 auto;
+  width: 61.803399%;
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+/* Fibonacci Two-Column: 5:8 proportions */
+.vd-row-fib-2 {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--vd-grid-gutter) * -0.5);
+  margin-right: calc(var(--vd-grid-gutter) * -0.5);
+}
+
+.vd-row-fib-2>.vd-col-fib-5 {
+  flex: 0 0 auto;
+  width: 38.461538%;
+  /* 5/13 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-2>.vd-col-fib-8 {
+  flex: 0 0 auto;
+  width: 61.538462%;
+  /* 8/13 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+/* Fibonacci Three-Column: 2:3:5 proportions */
+.vd-row-fib-3 {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--vd-grid-gutter) * -0.5);
+  margin-right: calc(var(--vd-grid-gutter) * -0.5);
+}
+
+.vd-row-fib-3>.vd-col-fib-2 {
+  flex: 0 0 auto;
+  width: 20%;
+  /* 2/10 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-3>.vd-col-fib-3 {
+  flex: 0 0 auto;
+  width: 30%;
+  /* 3/10 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-3>.vd-col-fib-5 {
+  flex: 0 0 auto;
+  width: 50%;
+  /* 5/10 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+/* CSS Grid Golden Ratio layouts */
+.vd-grid-golden,
+.grid-golden {
+  display: grid;
+  grid-template-columns: 1fr 1.618fr;
+  gap: var(--vd-grid-gutter);
+}
+
+.vd-grid-golden-reverse,
+.grid-golden-reverse {
+  display: grid;
+  grid-template-columns: 1.618fr 1fr;
+  gap: var(--vd-grid-gutter);
+}
+
+.vd-grid-fib-3,
+.grid-fib-3 {
+  display: grid;
+  grid-template-columns: 2fr 3fr 5fr;
+  gap: var(--vd-grid-gutter);
+}
+
+/* Fibonacci Four-Column: 1:2:3:5 proportions */
+.vd-row-fib-4 {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--vd-grid-gutter) * -0.5);
+  margin-right: calc(var(--vd-grid-gutter) * -0.5);
+}
+
+.vd-row-fib-4>.vd-col-fib-1 {
+  flex: 0 0 auto;
+  width: 9.090909%;
+  /* 1/11 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-4>.vd-col-fib-2 {
+  flex: 0 0 auto;
+  width: 18.181818%;
+  /* 2/11 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-4>.vd-col-fib-3 {
+  flex: 0 0 auto;
+  width: 27.272727%;
+  /* 3/11 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-4>.vd-col-fib-5 {
+  flex: 0 0 auto;
+  width: 45.454545%;
+  /* 5/11 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+/* Fibonacci Three-Column: 3:5:8 proportions */
+.vd-row-fib-3-alt {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--vd-grid-gutter) * -0.5);
+  margin-right: calc(var(--vd-grid-gutter) * -0.5);
+}
+
+.vd-row-fib-3-alt>.vd-col-fib-3 {
+  flex: 0 0 auto;
+  width: 18.75%;
+  /* 3/16 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-3-alt>.vd-col-fib-5 {
+  flex: 0 0 auto;
+  width: 31.25%;
+  /* 5/16 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+.vd-row-fib-3-alt>.vd-col-fib-8 {
+  flex: 0 0 auto;
+  width: 50%;
+  /* 8/16 */
+  padding-left: calc(var(--vd-grid-gutter) * 0.5);
+  padding-right: calc(var(--vd-grid-gutter) * 0.5);
+}
+
+/* CSS Grid Fibonacci variants */
+.vd-grid-fib-4,
+.grid-fib-4 {
+  display: grid;
+  grid-template-columns: 1fr 2fr 3fr 5fr;
+  gap: var(--vd-grid-gutter);
+}
+
+.vd-grid-fib-3-alt,
+.grid-fib-3-alt {
+  display: grid;
+  grid-template-columns: 3fr 5fr 8fr;
+  gap: var(--vd-grid-gutter);
+}
+
+/* ===================================================
+ * Fibonacci Gap Utilities
+ * Gap classes using Fibonacci sequence values
+ * =================================================== */
+
+.vd-gap-fib-2 {
+  gap: var(--vd-gap-fib-2);
+}
+
+.vd-gap-fib-3 {
+  gap: var(--vd-gap-fib-3);
+}
+
+.vd-gap-fib-5 {
+  gap: var(--vd-gap-fib-5);
+}
+
+.vd-gap-fib-8 {
+  gap: var(--vd-gap-fib-8);
+}
+
+.vd-gap-fib-13 {
+  gap: var(--vd-gap-fib-13);
+}
+
+.vd-gap-fib-21 {
+  gap: var(--vd-gap-fib-21);
+}
+
+.vd-row-gap-fib-2 {
+  row-gap: var(--vd-gap-fib-2);
+}
+
+.vd-row-gap-fib-3 {
+  row-gap: var(--vd-gap-fib-3);
+}
+
+.vd-row-gap-fib-5 {
+  row-gap: var(--vd-gap-fib-5);
+}
+
+.vd-row-gap-fib-8 {
+  row-gap: var(--vd-gap-fib-8);
+}
+
+.vd-row-gap-fib-13 {
+  row-gap: var(--vd-gap-fib-13);
+}
+
+.vd-row-gap-fib-21 {
+  row-gap: var(--vd-gap-fib-21);
+}
+
+.vd-col-gap-fib-2 {
+  column-gap: var(--vd-gap-fib-2);
+}
+
+.vd-col-gap-fib-3 {
+  column-gap: var(--vd-gap-fib-3);
+}
+
+.vd-col-gap-fib-5 {
+  column-gap: var(--vd-gap-fib-5);
+}
+
+.vd-col-gap-fib-8 {
+  column-gap: var(--vd-gap-fib-8);
+}
+
+.vd-col-gap-fib-13 {
+  column-gap: var(--vd-gap-fib-13);
+}
+
+.vd-col-gap-fib-21 {
+  column-gap: var(--vd-gap-fib-21);
+}
+
+/* ===================================================
+ * Grid Mode Toggle Classes
+ * Switch between standard 12-column and Fibonacci modes
+ * =================================================== */
+
+/* Standard grid mode (default behavior) */
+.vd-grid-standard>.vd-row,
+.grid-standard>.vd-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Fibonacci grid mode - converts rows to CSS Grid with Fibonacci proportions */
+.vd-grid-fibonacci>.vd-row,
+.grid-fibonacci>.vd-row {
+  display: grid;
+  gap: var(--vd-grid-gutter);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.vd-grid-fibonacci>.vd-row>[class*="col-"],
+.grid-fibonacci>.vd-row>[class*="col-"] {
+  width: auto;
+  padding-left: 0;
+  padding-right: 0;
+  flex: none;
+}
+
+/* Two-child fibonacci rows use golden ratio */
+.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(2):last-child),
+.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(2):last-child) {
+  grid-template-columns: 1fr 1.618fr;
+}
+
+/* Three-child fibonacci rows use 2:3:5 */
+.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(3):last-child),
+.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(3):last-child) {
+  grid-template-columns: 2fr 3fr 5fr;
+}
+
+/* Four-child fibonacci rows use 1:2:3:5 */
+.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(4):last-child),
+.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(4):last-child) {
+  grid-template-columns: 1fr 2fr 3fr 5fr;
+}
+
+/* Single-child rows stay full width */
+.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:only-child),
+.grid-fibonacci>.vd-row:has(> [class*="col-"]:only-child) {
+  grid-template-columns: 1fr;
+}
+
+/* Five+ children use equal columns */
+.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(5)),
+.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(5)) {
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+
+/* Responsive: stack golden/fibonacci grids on mobile */
+@media (max-width: 767.98px) {
+
+  .vd-row-golden>.vd-col-golden-minor,
+  .vd-row-golden>.vd-col-golden-major,
+  .vd-row-fib-2>.vd-col-fib-5,
+  .vd-row-fib-2>.vd-col-fib-8,
+  .vd-row-fib-3>.vd-col-fib-2,
+  .vd-row-fib-3>.vd-col-fib-3,
+  .vd-row-fib-3>.vd-col-fib-5,
+  .vd-row-fib-4>.vd-col-fib-1,
+  .vd-row-fib-4>.vd-col-fib-2,
+  .vd-row-fib-4>.vd-col-fib-3,
+  .vd-row-fib-4>.vd-col-fib-5,
+  .vd-row-fib-3-alt>.vd-col-fib-3,
+  .vd-row-fib-3-alt>.vd-col-fib-5,
+  .vd-row-fib-3-alt>.vd-col-fib-8 {
+    width: 100%;
+  }
+
+  .vd-grid-golden,
+  .vd-grid-golden-reverse,
+  .vd-grid-fib-3,
+  .vd-grid-fib-4,
+  .vd-grid-fib-3-alt,
+  .grid-golden,
+  .grid-golden-reverse,
+  .grid-fib-3,
+  .grid-fib-4,
+  .grid-fib-3-alt {
+    grid-template-columns: 1fr;
+  }
+
+  .vd-grid-fibonacci>.vd-row,
+  .grid-fibonacci>.vd-row {
+    grid-template-columns: 1fr;
+  }
+}

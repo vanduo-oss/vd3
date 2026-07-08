@@ -5,7 +5,9 @@
     "emitDeclarationOnly": true,
     "outDir": "dist",
     "rootDir": "src",
-    "noEmit": false
+    "noEmit": false,
+    // src/ is browser-only; node types are a test-only affordance.
+    "types": []
   },
   "include": ["src/**/*.ts", "src/**/*.vue"],
   "exclude": ["dist", "node_modules", "tests"]

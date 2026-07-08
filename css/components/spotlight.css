@@ -1,0 +1,124 @@
+/**
+ * Vanduo Framework - Spotlight (Feature Discovery)
+ * Overlay highlight + tooltip tour system
+ */
+
+:root {
+  --vd-spotlight-overlay-bg: rgba(0, 0, 0, 0.5);
+  --vd-spotlight-tooltip-bg: var(--vd-card-bg, #fff);
+  --vd-spotlight-tooltip-color: var(--vd-text-primary, #212529);
+  --vd-spotlight-tooltip-shadow: 0 0.5rem 1.3125rem rgba(0, 0, 0, 0.15);
+  --vd-spotlight-tooltip-padding: 1.3125rem; /* 21px - fib */
+  --vd-spotlight-tooltip-radius: var(--vd-card-border-radius, var(--vd-btn-border-radius-lg, 0.5rem));
+  --vd-spotlight-tooltip-max-width: 21rem; /* 336px - fib×16 */
+  --vd-spotlight-highlight-padding: 0.5rem; /* 8px - fib */
+  /* Match card/modal surfaces so the cutout reads like other rounded UI (not the smaller base button token). */
+  --vd-spotlight-target-radius: var(--vd-card-border-radius, var(--vd-btn-border-radius-lg, var(--vd-btn-border-radius, 0.25rem)));
+  --vd-spotlight-z-index: 1080;
+}
+
+[data-theme="dark"] {
+  --vd-spotlight-tooltip-bg: var(--vd-card-bg, #2d2d44);
+  --vd-spotlight-tooltip-shadow: 0 0.5rem 1.3125rem rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-spotlight-tooltip-bg: var(--vd-card-bg, #2d2d44);
+    --vd-spotlight-tooltip-shadow: 0 0.5rem 1.3125rem rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ========== Overlay ========== */
+
+.vd-spotlight-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--vd-spotlight-z-index);
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+/* ========== Tooltip ========== */
+
+.vd-spotlight-tooltip {
+  position: absolute;
+  z-index: calc(var(--vd-spotlight-z-index) + 2);
+  background: var(--vd-spotlight-tooltip-bg);
+  color: var(--vd-spotlight-tooltip-color);
+  padding: var(--vd-spotlight-tooltip-padding);
+  border-radius: var(--vd-spotlight-tooltip-radius);
+  box-shadow: var(--vd-spotlight-tooltip-shadow);
+  max-width: var(--vd-spotlight-tooltip-max-width);
+}
+
+.vd-spotlight-title {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.vd-spotlight-description {
+  margin: 0 0 0.8125rem; /* 13px - fib */
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ========== Footer (nav buttons) ========== */
+
+.vd-spotlight-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.vd-spotlight-counter {
+  font-size: 0.75rem;
+  color: var(--vd-text-muted, #6c757d);
+}
+
+.vd-spotlight-actions {
+  display: flex;
+  gap: 0.3125rem; /* 5px - fib */
+}
+
+.vd-spotlight-btn {
+  padding: 0.3125rem 0.8125rem; /* 5px 13px - fib */
+  border: 1px solid var(--vd-border-color, #dee2e6);
+  border-radius: var(--vd-btn-border-radius-sm, 0.25rem);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: background 0.15s ease;
+}
+
+.vd-spotlight-btn:hover {
+  background: var(--vd-bg-secondary, #f8f9fa);
+}
+
+.vd-spotlight-btn-primary {
+  background: var(--vd-color-primary, #0d6efd);
+  color: #fff;
+  border-color: var(--vd-color-primary, #0d6efd);
+}
+
+.vd-spotlight-btn-primary:hover {
+  background: var(--vd-color-primary-dark, #0b5ed7);
+}
+
+/* ========== Highlighted Target ========== */
+
+.vd-spotlight-target {
+  position: relative;
+  z-index: calc(var(--vd-spotlight-z-index) + 1);
+  isolation: isolate;
+  overflow: visible;
+  /* box-shadow cutout follows border-radius; !important wins over consumer utilities (e.g. docs demos) */
+  border-radius: var(--vd-spotlight-target-radius) !important;
+  box-shadow: 0 0 0 var(--vd-spotlight-highlight-padding) rgba(13, 110, 253, 0.25),
+              0 0 0 9999px var(--vd-spotlight-overlay-bg);
+}

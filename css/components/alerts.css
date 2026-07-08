@@ -1,0 +1,289 @@
+/**
+ * Vanduo Framework - Alerts
+ * Alert and notification components for user feedback
+ */
+
+:root {
+  /* Alert Spacing (Fibonacci: 21px/13px, ratio ~ phi) */
+  --vd-alert-padding-x: 1.3125rem;   /* 21px - fib */
+  --vd-alert-padding-y: 0.8125rem;   /* 13px - fib */
+  --vd-alert-border-radius: var(--vd-btn-border-radius);
+  --vd-alert-border-width: 1px;
+
+  /* Alert Colors */
+  --vd-alert-primary-bg: var(--vd-color-primary-alpha-10);
+  --vd-alert-primary-border: var(--vd-color-primary);
+  --vd-alert-primary-text: var(--vd-color-primary-dark);
+
+  --vd-alert-success-bg: var(--vd-color-success-alpha-10);
+  --vd-alert-success-border: var(--vd-color-success);
+  --vd-alert-success-text: var(--vd-color-success-dark);
+
+  --vd-alert-warning-bg: var(--vd-color-warning-alpha-10);
+  --vd-alert-warning-border: var(--vd-color-warning);
+  --vd-alert-warning-text: var(--vd-color-warning-dark);
+
+  --vd-alert-error-bg: var(--vd-color-error-alpha-10);
+  --vd-alert-error-border: var(--vd-color-error);
+  --vd-alert-error-text: var(--vd-color-error-dark);
+
+  --vd-alert-info-bg: var(--vd-color-info-alpha-10);
+  --vd-alert-info-border: var(--vd-color-info);
+  --vd-alert-info-text: var(--vd-color-info-dark);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-alert-primary-text: var(--vd-color-primary-light);
+  --vd-alert-success-text: var(--vd-color-success-light);
+  --vd-alert-warning-text: var(--vd-color-warning-light);
+  --vd-alert-error-text: var(--vd-color-error-light);
+  --vd-alert-info-text: var(--vd-color-info-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-alert-primary-text: var(--vd-color-primary-light);
+    --vd-alert-success-text: var(--vd-color-success-light);
+    --vd-alert-warning-text: var(--vd-color-warning-light);
+    --vd-alert-error-text: var(--vd-color-error-light);
+    --vd-alert-info-text: var(--vd-color-info-light);
+  }
+}
+
+/* Base Alert */
+.vd-alert {
+  position: relative;
+  padding: var(--vd-alert-padding-y) var(--vd-alert-padding-x);
+  margin-bottom: 1rem;
+  border: var(--vd-alert-border-width) solid transparent;
+  border-radius: var(--vd-alert-border-radius);
+  font-size: var(--vd-font-size-base);
+  line-height: var(--vd-line-height-normal);
+}
+
+/* Alert Variants */
+.vd-alert-primary {
+  background-color: var(--vd-alert-primary-bg);
+  border-color: var(--vd-alert-primary-border);
+  color: var(--vd-alert-primary-text);
+}
+
+.vd-alert-success {
+  background-color: var(--vd-alert-success-bg);
+  border-color: var(--vd-alert-success-border);
+  color: var(--vd-alert-success-text);
+}
+
+.vd-alert-warning {
+  background-color: var(--vd-alert-warning-bg);
+  border-color: var(--vd-alert-warning-border);
+  color: var(--vd-alert-warning-text);
+}
+
+.vd-alert-error,
+.vd-alert-danger {
+  background-color: var(--vd-alert-error-bg);
+  border-color: var(--vd-alert-error-border);
+  color: var(--vd-alert-error-text);
+}
+
+.vd-alert-info {
+  background-color: var(--vd-alert-info-bg);
+  border-color: var(--vd-alert-info-border);
+  color: var(--vd-alert-info-text);
+}
+
+/* Secondary variant (added 1.7.0 for the unified status palette) */
+.vd-alert-secondary {
+  background-color: var(--vd-color-secondary-alpha-10);
+  border-color: var(--vd-color-secondary);
+  color: var(--vd-color-secondary-dark);
+}
+
+[data-theme="dark"] .vd-alert-secondary {
+  color: var(--vd-color-secondary-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .vd-alert-secondary {
+    color: var(--vd-color-secondary-light);
+  }
+}
+
+/* Alert with Icon */
+.vd-alert-icon {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.vd-alert-icon > svg,
+.vd-alert-icon > .icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.125rem;
+}
+
+/* Alert Title */
+.vd-alert-title {
+  font-weight: var(--vd-font-weight-semibold);
+  margin-bottom: 0.25rem;
+}
+
+/* Alert Content */
+.vd-alert-content {
+  flex: 1;
+}
+
+/* Dismissible Alert */
+.vd-alert-dismissible {
+  padding-right: 3rem;
+}
+
+.vd-alert-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: var(--vd-alert-padding-y) var(--vd-alert-padding-x);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.vd-alert-close:hover {
+  opacity: 1;
+}
+
+.vd-alert-close:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Alert Link */
+.vd-alert a,
+.vd-alert-link {
+  font-weight: var(--vd-font-weight-semibold);
+  color: inherit;
+  text-decoration: underline;
+}
+
+.vd-alert a:hover,
+.vd-alert-link:hover {
+  text-decoration: none;
+}
+
+/* Solid Variants (filled background) */
+.vd-alert-solid.vd-alert-primary {
+  background-color: var(--vd-color-primary);
+  border-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+.vd-alert-solid.vd-alert-success {
+  background-color: var(--vd-color-success);
+  border-color: var(--vd-color-success);
+  color: var(--vd-color-white);
+}
+
+.vd-alert-solid.vd-alert-warning {
+  background-color: var(--vd-color-warning);
+  border-color: var(--vd-color-warning);
+  color: var(--vd-color-gray-900);
+}
+
+.vd-alert-solid.vd-alert-error,
+.vd-alert-solid.vd-alert-danger {
+  background-color: var(--vd-color-error);
+  border-color: var(--vd-color-error);
+  color: var(--vd-color-white);
+}
+
+.vd-alert-solid.vd-alert-info {
+  background-color: var(--vd-color-info);
+  border-color: var(--vd-color-info);
+  color: var(--vd-color-white);
+}
+
+/* Outline Variants */
+.vd-alert-outline {
+  background-color: transparent;
+}
+
+/* Alert Sizes */
+.vd-alert-sm {
+  padding: 0.3125rem 0.5rem; /* 5px 8px - fib pair */
+  font-size: var(--vd-font-size-sm);
+}
+
+.vd-alert-lg {
+  padding: 1.3125rem 2.125rem; /* 21px 34px - fib pair */
+  font-size: var(--vd-font-size-lg);
+}
+
+/* Alert with Border Left Accent */
+.vd-alert-accent {
+  border-left-width: 4px;
+  border-radius: 0 var(--vd-alert-border-radius) var(--vd-alert-border-radius) 0;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .vd-alert-close {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue VdAlert markup (additive; added in 1.6.1)
+   VdAlert renders `.vd-alert > .vd-alert-icon + .vd-alert-body + .vd-alert-dismiss`.
+   .vd-alert-body wraps the title + content; .vd-alert-dismiss replaces the legacy
+   .vd-alert-close. Scoped with :has() so legacy alert markup is untouched.
+   ========================================================================== */
+.vd-alert:has(.vd-alert-body) {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.vd-alert:has(.vd-alert-body) > .vd-alert-icon {
+  flex-shrink: 0;
+}
+
+.vd-alert-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.vd-alert-dismiss {
+  flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.5;
+  color: inherit;
+  line-height: 1;
+  transition: opacity 0.15s ease;
+}
+
+.vd-alert-dismiss:hover {
+  opacity: 1;
+}
+
+.vd-alert-dismiss:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-alert-dismiss {
+    transition: none;
+  }
+}

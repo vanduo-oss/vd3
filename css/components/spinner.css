@@ -1,0 +1,184 @@
+/**
+ * Vanduo Framework - Spinner Component
+ * Loading indicators with variants and sizes
+ */
+
+:root {
+  --vd-spinner-size: 2rem;
+  --vd-spinner-border-width: 3px;
+  --vd-spinner-color: var(--vd-color-primary);
+  --vd-spinner-speed: 0.65s;
+}
+
+/* Border Spinner */
+.vd-spinner {
+  display: inline-block;
+  width: var(--vd-spinner-size);
+  height: var(--vd-spinner-size);
+  border: var(--vd-spinner-border-width) solid var(--vd-border-color, #e9ecef);
+  border-top-color: var(--vd-spinner-color);
+  border-radius: 50%;
+  animation: spinner-rotate var(--vd-spinner-speed) linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* Dot Spinner */
+.vd-spinner-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vd-spinner-dots::before,
+.vd-spinner-dots::after,
+.vd-spinner-dots span {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--vd-spinner-color);
+  animation: spinner-dots-bounce 1.4s ease-in-out infinite both;
+}
+
+.vd-spinner-dots::before {
+  animation-delay: -0.32s;
+}
+
+.vd-spinner-dots span {
+  animation-delay: -0.16s;
+}
+
+@keyframes spinner-dots-bounce {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Growing Spinner */
+.vd-spinner-grow {
+  display: inline-block;
+  width: var(--vd-spinner-size);
+  height: var(--vd-spinner-size);
+  background-color: var(--vd-spinner-color);
+  border-radius: 50%;
+  opacity: 0;
+  animation: spinner-grow 0.75s linear infinite;
+}
+
+@keyframes spinner-grow {
+  0% { transform: scale(0); }
+  50% { opacity: 1; }
+}
+
+/* Size Variants */
+.vd-spinner-xs { --vd-spinner-size: 1rem; --vd-spinner-border-width: 2px; }
+.vd-spinner-sm { --vd-spinner-size: 1.5rem; --vd-spinner-border-width: 2px; }
+.vd-spinner-lg { --vd-spinner-size: 3rem; --vd-spinner-border-width: 4px; }
+.vd-spinner-xl { --vd-spinner-size: 4rem; --vd-spinner-border-width: 5px; }
+
+/* Color Variants */
+.vd-spinner-success { --vd-spinner-color: var(--vd-color-success); }
+.vd-spinner-warning { --vd-spinner-color: var(--vd-color-warning); }
+.vd-spinner-error { --vd-spinner-color: var(--vd-color-error); }
+.vd-spinner-info { --vd-spinner-color: var(--vd-color-info); }
+.vd-spinner-light { --vd-spinner-color: #fff; }
+.vd-spinner-dark { --vd-spinner-color: var(--vd-text-primary); }
+
+/* Centering Helper */
+.vd-spinner-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--vd-spacing-5, 1rem);
+}
+
+/* Quad-Spinner Loader — signature Vanduo 2x2 grid loader */
+.vd-dynamic-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  gap: 1rem;
+}
+
+.vd-dynamic-loader-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  justify-items: center;
+}
+
+.vd-dynamic-loader-grid .vd-spinner {
+  --vd-spinner-size: 1.125rem;
+  --vd-spinner-border-width: 2px;
+  --vd-spinner-speed: 0.9s;
+
+  border-color: var(--vd-border-color, #d9d9d9);
+  border-top-color: var(--vd-spinner-color);
+}
+
+.vd-dynamic-loader-grid .vd-spinner:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.vd-dynamic-loader-grid .vd-spinner:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.vd-dynamic-loader-grid .vd-spinner:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+.vd-dynamic-loader-grid .vd-spinner:nth-child(4) {
+  animation-delay: 0s;
+}
+
+.vd-dynamic-loader-text {
+  color: var(--vd-text-muted);
+  font-size: var(--vd-font-size-sm, 0.8125rem);
+}
+
+/* Quad-Spinner overlaying a skeleton card */
+.vd-dynamic-loader-card {
+  position: relative;
+  min-height: 300px;
+  padding: 2rem;
+  overflow: hidden;
+  border-radius: var(--vd-btn-border-radius, 0.5rem);
+  border: 1px solid var(--vd-border-color);
+}
+
+.vd-dynamic-loader-card > .vd-dynamic-loader {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .vd-dynamic-loader-card > .vd-dynamic-loader {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .vd-dynamic-loader-card > .vd-dynamic-loader {
+    background: rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .vd-spinner,
+  .vd-spinner-dots::before,
+  .vd-spinner-dots::after,
+  .vd-spinner-dots span,
+  .vd-spinner-grow {
+    animation-duration: 1.5s;
+  }
+}

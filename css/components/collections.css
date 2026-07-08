@@ -1,0 +1,273 @@
+/**
+ * Vanduo Framework - Collections
+ * List/item collection component
+ */
+
+:root {
+  /* Collection Colors */
+  --vd-collection-bg: var(--vd-color-white);
+  --vd-collection-item-bg: var(--vd-color-white);
+  --vd-collection-item-bg-hover: var(--vd-bg-secondary);
+  --vd-collection-item-bg-active: var(--vd-color-primary-alpha-10);
+  --vd-collection-border-color: var(--vd-border-color);
+  
+  /* Collection Spacing (Fibonacci) */
+  --vd-collection-padding-y: 0;
+  --vd-collection-padding-x: 0;
+  --vd-collection-item-padding-y: 0.8125rem;    /* 13px - fib */
+  --vd-collection-item-padding-x: 1.3125rem;    /* 21px - fib */
+  --vd-collection-item-padding-y-sm: 0.5rem;    /* 8px  - fib */
+  --vd-collection-item-padding-x-sm: 0.8125rem; /* 13px - fib */
+  --vd-collection-item-padding-y-lg: 1.3125rem; /* 21px - fib */
+  --vd-collection-item-padding-x-lg: 2.125rem;  /* 34px - fib */
+
+  /* Collection Avatar (Fibonacci) */
+  --vd-collection-avatar-size: 2.125rem;     /* 34px - fib */
+  --vd-collection-avatar-size-sm: 1.3125rem; /* 21px - fib */
+  --vd-collection-avatar-size-lg: 3.4375rem; /* 55px - fib */
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-collection-bg: var(--vd-bg-secondary);
+  --vd-collection-item-bg: var(--vd-bg-secondary);
+  --vd-collection-item-bg-hover: var(--vd-bg-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-collection-bg: var(--vd-bg-secondary);
+    --vd-collection-item-bg: var(--vd-bg-secondary);
+    --vd-collection-item-bg-hover: var(--vd-bg-primary);
+  }
+}
+
+/* Base Collection */
+.vd-collection {
+  display: flex;
+  flex-direction: column;
+  padding: var(--vd-collection-padding-y) var(--vd-collection-padding-x);
+  margin-bottom: 0;
+  list-style: none;
+  background-color: var(--vd-collection-bg);
+}
+
+/* Collection Item */
+.vd-collection-item {
+  display: flex;
+  align-items: center;
+  padding: var(--vd-collection-item-padding-y) var(--vd-collection-item-padding-x);
+  margin-bottom: 0;
+  color: var(--vd-text-primary);
+  text-decoration: none;
+  background-color: var(--vd-collection-item-bg);
+  border-bottom: 1px solid var(--vd-collection-border-color);
+  transition: var(--vd-transition-bg);
+}
+
+.vd-collection-item:last-child {
+  border-bottom: none;
+}
+
+.vd-collection-item:hover {
+  background-color: var(--vd-collection-item-bg-hover);
+  text-decoration: none;
+}
+
+.vd-collection-item.active {
+  background-color: var(--vd-collection-item-bg-active);
+  color: var(--vd-color-primary);
+  font-weight: var(--vd-font-weight-medium);
+}
+
+.vd-collection-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Collection Avatar */
+.vd-collection-avatar {
+  flex-shrink: 0;
+  width: var(--vd-collection-avatar-size);
+  height: var(--vd-collection-avatar-size);
+  margin-right: 1rem;
+  border-radius: 50%;
+  background-color: var(--vd-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.vd-collection-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vd-collection-avatar-icon {
+  font-size: 1.25rem;
+  color: var(--vd-text-secondary);
+}
+
+/* Collection Content */
+.vd-collection-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.vd-collection-title {
+  margin: 0 0 0.25rem 0;
+  font-size: var(--vd-font-size-base);
+  font-weight: var(--vd-font-weight-medium);
+  line-height: var(--vd-line-height-normal);
+  color: var(--vd-text-primary);
+}
+
+.vd-collection-item.active .vd-collection-title {
+  color: var(--vd-color-primary);
+}
+
+.vd-collection-text {
+  margin: 0;
+  font-size: var(--vd-font-size-sm);
+  line-height: var(--vd-line-height-normal);
+  color: var(--vd-text-secondary);
+}
+
+.vd-collection-item-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vd-collection-item-secondary .vd-collection-title {
+  margin-bottom: 0;
+}
+
+/* Collection Action */
+.vd-collection-action {
+  flex-shrink: 0;
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Collection Divider */
+.vd-collection-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid var(--vd-collection-border-color);
+}
+
+/* Collection Header */
+.vd-collection-header {
+  padding: var(--vd-collection-item-padding-y) var(--vd-collection-item-padding-x);
+  margin-bottom: 0;
+  font-size: var(--vd-font-size-sm);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--vd-bg-secondary);
+  border-bottom: 1px solid var(--vd-collection-border-color);
+}
+
+/* Collection Variants */
+.vd-collection-bordered {
+  border: 1px solid var(--vd-collection-border-color);
+  border-radius: var(--vd-btn-border-radius);
+  overflow: hidden;
+}
+
+.vd-collection-bordered .vd-collection-item {
+  border-bottom: 1px solid var(--vd-collection-border-color);
+}
+
+.vd-collection-bordered .vd-collection-item:last-child {
+  border-bottom: none;
+}
+
+.vd-collection-stripped .vd-collection-item:nth-child(odd) {
+  background-color: var(--vd-bg-secondary);
+}
+
+.vd-collection-stripped .vd-collection-item:nth-child(odd):hover {
+  background-color: var(--vd-collection-item-bg-hover);
+}
+
+.vd-collection-hoverable .vd-collection-item {
+  cursor: pointer;
+}
+
+/* Collection Sizes */
+.vd-collection-sm .vd-collection-item {
+  padding: var(--vd-collection-item-padding-y-sm) var(--vd-collection-item-padding-x-sm);
+}
+
+.vd-collection-sm .vd-collection-avatar {
+  width: var(--vd-collection-avatar-size-sm);
+  height: var(--vd-collection-avatar-size-sm);
+}
+
+.vd-collection-sm .vd-collection-title {
+  font-size: var(--vd-font-size-sm);
+}
+
+.vd-collection-sm .vd-collection-text {
+  font-size: var(--vd-font-size-xs);
+}
+
+.vd-collection-lg .vd-collection-item {
+  padding: var(--vd-collection-item-padding-y-lg) var(--vd-collection-item-padding-x-lg);
+}
+
+.vd-collection-lg .vd-collection-avatar {
+  width: var(--vd-collection-avatar-size-lg);
+  height: var(--vd-collection-avatar-size-lg);
+}
+
+.vd-collection-lg .vd-collection-title {
+  font-size: var(--vd-font-size-lg);
+}
+
+.vd-collection-lg .vd-collection-text {
+  font-size: var(--vd-font-size-base);
+}
+
+/* Responsive Behavior */
+@media (max-width: 575.98px) {
+  .vd-collection-item {
+    flex-wrap: wrap;
+  }
+
+  .vd-collection-action {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.5rem;
+    padding-left: calc(var(--vd-collection-avatar-size) + 1rem);
+  }
+}
+
+/* ==========================================================================
+   @vanduo-oss/vue VdCollection additions (additive; added in 1.6.1)
+   VdCollection wraps items in `ul.vd-collection-list` and renders a
+   `.vd-collection-text-secondary` subtitle.
+   ========================================================================== */
+.vd-collection-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vd-collection-text-secondary {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: var(--vd-font-size-sm);
+  color: var(--vd-text-secondary);
+}
+

@@ -1,0 +1,316 @@
+/**
+ * Vanduo Framework - Design Tokens
+ * Centralized CSS custom properties for consistent theming
+ * v1.4.1
+ */
+
+:root {
+  /* ============================================
+   * COLOR TOKENS
+   * Based on Open Color with semantic mapping
+   * ============================================ */
+
+  /* Primary Colors */
+  --vd-color-primary: var(--vd-primary-5);
+  --vd-color-primary-light: var(--vd-primary-3);
+  --vd-color-primary-dark: var(--vd-primary-7);
+  --vd-color-primary-hover: var(--vd-primary-6);
+  --vd-color-primary-active: var(--vd-primary-7);
+  --vd-color-primary-rgb: 92, 124, 250;
+  --vd-color-primary-alpha-5: color-mix(in srgb, var(--vd-color-primary) 5%, transparent);
+  --vd-color-primary-alpha-08: color-mix(in srgb, var(--vd-color-primary) 8%, transparent);
+  --vd-color-primary-alpha-10: color-mix(in srgb, var(--vd-color-primary) 10%, transparent);
+  --vd-color-primary-alpha-15: color-mix(in srgb, var(--vd-color-primary) 15%, transparent);
+  --vd-color-primary-alpha-20: color-mix(in srgb, var(--vd-color-primary) 20%, transparent);
+  --vd-color-primary-alpha-30: color-mix(in srgb, var(--vd-color-primary) 30%, transparent);
+  --vd-color-primary-alpha-40: color-mix(in srgb, var(--vd-color-primary) 40%, transparent);
+  --vd-color-primary-alpha-50: color-mix(in srgb, var(--vd-color-primary) 50%, transparent);
+
+  /* Secondary Colors */
+  --vd-color-secondary: var(--vd-secondary-5);
+  --vd-color-secondary-light: var(--vd-secondary-3);
+  --vd-color-secondary-dark: var(--vd-secondary-7);
+  --vd-color-secondary-hover: var(--vd-secondary-6);
+  --vd-color-secondary-active: var(--vd-secondary-7);
+  --vd-color-secondary-alpha-10: color-mix(in srgb, var(--vd-color-secondary) 10%, transparent);
+  --vd-color-secondary-alpha-20: color-mix(in srgb, var(--vd-color-secondary) 20%, transparent);
+
+  /* Accent */
+  --vd-color-accent: var(--vd-color-primary);
+  --vd-color-accent-light: var(--vd-color-primary-light);
+  --vd-color-accent-dark: var(--vd-color-primary-dark);
+
+  /* Semantic Colors */
+  --vd-color-success: var(--vd-success-6);
+  --vd-color-success-light: var(--vd-success-4);
+  --vd-color-success-dark: var(--vd-success-7);
+  --vd-color-success-hover: var(--vd-success-7);
+  --vd-color-success-active: var(--vd-success-8);
+  --vd-color-success-rgb: 64, 192, 87;
+  --vd-color-success-alpha-10: color-mix(in srgb, var(--vd-color-success) 10%, transparent);
+  --vd-color-success-alpha-20: color-mix(in srgb, var(--vd-color-success) 20%, transparent);
+
+  --vd-color-warning: var(--vd-warning-6);
+  --vd-color-warning-light: var(--vd-warning-4);
+  --vd-color-warning-dark: var(--vd-warning-7);
+  --vd-color-warning-hover: var(--vd-warning-7);
+  --vd-color-warning-active: var(--vd-warning-8);
+  --vd-color-warning-rgb: 250, 176, 5;
+  --vd-color-warning-alpha-10: color-mix(in srgb, var(--vd-color-warning) 10%, transparent);
+  --vd-color-warning-alpha-20: color-mix(in srgb, var(--vd-color-warning) 20%, transparent);
+  --vd-color-warning-alpha-30: color-mix(in srgb, var(--vd-color-warning) 30%, transparent);
+
+  --vd-color-error: var(--vd-danger-6);
+  --vd-color-error-light: var(--vd-danger-4);
+  --vd-color-error-dark: var(--vd-danger-7);
+  --vd-color-error-hover: var(--vd-danger-7);
+  --vd-color-error-active: var(--vd-danger-8);
+  --vd-color-error-rgb: 250, 82, 82;
+  --vd-color-error-alpha-10: color-mix(in srgb, var(--vd-color-error) 10%, transparent);
+  --vd-color-error-alpha-20: color-mix(in srgb, var(--vd-color-error) 20%, transparent);
+
+  --vd-color-danger: var(--vd-color-error);
+  --vd-color-danger-light: var(--vd-color-error-light);
+  --vd-color-danger-dark: var(--vd-color-error-dark);
+  --vd-color-danger-hover: var(--vd-color-error-hover);
+  --vd-color-danger-active: var(--vd-color-error-active);
+  --vd-color-danger-alpha-10: var(--vd-color-error-alpha-10);
+  --vd-color-danger-alpha-20: var(--vd-color-error-alpha-20);
+
+  --vd-color-info: var(--vd-info-6);
+  --vd-color-info-light: var(--vd-info-4);
+  --vd-color-info-dark: var(--vd-info-7);
+  --vd-color-info-hover: var(--vd-info-7);
+  --vd-color-info-active: var(--vd-info-8);
+  --vd-color-info-rgb: 34, 139, 230;
+  --vd-color-info-alpha-10: color-mix(in srgb, var(--vd-color-info) 10%, transparent);
+  --vd-color-info-alpha-20: color-mix(in srgb, var(--vd-color-info) 20%, transparent);
+
+  /* Neutral Colors (Open Color) */
+  --vd-color-white: #ffffff;
+  --vd-color-black: #000000;
+  --vd-color-gray-50: var(--vd-gray-0);
+  --vd-color-gray-100: var(--vd-gray-2);
+  --vd-color-gray-200: var(--vd-gray-3);
+  --vd-color-gray-300: var(--vd-gray-4);
+  --vd-color-gray-400: var(--vd-gray-5);
+  --vd-color-gray-500: var(--vd-gray-6);
+  --vd-color-gray-600: var(--vd-gray-7);
+  --vd-color-gray-700: var(--vd-gray-8);
+  --vd-color-gray-800: var(--vd-gray-9);
+  --vd-color-gray-900: #1a1d20;
+
+  /* ============================================
+   * BACKGROUND TOKENS
+   * ============================================ */
+  --vd-bg-primary: var(--vd-color-white);
+  --vd-bg-secondary: var(--vd-color-gray-100);
+  --vd-bg-tertiary: var(--vd-color-gray-200);
+  --vd-bg-dark: var(--vd-color-gray-800);
+  --vd-bg-darker: var(--vd-color-gray-900);
+
+  /* ============================================
+   * TEXT TOKENS
+   * ============================================ */
+  --vd-text-primary: var(--vd-color-gray-900);
+  --vd-text-secondary: var(--vd-color-gray-600);
+  --vd-text-muted: var(--vd-color-gray-500);
+  --vd-text-light: var(--vd-color-gray-400);
+  --vd-text-tertiary: var(--vd-text-secondary);
+  --vd-text-disabled: var(--vd-text-muted);
+  --vd-text-on-primary: var(--vd-color-white);
+  --vd-text-inverse: var(--vd-color-white);
+
+  /* ============================================
+   * BORDER TOKENS
+   * ============================================ */
+  --vd-border-color: var(--vd-color-gray-300);
+  --vd-border-color-light: var(--vd-color-gray-200);
+  --vd-border-color-dark: var(--vd-color-gray-400);
+  --vd-border-width: 1px;
+  --vd-border-radius-sm: 0.25rem;
+  --vd-border-radius-md: 0.5rem;
+  --vd-border-radius-lg: 0.75rem;
+  --vd-border-radius-xl: 1rem;
+
+  /* ============================================
+   * TYPOGRAPHY TOKENS
+   * ============================================ */
+  --vd-font-family-base: 'Ubuntu', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --vd-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Font Sizes (Fibonacci scale) */
+  --vd-font-size-xs: 0.75rem;
+  --vd-font-size-sm: 0.8125rem;
+  --vd-font-size-base: 1rem;
+  --vd-font-size-lg: 1.125rem;
+  --vd-font-size-xl: 1.25rem;
+  --vd-font-size-2xl: 1.5rem;
+  --vd-font-size-3xl: 1.875rem;
+  --vd-font-size-4xl: 2.25rem;
+
+  /* Font Weights */
+  --vd-font-weight-light: 300;
+  --vd-font-weight-normal: 400;
+  --vd-font-weight-medium: 500;
+  --vd-font-weight-semibold: 600;
+  --vd-font-weight-bold: 700;
+
+  /* Line Heights */
+  --vd-line-height-tight: 1.25;
+  --vd-line-height-normal: 1.5;
+  --vd-line-height-relaxed: 1.75;
+
+  /* ============================================
+   * SPACING TOKENS (Fibonacci)
+   * ============================================ */
+  --vd-space-fib-1: 0.125rem;   /* 2px */
+  --vd-space-fib-2: 0.25rem;    /* 4px */
+  --vd-space-fib-3: 0.375rem;   /* 6px */
+  --vd-space-fib-5: 0.5rem;     /* 8px */
+  --vd-space-fib-8: 0.75rem;    /* 12px */
+  --vd-space-fib-13: 0.8125rem; /* 13px */
+  --vd-space-fib-21: 1.3125rem; /* 21px */
+  --vd-space-fib-34: 2.125rem;  /* 34px */
+  --vd-space-fib-55: 3.4375rem; /* 55px */
+
+  /* Standard spacing */
+  --vd-space-1: 0.25rem;
+  --vd-space-2: 0.5rem;
+  --vd-space-3: 0.75rem;
+  --vd-space-4: 1rem;
+  --vd-space-5: 1.25rem;
+  --vd-space-6: 1.5rem;
+  --vd-space-8: 2rem;
+  --vd-space-10: 2.5rem;
+  --vd-space-12: 3rem;
+  --vd-space-16: 4rem;
+
+  /* ============================================
+   * SHADOW TOKENS
+   * ============================================ */
+  --vd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --vd-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --vd-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --vd-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* ============================================
+   * GLASS TOKENS
+   * ============================================ */
+  --vd-glass-blur: 12px;
+  --vd-glass-saturate: 1.8;
+  --vd-glass-bg-opacity: 0.65;
+  --vd-glass-bg-light: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
+  --vd-glass-bg-dark: rgba(30, 30, 30, var(--vd-glass-bg-opacity));
+  --vd-glass-border-alpha: 0.18;
+  --vd-glass-border-light: rgba(255, 255, 255, var(--vd-glass-border-alpha));
+  --vd-glass-border-dark: rgba(255, 255, 255, 0.08);
+  --vd-glass-highlight-alpha: 0.25;
+  --vd-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --vd-glass-noise-opacity: 0.03;
+
+  /* ============================================
+   * TRANSITION TOKENS
+   * ============================================ */
+  --vd-transition-fast: 150ms ease;
+  --vd-transition-normal: 250ms ease;
+  --vd-transition-slow: 350ms ease;
+
+  /* ============================================
+   * Z-INDEX TOKENS
+   * ============================================ */
+  --vd-z-dropdown: 1000;
+  --vd-z-sticky: 1020;
+  --vd-z-fixed: 1030;
+  --vd-z-modal-backdrop: 1040;
+  --vd-z-modal: 1050;
+  --vd-z-popover: 1060;
+  --vd-z-tooltip: 1070;
+  --vd-z-toast: 1080;
+
+  /* ============================================
+   * BREAKPOINT TOKENS
+   * (Documented, not CSS variables - used in media queries)
+   * ============================================ */
+  /* sm: 576px */
+  /* md: 768px */
+  /* lg: 992px */
+  /* xl: 1200px */
+  /* 2xl: 1400px */
+}
+
+/* ============================================
+ * DARK MODE TOKENS
+ * ============================================ */
+[data-theme="dark"] {
+  --vd-bg-primary: var(--vd-color-gray-900);
+  --vd-bg-secondary: var(--vd-color-gray-800);
+  --vd-bg-tertiary: var(--vd-color-gray-700);
+  --vd-bg-dark: var(--vd-color-black);
+  --vd-bg-darker: #000000;
+
+  --vd-text-primary: var(--vd-color-gray-100);
+  --vd-text-secondary: var(--vd-color-gray-400);
+  --vd-text-muted: var(--vd-color-gray-500);
+  --vd-text-light: var(--vd-color-gray-600);
+  --vd-text-inverse: var(--vd-color-gray-900);
+
+  --vd-border-color: var(--vd-color-gray-700);
+  --vd-border-color-light: var(--vd-color-gray-800);
+  --vd-border-color-dark: var(--vd-color-gray-600);
+
+  --vd-color-primary: var(--vd-primary-4);
+  --vd-color-primary-light: var(--vd-primary-3);
+  --vd-color-primary-dark: var(--vd-primary-5);
+  --vd-color-primary-hover: var(--vd-primary-5);
+  --vd-color-primary-active: var(--vd-primary-6);
+  --vd-color-primary-alpha-10: rgba(116, 143, 252, 0.15);
+  --vd-color-primary-alpha-20: rgba(116, 143, 252, 0.25);
+
+  --vd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --vd-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --vd-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+
+  --vd-glass-bg-light: var(--vd-glass-bg-dark);
+  --vd-glass-border-light: var(--vd-glass-border-dark);
+  --vd-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  --vd-glass-highlight-alpha: 0.16;
+}
+
+/* Dark mode via prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-bg-primary: var(--vd-color-gray-900);
+    --vd-bg-secondary: var(--vd-color-gray-800);
+    --vd-bg-tertiary: var(--vd-color-gray-700);
+    --vd-bg-dark: var(--vd-color-black);
+    --vd-bg-darker: #000000;
+
+    --vd-text-primary: var(--vd-color-gray-100);
+    --vd-text-secondary: var(--vd-color-gray-400);
+    --vd-text-muted: var(--vd-color-gray-500);
+    --vd-text-light: var(--vd-color-gray-600);
+    --vd-text-inverse: var(--vd-color-gray-900);
+
+    --vd-border-color: var(--vd-color-gray-700);
+    --vd-border-color-light: var(--vd-color-gray-800);
+    --vd-border-color-dark: var(--vd-color-gray-600);
+
+    --vd-color-primary: var(--vd-primary-4);
+    --vd-color-primary-light: var(--vd-primary-3);
+    --vd-color-primary-dark: var(--vd-primary-5);
+    --vd-color-primary-hover: var(--vd-primary-5);
+    --vd-color-primary-active: var(--vd-primary-6);
+    --vd-color-primary-alpha-10: rgba(116, 143, 252, 0.15);
+    --vd-color-primary-alpha-20: rgba(116, 143, 252, 0.25);
+
+    --vd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --vd-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --vd-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+
+    --vd-glass-bg-light: var(--vd-glass-bg-dark);
+    --vd-glass-border-light: var(--vd-glass-border-dark);
+    --vd-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+    --vd-glass-highlight-alpha: 0.16;
+  }
+}

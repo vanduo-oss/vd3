@@ -1,0 +1,371 @@
+/**
+ * Vanduo Framework - Sidenav
+ * Side navigation drawer component
+ */
+
+:root {
+  /* Sidenav Colors */
+  --vd-sidenav-bg: var(--vd-color-white);
+  --vd-sidenav-overlay-bg: rgba(0, 0, 0, 0.35);
+  --vd-sidenav-border-color: var(--vd-border-color);
+  --vd-sidenav-item-bg-hover: var(--vd-bg-secondary);
+  --vd-sidenav-item-bg-active: var(--vd-color-primary-alpha-10);
+  --vd-sidenav-item-color-active: var(--vd-color-primary);
+  
+  /* Sidenav Dimensions (Fibonacci) */
+  --vd-sidenav-width: 233px;     /* fib */
+  --vd-sidenav-width-sm: 233px;  /* fib */
+  --vd-sidenav-width-lg: 377px;  /* fib */
+
+  /* Sidenav Spacing (Fibonacci) */
+  --vd-sidenav-padding-y: 0.8125rem;      /* 13px - fib */
+  --vd-sidenav-padding-x: 1.3125rem;      /* 21px - fib */
+  --vd-sidenav-item-padding-y: 0.5rem;    /* 8px  - fib */
+  --vd-sidenav-item-padding-x: 0.8125rem; /* 13px - fib */
+  
+  /* Sidenav Z-index */
+  --vd-sidenav-z-index: 1040;
+  --vd-sidenav-overlay-z-index: 1030;
+  
+  /* Sidenav Transitions */
+  --vd-sidenav-transition: transform var(--vd-transition-duration-slow) var(--vd-transition-ease);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-sidenav-bg: var(--vd-bg-secondary);
+  --vd-sidenav-item-bg-hover: var(--vd-bg-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-sidenav-bg: var(--vd-bg-secondary);
+    --vd-sidenav-item-bg-hover: var(--vd-bg-primary);
+  }
+}
+
+/* Sidenav Overlay */
+.vd-sidenav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--vd-sidenav-overlay-z-index);
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--vd-sidenav-overlay-bg);
+  opacity: 0;
+  transition: opacity var(--vd-transition-duration-base) var(--vd-transition-ease);
+  pointer-events: none;
+}
+
+.vd-sidenav-overlay.is-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Base Sidenav */
+.vd-sidenav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--vd-sidenav-z-index);
+  width: var(--vd-sidenav-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--vd-sidenav-bg);
+  box-shadow: var(--vd-shadow-lg);
+  transform: translateX(-100%);
+  transition: var(--vd-sidenav-transition);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.vd-sidenav.is-open {
+  transform: translateX(0);
+}
+
+/* Sidenav Right */
+.vd-sidenav-right {
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
+}
+
+.vd-sidenav-right.is-open {
+  transform: translateX(0);
+}
+
+/* Sidenav Variants */
+.vd-sidenav-overlay-variant {
+  /* Overlay variant - slides over content */
+}
+
+.vd-sidenav-push {
+  /* Push variant - pushes content */
+}
+
+.vd-sidenav-push.is-open ~ * {
+  margin-left: var(--vd-sidenav-width);
+  transition: margin-left var(--vd-transition-duration-slow) var(--vd-transition-ease);
+}
+
+.vd-sidenav-push.vd-sidenav-right.is-open ~ * {
+  margin-left: 0;
+  margin-right: var(--vd-sidenav-width);
+}
+
+.vd-sidenav-fixed {
+  position: fixed;
+  transform: translateX(0);
+}
+
+.vd-sidenav-fixed.is-open {
+  transform: translateX(0);
+}
+
+/* Sidenav Header */
+.vd-sidenav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--vd-sidenav-padding-y) var(--vd-sidenav-padding-x);
+  border-bottom: 1px solid var(--vd-sidenav-border-color);
+  flex-shrink: 0;
+}
+
+.vd-sidenav-title {
+  margin: 0;
+  font-size: var(--vd-font-size-lg);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-text-primary);
+}
+
+.vd-sidenav-close {
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+  background: transparent;
+  border: 0;
+  border-radius: var(--vd-btn-border-radius);
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: var(--vd-font-weight-bold);
+  line-height: 1;
+  color: var(--vd-text-secondary);
+  transition: var(--vd-transition-opacity);
+}
+
+.vd-sidenav-close:hover,
+.vd-sidenav-close:focus {
+  opacity: 0.75;
+  outline: none;
+}
+
+/* Sidenav Body */
+.vd-sidenav-body {
+  flex: 1 1 auto;
+  padding: var(--vd-sidenav-padding-y) 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Sidenav Footer */
+.vd-sidenav-footer {
+  padding: var(--vd-sidenav-padding-y) var(--vd-sidenav-padding-x);
+  border-top: 1px solid var(--vd-sidenav-border-color);
+  flex-shrink: 0;
+}
+
+/* Sidenav Navigation */
+.vd-sidenav-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Sidenav Section */
+.vd-sidenav-section {
+  padding: 0.5rem var(--vd-sidenav-padding-x);
+  margin-top: 0.5rem;
+  font-size: var(--vd-font-size-xs);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vd-sidenav-section:first-child {
+  margin-top: 0;
+}
+
+/* Sidenav Item */
+.vd-sidenav-item {
+  display: block;
+}
+
+.vd-sidenav-link {
+  display: flex;
+  align-items: center;
+  padding: var(--vd-sidenav-item-padding-y) var(--vd-sidenav-item-padding-x);
+  font-size: var(--vd-font-size-base);
+  font-weight: var(--vd-font-weight-normal);
+  line-height: var(--vd-line-height-normal);
+  color: var(--vd-text-primary);
+  text-decoration: none;
+  transition: var(--vd-transition-bg);
+  cursor: pointer;
+}
+
+.vd-sidenav-link:hover {
+  background-color: var(--vd-sidenav-item-bg-hover);
+  color: var(--vd-text-primary);
+  text-decoration: none;
+}
+
+.vd-sidenav-link:focus {
+  outline: 2px solid var(--vd-input-focus-border-color);
+  outline-offset: -2px;
+}
+
+.vd-sidenav-item.active .vd-sidenav-link {
+  background-color: var(--vd-sidenav-item-bg-active);
+  color: var(--vd-sidenav-item-color-active);
+  font-weight: var(--vd-font-weight-medium);
+}
+
+/* Sidenav Divider */
+.vd-sidenav-divider {
+  height: 0;
+  margin: 0.5rem var(--vd-sidenav-padding-x);
+  overflow: hidden;
+  border-top: 1px solid var(--vd-sidenav-border-color);
+}
+
+/* Sidenav Sizes */
+.vd-sidenav-sm {
+  width: var(--vd-sidenav-width-sm);
+}
+
+.vd-sidenav-sm.vd-sidenav-push.is-open ~ * {
+  margin-left: var(--vd-sidenav-width-sm);
+}
+
+.vd-sidenav-sm.vd-sidenav-push.vd-sidenav-right.is-open ~ * {
+  margin-right: var(--vd-sidenav-width-sm);
+}
+
+.vd-sidenav-lg {
+  width: var(--vd-sidenav-width-lg);
+}
+
+.vd-sidenav-lg.vd-sidenav-push.is-open ~ * {
+  margin-left: var(--vd-sidenav-width-lg);
+}
+
+.vd-sidenav-lg.vd-sidenav-push.vd-sidenav-right.is-open ~ * {
+  margin-right: var(--vd-sidenav-width-lg);
+}
+
+/* ========== Offcanvas Alias ========== */
+
+.vd-offcanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--vd-sidenav-z-index);
+  width: var(--vd-sidenav-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--vd-sidenav-bg);
+  box-shadow: var(--vd-shadow-lg);
+  transform: translateX(-100%);
+  transition: var(--vd-sidenav-transition);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.vd-offcanvas.is-open {
+  transform: translateX(0) translateY(0);
+}
+
+/* Top direction */
+.vd-sidenav-top,
+.vd-offcanvas-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  transform: translateY(-100%);
+}
+
+.vd-sidenav-top.is-open,
+.vd-offcanvas-top.is-open {
+  transform: translateY(0);
+}
+
+/* Bottom direction */
+.vd-sidenav-bottom,
+.vd-offcanvas-bottom {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  transform: translateY(100%);
+}
+
+.vd-sidenav-bottom.is-open,
+.vd-offcanvas-bottom.is-open {
+  transform: translateY(0);
+}
+
+/* Right alias for offcanvas */
+.vd-offcanvas-right {
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
+}
+
+.vd-offcanvas-right.is-open {
+  transform: translateX(0);
+}
+
+/* Body Scroll Lock */
+.body-sidenav-open {
+  overflow: hidden;
+}
+
+/* Responsive Behavior */
+@media (max-width: 991.98px) {
+  .vd-sidenav {
+    /* On mobile, sidenav is always overlay */
+    position: fixed;
+  }
+  
+  .vd-sidenav-fixed {
+    /* Fixed sidenav becomes overlay on mobile */
+    position: fixed;
+    transform: translateX(-100%);
+  }
+  
+  .vd-sidenav-fixed.vd-sidenav-right {
+    transform: translateX(100%);
+  }
+  
+  .vd-sidenav-fixed.is-open {
+    transform: translateX(0);
+  }
+  
+  .vd-sidenav-push.is-open ~ * {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+

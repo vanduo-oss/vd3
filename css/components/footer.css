@@ -1,0 +1,375 @@
+/**
+ * Vanduo Framework - Footer
+ * Footer component for site footers
+ */
+
+:root {
+  /* Footer Colors */
+  --vd-footer-bg: var(--vd-bg-secondary);
+  --vd-footer-bg-dark: var(--vd-bg-dark);
+  --vd-footer-text-color: var(--vd-text-primary);
+  --vd-footer-text-color-dark: var(--vd-text-inverse);
+  --vd-footer-link-color: var(--vd-text-secondary);
+  --vd-footer-link-hover-color: var(--vd-color-primary);
+  --vd-footer-border-color: var(--vd-border-color);
+  --vd-footer-heading-color: var(--vd-text-primary);
+  
+  /* Footer Spacing (Fibonacci) */
+  --vd-footer-padding-y: 3.4375rem;    /* 55px - fib */
+  --vd-footer-padding-x: 1.3125rem;    /* 21px - fib */
+  --vd-footer-padding-y-sm: 2.125rem;  /* 34px - fib */
+  --vd-footer-padding-y-lg: 5.5625rem; /* 89px - fib */
+  --vd-footer-section-spacing: 2.125rem; /* 34px - fib */
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+  --vd-footer-bg: var(--vd-bg-secondary);
+  --vd-footer-text-color: var(--vd-text-primary);
+  --vd-footer-link-color: var(--vd-text-secondary);
+  --vd-footer-heading-color: var(--vd-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-footer-bg: var(--vd-bg-secondary);
+    --vd-footer-text-color: var(--vd-text-primary);
+    --vd-footer-link-color: var(--vd-text-secondary);
+    --vd-footer-heading-color: var(--vd-text-primary);
+  }
+}
+
+/* Base Footer */
+.vd-footer {
+  padding: var(--vd-footer-padding-y) var(--vd-footer-padding-x);
+  background-color: var(--vd-footer-bg);
+  color: var(--vd-footer-text-color);
+  border-top: 1px solid var(--vd-footer-border-color);
+}
+
+/* Footer Container */
+.vd-footer-container {
+  max-width: var(--vd-container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--vd-container-padding);
+  padding-right: var(--vd-container-padding);
+}
+
+/* Footer Sections */
+.vd-footer-section {
+  margin-bottom: var(--vd-footer-section-spacing);
+}
+
+.vd-footer-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Footer Headings */
+.vd-footer-heading {
+  font-size: var(--vd-font-size-lg);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-footer-heading-color);
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+/* Footer Links */
+.vd-footer-link {
+  display: inline-block;
+  color: var(--vd-footer-link-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+
+.vd-footer-link:hover {
+  color: var(--vd-footer-link-hover-color);
+  text-decoration: underline;
+}
+
+.vd-footer-link:focus {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Footer Lists */
+.vd-footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.vd-footer-list-item {
+  margin-bottom: 0.5rem;
+}
+
+.vd-footer-list-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Copyright Area */
+.vd-footer-copyright {
+  padding-top: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--vd-footer-border-color);
+  text-align: center;
+  font-size: var(--vd-font-size-sm);
+  color: var(--vd-text-muted);
+}
+
+.vd-footer-copyright-left {
+  text-align: left;
+}
+
+.vd-footer-copyright-right {
+  text-align: right;
+}
+
+/* Multi-Column Footer Layouts */
+.vd-footer-2col,
+.vd-footer-3col,
+.vd-footer-4col {
+  display: grid;
+  gap: var(--vd-footer-section-spacing);
+}
+
+.vd-footer-2col {
+  grid-template-columns: 1fr;
+}
+
+.vd-footer-3col {
+  grid-template-columns: 1fr;
+}
+
+.vd-footer-4col {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .vd-footer-2col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .vd-footer-3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .vd-footer-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Footer Variants - Dark */
+.vd-footer-dark {
+  background-color: var(--vd-footer-bg-dark);
+  color: var(--vd-footer-text-color-dark);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.vd-footer-dark .vd-footer-heading {
+  color: var(--vd-footer-text-color-dark);
+}
+
+.vd-footer-dark .vd-footer-link {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.vd-footer-dark .vd-footer-link:hover {
+  color: var(--vd-color-primary-light);
+}
+
+.vd-footer-dark .vd-footer-copyright {
+  border-top-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Footer Sizes */
+.vd-footer-sm {
+  padding: var(--vd-footer-padding-y-sm) var(--vd-footer-padding-x);
+}
+
+.vd-footer-lg {
+  padding: var(--vd-footer-padding-y-lg) var(--vd-footer-padding-x);
+}
+
+/* Footer with Container */
+.vd-footer .container {
+  max-width: var(--vd-container-max-width);
+}
+
+/* Footer Brand/Logo Area */
+.vd-footer-brand {
+  margin-bottom: 1rem;
+}
+
+.vd-footer-brand img {
+  max-height: 2rem;
+  width: auto;
+}
+
+.vd-footer-brand-text {
+  font-size: var(--vd-font-size-xl);
+  font-weight: var(--vd-font-weight-bold);
+  color: var(--vd-footer-heading-color);
+  text-decoration: none;
+}
+
+.vd-footer-brand-text:hover {
+  text-decoration: none;
+  color: var(--vd-footer-link-hover-color);
+}
+
+/* Footer Social Links */
+.vd-footer-social {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.vd-footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--vd-footer-link-color);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.vd-footer-social-link:hover {
+  background-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+  transform: translateY(-2px);
+}
+
+.vd-footer-dark .vd-footer-social-link {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.vd-footer-dark .vd-footer-social-link:hover {
+  background-color: var(--vd-color-primary);
+  color: var(--vd-color-white);
+}
+
+/* Responsive Footer */
+@media (max-width: 767.98px) {
+  .vd-footer-2col,
+  .vd-footer-3col,
+  .vd-footer-4col {
+    grid-template-columns: 1fr;
+  }
+  
+  .vd-footer-copyright-left,
+  .vd-footer-copyright-right {
+    text-align: center;
+  }
+}
+
+/* Made with Kilo Code Section */
+.vd-footer-made-with {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--vd-footer-border-color);
+}
+
+.vd-footer-made-with-text {
+  font-size: var(--vd-font-size-sm);
+  color: var(--vd-text-muted);
+  font-weight: var(--vd-font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.vd-footer-kilo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.vd-footer-kilo-link:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.vd-footer-kilo-link:focus {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+}
+
+.vd-footer-kilo-logo {
+  height: 1.75rem;
+  width: auto;
+  display: block;
+  border-radius: 0.25rem;
+}
+
+/* Vertical Separator */
+.vd-footer-separator {
+  width: 1px;
+  height: 1.5rem;
+  background-color: var(--vd-footer-border-color);
+  margin: 0 0.5rem;
+}
+
+/* Buy Me A Coffee Link */
+.vd-footer-bmac-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.vd-footer-bmac-link:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.vd-footer-bmac-link:focus {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.vd-footer-bmac-logo {
+  height: 2.5rem;
+  width: auto;
+  display: block;
+  border-radius: 0.25rem;
+}
+
+/* Dark theme styles for Kilo Code section */
+[data-theme="dark"] .vd-footer-kilo-link {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .vd-footer-kilo-link:hover {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .vd-footer-kilo-link {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  
+  :root:not([data-theme]) .vd-footer-kilo-link:hover {
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}

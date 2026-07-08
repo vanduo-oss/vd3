@@ -1,0 +1,395 @@
+/**
+ * Vanduo Framework - Table Utilities
+ * Table styling utilities
+ */
+
+:root {
+  /* Table Colors */
+  --vd-table-bg: var(--vd-color-white);
+  --vd-table-border-color: var(--vd-border-color);
+  --vd-table-striped-bg: var(--vd-bg-secondary);
+  --vd-table-hover-bg: rgba(0, 0, 0, 0.075);
+  --vd-table-active-bg: var(--vd-color-primary-alpha-10);
+
+  /* Table Spacing (Fibonacci) */
+  --vd-table-padding-y: 0.5rem;
+  /* 8px  - fib */
+  --vd-table-padding-x: 0.8125rem;
+  /* 13px - fib (13/8 ~ phi) */
+  --vd-table-padding-y-sm: 0.3125rem;
+  /* 5px  - fib */
+  --vd-table-padding-x-sm: 0.5rem;
+  /* 8px  - fib (8/5 ~ phi) */
+}
+
+/* Base Table */
+.vd-table,
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: var(--vd-text-primary);
+  background-color: var(--vd-table-bg);
+  border-collapse: collapse;
+}
+
+/* @vanduo-oss/vue VdTable <caption> (additive; added in 1.6.1) */
+.vd-table-caption {
+  padding: var(--vd-table-padding-y) var(--vd-table-padding-x);
+  color: var(--vd-text-muted);
+  font-size: var(--vd-font-size-sm);
+  text-align: left;
+  caption-side: top;
+}
+
+.vd-table th,
+.vd-table td,
+.table th,
+.table td {
+  padding: var(--vd-table-padding-y) var(--vd-table-padding-x);
+  vertical-align: middle;
+  border-top: 1px solid var(--vd-table-border-color);
+}
+
+.vd-table thead th,
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid var(--vd-table-border-color);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-text-primary);
+}
+
+.vd-table tbody+tbody,
+.table tbody+tbody {
+  border-top: 2px solid var(--vd-table-border-color);
+}
+
+/* Table Variants */
+.vd-table-bordered,
+.table-bordered {
+  border: 1px solid var(--vd-table-border-color);
+}
+
+.vd-table-bordered th,
+.vd-table-bordered td,
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid var(--vd-table-border-color);
+}
+
+.vd-table-bordered thead th,
+.vd-table-bordered thead td,
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+
+.vd-table-borderless th,
+.vd-table-borderless td,
+.vd-table-borderless thead th,
+.vd-table-borderless tbody+tbody,
+.table-borderless th,
+.table-borderless td,
+.table-borderless thead th,
+.table-borderless tbody+tbody {
+  border: 0;
+}
+
+.vd-table-striped tbody tr:nth-of-type(odd),
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--vd-table-striped-bg);
+}
+
+.vd-table-hover tbody tr:hover,
+.table-hover tbody tr:hover {
+  background-color: var(--vd-table-hover-bg);
+}
+
+.vd-table-sm th,
+.vd-table-sm td,
+.table-sm th,
+.table-sm td {
+  padding: var(--vd-table-padding-y-sm) var(--vd-table-padding-x-sm);
+}
+
+/* Table Cell States */
+.vd-table-active,
+.vd-table-active>th,
+.vd-table-active>td,
+.table-active,
+.table-active>th,
+.table-active>td {
+  background-color: var(--vd-table-active-bg);
+}
+
+.vd-table-primary,
+.vd-table-primary>th,
+.vd-table-primary>td,
+.table-primary,
+.table-primary>th,
+.table-primary>td {
+  color: var(--vd-color-white);
+  background-color: var(--vd-color-primary);
+}
+
+.vd-table-secondary,
+.vd-table-secondary>th,
+.vd-table-secondary>td,
+.table-secondary,
+.table-secondary>th,
+.table-secondary>td {
+  color: var(--vd-color-white);
+  background-color: var(--vd-color-secondary);
+}
+
+.vd-table-success,
+.vd-table-success>th,
+.vd-table-success>td,
+.table-success,
+.table-success>th,
+.table-success>td {
+  color: var(--vd-color-white);
+  background-color: var(--vd-color-success);
+}
+
+.vd-table-warning,
+.vd-table-warning>th,
+.vd-table-warning>td,
+.table-warning,
+.table-warning>th,
+.table-warning>td {
+  color: var(--vd-color-gray-900);
+  background-color: var(--vd-color-warning);
+}
+
+.vd-table-error,
+.vd-table-error>th,
+.vd-table-error>td,
+.table-error,
+.table-error>th,
+.table-error>td {
+  color: var(--vd-color-white);
+  background-color: var(--vd-color-error);
+}
+
+.vd-table-info,
+.vd-table-info>th,
+.vd-table-info>td,
+.table-info,
+.table-info>th,
+.table-info>td {
+  color: var(--vd-color-white);
+  background-color: var(--vd-color-info);
+}
+
+/* Table Sections */
+.vd-table-header,
+.table-header,
+thead {
+  background-color: var(--vd-bg-secondary);
+}
+
+.vd-table-header th,
+.table-header th,
+thead th {
+  font-weight: var(--vd-font-weight-semibold);
+  text-transform: uppercase;
+  font-size: var(--vd-font-size-sm);
+  letter-spacing: 0.05em;
+}
+
+.table-body,
+tbody {
+  /* Default styling */
+}
+
+.vd-table-footer,
+.table-footer,
+tfoot {
+  background-color: var(--vd-bg-secondary);
+  font-weight: var(--vd-font-weight-semibold);
+}
+
+/* Responsive Table Wrapper */
+.vd-table-responsive,
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vd-table-responsive>.vd-table,
+.vd-table-responsive>.table,
+.table-responsive>.table {
+  margin-bottom: 0;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 575.98px) {
+
+  .vd-table-responsive-sm,
+  .table-responsive-sm {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vd-table-responsive-sm>.vd-table,
+  .vd-table-responsive-sm>.table,
+  .table-responsive-sm>.table {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+
+  .vd-table-responsive-md,
+  .table-responsive-md {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vd-table-responsive-md>.vd-table,
+  .vd-table-responsive-md>.table,
+  .table-responsive-md>.table {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 991.98px) {
+
+  .vd-table-responsive-lg,
+  .table-responsive-lg {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vd-table-responsive-lg>.vd-table,
+  .vd-table-responsive-lg>.table,
+  .table-responsive-lg>.table {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 1199.98px) {
+
+  .vd-table-responsive-xl,
+  .table-responsive-xl {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vd-table-responsive-xl>.vd-table,
+  .vd-table-responsive-xl>.table,
+  .table-responsive-xl>.table {
+    margin-bottom: 0;
+  }
+}
+
+/* Dark Table Variant */
+.vd-table-dark,
+.table-dark {
+  color: var(--vd-color-white);
+  background-color: var(--vd-color-gray-800);
+}
+
+.vd-table-dark th,
+.vd-table-dark td,
+.vd-table-dark thead th,
+.table-dark th,
+.table-dark td,
+.table-dark thead th {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.vd-table-dark.vd-table-striped tbody tr:nth-of-type(odd),
+.vd-table-dark.table-striped tbody tr:nth-of-type(odd),
+.table-dark.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.vd-table-dark.vd-table-hover tbody tr:hover,
+.vd-table-dark.table-hover tbody tr:hover,
+.table-dark.table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.075);
+}
+
+/* Dark Mode Table Overrides */
+[data-theme="dark"] .vd-table,
+[data-theme="dark"] .table {
+  --vd-table-bg: var(--vd-bg-primary);
+  --vd-table-border-color: var(--vd-border-color);
+  --vd-table-striped-bg: var(--vd-bg-secondary);
+  --vd-table-hover-bg: rgba(255, 255, 255, 0.05);
+
+  background-color: var(--vd-table-bg);
+  color: var(--vd-text-primary);
+}
+
+[data-theme="dark"] .vd-table th,
+[data-theme="dark"] .vd-table td,
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+  border-color: var(--vd-table-border-color);
+}
+
+[data-theme="dark"] .vd-table thead th,
+[data-theme="dark"] .table thead th {
+  border-color: var(--vd-table-border-color);
+  color: var(--vd-text-primary);
+}
+
+[data-theme="dark"] .vd-table-striped tbody tr:nth-of-type(odd),
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--vd-table-striped-bg);
+}
+
+[data-theme="dark"] .vd-table thead,
+[data-theme="dark"] thead {
+  background-color: var(--vd-bg-secondary);
+}
+
+/* Dark mode support for system preference */
+@media (prefers-color-scheme: dark) {
+
+  :root:not([data-theme]) .vd-table,
+  :root:not([data-theme]) .table {
+    --vd-table-bg: var(--vd-bg-primary);
+    --vd-table-border-color: var(--vd-border-color);
+    --vd-table-striped-bg: var(--vd-bg-secondary);
+    --vd-table-hover-bg: rgba(255, 255, 255, 0.05);
+
+    background-color: var(--vd-table-bg);
+    color: var(--vd-text-primary);
+  }
+
+  :root:not([data-theme]) .vd-table th,
+  :root:not([data-theme]) .vd-table td,
+  :root:not([data-theme]) .table th,
+  :root:not([data-theme]) .table td {
+    border-color: var(--vd-table-border-color);
+  }
+
+  :root:not([data-theme]) .vd-table thead th,
+  :root:not([data-theme]) .table thead th {
+    border-color: var(--vd-table-border-color);
+    color: var(--vd-text-primary);
+  }
+
+  :root:not([data-theme]) .vd-table-striped tbody tr:nth-of-type(odd),
+  :root:not([data-theme]) .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--vd-table-striped-bg);
+  }
+
+  :root:not([data-theme]) .vd-table thead,
+  :root:not([data-theme]) thead {
+    background-color: var(--vd-bg-secondary);
+  }
+}
