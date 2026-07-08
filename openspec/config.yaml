@@ -1,0 +1,40 @@
+schema: spec-driven
+
+context: |
+  Package: @vanduo-oss/vd3 (MIT, vanduo-oss org). The Vue3-only design system — next
+  evolution of vanduo. Fully standalone: absorbs the DTCG token pipeline (from the old
+  core repo) and the CSS tree (from the old framework repo). Zero runtime deps beyond
+  a vue >=3.3 peer. No pinia (useToast is a module-scope reactive() singleton).
+  Stack: Vue 3 composition API + TypeScript SFC library, DTCG tokens in tokens/,
+  authored CSS in css/ with generated color partials in css/core/generated/ (gitignored).
+  Build order: scripts/build-tokens.mjs -> scripts/build-css.mjs (lightningcss) ->
+  vite build (lib es+cjs, externalize vue only) -> vue-tsc -> scripts/check-class-coverage.mjs.
+  Exports: "." (components + composables + theme API + token data), "./css" (dist/vd3.min.css),
+  "./css/core", "./tokens.json". Fonts (10 families) + Phosphor icons (regular+fill only)
+  copied to dist/ beside CSS. CSS classes use vd-* prefix; custom properties use --vd-*;
+  theme via data-palette/-primary/-neutral/-radius/-theme/-font attributes; localStorage
+  keys keep the vanduo-* prefix.
+  Tests: vitest + @vue/test-utils + jsdom. Every exported component/composable has >=1 spec.
+  Old-line repos (core, framework, vue, vd2) are READ-ONLY reference material — never edit.
+  Do not publish openspec/ to npm (files field is dist/ plus docs).
+
+rules:
+  proposal:
+    - Call out semver impact and API compatibility with the old @vanduo-oss/vue package (vd2->vd3 migration notes)
+    - Name the framework/js source file(s) being ported when rewriting a composable, with line counts
+    - Always include a "Non-goals" section
+  specs:
+    - Use Given/When/Then scenario format under each requirement
+    - Use SHALL/MUST for normative requirements
+    - For composable rewrites, spec behavior parity with the vanilla source (options surface, ARIA, keyboard)
+  design:
+    - Pure Vue only — no window.Vanduo* globals, no IIFE loading, no DOM-scan auto-init layers
+    - All browser access in onMounted/onScopeDispose (SSR-safe under vite-ssg)
+    - Prefer extending existing components/composables over new abstractions
+    - No new runtime npm dependencies
+  tasks:
+    - Include pnpm build and pnpm test when code changes
+    - Include check-class-coverage gate when components or CSS change
+    - Include docs sync step (vd3-docs) when public API or CSS changes
+  changelog:
+    - Track packages only (@vanduo-oss/vd3, @vanduo-oss/vd3-cbun); never docs-site content
