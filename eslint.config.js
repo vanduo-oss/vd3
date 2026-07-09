@@ -99,6 +99,8 @@ export default [
       'node_modules/**',
       // Generated color partials (Phase 1 token/CSS pipeline output).
       'css/core/generated/**',
+      // Generated token-data module (build-tokens.mjs output, gitignored).
+      'src/theme/generated/**',
       // Node build scripts (not app code).
       'scripts/**',
       // Spec-driven change artifacts and agent config — not lintable code.

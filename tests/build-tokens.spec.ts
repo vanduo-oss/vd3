@@ -5,8 +5,8 @@
  * (generated CSS partials + typed token-data module + flat tokens.json).
  */
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { existsSync, readFileSync, rmSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -14,12 +14,15 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 
 const ARTIFACTS = [
-  "dist/tokens.js",
-  "dist/tokens.d.ts",
   "dist/tokens.json",
+  "src/theme/generated/tokens.data.ts",
   "css/core/generated/colors-fib-base.css",
   "css/core/generated/colors-palette.css",
 ];
+
+/** Legacy dist token-data module — dropped in vd3-carryover (the typed data
+ * now ships inlined in the lib bundle via src/theme/generated/tokens.data.ts). */
+const LEGACY_ARTIFACTS = ["dist/tokens.js", "dist/tokens.d.ts"];
 
 const build = () =>
   execSync(`"${process.execPath}" scripts/build-tokens.mjs`, {
@@ -40,12 +43,25 @@ const generatedPair = () =>
 
 describe("scripts/build-tokens.mjs output contract", () => {
   beforeAll(() => {
+    // Remove any stale legacy artifacts (pre-carryover builds) so the
+    // "no longer emitted" assertion tests the generator, not the checkout.
+    for (const f of LEGACY_ARTIFACTS) {
+      rmSync(resolve(root, f), { force: true });
+    }
     build(); // ensure artifacts exist before any assertions
   });
 
-  it("emits all five artifacts, non-empty", () => {
+  it("emits all four artifacts, non-empty", () => {
     for (const f of ARTIFACTS) {
       expect(read(f).length, `${f} is empty`).toBeGreaterThan(0);
+    }
+  });
+
+  it("no longer emits the legacy dist token module", () => {
+    for (const f of LEGACY_ARTIFACTS) {
+      expect(existsSync(resolve(root, f)), `${f} should not be emitted`).toBe(
+        false,
+      );
     }
   });
 
@@ -96,9 +112,9 @@ describe("scripts/build-tokens.mjs output contract", () => {
     expect(json.customizer, "customizer metadata present").toBeTruthy();
   });
 
-  it("tokens.js exposes the documented public API", async () => {
-    const url = pathToFileURL(resolve(root, "dist/tokens.js")).href;
-    const mod = (await import(/* @vite-ignore */ url)) as Record<
+  it("tokens.data.ts exposes the documented public API", async () => {
+    // Deferred import: the module is (re)generated in beforeAll.
+    const mod = (await import("../src/theme/generated/tokens.data")) as Record<
       string,
       unknown
     >;

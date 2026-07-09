@@ -1,0 +1,4 @@
+# Generated output — formatted by its generator, byte-deterministically.
+src/theme/generated/
+css/core/generated/
+dist/

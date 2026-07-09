@@ -5,6 +5,24 @@ tracks the package only — never docs-site content.
 
 ## Unreleased
 
+- Vue surface carryover (`vd3-carryover`): the pure-Vue surface of the old
+  `@vanduo-oss/vue` package lands 1:1 — 37 SFC components (all except
+  `VdMenu`, deferred to `vd3-rewrites` with the 12 delegating/DOM-scan
+  composables), the 7 layout primitives, 19 composables (incl. the theme
+  layer and `useToast`), `sanitizeHtml`, the `StatusVariant`/`TreeNode`
+  types, and the `VanduoVue` plugin. Token data now ships inlined in the lib
+  bundle via a generated `src/theme/generated/tokens.data.ts` (same export
+  surface as the old `@vanduo-oss/core`: `DEFAULTS`, `PALETTE_OPTIONS`,
+  `PRIMARY_COLORS`, `NEUTRAL_COLORS`, `RADIUS_OPTIONS`, `FONT_OPTIONS`,
+  `THEME_MODES`, `tokens` + types, re-exported from the package root);
+  `dist/tokens.js` + `dist/tokens.d.ts` are **dropped** (`./tokens.json`
+  stays). **BREAKING** vs old `@vanduo-oss/vue`: `loadVanduoRuntime` is
+  removed (no IIFE runtime, no `window.Vanduo*`), and `useToast` is a
+  pinia-free module singleton — identical documented API (`useToastStore`,
+  `useToast`, flexible `show()`, typed helpers, reactive `queue`) but the
+  pinia meta-API (`$patch`/`$subscribe`/devtools) is gone and pinia is no
+  longer a peer. New `check:classes` gate proves every rendered `vd-*`
+  class has a selector in `dist/vd3.min.css`.
 - Token + CSS foundation (`vd3-token-css-foundation`): vd3 becomes fully
   standalone. DTCG token sources absorbed from the old core repo
   (`tokens/`) with a zero-dependency generator emitting the generated color

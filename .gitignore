@@ -1,6 +1,7 @@
 node_modules/
 dist/
 css/core/generated/
+src/theme/generated/
 *.tsbuildinfo
 .DS_Store
 *.log

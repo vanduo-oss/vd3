@@ -34,9 +34,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Bootstrap the generated theme-data module (src/theme/generated/
+      # tokens.data.ts) that lint/typecheck/test need on a fresh clone.
+      - run: pnpm run build:tokens
+
       - run: pnpm run lint
       - run: pnpm run format:check
       - run: pnpm run stylelint
       - run: pnpm run typecheck
       - run: pnpm run test
       - run: pnpm run build
+      - run: pnpm run check:classes

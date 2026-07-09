@@ -10,10 +10,11 @@ components), vd3 is fully standalone: one package will ship its own DTCG
 design tokens, CSS tree, and typed `Vd*` components/composables. Sole peer
 dependency: `vue >=3.3` — no pinia.
 
-**STATUS: pre-release — not yet published to npm.** The scaffold and the
-token/CSS foundation are in place; the component carryover lands next.
+**STATUS: pre-release — not yet published to npm.** The scaffold, the
+token/CSS foundation, and the pure-Vue component/composable carryover are in
+place; the delegating-composable rewrites (`vd3-rewrites`) land next.
 
-## Planned exports
+## Exports
 
 | Export                       | Contents                                          |
 | ---------------------------- | ------------------------------------------------- |
@@ -29,22 +30,35 @@ token/CSS foundation are in place; the component carryover lands next.
 1. `scripts/clean-dist.mjs` — resets `dist/` (the only step that cleans;
    vite runs with `emptyOutDir: false`).
 2. `scripts/build-tokens.mjs` — DTCG tokens (`tokens/`) → generated color
-   partials (`css/core/generated/`, gitignored) + `dist/tokens.{js,d.ts,json}`.
-   Zero-dependency and deterministic.
+   partials (`css/core/generated/`, gitignored), the typed token-data module
+   (`src/theme/generated/tokens.data.ts`, gitignored — inlined into the lib
+   bundle) + `dist/tokens.json`. Zero-dependency and deterministic.
 3. `scripts/build-css.mjs` — bundles `css/vd3.css` with lightningcss into
    `dist/vd3(.min).css` and the no-icons `dist/vd3-core(.min).css` (+ source
    maps), and copies `fonts/` and the Phosphor regular + fill icon weights
    into `dist/`.
 4. `vite build` — the library JS (`dist/index.{js,cjs}`).
 5. `vue-tsc -p tsconfig.build.json` — the `.d.ts` declarations.
+6. `scripts/check-class-coverage.mjs` — asserts every `vd-*` class the
+   components render has a selector in `dist/vd3.min.css`
+   (also standalone as `pnpm check:classes`).
 
 `pnpm build:tokens` / `pnpm build:css` run steps 2–3 standalone;
 `pnpm gen:fib` regenerates `tokens/primitive/color.fib.tokens.json`.
 
 ## Development
 
+On a fresh clone, bootstrap the generated token-data module first — `src/`
+imports `src/theme/generated/tokens.data.ts` (gitignored build output), so
+lint/typecheck/test cannot pass until it exists:
+
 ```sh
-pnpm install
+pnpm install && pnpm build:tokens
+```
+
+Then the usual gates:
+
+```sh
 pnpm lint          # eslint
 pnpm format:check  # prettier (src, tests, scripts)
 pnpm stylelint     # authored css tree (generated partials excluded)
