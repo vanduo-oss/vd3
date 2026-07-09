@@ -31,12 +31,15 @@
       `loadVanduoRuntime`, the `runtimePromise` machinery, and the
       `ThemeDefaults` import from core (now from the theme layer); do NOT
       carry `src/shims.d.ts`.
-- [ ] 2.4 Theme/plugin specs: `tests/composables/useTheme.spec.ts`
+- [x] 2.4 Theme/plugin specs: `tests/composables/use-theme.spec.ts`
       (defaults merge, load/apply/persist, `vanduo-*` keys, invalid-value
       fallback, system-value attribute removal, `defaultPrimary` /
-      `isDefaultPrimary`), `tests/composables/useThemeBridge.spec.ts`
+      `isDefaultPrimary`), `tests/composables/use-theme-bridge.spec.ts`
       (ref-driven `data-theme` re-application), `tests/plugin.spec.ts`
-      (install applies `themeDefaults`; `loadVanduoRuntime` absent).
+      (`app.use(VanduoVue, { themeDefaults })` applies overrides via
+      `setThemeDefaults`; the no-override branch leaves the baseline intact;
+      `loadVanduoRuntime` absent from both the module and the plugin object).
+      Spec files use kebab-case names.
 
 ## 3. useToast — lock first, then rewrite
 
@@ -54,9 +57,9 @@
       (`duration: 5000`, `position: "top-right"`, `dismissible: true`,
       `showProgress: true`, `solid: false`); document the SSR
       shared-singleton caveat in the doc comment.
-- [ ] 3.3 Behavior spec `tests/composables/useToast.spec.ts`: singleton
-      shared across callers, flexible `show()` runtime behavior, defaults,
-      `dismiss` filtering; verify the pre-written type lock passes
+- [x] 3.3 Behavior spec `tests/composables/use-toast.spec.ts` (kebab-case):
+      singleton shared across callers, flexible `show()` runtime behavior,
+      defaults, `dismiss` filtering; verify the pre-written type lock passes
       unmodified.
 
 ## 4. Pure composables (18)
@@ -70,9 +73,9 @@
 - [x] 4.2 Guard: grep `src/` for `window.Vanduo`, `@vanduo-oss/framework`,
       and `pinia` — zero matches (the 12 delegating/DOM-scan composables
       stay out; they land in `vd3-rewrites`).
-- [ ] 4.3 jsdom behavior spec per carried composable under
-      `tests/composables/` (harness mount, drive DOM/events, assert effects
-      + cleanup on unmount).
+- [x] 4.3 jsdom behavior spec per carried composable under
+      `tests/composables/` (kebab-case `use-*.spec.ts`; harness mount, drive
+      DOM/events, assert effects + cleanup on unmount).
 
 ## 5. Components (37 SFCs + 7 primitives)
 
@@ -87,11 +90,13 @@
       `loadVanduoRuntime`, and the 12 excluded composables; keep
       `VD3_VERSION`, the `StatusVariant` + `TreeNode` type re-exports, and
       the `sanitizeHtml` export.
-- [ ] 5.5 Mount spec per exported SFC under `tests/components/` (primitives
+- [x] 5.5 Mount spec per exported SFC under `tests/components/` (primitives
       may share one file): root `vd-*` class, representative prop→class
       mapping, declared emits, `v-model` round-trip where applicable;
       toast-stack specs cover position grouping + dismissal via the
-      singleton queue.
+      singleton queue. (Filled the last gaps: dedicated
+      `vd-switch`/`vd-table`/`vd-tabs`/`vd-toast` specs — every SFC exported
+      from `src/index.ts` now has a mount spec.)
 
 ## 6. Class-coverage gate
 
@@ -118,7 +123,7 @@
 
 - [x] 8.1 `pnpm build` green (clean → build-tokens → build-css → vite →
       vue-tsc → check:classes), run via `mise exec node@24 -- pnpm build`.
-- [x] 8.2 `pnpm test` green (65 spec files / 668 tests: components,
+- [x] 8.2 `pnpm test` green (70 spec files / 701 tests: components,
       composables, theme, plugin, API lock, build contracts), via
       `mise exec node@24 --`. Type Errors: none.
 - [x] 8.3 `pnpm lint`, `pnpm format:check`, `pnpm stylelint`,
@@ -127,6 +132,9 @@
 - [x] 8.4 Fresh-clone rehearsal: remove `dist/`, `css/core/generated/`,
       `src/theme/generated/` → `pnpm build:tokens` → all gates pass.
 - [ ] 8.5 Flag the new public surface for vd3-docs (docs sync happens in the
-      docs repo's own change; no docs-site work here).
-- [ ] 8.6 `openspec validate vd3-carryover --strict` green; then archive per
-      workflow.
+      docs repo's own change; no docs-site work here). DEFERRED: cross-repo
+      follow-up — filed against the vd3-docs openspec, not doable in this
+      repo.
+- [ ] 8.6 `openspec validate vd3-carryover --strict` green (verified passing);
+      archive DEFERRED: the change stays active in `openspec/changes/` until
+      review sign-off, so it is intentionally not archived here.
