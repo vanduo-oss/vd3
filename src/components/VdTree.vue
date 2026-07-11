@@ -16,12 +16,21 @@ import VdTreeNode, { type TreeNode } from "./VdTreeNode.vue";
  *    `{ id, checked: boolean, label }`).
  *  - Arrow Left/Right collapse/expand the focused branch (documented keyboard
  *    support the Vanilla JS omitted; it only handled Up/Down).
+ *
+ * BEHAVIOR CHANGE: `cascade` now defaults to `true` via `withDefaults`, so
+ * mounting VdTree WITHOUT the prop cascades a parent check to its descendants.
+ * The prior type-only `defineProps` + `props.cascade ?? true` never engaged
+ * because Vue coerces an omitted Boolean prop to `false`, leaving `?? true`
+ * dead. Pass `:cascade="false"` to opt out of the cascade.
  */
-const props = defineProps<{
-  nodes: TreeNode[];
-  checkbox?: boolean;
-  cascade?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    nodes: TreeNode[];
+    checkbox?: boolean;
+    cascade?: boolean;
+  }>(),
+  { cascade: true },
+);
 
 const root = ref<HTMLElement | null>(null);
 
@@ -50,7 +59,7 @@ const collectChecked = (items: TreeNode[], acc: string[] = []): string[] => {
 
 const onCheck = (node: TreeNode, checked: boolean): void => {
   node.checked = checked;
-  if ((props.cascade ?? true) && node.children) {
+  if (props.cascade && node.children) {
     setChildChecked(node.children, checked);
   }
   root.value?.dispatchEvent(

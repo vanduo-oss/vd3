@@ -65,13 +65,14 @@ describe("VdTree", () => {
     expect(events[1].detail).toEqual({ id: "docs", open: false });
   });
 
-  it("cascades a parent check to children when cascade is enabled and fires tree:check", async () => {
-    // NOTE: `cascade` must be passed explicitly. Because Vue coerces an absent
-    // Boolean prop to `false`, the component's `props.cascade ?? true` default
-    // never engages when the prop is omitted, so cascade is only active when
-    // `cascade: true` is provided (see suspected component bug in the report).
+  it("cascades a parent check to children by default (cascade omitted) and fires tree:check", async () => {
+    // BEHAVIOR: `cascade` now defaults to `true` via `withDefaults`, so mounting
+    // WITHOUT the prop cascades a parent check to its descendants. (Previously a
+    // type-only `defineProps` + `props.cascade ?? true` left cascade off unless
+    // `cascade: true` was passed, because Vue coerces an omitted Boolean to
+    // `false` — the fixed VdTree-fix item.)
     const wrapper = mount(VdTree, {
-      props: { nodes: makeNodes(), checkbox: true, cascade: true },
+      props: { nodes: makeNodes(), checkbox: true },
     });
     const events: CustomEvent[] = [];
     wrapper.element.addEventListener("tree:check", (e: Event) =>

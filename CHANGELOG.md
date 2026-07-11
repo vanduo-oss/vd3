@@ -5,6 +5,41 @@ tracks the package only — never docs-site content.
 
 ## Unreleased
 
+- New components + composables (`vd3-new-components`): seven new SFCs land —
+  `VdBreadcrumb`, `VdFooter`, `VdFab` (with speed-dial), `VdNavbar` (ported
+  from `framework/js/navbar.js`: burger + overlay + body-lock + resize/Escape/
+  outside close, wired to `useNavbarGlassScroll` for glass/transparent
+  variants), `VdThemeSwitcher` (menu + cycle modes) and `VdThemeCustomizer`
+  (de-pinia'd onto the vd3 theme layer, `show-palette` prop, `vd:open-customizer`
+  window event), and `VdDocSearch` (combobox/listbox over the new
+  `useDocSearch` composable). Four composables are added: `useClickOutside`
+  (promoted from vd2, signature intact), `useDocSearch`, `useLazyLoad`
+  (IntersectionObserver reveal + `loadSection` with `sanitizeHtml` injection and
+  https/relative URL guard), and `useGrid` + `setGridSystem` (per-container
+  standard/fibonacci mode with `grid:modechange`, plus a document-level
+  `data-grid="fibonacci"` default backed by new `css/core/grid.css` rules that
+  apply the Fibonacci templates to `.vd-row`s outside an explicit
+  `.vd-grid-standard` container, closest-container-wins). **BEHAVIOR CHANGE**:
+  `VdTree`'s `cascade` prop now genuinely defaults to `true` via `withDefaults`
+  (the prior type-only `defineProps` + `props.cascade ?? true` never engaged, so
+  parent→child check cascade silently never fired); mounting `VdTree` without
+  the prop now cascades a parent check to its descendants — pass
+  `:cascade="false"` to opt out.
+- Rewritten composables + `VdMenu` un-defer (`vd3-rewrites`): the twelve
+  delegating/DOM-scan composables deferred at carryover are restored as pure
+  Vue rewrites (no `window.Vanduo*`, no framework IIFE) — `useRipple`,
+  `useSearch`, `useExpandingCards`, `useValidate`, `useTimeline`, `usePopover`,
+  `useFlow`, `useTabs`, `useSpotlight`, `useDropdown`, `useImageBox`,
+  `useDraggable` — and `VdMenu` (built on the rewritten `useDropdown`) ships.
+  Each preserves the old `useX(root: Ref<HTMLElement | null>)` shim signature
+  (call sites port unchanged) while additively returning an optional controller
+  and, where relevant, accepting an `options` argument; controllers expose a
+  `refresh()` idiom for re-scanning DOM added after mount (idempotent across
+  `v-for` re-renders). **Behavior notes**: overlays/instances now tear down
+  per-instance (no `destroyAll()` nuking sibling instances) and dismissal
+  handlers only emit `*:hide` for panels actually open; `useSearch` returns the
+  module-scope `SearchRegistry` (register/unregister/list/query) and is callable
+  from app-level code outside component setup.
 - Vue surface carryover (`vd3-carryover`): the pure-Vue surface of the old
   `@vanduo-oss/vue` package lands 1:1 — 37 SFC components (all except
   `VdMenu`, deferred to `vd3-rewrites` with the 12 delegating/DOM-scan

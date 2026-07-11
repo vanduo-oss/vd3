@@ -1654,6 +1654,52 @@
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 }
 
+/* ===================================================
+ * Document-Level Grid Default (data-grid attribute)
+ * `setGridSystem("fibonacci")` stamps `data-grid="fibonacci"` on <html>,
+ * applying the Fibonacci template to every `.vd-row` EXCEPT rows inside an
+ * explicit `.vd-grid-standard` container (closest explicit container wins).
+ * =================================================== */
+
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row) {
+  display: grid;
+  gap: var(--vd-grid-gutter);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row)>[class*="col-"] {
+  width: auto;
+  padding-left: 0;
+  padding-right: 0;
+  flex: none;
+}
+
+/* Two-child rows use golden ratio */
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(2):last-child) {
+  grid-template-columns: 1fr 1.618fr;
+}
+
+/* Three-child rows use 2:3:5 */
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(3):last-child) {
+  grid-template-columns: 2fr 3fr 5fr;
+}
+
+/* Four-child rows use 1:2:3:5 */
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(4):last-child) {
+  grid-template-columns: 1fr 2fr 3fr 5fr;
+}
+
+/* Single-child rows stay full width */
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:only-child) {
+  grid-template-columns: 1fr;
+}
+
+/* Five+ children use equal columns */
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(5)) {
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+
 /* Responsive: stack golden/fibonacci grids on mobile */
 @media (max-width: 767.98px) {
 
@@ -1689,6 +1735,10 @@
 
   .vd-grid-fibonacci>.vd-row,
   .grid-fibonacci>.vd-row {
+    grid-template-columns: 1fr;
+  }
+
+  [data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row) {
     grid-template-columns: 1fr;
   }
 }
