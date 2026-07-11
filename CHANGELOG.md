@@ -11,8 +11,14 @@ tracks the package only — never docs-site content.
   outside close, wired to `useNavbarGlassScroll` for glass/transparent
   variants), `VdThemeSwitcher` (menu + cycle modes) and `VdThemeCustomizer`
   (de-pinia'd onto the vd3 theme layer, `show-palette` prop, `vd:open-customizer`
-  window event), and `VdDocSearch` (combobox/listbox over the new
-  `useDocSearch` composable). Four composables are added: `useClickOutside`
+  window event) — both share the new `useThemePreference` singleton, and
+  `VdDocSearch` (combobox/listbox over the new
+  `useDocSearch` composable). Five composables are added: `useThemePreference`
+  (module-scope reactive theme-preference singleton — the de-pinia'd replacement
+  for vd2's theme store and the shared source of truth behind both theme
+  controls, with `setTheme`/`setPalette`/`setPrimary`/`setNeutral`/`setRadius`/
+  `setFont`/`reset` and a refcounted `prefers-color-scheme` listener),
+  `useClickOutside`
   (promoted from vd2, signature intact), `useDocSearch`, `useLazyLoad`
   (IntersectionObserver reveal + `loadSection` with `sanitizeHtml` injection and
   https/relative URL guard), and `useGrid` + `setGridSystem` (per-container

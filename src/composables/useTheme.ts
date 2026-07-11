@@ -13,6 +13,7 @@
  * `app.use(VanduoVue, { themeDefaults })` — before the theme model first reads
  * them.
  */
+import { getCurrentInstance, onBeforeUnmount, onMounted, reactive } from "vue";
 import {
   DEFAULTS as CORE_DEFAULTS,
   FONT_OPTIONS,
@@ -208,3 +209,144 @@ export const persistPreference = (prefs: ThemePreference): void => {
 };
 
 export { isDefaultPrimary };
+
+/**
+ * Shared, reactive theme-preference singleton — the de-pinia'd replacement for
+ * vd2's pinia theme store and the single source of truth behind both
+ * `VdThemeSwitcher` and `VdThemeCustomizer`. Follows the `useToast` precedent:
+ * module-scope reactive state, no store library.
+ *
+ * Why a singleton: the two controls own disjoint fields (the switcher owns
+ * `theme`; the customizer owns palette/primary/neutral/radius/font), yet every
+ * write persists the *whole* preference. With per-component snapshots, whichever
+ * control acted second wrote its own stale copy of the other's field over
+ * storage — e.g. picking a primary color reverted a just-selected dark mode.
+ * One shared reactive object means a change in either control is immediately
+ * visible to the other, so no write ever carries a stale field.
+ *
+ * SSR caveat (same as `useToast`): module-scope state is process-global. Theme
+ * is a client-only concern — the state is created from `defaultPreference()` at
+ * SSR/SSG render time and only ever hydrated/mutated on the client.
+ */
+let themeState: ThemePreference | null = null;
+
+/**
+ * Lazily create the singleton. On the client the first access hydrates from
+ * storage and syncs `<html>`; on the server it seeds from defaults without
+ * touching storage or the DOM.
+ */
+const ensureThemeState = (): ThemePreference => {
+  if (!themeState) {
+    themeState = reactive<ThemePreference>(
+      isClient() ? loadPreference() : defaultPreference(),
+    );
+    if (isClient()) applyPreference(themeState);
+  }
+  return themeState;
+};
+
+/** Persist + apply the shared state (mirrors the old store's `commit`). */
+const commitThemeState = (): void => {
+  const state = ensureThemeState();
+  applyPreference(state);
+  persistPreference(state);
+};
+
+// Refcounted `prefers-color-scheme` listener: while the preference tracks the
+// system scheme, a scheme flip must re-apply so the auto-default primary
+// follows. Attached on the first consumer mount, detached when the last
+// consumer unmounts (SSR-safe: only touched from client lifecycle hooks).
+let consumerCount = 0;
+let mediaQuery: MediaQueryList | null = null;
+
+const onSchemeChange = (): void => {
+  if (themeState && themeState.theme === "system") applyPreference(themeState);
+};
+
+const attachSchemeListener = (): void => {
+  consumerCount += 1;
+  if (
+    consumerCount === 1 &&
+    isClient() &&
+    typeof window.matchMedia === "function"
+  ) {
+    mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", onSchemeChange);
+  }
+};
+
+const detachSchemeListener = (): void => {
+  consumerCount = Math.max(0, consumerCount - 1);
+  if (consumerCount === 0 && mediaQuery) {
+    mediaQuery.removeEventListener("change", onSchemeChange);
+    mediaQuery = null;
+  }
+};
+
+export interface ThemePreferenceApi {
+  /** The shared reactive preference (six fields). Read in templates/computeds. */
+  state: ThemePreference;
+  setTheme: (theme: ThemeMode) => void;
+  setPalette: (palette: Palette) => void;
+  setPrimary: (primary: string) => void;
+  setNeutral: (neutral: string) => void;
+  setRadius: (radius: RadiusOption) => void;
+  setFont: (font: string) => void;
+  /** Restore every field to `defaultPreference()` and re-apply/persist. */
+  reset: () => void;
+}
+
+/**
+ * Access the shared theme-preference singleton. Every setter routes through
+ * `applyPreference()` + `persistPreference()` so the `data-*` attribute contract
+ * and `vanduo-*` storage keys remain the single source of truth; `setTheme`
+ * re-derives the default primary for the new scheme via `applyPreference`.
+ *
+ * When called inside a component `setup()`, it refcounts the shared
+ * `prefers-color-scheme` listener across that component's lifecycle and
+ * re-hydrates the state from storage on mount (idempotent — storage is the
+ * source of truth, so a later-mounting consumer never clobbers an in-session
+ * change made through the setters).
+ */
+export const useThemePreference = (): ThemePreferenceApi => {
+  const state = ensureThemeState();
+
+  // On the client, re-sync the shared state from persisted storage at call
+  // time (synchronously, before the consumer's first render) so a consumer
+  // mounting after the singleton was created — or a client setup re-run during
+  // SSR hydration — paints the current preference rather than a stale snapshot.
+  // Storage is the source of truth and every setter persists, so this never
+  // drops an in-session change. SSR: skipped; the state stays at defaults.
+  if (isClient()) {
+    Object.assign(state, loadPreference());
+    applyPreference(state);
+  }
+
+  if (getCurrentInstance()) {
+    // Refcount the shared scheme listener across this consumer's lifecycle.
+    onMounted(attachSchemeListener);
+    onBeforeUnmount(detachSchemeListener);
+  }
+
+  const setField = <K extends keyof ThemePreference>(
+    key: K,
+    value: ThemePreference[K],
+  ): void => {
+    state[key] = value;
+    commitThemeState();
+  };
+
+  return {
+    state,
+    setTheme: (theme) => setField("theme", theme),
+    setPalette: (palette) => setField("palette", palette),
+    setPrimary: (primary) => setField("primary", primary),
+    setNeutral: (neutral) => setField("neutral", neutral),
+    setRadius: (radius) => setField("radius", radius),
+    setFont: (font) => setField("font", font),
+    reset: () => {
+      Object.assign(state, defaultPreference());
+      commitThemeState();
+    },
+  };
+};

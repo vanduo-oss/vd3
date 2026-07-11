@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
-import {
-  applyPreference,
-  defaultPreference,
-  loadPreference,
-  persistPreference,
-  type ThemeMode,
-  type ThemePreference,
-} from "../composables/useTheme";
+import { useThemePreference, type ThemeMode } from "../composables/useTheme";
 
 /**
  * VdThemeSwitcher — the UI half of the light/dark/system theme control.
  *
- * Behavior source: `framework/js/components/theme-switcher.js`. The
- * persistence / apply / system-preference logic already lives in vd3's theme
- * layer (`loadPreference`/`applyPreference`/`persistPreference`), so this
- * component is purely the markup + interaction. It renders either the
+ * Behavior source: `framework/js/components/theme-switcher.js`. All theme
+ * reads/writes go through the shared `useThemePreference()` singleton (which
+ * owns persistence, `data-theme` application, and the refcounted
+ * `prefers-color-scheme` listener), so this component is purely the markup +
+ * interaction and stays in sync with `VdThemeCustomizer`. It renders either the
  * vd2-proven icon menu (`menu`, default) or a single button that cycles
  * `system -> light -> dark`.
  */
@@ -54,23 +48,21 @@ const OPTION_LABELS: Record<ThemeMode, string> = {
   dark: "Dark theme",
 };
 
-// The full preference set is kept so every write carries all the fields the
-// theme layer applies; only `theme` is mutated here. Hydrated from storage on
-// mount (SSR-safe: no storage/DOM read at setup time).
-const pref = ref<ThemePreference>(defaultPreference());
+// The shared theme singleton owns all preference state; this component only
+// reads/writes the `theme` field through it, so a change here is immediately
+// visible to VdThemeCustomizer and vice versa.
+const theme = useThemePreference();
 const open = ref(false);
 const root = ref<HTMLElement | null>(null);
 
-const mode = computed<ThemeMode>(() => pref.value.theme);
+const mode = computed<ThemeMode>(() => theme.state.theme);
 const currentLabel = computed(() => LABELS[mode.value]);
 const iconClass = (m: ThemeMode): string => ICONS[m];
 
 const commit = (m: ThemeMode): void => {
-  pref.value = { ...pref.value, theme: m };
-  // `applyPreference` re-derives the default primary for the new scheme and
-  // writes the `data-*` attributes; `persistPreference` stores every key.
-  applyPreference(pref.value);
-  persistPreference(pref.value);
+  // `setTheme` re-derives the default primary for the new scheme, writes the
+  // `data-*` attributes, and persists every key on the shared state.
+  theme.setTheme(m);
   emit("change", m);
 };
 
@@ -139,28 +131,16 @@ const onDocumentClick = (e: MouseEvent): void => {
   }
 };
 
-const onMediaChange = (): void => {
-  // While tracking the system scheme, re-apply so the default primary follows.
-  if (pref.value.theme === "system") applyPreference(pref.value);
-};
-
-let mq: MediaQueryList | null = null;
-
 onMounted(() => {
   if (typeof window === "undefined") return;
-  // Now on the client: hydrate the live preference from storage.
-  pref.value = loadPreference();
+  // The shared singleton hydrates the preference from storage and owns the
+  // `prefers-color-scheme` listener; this component only tracks outside clicks.
   document.addEventListener("click", onDocumentClick);
-  if (typeof window.matchMedia === "function") {
-    mq = window.matchMedia("(prefers-color-scheme: dark)");
-    mq.addEventListener("change", onMediaChange);
-  }
 });
 
 onBeforeUnmount(() => {
   if (typeof window === "undefined") return;
   document.removeEventListener("click", onDocumentClick);
-  if (mq) mq.removeEventListener("change", onMediaChange);
 });
 </script>
 

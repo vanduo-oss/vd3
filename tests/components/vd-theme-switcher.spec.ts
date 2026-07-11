@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import VdThemeSwitcher from "../../src/components/VdThemeSwitcher.vue";
+import VdThemeCustomizer from "../../src/components/VdThemeCustomizer.vue";
 
 const THEME_KEY = "vanduo-theme-preference";
 
@@ -152,6 +154,54 @@ describe("VdThemeSwitcher — menu variant", () => {
     expect(wrapper.get(".vd-theme-switcher").classes()).toContain(
       "vd-theme-switcher-menu-end",
     );
+  });
+});
+
+describe("VdThemeSwitcher — cross-component sync (shared singleton)", () => {
+  const q = (sel: string): HTMLElement | null =>
+    document.querySelector(sel) as HTMLElement | null;
+
+  it("a customizer primary change does not revert a switcher dark selection", async () => {
+    const switcher = mount(VdThemeSwitcher, { attachTo: document.body });
+    const customizer = mount(VdThemeCustomizer, { attachTo: document.body });
+
+    // Switcher -> dark.
+    await switcher.get('[data-theme-value="dark"]').trigger("click");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(window.localStorage.getItem(THEME_KEY)).toBe("dark");
+
+    // Customizer -> primary color: must NOT clobber the dark selection (the
+    // pre-singleton regression, where each control held a stale full snapshot).
+    q('.tc-color-swatch[data-color="blue"]')!.click();
+    await nextTick();
+
+    expect(document.documentElement.getAttribute("data-primary")).toBe("blue");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(window.localStorage.getItem(THEME_KEY)).toBe("dark");
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBe("blue");
+
+    switcher.unmount();
+    customizer.unmount();
+    document.body.innerHTML = "";
+  });
+
+  it("a switcher mode change does not clobber a customizer primary color", async () => {
+    const switcher = mount(VdThemeSwitcher, { attachTo: document.body });
+    const customizer = mount(VdThemeCustomizer, { attachTo: document.body });
+
+    q('.tc-color-swatch[data-color="teal"]')!.click();
+    await nextTick();
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBe("teal");
+
+    await switcher.get('[data-theme-value="light"]').trigger("click");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+    // The non-default primary survives the scheme change (shared singleton).
+    expect(document.documentElement.getAttribute("data-primary")).toBe("teal");
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBe("teal");
+
+    switcher.unmount();
+    customizer.unmount();
+    document.body.innerHTML = "";
   });
 });
 

@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from "vue";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useClickOutside } from "../composables/useClickOutside";
 import {
-  applyPreference,
-  defaultPreference,
-  loadPreference,
-  persistPreference,
+  useThemePreference,
   FONT_OPTIONS,
   NEUTRAL_COLORS,
   PALETTE_OPTIONS,
@@ -13,17 +10,17 @@ import {
   RADIUS_OPTIONS,
   type Palette,
   type RadiusOption,
-  type ThemePreference,
 } from "../composables/useTheme";
 
 /**
  * VdThemeCustomizer — promoted from `vd2/src/overlays/VdThemeCustomizer.vue`.
  *
- * De-pinia'd onto the vd3 theme layer (`useTheme` helpers). It holds a local
- * reactive `ThemePreference` and routes every mutation through the shared
- * `applyPreference()` / `persistPreference()` so the `data-*` attribute
- * contract and `vanduo-*` storage keys stay the single source of truth — the
- * same commit pattern the old store used.
+ * De-pinia'd onto the shared `useThemePreference()` singleton (the de-pinia'd
+ * theme store). Every control writes through the singleton's setters, so the
+ * `data-*` attribute contract and `vanduo-*` storage keys stay the single
+ * source of truth and the customizer stays in sync with `VdThemeSwitcher` — a
+ * dark-mode selection in the switcher is never clobbered by a color change here
+ * (and vice versa).
  *
  * The font select absorbs the framework `font-switcher.js` capability: a
  * non-`system` choice stamps `data-font` (removed for `system`) and persists to
@@ -41,9 +38,11 @@ const props = withDefaults(defineProps<Props>(), {
   showPalette: true,
 });
 
-// Local reactive preference — the de-pinia'd replacement for vd2's theme store.
-// Seeded SSR-safe from the generic defaults; hydrated from storage on mount.
-const prefs = reactive<ThemePreference>(defaultPreference());
+// Shared theme singleton — the de-pinia'd replacement for vd2's theme store.
+// `prefs` is its reactive state (SSR-safe seed, hydrated from storage on mount
+// by the singleton), shared live with VdThemeSwitcher.
+const theme = useThemePreference();
+const prefs = theme.state;
 
 const isOpen = ref(false);
 const panelRef = ref<HTMLElement | null>(null);
@@ -52,36 +51,14 @@ const triggerRef = ref<HTMLElement | null>(null);
 const PANEL_WIDTH = 320;
 const MOBILE_BREAKPOINT = 768;
 
-/** Persist + apply the current preference (mirrors the old store's `commit`). */
-const commit = (): void => {
-  applyPreference(prefs);
-  persistPreference(prefs);
-};
-
-const setPalette = (palette: Palette): void => {
-  prefs.palette = palette;
-  commit();
-};
-const setPrimary = (primary: string): void => {
-  prefs.primary = primary;
-  commit();
-};
-const setNeutral = (neutral: string): void => {
-  prefs.neutral = neutral;
-  commit();
-};
-const setRadius = (radius: RadiusOption): void => {
-  prefs.radius = radius;
-  commit();
-};
-const setFont = (font: string): void => {
-  prefs.font = font;
-  commit();
-};
-const reset = (): void => {
-  Object.assign(prefs, defaultPreference());
-  commit();
-};
+// Each control writes only the field it owns through the shared singleton, so a
+// mutation never carries a stale copy of another control's field.
+const setPalette = (palette: Palette): void => theme.setPalette(palette);
+const setPrimary = (primary: string): void => theme.setPrimary(primary);
+const setNeutral = (neutral: string): void => theme.setNeutral(neutral);
+const setRadius = (radius: RadiusOption): void => theme.setRadius(radius);
+const setFont = (font: string): void => theme.setFont(font);
+const reset = (): void => theme.reset();
 
 const resetPanelPosition = (): void => {
   const panel = panelRef.value;
@@ -156,10 +133,8 @@ watch(isOpen, async (open) => {
 });
 
 onMounted(() => {
-  // Hydrate from persisted preferences and sync <html> (client-only).
-  Object.assign(prefs, loadPreference());
-  applyPreference(prefs);
-
+  // The shared singleton hydrates the preference from storage and syncs <html>
+  // on mount; this component only owns its overlay/keyboard window listeners.
   window.addEventListener("keydown", onKeydown);
   window.addEventListener("vd:open-customizer", open);
   window.addEventListener("resize", onReposition);
