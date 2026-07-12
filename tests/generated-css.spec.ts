@@ -58,3 +58,33 @@ describe("generated color partials", () => {
     expect(fibBase).toMatch(/--vd-fib-[a-z]+-\d:/);
   });
 });
+
+describe("built CSS bundle — glass noise filter", () => {
+  // Regression guard: the glass effect embeds an inline SVG whose fractalNoise
+  // is applied via an internal `filter="url(#n)"` fragment reference. lightningcss
+  // used to rebase that fragment to `effects/%23n` (a bogus relative path),
+  // silently breaking the noise. Assert the minified bundle keeps a valid
+  // internal fragment ref and carries no rebased path artifact.
+  let minified = "";
+  beforeAll(() => {
+    execSync(`"${process.execPath}" scripts/build-tokens.mjs`, {
+      cwd: root,
+      stdio: "pipe",
+    });
+    execSync(`"${process.execPath}" scripts/build-css.mjs`, {
+      cwd: root,
+      stdio: "pipe",
+    });
+    minified = readFileSync(resolve(root, "dist/vd3.min.css"), "utf8");
+  });
+
+  it("keeps a valid internal SVG filter fragment reference", () => {
+    // %23 is the URL-encoded '#'; the fragment id is `n`.
+    expect(minified).toContain("filter='url%28%23n%29'");
+  });
+
+  it("carries no lightningcss path-rebase artifact for the noise filter", () => {
+    expect(minified).not.toContain("effects/%23");
+    expect(minified).not.toContain("effects/#n");
+  });
+});

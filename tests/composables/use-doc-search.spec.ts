@@ -186,6 +186,47 @@ describe("useDocSearch excerpt", () => {
     expect(result!.excerpt.startsWith("...")).toBe(true);
     expect(result!.excerptHtml).toContain("<mark>needle</mark>");
   });
+
+  it("yields an empty excerpt for a title-only match with no body", () => {
+    const { api } = mountSearch([
+      { id: "x", title: "Vue Guide", keywords: [] },
+    ]);
+    const [result] = api.search("vue");
+    // The result still ranks and renders (title matched) …
+    expect(result).toBeDefined();
+    expect(result!.id).toBe("x");
+    // … but with no body there is nothing to excerpt — never a bare "...".
+    expect(result!.excerpt).toBe("");
+    expect(result!.excerptHtml).toBe("");
+  });
+
+  it("yields an empty excerpt for a whitespace-only body", () => {
+    const { api } = mountSearch([
+      { id: "x", title: "Vue Guide", keywords: [], content: "   \n\t  " },
+    ]);
+    const [result] = api.search("vue");
+    expect(result!.excerpt).toBe("");
+  });
+
+  it("returns a short non-matching body intact, with no stray ellipsis", () => {
+    const body = "A tidy little introduction.";
+    const { api } = mountSearch([
+      { id: "x", title: "Vue Guide", keywords: [], content: body },
+    ]);
+    const [result] = api.search("vue"); // matches the title, not the body
+    expect(result!.excerpt).toBe(body);
+    expect(result!.excerpt.endsWith("...")).toBe(false);
+  });
+
+  it("truncates a long non-matching body with a trailing ellipsis", () => {
+    const body = "alpha ".repeat(40); // 240 chars, contains no "vue"
+    const { api } = mountSearch([
+      { id: "x", title: "Vue Guide", keywords: [], content: body },
+    ]);
+    const [result] = api.search("vue"); // matches the title, not the body
+    expect(result!.excerpt).toBe(`${body.substring(0, 100)}...`);
+    expect(result!.excerpt.startsWith("...")).toBe(false);
+  });
 });
 
 describe("useDocSearch navigation", () => {

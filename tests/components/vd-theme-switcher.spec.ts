@@ -149,6 +149,46 @@ describe("VdThemeSwitcher — menu variant", () => {
     wrapper.unmount();
   });
 
+  it("opening by click moves focus to the active option", async () => {
+    // Hydrate to a non-default active mode so we prove focus lands on the
+    // *active* menuitemradio (donor `openMenu`), not merely the first.
+    window.localStorage.setItem(THEME_KEY, "dark");
+    const wrapper = mount(VdThemeSwitcher, { attachTo: document.body });
+    await flushPromises();
+
+    const toggle = wrapper.get(".vd-theme-switcher-toggle");
+    await toggle.trigger("click");
+    await nextTick();
+
+    expect(wrapper.get(".vd-theme-switcher").classes()).toContain("is-open");
+    const darkOption = wrapper.get('[data-theme-value="dark"]');
+    expect(darkOption.classes()).toContain("is-active");
+    expect(document.activeElement).toBe(darkOption.element);
+    wrapper.unmount();
+  });
+
+  it("Escape from the open menu returns focus to the toggle button", async () => {
+    const wrapper = mount(VdThemeSwitcher, { attachTo: document.body });
+    const toggle = wrapper.get(".vd-theme-switcher-toggle");
+    await toggle.trigger("click");
+    await nextTick();
+    // Focus starts inside the menu (on the active option) after opening.
+    expect(document.activeElement).not.toBe(toggle.element);
+
+    await wrapper.get(".vd-theme-switcher-menu").trigger("keydown", {
+      key: "Escape",
+    });
+    await nextTick();
+
+    expect(wrapper.get(".vd-theme-switcher").classes()).not.toContain(
+      "is-open",
+    );
+    expect(toggle.attributes("aria-expanded")).toBe("false");
+    // Focus is not stranded on the now-hidden menu — it returns to the toggle.
+    expect(document.activeElement).toBe(toggle.element);
+    wrapper.unmount();
+  });
+
   it("align=end adds the menu-end modifier class", () => {
     const wrapper = mount(VdThemeSwitcher, { props: { align: "end" } });
     expect(wrapper.get(".vd-theme-switcher").classes()).toContain(

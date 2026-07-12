@@ -5,6 +5,14 @@ tracks the package only — never docs-site content.
 
 ## Unreleased
 
+- Hardening (`vd3-hardening`): `useTabs` now accepts the framework's dual
+  selectors (`.vd-tabs, [data-tabs]` / `.vd-tab-link, [data-tab]`) for markup
+  parity (non-breaking superset); `VdThemeSwitcher` returns focus to its toggle
+  on Escape and moves focus into the menu on open (a11y); `useDocSearch` yields a
+  sensible excerpt for title/category/keyword-only matches; and the glass noise
+  effect's inline-SVG `filter="url(#n)"` fragment no longer gets rebased to a
+  bogus `effects/%23n` path by lightningcss in the minified bundle (regression
+  guarded in `tests/generated-css.spec.ts`).
 - New components + composables (`vd3-new-components`): seven new SFCs land —
   `VdBreadcrumb`, `VdFooter`, `VdFab` (with speed-dial), `VdNavbar` (ported
   from `framework/js/navbar.js`: burger + overlay + body-lock + resize/Escape/

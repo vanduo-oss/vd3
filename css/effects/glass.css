@@ -16,7 +16,8 @@
   border: 1px solid var(--vd-glass-border-light);
   box-shadow: var(--vd-glass-shadow);
   backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--vd-glass-blur))
+    saturate(var(--vd-glass-saturate));
   isolation: isolate;
 }
 
@@ -39,7 +40,12 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+  /* The internal SVG filter reference is written as `url%28%23n%29` (percent-encoded
+     parentheses + hash) so the CSS build's url() rewriter and lightningcss don't
+     mistake this same-document fragment ref for a rebasable asset path (which
+     produced a broken `url('effects/%23n')` in dist). The browser percent-decodes
+     the data URI payload back to `filter='url(#n)'`, applying the fractalNoise. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url%28%23n%29' opacity='0.25'/%3E%3C/svg%3E");
   opacity: var(--vd-glass-noise-opacity);
   pointer-events: none;
   z-index: 2;
@@ -70,7 +76,8 @@
 }
 
 .vd-glass-tinted {
-  background: linear-gradient(
+  background:
+    linear-gradient(
       135deg,
       var(--vd-glass-tint, var(--vd-color-primary-alpha-10)) 0%,
       transparent 70%
@@ -79,7 +86,9 @@
 }
 
 .vd-glass-floating {
-  transition: transform var(--vd-transition-normal), box-shadow var(--vd-transition-normal);
+  transition:
+    transform var(--vd-transition-normal),
+    box-shadow var(--vd-transition-normal);
 }
 
 .vd-glass-floating:hover,
@@ -115,7 +124,9 @@
   opacity: 0;
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
   .vd-glass,
   .vd-glass-md {
     background: var(--vd-bg-primary);

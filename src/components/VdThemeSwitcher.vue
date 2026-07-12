@@ -54,6 +54,10 @@ const OPTION_LABELS: Record<ThemeMode, string> = {
 const theme = useThemePreference();
 const open = ref(false);
 const root = ref<HTMLElement | null>(null);
+// The menu toggle owns focus while the menu is closed; we return focus here
+// after Escape so it is never stranded on the now-hidden menu (donor
+// `handleMenuKeydown` -> `toggle.focus()`).
+const toggleBtn = ref<HTMLButtonElement | null>(null);
 
 const mode = computed<ThemeMode>(() => theme.state.theme);
 const currentLabel = computed(() => LABELS[mode.value]);
@@ -77,7 +81,12 @@ const cycle = (): void => {
 };
 
 const toggleMenu = (): void => {
-  open.value = !open.value;
+  const willOpen = !open.value;
+  open.value = willOpen;
+  // Opening via click (and Enter/Space, which dispatch `click` on the
+  // `<button>`) moves focus into the menu, mirroring the ArrowDown-to-open path
+  // and the donor `openMenu`.
+  if (willOpen) void nextTick(focusActiveOption);
 };
 
 const optionEls = (): HTMLElement[] =>
@@ -99,6 +108,10 @@ const focusActiveOption = (): void => {
   (active ?? optionEls()[0])?.focus();
 };
 
+const focusToggle = (): void => {
+  toggleBtn.value?.focus();
+};
+
 const onToggleKeydown = (e: KeyboardEvent): void => {
   if (e.key === "ArrowDown") {
     e.preventDefault();
@@ -107,6 +120,7 @@ const onToggleKeydown = (e: KeyboardEvent): void => {
   } else if (e.key === "Escape" && open.value) {
     e.preventDefault();
     open.value = false;
+    void nextTick(focusToggle);
   }
 };
 
@@ -116,6 +130,7 @@ const onMenuKeydown = (e: KeyboardEvent): void => {
   if (e.key === "Escape") {
     e.preventDefault();
     open.value = false;
+    void nextTick(focusToggle);
   } else if (e.key === "ArrowDown") {
     e.preventDefault();
     focusOption(current + 1);
@@ -156,6 +171,7 @@ onBeforeUnmount(() => {
     data-theme-ui="menu"
   >
     <button
+      ref="toggleBtn"
       type="button"
       class="vd-theme-switcher-toggle"
       :aria-label="currentLabel"

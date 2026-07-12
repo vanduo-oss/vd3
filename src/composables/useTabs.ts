@@ -6,36 +6,42 @@ import { onMounted, onUnmounted, type Ref } from "vue";
  */
 export interface UseTabsController {
   /**
-   * vd3 extension — programmatically activate a tab. Pass the `.vd-tab-link`
-   * element, or an index into `container`'s tab links (`container` defaults
-   * to the first `.vd-tabs` inside the root). Replaces the vanilla
-   * `VanduoTabs.show('tab-id')` document-wide selector convenience.
+   * vd3 extension — programmatically activate a tab. Pass the
+   * `.vd-tab-link`/`[data-tab]` element, or an index into `container`'s tab
+   * links (`container` defaults to the first `.vd-tabs`/`[data-tabs]` inside
+   * the root). Replaces the vanilla `VanduoTabs.show('tab-id')` document-wide
+   * selector convenience.
    */
   show(tab: HTMLElement | number, container?: HTMLElement): void;
   /**
    * vd3 extension — re-scan the root and (re)apply wiring idempotently.
-   * Click/keydown listeners are delegated on each `.vd-tabs` container, so
-   * `v-for` re-renders of the links keep working without a call; call this
-   * after adding whole new `.vd-tabs` containers or new links that need
-   * their ARIA attributes (re)applied.
+   * Click/keydown listeners are delegated on each `.vd-tabs`/`[data-tabs]`
+   * container, so `v-for` re-renders of the links keep working without a
+   * call; call this after adding whole new tab containers or new links that
+   * need their ARIA attributes (re)applied.
    */
   refresh(): void;
 }
 
 /**
- * Ports framework/js/components/tabs.js — wires every `.vd-tabs` container
- * inside `root` with the full vanilla tab behavior: tablist/tab/tabpanel
- * ARIA (`role="tablist"` on `.vd-tab-list`, `role="tab"` + `aria-selected`
- * + roving tabindex on `.vd-tab-link`s, `role="tabpanel"` +
- * `aria-labelledby` on panes, generated ids and `aria-controls`
- * back-links), click and Enter/Space activation skipping `disabled` tabs,
- * orientation-aware arrow keys (ArrowLeft/ArrowRight horizontal,
- * ArrowUp/ArrowDown on `.vd-tabs-vertical`) plus Home/End — moving focus
- * AND activation with wrap-around while skipping disabled tabs — three-way
- * pane resolution (`[data-tab-pane]` attribute, then id, then index),
- * `.is-active` state classes on the tab, its `.vd-tab-item` parent, and the
- * pane, auto-activation of the first tab when none is active at mount, and
- * a bubbling `tab:change` CustomEvent with `{ tab, pane, tabId }`.
+ * Ports framework/js/components/tabs.js — wires every `.vd-tabs`/`[data-tabs]`
+ * container inside `root` with the full vanilla tab behavior: tablist/tab/
+ * tabpanel ARIA (`role="tablist"` on `.vd-tab-list`, `role="tab"` +
+ * `aria-selected` + roving tabindex on `.vd-tab-link`/`[data-tab]` links,
+ * `role="tabpanel"` + `aria-labelledby` on panes, generated ids and
+ * `aria-controls` back-links), click and Enter/Space activation skipping
+ * `disabled` tabs, orientation-aware arrow keys (ArrowLeft/ArrowRight
+ * horizontal, ArrowUp/ArrowDown on `.vd-tabs-vertical`) plus Home/End —
+ * moving focus AND activation with wrap-around while skipping disabled tabs —
+ * three-way pane resolution (`[data-tab-pane]` attribute, then id, then
+ * index), `.is-active` state classes on the tab, its `.vd-tab-item` parent,
+ * and the pane, auto-activation of the first tab when none is active at
+ * mount, and a bubbling `tab:change` CustomEvent with `{ tab, pane, tabId }`.
+ *
+ * Selectors match the framework's dual convention as a non-breaking superset:
+ * containers `.vd-tabs, [data-tabs]`, tab links `.vd-tab-link, [data-tab]`,
+ * and panes `.vd-tab-pane, [data-tab-pane]`. Existing class-only markup keeps
+ * working; attribute-only markup is now wired identically.
  *
  * Dropped vanilla-layer concepts: document-wide auto-init, the instances
  * registry, and `Vanduo.register`. Teardown removes exactly this instance's
@@ -46,12 +52,12 @@ export function useTabs(root: Ref<HTMLElement | null>): UseTabsController {
   const wired = new Map<HTMLElement, () => void>();
 
   const ownedBy = (container: HTMLElement, el: Element): boolean =>
-    el.closest(".vd-tabs") === container;
+    el.closest(".vd-tabs, [data-tabs]") === container;
 
   const linksOf = (container: HTMLElement): HTMLElement[] =>
-    Array.from(container.querySelectorAll<HTMLElement>(".vd-tab-link")).filter(
-      (link) => ownedBy(container, link),
-    );
+    Array.from(
+      container.querySelectorAll<HTMLElement>(".vd-tab-link, [data-tab]"),
+    ).filter((link) => ownedBy(container, link));
 
   const panesOf = (container: HTMLElement): HTMLElement[] =>
     Array.from(
@@ -197,7 +203,7 @@ export function useTabs(root: Ref<HTMLElement | null>): UseTabsController {
 
   const closestLink = (e: Event): HTMLElement | null =>
     e.target instanceof Element
-      ? e.target.closest<HTMLElement>(".vd-tab-link")
+      ? e.target.closest<HTMLElement>(".vd-tab-link, [data-tab]")
       : null;
 
   // Delegated listeners on the container (vanilla wired each link) so v-for
@@ -264,21 +270,25 @@ export function useTabs(root: Ref<HTMLElement | null>): UseTabsController {
   const refresh = (): void => {
     const el = root.value;
     if (!el) return;
-    el.querySelectorAll<HTMLElement>(".vd-tabs").forEach((container) => {
-      attach(container);
-      wire(container);
-    });
+    el.querySelectorAll<HTMLElement>(".vd-tabs, [data-tabs]").forEach(
+      (container) => {
+        attach(container);
+        wire(container);
+      },
+    );
   };
 
   const show = (tab: HTMLElement | number, container?: HTMLElement): void => {
     if (typeof tab === "number") {
       const target =
-        container ?? root.value?.querySelector<HTMLElement>(".vd-tabs");
+        container ??
+        root.value?.querySelector<HTMLElement>(".vd-tabs, [data-tabs]");
       const link = target ? linksOf(target)[tab] : undefined;
       if (target && link) activateTab(target, link);
       return;
     }
-    const owner = container ?? tab.closest<HTMLElement>(".vd-tabs");
+    const owner =
+      container ?? tab.closest<HTMLElement>(".vd-tabs, [data-tabs]");
     if (owner) activateTab(owner, tab);
   };
 

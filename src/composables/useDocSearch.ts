@@ -252,6 +252,14 @@ export function useDocSearch(
     }
 
     if (matchPos === -1) {
+      // Metadata-only match (title / category / keyword): the body holds no
+      // query term, or was supplied empty. Fall back to the donor's
+      // leading-window intent — the start of the body — but append a trailing
+      // ellipsis only when the body was actually truncated, and yield an empty
+      // excerpt for an empty / whitespace-only body. This avoids the donor's
+      // degenerate bare `"..."` (`getExcerpt` always appended it) and never
+      // emits a broken fragment.
+      if (content.trim() === "") return "";
       const head = content.substring(0, EXCERPT_LENGTH);
       return content.length > EXCERPT_LENGTH ? `${head}...` : head;
     }

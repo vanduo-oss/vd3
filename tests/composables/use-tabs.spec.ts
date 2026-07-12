@@ -86,6 +86,24 @@ const html = `
     </div>
   </div>`;
 
+// Attribute-only markup: the framework's dual selectors (`[data-tabs]`,
+// `[data-tab]`, `[data-tab-pane]`) with no `.vd-*` classes anywhere. The
+// `[data-tab]` values double as tab ids (via `getTabId`), pairing each link
+// with its `[data-tab-pane]`.
+const dataHtml = `
+  <div data-tabs id="dt1">
+    <div role="tablist">
+      <button type="button" data-tab="alpha">A</button>
+      <button type="button" data-tab="beta">B</button>
+      <button type="button" data-tab="gamma">C</button>
+    </div>
+    <div>
+      <div data-tab-pane="alpha">Alpha</div>
+      <div data-tab-pane="beta">Beta</div>
+      <div data-tab-pane="gamma">Gamma</div>
+    </div>
+  </div>`;
+
 describe("useTabs", () => {
   describe("mount wiring", () => {
     it("applies tablist/tab/tabpanel ARIA, generated ids, and back-links", () => {
@@ -147,6 +165,79 @@ describe("useTabs", () => {
       expect(links[1]!.classList.contains("is-active")).toBe(true);
       expect(links[1]!.getAttribute("aria-selected")).toBe("true");
       expect(links[1]!.getAttribute("tabindex")).toBe("0");
+    });
+  });
+
+  describe("data-attribute markup (framework selector superset)", () => {
+    it("wires an attribute-only container at mount: ARIA, roving tabindex, first-tab activation", () => {
+      const changes = collectChanges(document.body);
+      const { wrapper } = mountHost(dataHtml, useTabs);
+      const container = wrapper.get("#dt1").element;
+      const list = container.querySelector('[role="tablist"]')!;
+      const links = container.querySelectorAll<HTMLElement>("[data-tab]");
+      const panes = container.querySelectorAll<HTMLElement>("[data-tab-pane]");
+
+      expect(list.getAttribute("role")).toBe("tablist");
+      links.forEach((link) => expect(link.getAttribute("role")).toBe("tab"));
+      panes.forEach((pane) =>
+        expect(pane.getAttribute("role")).toBe("tabpanel"),
+      );
+
+      // Generated ids and aria-controls back-links follow the data-tab id.
+      expect(links[0]!.id).toBe("tab-btn-alpha");
+      expect(links[0]!.getAttribute("aria-controls")).toBe("tab-pane-alpha");
+      expect(panes[0]!.id).toBe("tab-pane-alpha");
+      expect(panes[0]!.getAttribute("aria-labelledby")).toBe("tab-btn-alpha");
+
+      // First tab auto-activated with roving tabindex across the set.
+      expect(links[0]!.classList.contains("is-active")).toBe(true);
+      expect(links[0]!.getAttribute("aria-selected")).toBe("true");
+      expect(links[0]!.getAttribute("tabindex")).toBe("0");
+      expect(links[1]!.getAttribute("aria-selected")).toBe("false");
+      expect(links[1]!.getAttribute("tabindex")).toBe("-1");
+      expect(links[2]!.getAttribute("tabindex")).toBe("-1");
+      expect(panes[0]!.classList.contains("is-active")).toBe(true);
+
+      expect(changes).toHaveLength(1);
+      expect(changes[0]!.tabId).toBe("alpha");
+    });
+
+    it("activates the clicked tab in attribute-only markup: classes, ARIA, pane, tab:change", () => {
+      const { wrapper } = mountHost(dataHtml, useTabs);
+      const container = wrapper.get("#dt1").element;
+      const changes = collectChanges(container);
+      const links = container.querySelectorAll<HTMLElement>("[data-tab]");
+      const panes = container.querySelectorAll<HTMLElement>("[data-tab-pane]");
+
+      const ev = click(links[2]!);
+
+      expect(ev.defaultPrevented).toBe(true);
+      expect(links[0]!.classList.contains("is-active")).toBe(false);
+      expect(links[2]!.classList.contains("is-active")).toBe(true);
+      expect(links[2]!.getAttribute("aria-selected")).toBe("true");
+      expect(links[2]!.getAttribute("tabindex")).toBe("0");
+      expect(panes[0]!.classList.contains("is-active")).toBe(false);
+      expect(panes[2]!.classList.contains("is-active")).toBe(true);
+
+      expect(changes).toHaveLength(1);
+      expect(changes[0]!.tab).toBe(links[2]);
+      expect(changes[0]!.pane).toBe(panes[2]);
+      expect(changes[0]!.tabId).toBe("gamma");
+    });
+
+    it("moves focus and activation on arrow keys in attribute-only markup", () => {
+      const { wrapper } = mountHost(dataHtml, useTabs);
+      const container = wrapper.get("#dt1").element;
+      const links = container.querySelectorAll<HTMLElement>("[data-tab]");
+
+      const ev = key(links[0]!, "ArrowRight");
+      expect(ev.defaultPrevented).toBe(true);
+      expect(links[1]!.classList.contains("is-active")).toBe(true);
+      expect(document.activeElement).toBe(links[1]);
+
+      key(links[1]!, "ArrowLeft"); // wraps/moves back to the first tab
+      expect(links[0]!.classList.contains("is-active")).toBe(true);
+      expect(document.activeElement).toBe(links[0]);
     });
   });
 
