@@ -5,23 +5,134 @@
 > Vanduo UI for Vue 3 — design system and component library (the vd3 line).
 
 The Vue3-only line of the [Vanduo](https://vanduo.dev) design system. Unlike
-the previous three-package split (core tokens + framework CSS/JS + vue
-components), vd3 is fully standalone: one package will ship its own DTCG
-design tokens, CSS tree, and typed `Vd*` components/composables. Sole peer
-dependency: `vue >=3.3` — no pinia.
+the previous three-package split (`@vanduo-oss/core` tokens +
+`@vanduo-oss/framework` CSS/JS + `@vanduo-oss/vue` components), vd3 is fully
+standalone: one package ships its own DTCG design tokens, CSS tree, and typed
+`Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
+no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**STATUS: pre-release — not yet published to npm.** The scaffold, the
-token/CSS foundation, and the pure-Vue component/composable carryover are in
-place; the delegating-composable rewrites (`vd3-rewrites`) land next.
+**Status: 0.1.0 initial release line.** The full surface is in place — the
+token/CSS foundation, the pure-Vue component/composable carryover, the
+delegating-composable rewrites (`vd3-rewrites`), the new components/composables
+(`vd3-new-components`), and the hardening pass (`vd3-hardening`) have all
+landed.
+
+## Install
+
+```sh
+pnpm add @vanduo-oss/vd3
+```
+
+## Usage
+
+Three integration points — import the stylesheet, register the plugin, and
+render components:
+
+```ts
+// main.ts
+import { createApp } from "vue";
+import { VanduoVue } from "@vanduo-oss/vd3";
+import "@vanduo-oss/vd3/css"; // full stylesheet (tokens + components + icons)
+import App from "./App.vue";
+
+createApp(App).use(VanduoVue).mount("#app");
+```
+
+`app.use(VanduoVue)` accepts an optional `{ themeDefaults }` to override the
+generic baseline before the theme model first reads it (e.g.
+`app.use(VanduoVue, { themeDefaults: { PRIMARY_DARK: "blue" } })`).
+
+```vue
+<script setup lang="ts">
+import { VdButton, VdCard } from "@vanduo-oss/vd3";
+</script>
+
+<template>
+  <VdCard>
+    <VdButton variant="primary">Save</VdButton>
+  </VdCard>
+</template>
+```
+
+## Components & composables
+
+**52 components** — 45 `Vd*` components plus 7 layout primitives — and **~35
+composables**, all named exports from the package root (import only what you
+render; nothing registers globally).
+
+- **Form & input:** `VdButton`, `VdButtonGroup`, `VdInput`, `VdSelect`,
+  `VdCustomSelect`, `VdCheckboxGroup`, `VdRadioGroup`, `VdSwitch`, `VdSlider`,
+  `VdRating`, `VdTransfer`.
+- **Data display:** `VdTable`, `VdTree`, `VdTreeNode`, `VdCollection`, `VdCard`,
+  `VdBadge`, `VdChip`, `VdAvatar`.
+- **Feedback & status:** `VdAlert`, `VdModal`, `VdOffcanvas`, `VdToast`,
+  `VdToastContainer`, `VdProgress`, `VdSpinner`, `VdPreloader`, `VdSkeleton`.
+- **Navigation:** `VdNavbar`, `VdSidenav`, `VdMenu`, `VdTabs`, `VdBreadcrumb`,
+  `VdPagination`, `VdFooter`, `VdFab`.
+- **Content & utility:** `VdAccordion`, `VdCodeSnippet`, `VdIcon`, `VdSeparator`,
+  `VdTooltip`, `VdDocSearch`, `VdFlow`.
+- **Theme controls:** `VdThemeSwitcher`, `VdThemeCustomizer`.
+- **Layout primitives:** `VdBox`, `VdCenter`, `VdCover`, `VdFrame`, `VdInline`,
+  `VdStack`, `VdSwitcher`.
+
+Composables cover the theme layer (`useTheme`, `useThemeBridge`), forms
+(`useDatepicker`, `useTimepicker`, `useStepper`, `useSuggest`, `useSearch`,
+`useValidate`), overlays/dismissal (`useDropdown`, `usePopover`, `useTooltips`,
+`useToast`, `useImageBox`, `useSpotlight`, `useSidenav`, `useFocusTrap`,
+`useClickOutside`), motion/scroll (`useAffix`, `useScrollspy`, `useParallax`,
+`useWaypoint`, `useLazyLoad`, `useNavbarGlassScroll`, `useMorph`,
+`useMorphBadges`, `useRipple`, `useExpandingCards`, `useTimeline`), and layout/
+interaction (`useGrid` + `setGridSystem`, `useGlass`, `useTabs`, `useDocSearch`,
+`useDraggable`, `useFlow`, `useKeyboardNav`). `sanitizeHtml` is exported too.
+
+The full agent/LLM reference — with the per-group inventory and the theming
+contract — is in [SKILL.md](./SKILL.md).
+
+### Theming
+
+The theme layer (`useTheme`) drives six `data-*` attributes on `<html>` —
+`data-palette`, `data-primary`, `data-neutral`, `data-radius`, `data-theme`,
+`data-font` — which the CSS resolves into `--vd-*` custom properties (e.g.
+`--vd-radius-scale`). Preferences persist to six `localStorage` keys
+(`vanduo-palette`, `vanduo-primary-color`, `vanduo-neutral-color`,
+`vanduo-radius`, `vanduo-theme-preference`, `vanduo-font-preference`).
+
+`useThemePreference()` is a module-scope reactive singleton (no pinia) that is
+the single source of truth behind `VdThemeSwitcher` and `VdThemeCustomizer`;
+its setters route through `applyPreference` + `persistPreference`. Override the
+default palette/primary/etc. via `app.use(VanduoVue, { themeDefaults })` or
+`setThemeDefaults()`. Token data (`DEFAULTS`, `PALETTE_OPTIONS`, `tokens`, …) is
+re-exported from the package root, or import raw JSON from
+`@vanduo-oss/vd3/tokens.json`. Ship the token-only stylesheet with
+`@vanduo-oss/vd3/css/core`.
+
+### SSR
+
+The package is SSR / `vite-ssg`-safe: all browser access is client-guarded with
+`typeof window` checks and `onMounted` / `onScopeDispose` lifecycle hooks, so
+nothing touches `window`, `document`, `localStorage`, or `matchMedia` during
+server render. `useThemePreference` seeds from defaults on the server and
+hydrates from storage lazily on the first client call.
+
+### Security
+
+- **Zero runtime dependencies** beyond the `vue >=3.3` peer — no pinia, no
+  transitive runtime deps.
+- **Hardened `.npmrc`:** `ignore-scripts`, `minimum-release-age`, `save-exact`,
+  `strict-peer-dependencies`, `trust-policy=no-downgrade`,
+  `block-exotic-subdeps`, and an explicit `registry`.
+- **MIT** licensed ([LICENSE](./LICENSE)); bundled third-party notices in
+  [THIRD-PARTY-LICENSES](./THIRD-PARTY-LICENSES) (Open Color, Phosphor Icons,
+  and the adapted expanding-cards CSS — all MIT).
 
 ## Exports
 
-| Export                       | Contents                                          |
-| ---------------------------- | ------------------------------------------------- |
-| `@vanduo-oss/vd3`            | Components, composables, theme API, token data    |
-| `@vanduo-oss/vd3/css`        | Full stylesheet (`dist/vd3.min.css`)              |
-| `@vanduo-oss/vd3/css/core`   | Tokens-only stylesheet (`dist/vd3-core.min.css`)  |
-| `@vanduo-oss/vd3/tokens.json`| Resolved DTCG token data (`dist/tokens.json`)     |
+| Export                        | Contents                                         |
+| ----------------------------- | ------------------------------------------------ |
+| `@vanduo-oss/vd3`             | Components, composables, theme API, token data   |
+| `@vanduo-oss/vd3/css`         | Full stylesheet (`dist/vd3.min.css`)             |
+| `@vanduo-oss/vd3/css/core`    | Tokens-only stylesheet (`dist/vd3-core.min.css`) |
+| `@vanduo-oss/vd3/tokens.json` | Resolved DTCG token data (`dist/tokens.json`)    |
 
 ## Build pipeline
 
