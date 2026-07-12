@@ -305,11 +305,18 @@ the `.vd-theme-switcher[data-theme-ui="menu"]` contract: a
 Phosphor icon `ph-desktop`/`ph-sun`/`ph-moon` for the active mode) and a
 `.vd-theme-switcher-menu` of `menuitemradio` options
 (`data-theme-value`, `is-active` + `aria-checked` on the active mode)
-supporting click, Enter/Space, ArrowDown/ArrowUp cycling, Escape-close
-with refocus, and outside-click close. With `menu=false` it renders the
-cycle button: each activation advances system → light → dark → system.
-While the preference is `system`, a `prefers-color-scheme` change SHALL
-re-apply the effective theme (via the singleton's media listener).
+supporting click, Enter/Space, ArrowDown/ArrowUp cycling, and outside-click
+close. Focus management MUST match the donor: **opening the menu** by click,
+Enter, or Space (in addition to the existing ArrowDown-to-open path) SHALL
+move focus into the menu — to the active `menuitemradio`, or the first option
+when none is active (donor `openMenu`); **pressing Escape while the menu is
+open** — whether the key is handled on the toggle or within the menu — SHALL
+close the menu AND return focus to the `.vd-theme-switcher-toggle` button
+(donor `handleMenuKeydown`), so focus is never stranded on the now-hidden
+menu. With `menu=false` it renders the cycle button unchanged: each
+activation advances system → light → dark → system, and it manages no menu
+focus. While the preference is `system`, a `prefers-color-scheme` change
+SHALL re-apply the effective theme (via the singleton's media listener).
 
 #### Scenario: menu selection applies and persists
 
@@ -326,6 +333,22 @@ re-apply the effective theme (via the singleton's media listener).
 - **WHEN** it is clicked
 - **THEN** the preference becomes `dark`, and a further click returns to
   `system` (removing `data-theme`)
+
+#### Scenario: opening by click moves focus into the menu
+
+- **GIVEN** a mounted menu-mode switcher whose menu is closed, with `dark`
+  the active mode
+- **WHEN** the toggle is activated by click (or Enter/Space)
+- **THEN** the menu opens (`aria-expanded="true"`) and focus moves to the
+  active `dark` `menuitemradio` option (the first option when no mode is
+  active)
+
+#### Scenario: escape closes and refocuses the toggle
+
+- **GIVEN** an open switcher menu with focus on one of its options
+- **WHEN** Escape is pressed
+- **THEN** the menu closes (`aria-expanded="false"`) and focus returns to
+  the `.vd-theme-switcher-toggle` button
 
 #### Scenario: menu keyboard contract
 
