@@ -1,6 +1,6 @@
 {
   "name": "@vanduo-oss/vd3",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Vanduo UI for Vue 3 — design system and component library (the vd3 line)",
   "type": "module",
   "homepage": "https://github.com/vanduo-oss/vd3#readme",
@@ -13,6 +13,9 @@
   },
   "license": "MIT",
   "author": "vanduo-oss",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "vue",
     "vue3",
@@ -51,6 +54,8 @@
   },
   "scripts": {
     "build": "node scripts/clean-dist.mjs && node scripts/build-tokens.mjs && node scripts/build-css.mjs && vite build && vue-tsc -p tsconfig.build.json && node scripts/check-class-coverage.mjs",
+    "prepack": "pnpm run build",
+    "release": "pnpm run build && pnpm publish",
     "build:tokens": "node scripts/build-tokens.mjs",
     "build:css": "node scripts/build-css.mjs",
     "check:classes": "node scripts/check-class-coverage.mjs",
@@ -89,7 +94,7 @@
     "vue-tsc": "^3.3.5"
   },
   "engines": {
-    "node": ">=24",
+    "node": ">=20.19.0",
     "pnpm": ">=10"
   },
   "packageManager": "pnpm@10.28.2"

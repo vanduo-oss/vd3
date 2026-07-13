@@ -11,7 +11,7 @@ standalone: one package ships its own DTCG design tokens, CSS tree, and typed
 `Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
 no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**Status: 0.1.0 initial release line.** The full surface is in place — the
+**Status: 1.0.0 — first public release.** The full surface is in place — the
 token/CSS foundation, the pure-Vue component/composable carryover, the
 delegating-composable rewrites (`vd3-rewrites`), the new components/composables
 (`vd3-new-components`), and the hardening pass (`vd3-hardening`) have all

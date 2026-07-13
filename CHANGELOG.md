@@ -3,7 +3,17 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
-## Unreleased
+## 1.0.0 — 2026-07-13
+
+First public release of `@vanduo-oss/vd3` — the standalone Vue 3 line of Vanduo
+UI (one package ships its own DTCG tokens, CSS tree, and typed `Vd*`
+components/composables; sole peer `vue >=3.3`, no pinia, no IIFE runtime). The
+bullets below roll up the development history that makes up 1.0.0 (scaffold →
+token/CSS foundation → pure-Vue carryover → composable rewrites → new
+components/composables → hardening). Publish prep (`vd3-publish-prep`) added
+`publishConfig.access: "public"`, a build-before-publish `release`/`prepack`
+flow, a consumer-friendly `engines.node` floor, and dropped the never-fetched
+legacy Phosphor SVG webfont from the tarball.
 
 - Hardening (`vd3-hardening`): `useTabs` now accepts the framework's dual
   selectors (`.vd-tabs, [data-tabs]` / `.vd-tab-link, [data-tab]`) for markup
