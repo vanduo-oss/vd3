@@ -45,7 +45,9 @@ tracks the package only — never docs-site content.
     (previously it reacted only to a false→true transition, contradicting its
     JSDoc).
   - `useStepper` no longer dispatches a spurious `stepper:change` on mount for
-    the initial (unchanged) step.
+    the initial (unchanged) step (`current === previous`). **Behavior change:** a
+    consumer that relied on the mount-time event should read the initial step
+    directly (or in `onMounted`) instead.
   - Added the missing `.vd-validate-error` selector that styles the message
     `useValidate` injects beneath an invalid field.
 

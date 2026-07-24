@@ -208,9 +208,8 @@ export function useTimepicker(root: Ref<HTMLElement | null>): void {
               e.preventDefault();
               if (highlighted >= 0) selectAt(highlighted);
               break;
-            case "Escape":
-              close();
-              break;
+            // Escape closes via the document-level escHandler — handling it
+            // here too would call close() twice during event bubbling.
           }
         };
         const repositionHandler = (): void => positionPopup();
