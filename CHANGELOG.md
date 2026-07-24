@@ -26,6 +26,29 @@ tracks the package only — never docs-site content.
     highlight with `aria-activedescendant`; Enter selects; Escape closes).
   - `useKeyboardNav` now attaches its keydown listener on mount and removes it
     on unmount (previously a no-op-prone, never-cleaned-up listener).
+- Sanitizer and composable hardening (`vd3-sanitize-coverage`), non-breaking:
+  - `sanitizeHtml` now keeps allow-listed SVG under `allowSvg`: the tag/attr
+    allowlist is matched case-insensitively, fixing a dead branch that stripped
+    every `<svg>` to text (an HTML-mode `DOMParser` lowercases SVG node names).
+  - `sanitizeHtml`'s `allowStyle` now applies a minimal CSS blocklist scrub
+    (dropping `style` values containing `url(`, `expression(`, or
+    `position: fixed|sticky`) instead of passing the raw value through verbatim.
+  - `useClickOutside` now attaches on mount when `enabled` is already true
+    (previously it reacted only to a false→true transition, contradicting its
+    JSDoc).
+  - `useStepper` no longer dispatches a spurious `stepper:change` on mount for
+    the initial (unchanged) step.
+  - Added the missing `.vd-validate-error` selector that styles the message
+    `useValidate` injects beneath an invalid field.
+
+### Changed
+
+- Housekeeping (`vd3-token-ci-hygiene`), non-breaking:
+  - Removed dead `btn btn-sm btn-outline` classes from `VdThemeCustomizer`'s
+    Reset button (it is already styled by `.customizer-reset`).
+  - Softened the `dist/tokens.json` `$description` so it no longer implies it is
+    the complete `--vd-*` set (non-color props ship only from
+    `css/core/tokens.css`).
 
 ## 1.0.0 — 2026-07-13
 

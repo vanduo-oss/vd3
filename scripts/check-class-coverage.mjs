@@ -19,6 +19,13 @@
  *
  * State classes (`is-open`, `is-active`, ...) are not `vd-*` and are ignored.
  *
+ * Composables also emit `vd-*` classes imperatively (they build DOM in
+ * `onMounted` rather than in a template), so a third pass scans
+ * `src/composables/*.ts` for `vd-*` literals in `classList.add(...)` calls and
+ * `el.className = "..."` assignments. A literal ending in `-` (e.g.
+ * `"vd-tooltip-"` concatenated with a runtime placement) is treated as a
+ * dynamic prefix, mirroring the template-literal rule for components.
+ *
  * Usage: node scripts/check-class-coverage.mjs [path/to/bundle.css]
  * Exits non-zero (and prints the gaps) on drift.
  */
@@ -28,6 +35,7 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const componentsDir = resolve(root, "src", "components");
+const composablesDir = resolve(root, "src", "composables");
 const cssPath = process.argv[2]
   ? resolve(process.cwd(), process.argv[2])
   : resolve(root, "dist", "vd3.min.css");
@@ -101,6 +109,43 @@ for (const file of walk(componentsDir)) {
   //    (e.g. `vd-accordion-panel-${id}`) don't leak in as false positives.
   for (const s of src.matchAll(/(['"])(vd-[a-z0-9-]+)\1/g))
     addStatic(s[2], base);
+}
+
+// --- collect classes injected imperatively by composables ---
+// A literal that ends with `-` is a concatenation base (e.g. `"vd-tooltip-"`
+// + placement) — record it as a dynamic prefix rather than an exact class.
+const classifyComposableToken = (tok, file) => {
+  if (!tok.startsWith("vd-")) return;
+  if (tok.endsWith("-")) addDynamic(tok, file);
+  else addStatic(tok, file);
+};
+
+for (const entry of readdirSync(composablesDir)) {
+  if (!entry.endsWith(".ts")) continue;
+  const file = join(composablesDir, entry);
+  const src = readFileSync(file, "utf8");
+  const base = "composables/" + entry;
+
+  // 1. classList.add("vd-x", "vd-y", `vd-z-${…}`)
+  for (const m of src.matchAll(/classList\.add\(([^)]*)\)/g)) {
+    for (const s of m[1].matchAll(/(['"])(vd-[a-z0-9-]+)\1/g))
+      classifyComposableToken(s[2], base);
+    for (const t of m[1].matchAll(/`(vd-[a-z0-9-]*?)\$\{/g))
+      addDynamic(t[1], base);
+  }
+
+  // 2. el.className = "vd-x vd-y" / += "vd-z"  (string literals)
+  for (const m of src.matchAll(/\.className\s*(?:\+?=)\s*(['"])([^'"]*)\1/g)) {
+    for (const tok of m[2].split(/\s+/)) classifyComposableToken(tok, base);
+  }
+
+  // 3. el.className = `vd-x vd-y-${…}`  (template literals: static head + prefix)
+  for (const m of src.matchAll(/\.className\s*(?:\+?=)\s*`([^`]*)`/g)) {
+    for (const tok of m[1].split("${")[0].split(/\s+/))
+      classifyComposableToken(tok, base);
+    for (const t of m[1].matchAll(/`?(vd-[a-z0-9-]*?)\$\{/g))
+      addDynamic(t[1], base);
+  }
 }
 
 // --- compare ---

@@ -265,6 +265,88 @@ describe("useDatepicker", () => {
     ).toBe("2026-07-16");
   });
 
+  const focusedDate = (): string | null =>
+    (document.activeElement as HTMLElement).getAttribute("data-vd-date");
+  const title = (popup: HTMLElement): string | undefined =>
+    popup.querySelector(".vd-datepicker-title")?.textContent ?? undefined;
+
+  it("ArrowDown/ArrowUp move focus by 7 days within the month", () => {
+    const wrapper = mountDp({ value: "2026-07-15" });
+    fireFocus(getInput(wrapper));
+    const popup = getPopup();
+    const start = popup.querySelector<HTMLElement>(
+      '[data-vd-date="2026-07-15"]',
+    )!;
+    expect(document.activeElement).toBe(start);
+
+    keydown(document.activeElement!, "ArrowDown"); // +7
+    expect(focusedDate()).toBe("2026-07-22");
+    keydown(document.activeElement!, "ArrowUp"); // -7, back to 07-15
+    expect(focusedDate()).toBe("2026-07-15");
+  });
+
+  it("ArrowUp across the top of the month re-renders the previous month", () => {
+    const wrapper = mountDp({ value: "2026-07-05" });
+    fireFocus(getInput(wrapper));
+    const popup = getPopup();
+
+    keydown(document.activeElement!, "ArrowUp"); // 07-05 -> 06-28
+    expect(title(popup)).toBe("June 2026");
+    expect(focusedDate()).toBe("2026-06-28");
+  });
+
+  it("ArrowDown across the end of the month re-renders the next month", () => {
+    const wrapper = mountDp({ value: "2026-07-28" });
+    fireFocus(getInput(wrapper));
+    const popup = getPopup();
+
+    keydown(document.activeElement!, "ArrowDown"); // 07-28 -> 08-04
+    expect(title(popup)).toBe("August 2026");
+    expect(focusedDate()).toBe("2026-08-04");
+  });
+
+  it("Home/End move focus to the Sunday/Saturday of the focused week", () => {
+    const wrapper = mountDp({ value: "2026-07-15" }); // Wednesday
+    fireFocus(getInput(wrapper));
+
+    keydown(document.activeElement!, "Home");
+    expect(focusedDate()).toBe("2026-07-12"); // Sunday
+    keydown(document.activeElement!, "End");
+    expect(focusedDate()).toBe("2026-07-18"); // Saturday
+  });
+
+  it("PageUp/PageDown move focus by one month", () => {
+    const wrapper = mountDp({ value: "2026-07-15" });
+    fireFocus(getInput(wrapper));
+    const popup = getPopup();
+
+    keydown(document.activeElement!, "PageUp"); // -1 month
+    expect(title(popup)).toBe("June 2026");
+    expect(focusedDate()).toBe("2026-06-15");
+
+    keydown(document.activeElement!, "PageDown"); // +1 month back
+    expect(title(popup)).toBe("July 2026");
+    expect(focusedDate()).toBe("2026-07-15");
+
+    keydown(document.activeElement!, "PageDown"); // +1 month
+    expect(title(popup)).toBe("August 2026");
+    expect(focusedDate()).toBe("2026-08-15");
+  });
+
+  it("ArrowLeft at the min boundary lands on the first selectable day (skipDisabled)", () => {
+    const wrapper = mountDp({
+      value: "2026-07-11",
+      "data-vd-datepicker-min": "2026-07-10",
+      "data-vd-datepicker-max": "2026-07-20",
+    });
+    fireFocus(getInput(wrapper));
+
+    keydown(document.activeElement!, "ArrowLeft"); // 07-11 -> 07-10 (min)
+    const landed = document.activeElement as HTMLElement;
+    expect(landed.getAttribute("data-vd-date")).toBe("2026-07-10");
+    expect(landed.getAttribute("aria-disabled")).not.toBe("true");
+  });
+
   it("selects the focused day on Enter within the grid", () => {
     const wrapper = mountDp({ value: "2026-07-15" });
     const input = getInput(wrapper);

@@ -28,6 +28,20 @@ function mountHost<T>(
   return { wrapper, api };
 }
 
+const rect = (p: Partial<DOMRect>): DOMRect =>
+  ({
+    x: 0,
+    y: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: 0,
+    height: 0,
+    toJSON: () => ({}),
+    ...p,
+  }) as DOMRect;
+
 const click = (el: Element): MouseEvent => {
   const ev = new MouseEvent("click", { bubbles: true, cancelable: true });
   el.dispatchEvent(ev);
@@ -304,6 +318,48 @@ describe("useDropdown", () => {
     expect(rm.classList.contains("vd-dropdown-menu-start")).toBe(false);
     expect(rm.classList.contains("vd-dropdown-menu-end")).toBe(false);
     expect(rm.classList.contains("vd-dropdown-menu-top")).toBe(false);
+  });
+
+  it("auto-placement flips to -end when the menu overflows the right viewport edge", () => {
+    const { wrapper } = mountHost(menu, useDropdown);
+    const dropdown = wrapper.get(".vd-dropdown").element as HTMLElement;
+    const m = menuEl(wrapper);
+    // Trigger sits at the far right; the menu is wide enough to spill past it.
+    dropdown.getBoundingClientRect = () =>
+      rect({
+        left: 1000,
+        right: 1040,
+        top: 10,
+        bottom: 40,
+        width: 40,
+        height: 30,
+      });
+    m.getBoundingClientRect = () => rect({ width: 200, height: 100 });
+
+    click(toggleEl(wrapper));
+    expect(m.classList.contains("vd-dropdown-menu-end")).toBe(true);
+    expect(m.classList.contains("vd-dropdown-menu-start")).toBe(false);
+    expect(m.classList.contains("vd-dropdown-menu-top")).toBe(false);
+  });
+
+  it("auto-placement flips to -top when there is not enough room below the trigger", () => {
+    const { wrapper } = mountHost(menu, useDropdown);
+    const dropdown = wrapper.get(".vd-dropdown").element as HTMLElement;
+    const m = menuEl(wrapper);
+    // Trigger sits near the viewport bottom with room above; the menu spills down.
+    dropdown.getBoundingClientRect = () =>
+      rect({
+        left: 100,
+        right: 140,
+        top: 700,
+        bottom: 730,
+        width: 40,
+        height: 30,
+      });
+    m.getBoundingClientRect = () => rect({ width: 200, height: 100 });
+
+    click(toggleEl(wrapper));
+    expect(m.classList.contains("vd-dropdown-menu-top")).toBe(true);
   });
 
   it("opening one dropdown closes the others wired by the same instance", () => {

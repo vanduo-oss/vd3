@@ -13,6 +13,14 @@ export default defineConfig({
     // dist/ already holds the token + CSS artifacts emitted earlier in the
     // build chain; cleaning is owned by scripts/clean-dist.mjs (see
     // openspec/changes/vd3-token-css-foundation/design.md).
+    //
+    // INVARIANT: no SFC in src/ may carry a `<style>` block. All CSS is
+    // hand-authored under css/ and bundled by scripts/build-css.mjs
+    // (lightningcss) into dist/vd3(.min).css. A component `<style>` would make
+    // @vitejs/plugin-vue emit a separate style asset here, which — because
+    // emptyOutDir is false and that asset is NOT part of the `./css` bundle —
+    // would silently accumulate in dist/ and ship unreferenced. Keep styling in
+    // css/; the check:classes gate then guarantees selector coverage.
     emptyOutDir: false,
     sourcemap: true,
     lib: {

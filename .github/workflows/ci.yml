@@ -31,8 +31,13 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
+          cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      # Fail on known moderate+ advisories. The brace-expansion override in
+      # pnpm-workspace.yaml keeps this green (GHSA-3jxr-9vmj-r5cp).
+      - run: pnpm audit --audit-level=moderate
 
       # Bootstrap the generated theme-data module (src/theme/generated/
       # tokens.data.ts) that lint/typecheck/test need on a fresh clone.

@@ -10,10 +10,20 @@
  *
  * Differs from the framework on one intentional point: `style` is DENIED by
  * default here (the framework defaults it on). Opt in with `allowStyle: true`.
+ *
+ * `allowStyle` is NOT a full CSS sanitizer: when enabled it only applies a
+ * minimal blocklist scrub (dropping the whole `style` attribute when its value
+ * contains `url(`, `expression(`, or `position: fixed|sticky`) to blunt the
+ * most common CSS-injection / clickjacking sinks. It is still not safe for
+ * fully-untrusted HTML — internal callers all pass `allowStyle: false`.
  */
 export interface SanitizeOptions {
   allowSvg?: boolean;
-  /** Permit the inline `style` attribute on kept elements. Default: false. */
+  /**
+   * Permit the inline `style` attribute on kept elements. Default: false.
+   * See the module note: this applies only a minimal blocklist scrub, not a
+   * full CSS sanitizer — do not enable on untrusted HTML.
+   */
   allowStyle?: boolean;
 }
 
@@ -34,11 +44,14 @@ const BASE_ALLOWED = [
   "MARK",
 ];
 const SVG_ALLOWED = ["SVG", "PATH", "LINE", "CIRCLE", "POLYLINE", "RECT", "G"];
+// Stored lowercase and matched case-insensitively: an HTML-mode DOMParser
+// lowercases most SVG attribute names (and camel-cases a few, e.g. `viewBox`),
+// so we normalise both sides with `.toLowerCase()`.
 const SAFE_SVG_ATTRS = new Set([
   "xmlns",
   "width",
   "height",
-  "viewBox",
+  "viewbox",
   "fill",
   "stroke",
   "stroke-width",
@@ -56,6 +69,16 @@ const SAFE_SVG_ATTRS = new Set([
   "transform",
   "class",
 ]);
+
+/**
+ * Minimal, dependency-free CSS blocklist used only when `allowStyle` is on.
+ * Returns true when an inline `style` value carries a common injection sink,
+ * in which case the whole attribute is dropped. Not a full CSS parser.
+ */
+function isUnsafeStyle(value: string | null): boolean {
+  if (!value) return false;
+  return /url\(|expression\(|position\s*:\s*(?:fixed|sticky)/i.test(value);
+}
 
 /** Attribute-safe text escape — used as the SSR / no-DOMParser fallback. */
 function escapeText(input: string): string {
@@ -90,13 +113,17 @@ export function sanitizeHtml(
     Array.from(node.childNodes).forEach((child) => {
       if (child.nodeType === Node.TEXT_NODE) return;
       const el = child as Element;
+      // Normalise the tag name: an HTML-mode DOMParser gives SVG elements a
+      // lowercase `nodeName` (e.g. `svg`, `circle`), while the allowlist is
+      // uppercase — compare case-insensitively so the SVG gate actually fires.
+      const name = el.nodeName.toUpperCase();
 
-      if (!allowed.includes(el.nodeName)) {
+      if (!allowed.includes(name)) {
         node.replaceChild(document.createTextNode(el.textContent ?? ""), child);
         return;
       }
 
-      if (el.nodeName === "A") {
+      if (name === "A") {
         const href = el.getAttribute("href") ?? "";
         try {
           const url = new URL(href, location.href);
@@ -108,9 +135,10 @@ export function sanitizeHtml(
         }
         el.removeAttribute("target");
         el.removeAttribute("rel");
-      } else if (allowSvg && (el.nodeName === "SVG" || el.closest?.("svg"))) {
+      } else if (allowSvg && (name === "SVG" || el.closest?.("svg"))) {
         Array.from(el.attributes).forEach((a) => {
-          if (!SAFE_SVG_ATTRS.has(a.name)) el.removeAttribute(a.name);
+          if (!SAFE_SVG_ATTRS.has(a.name.toLowerCase()))
+            el.removeAttribute(a.name);
         });
       } else {
         const safe = new Set(["class"]);
@@ -118,6 +146,11 @@ export function sanitizeHtml(
         Array.from(el.attributes).forEach((a) => {
           if (!safe.has(a.name)) el.removeAttribute(a.name);
         });
+        // allowStyle is a permit, not a sanitizer: drop a kept `style` value
+        // that carries a common CSS-injection sink.
+        if (allowStyle && isUnsafeStyle(el.getAttribute("style"))) {
+          el.removeAttribute("style");
+        }
       }
 
       sanitizeNode(el);

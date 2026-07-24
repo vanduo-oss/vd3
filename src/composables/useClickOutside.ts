@@ -45,16 +45,23 @@ export function useClickOutside(
     document.removeEventListener("pointerdown", onPointerDown, true);
   };
 
-  watch(enabled, (on) => {
-    if (on) {
-      // Defer so the opening click doesn't bubble straight into this listener.
-      setTimeout(() => {
-        if (enabled.value) attach();
-      }, 0);
-    } else {
-      detach();
-    }
-  });
+  watch(
+    enabled,
+    (on) => {
+      if (on) {
+        // Defer so the opening click doesn't bubble straight into this listener.
+        setTimeout(() => {
+          if (enabled.value) attach();
+        }, 0);
+      } else {
+        detach();
+      }
+    },
+    // `immediate` so an instance created with `enabled` already true attaches
+    // on mount (the JSDoc promises the listener is active whenever enabled is
+    // true, not only after a false→true transition).
+    { immediate: true },
+  );
 
   onUnmounted(detach);
 }
