@@ -159,6 +159,44 @@ describe("useTimepicker", () => {
     expect(popupEl().classList.contains("is-open")).toBe(false);
   });
 
+  it("keyboard: Arrow keys move a roving highlight and Enter selects the time", () => {
+    const { wrapper } = mountHost(
+      `<input data-vd-timepicker data-vd-timepicker-format="24h" data-vd-timepicker-step="60" />`,
+    );
+    const input = inputEl(wrapper);
+    const selects: Array<{ time: string; hours: number; minutes: number }> = [];
+    input.addEventListener("timepicker:select", (e) => {
+      selects.push(
+        (e as CustomEvent<{ time: string; hours: number; minutes: number }>)
+          .detail,
+      );
+    });
+
+    input.dispatchEvent(new Event("focus"));
+    expect(popupEl().classList.contains("is-open")).toBe(true);
+    // aria-controls points at the listbox popup.
+    expect(input.getAttribute("aria-controls")).toBe(popupEl().id);
+
+    const key = (k: string): void => {
+      input.dispatchEvent(
+        new KeyboardEvent("keydown", { key: k, bubbles: true }),
+      );
+    };
+
+    key("ArrowDown"); // highlight index 0 -> "00:00"
+    key("ArrowDown"); // highlight index 1 -> "01:00"
+    const items = itemsOf();
+    expect(items[1]!.classList.contains("is-highlighted")).toBe(true);
+    expect(input.getAttribute("aria-activedescendant")).toBe(items[1]!.id);
+
+    key("Enter");
+    expect(input.value).toBe("01:00");
+    expect(selects).toEqual([{ time: "01:00", hours: 1, minutes: 0 }]);
+    expect(popupEl().classList.contains("is-open")).toBe(false);
+    // Selection clears the roving-highlight bookkeeping.
+    expect(input.hasAttribute("aria-activedescendant")).toBe(false);
+  });
+
   it("closes on Escape", () => {
     const { wrapper } = mountHost(`<input data-vd-timepicker />`);
     inputEl(wrapper).dispatchEvent(new Event("focus"));

@@ -65,7 +65,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.vd-timepicker-item:hover {
+.vd-timepicker-item:hover,
+.vd-timepicker-item.is-highlighted {
   background: var(--vd-tp-item-hover-bg);
 }
 

@@ -124,4 +124,21 @@ describe("VdOffcanvas", () => {
     await wrapper.setProps({ modelValue: false });
     expect(document.body.style.overflow).toBe("");
   });
+
+  it("marks the panel as a modal dialog (role=dialog, aria-modal)", () => {
+    const panel = factory().find("aside.vd-offcanvas");
+    expect(panel.attributes("role")).toBe("dialog");
+    expect(panel.attributes("aria-modal")).toBe("true");
+    expect(panel.attributes("tabindex")).toBe("-1");
+  });
+
+  it("resets the body scroll lock when unmounted while open", async () => {
+    const wrapper = factory({ modelValue: false });
+    await wrapper.setProps({ modelValue: true });
+    expect(document.body.style.overflow).toBe("hidden");
+
+    // Unmounting while open must not leave the page permanently locked.
+    wrapper.unmount();
+    expect(document.body.style.overflow).toBe("");
+  });
 });

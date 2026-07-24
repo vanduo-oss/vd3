@@ -3,6 +3,30 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## Unreleased
+
+### Fixed
+
+- Accessibility / lifecycle hardening (`vd3-a11y-lifecycle`), non-breaking:
+  - `VdModal` now traps Tab focus within the panel (via `useFocusTrap`),
+    restores focus to the opener on close, and no longer leaks its global
+    Escape handler when unmounted while open.
+  - `VdOffcanvas` now presents as a modal dialog (`role="dialog"`,
+    `aria-modal`, focus trap) and resets the `document.body` scroll lock on
+    unmount, so unmounting while open can no longer leave the page locked.
+  - `VdTabs` now follows the WAI-ARIA tabs pattern: roving tabindex,
+    ArrowLeft/Right/Home/End keyboard navigation moving selection and focus,
+    per-tab `id`/`aria-controls`, a `role="tabpanel"` panel with
+    `aria-labelledby`, and `role="tablist"` on the tab list.
+  - `VdCustomSelect` now exposes `aria-controls` + `aria-activedescendant`
+    (with stable option ids) and no longer emits a dangling `aria-labelledby`.
+  - `VdRating` is now a valid radiogroup: exactly one `aria-checked` star, a
+    roving tabindex, and DOM focus that follows the arrow keys.
+  - `useTimepicker` is now keyboard-operable (Arrow keys move a roving
+    highlight with `aria-activedescendant`; Enter selects; Escape closes).
+  - `useKeyboardNav` now attaches its keydown listener on mount and removes it
+    on unmount (previously a no-op-prone, never-cleaned-up listener).
+
 ## 1.0.0 — 2026-07-13
 
 First public release of `@vanduo-oss/vd3` — the standalone Vue 3 line of Vanduo

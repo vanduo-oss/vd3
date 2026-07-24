@@ -31,10 +31,14 @@ describe("VdCustomSelect", () => {
     const button = root.get("button.custom-select-button");
     expect(button.attributes("type")).toBe("button");
     expect(button.attributes("aria-haspopup")).toBe("listbox");
-    expect(button.attributes("aria-labelledby")).toBe("country");
+    // No dangling aria-labelledby; the button text is its accessible name and
+    // it is wired to the listbox it controls.
+    expect(button.attributes("aria-labelledby")).toBeUndefined();
+    expect(button.attributes("aria-controls")).toBe("country-listbox");
 
     const dropdown = root.get("div.custom-select-dropdown");
     expect(dropdown.attributes("role")).toBe("listbox");
+    expect(dropdown.attributes("id")).toBe("country-listbox");
     expect(dropdown.findAll("[role='option']")).toHaveLength(4);
   });
 
@@ -170,6 +174,30 @@ describe("VdCustomSelect", () => {
       "is-open",
     );
     wrapper.unmount();
+  });
+
+  it("exposes aria-activedescendant tracking the active option with no dangling IDREF", async () => {
+    const wrapper = factory(); // no id/name -> generated, still-valid ids
+    const button = wrapper.get(".custom-select-button");
+
+    // Closed: no active descendant, and aria-controls resolves to a real node.
+    expect(button.attributes("aria-activedescendant")).toBeUndefined();
+    const listboxId = button.attributes("aria-controls")!;
+    expect(wrapper.find(`#${listboxId}`).exists()).toBe(true);
+
+    await button.trigger("keydown", { key: "ArrowDown" }); // open, active = 0
+    const opts = wrapper.findAll(".custom-select-option");
+    const active0 = button.attributes("aria-activedescendant");
+    expect(active0).toBe(opts[0]!.attributes("id"));
+    expect(wrapper.find(`#${active0}`).exists()).toBe(true);
+
+    await button.trigger("keydown", { key: "ArrowDown" }); // active = 1
+    const active1 = button.attributes("aria-activedescendant");
+    expect(active1).toBe(opts[1]!.attributes("id"));
+    expect(active1).not.toBe(active0);
+
+    await button.trigger("keydown", { key: "Escape" }); // close
+    expect(button.attributes("aria-activedescendant")).toBeUndefined();
   });
 
   it("opens on Enter when closed and highlights the selected option", async () => {

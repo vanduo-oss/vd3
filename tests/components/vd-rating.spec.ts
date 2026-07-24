@@ -40,13 +40,42 @@ describe("VdRating", () => {
     expect(wrapper.classes()).not.toContain("vd-rating-lg");
   });
 
-  it("marks filled stars is-active with aria-checked", () => {
+  it("marks filled stars is-active but aria-checks exactly the current star", () => {
     const wrapper = factory({ modelValue: 3 });
     const stars = wrapper.findAll(".vd-rating-star");
     for (const [i, star] of stars.entries()) {
+      // Visual fill still spans every star up to current.
       expect(star.classes().includes("is-active")).toBe(i < 3);
-      expect(star.attributes("aria-checked")).toBe(i < 3 ? "true" : "false");
+      // But a radiogroup has exactly one checked radio: the star == current.
+      expect(star.attributes("aria-checked")).toBe(i === 2 ? "true" : "false");
     }
+    expect(
+      stars.filter((s) => s.attributes("aria-checked") === "true"),
+    ).toHaveLength(1);
+  });
+
+  it("uses a roving tabindex with a single tab stop on the selected star", () => {
+    const wrapper = factory({ modelValue: 3 });
+    const stars = wrapper.findAll(".vd-rating-star");
+    expect(stars.filter((s) => s.attributes("tabindex") === "0")).toHaveLength(
+      1,
+    );
+    expect(stars[2].attributes("tabindex")).toBe("0"); // the selected star
+    expect(stars[0].attributes("tabindex")).toBe("-1");
+  });
+
+  it("moves DOM focus to the active star as arrow keys change the rating", async () => {
+    const wrapper = mount(VdRating, {
+      props: { modelValue: 3 },
+      attachTo: document.body,
+    });
+    const stars = () => wrapper.findAll(".vd-rating-star");
+
+    await stars()[2].trigger("keydown", { key: "ArrowRight" });
+    expect(wrapper.emitted("update:modelValue")!.at(-1)).toEqual([4]);
+    expect(document.activeElement).toBe(stars()[3].element);
+
+    wrapper.unmount();
   });
 
   it("marks the fractional star is-half", () => {

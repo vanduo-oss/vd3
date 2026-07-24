@@ -1,4 +1,4 @@
-import { ref, type Ref } from "vue";
+import { onMounted, onUnmounted, ref, type Ref } from "vue";
 
 export interface UseKeyboardNavOptions {
   itemSelector: string;
@@ -11,7 +11,6 @@ export const useKeyboardNav = (
   options: UseKeyboardNavOptions,
 ): { activeIndex: Ref<number>; setItems: (count: number) => void } => {
   const activeIndex = ref(0);
-  let count = 0;
 
   const items = (): HTMLElement[] => {
     if (!container.value) return [];
@@ -62,13 +61,24 @@ export const useKeyboardNav = (
     focusItem(next);
   };
 
-  if (typeof window !== "undefined" && container.value) {
-    container.value.addEventListener("keydown", onKeydown);
-  }
+  // Attach in onMounted so the template ref is populated (a synchronous
+  // attach in setup() would see a null container and silently do nothing);
+  // capture the resolved element so teardown detaches the exact same node.
+  let resolved: HTMLElement | null = null;
+
+  onMounted(() => {
+    if (typeof window === "undefined") return;
+    resolved = container.value;
+    resolved?.addEventListener("keydown", onKeydown);
+  });
+
+  onUnmounted(() => {
+    resolved?.removeEventListener("keydown", onKeydown);
+    resolved = null;
+  });
 
   const setItems = (next: number): void => {
-    count = next;
-    if (activeIndex.value >= count) activeIndex.value = Math.max(0, count - 1);
+    if (activeIndex.value >= next) activeIndex.value = Math.max(0, next - 1);
   };
 
   return { activeIndex, setItems };
