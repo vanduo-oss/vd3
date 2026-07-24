@@ -13,7 +13,7 @@ import { useFocusTrap } from "../composables/useFocusTrap";
 interface Props {
   open: boolean;
   title?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   closeOnBackdrop?: boolean;
 }
 

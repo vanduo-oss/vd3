@@ -3,7 +3,15 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
-## 1.0.1 — 2026-07-24
+## 1.1.0 — 2026-07-24
+
+### Added
+
+- `VdModal` gains an **`xl` size** (`size="xl"`) — the 987px / fib-16 width that
+  already existed as the `--vd-modal-width-xl` token is now reachable through the
+  component, joining `sm` / `md` / `lg`. Additive and backward-compatible;
+  `size="xl"` maps to the `vd-modal-panel-xl` panel class. This additive feature
+  is why the release is a minor (`1.0.x → 1.1.0`).
 
 ### Fixed
 

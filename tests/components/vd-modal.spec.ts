@@ -42,7 +42,7 @@ describe("VdModal", () => {
     wrapper.unmount();
   });
 
-  it.each(["sm", "md", "lg"] as const)(
+  it.each(["sm", "md", "lg", "xl"] as const)(
     "maps size=%s to vd-modal-panel-%s",
     (size) => {
       const wrapper = factory({ size });

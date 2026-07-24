@@ -1,7 +1,7 @@
 {
   "name": "@vanduo-oss/vd3",
-  "version": "1.0.1",
-  "description": "Vanduo UI for Vue 3 — design system and component library (the vd3 line)",
+  "version": "1.1.0",
+  "description": "Vanduo UI for Vue 3 \u2014 design system and component library (the vd3 line)",
   "type": "module",
   "homepage": "https://github.com/vanduo-oss/vd3#readme",
   "repository": {

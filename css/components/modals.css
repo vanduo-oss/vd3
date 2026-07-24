@@ -352,6 +352,7 @@
 .vd-modal-panel-sm { --vd-modal-dialog-max-width: var(--vd-modal-width-sm); }
 .vd-modal-panel-md { --vd-modal-dialog-max-width: var(--vd-modal-width); }
 .vd-modal-panel-lg { --vd-modal-dialog-max-width: var(--vd-modal-width-lg); }
+.vd-modal-panel-xl { --vd-modal-dialog-max-width: var(--vd-modal-width-xl); }
 
 /* Glass variant parity with .vd-modal-glass .vd-modal-content */
 .vd-modal-glass .vd-modal-panel {

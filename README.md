@@ -11,7 +11,7 @@ standalone: one package ships its own DTCG design tokens, CSS tree, and typed
 `Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
 no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**Status: 1.0.1** (patch on the 1.0.0 first public release).
+**Status: 1.1.0** (adds the VdModal `xl` size; on the 1.0.0 first-release line).
 
 ## Install
 
