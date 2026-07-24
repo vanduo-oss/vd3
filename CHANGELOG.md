@@ -3,6 +3,63 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.1.0 — 2026-07-24
+
+### Added
+
+- `VdModal` gains an **`xl` size** (`size="xl"`) — the 987px / fib-16 width that
+  already existed as the `--vd-modal-width-xl` token is now reachable through the
+  component, joining `sm` / `md` / `lg`. Additive and backward-compatible;
+  `size="xl"` maps to the `vd-modal-panel-xl` panel class. This additive feature
+  is why the release is a minor (`1.0.x → 1.1.0`).
+
+### Fixed
+
+- Accessibility / lifecycle hardening (`vd3-a11y-lifecycle`), non-breaking:
+  - `VdModal` now traps Tab focus within the panel (via `useFocusTrap`),
+    restores focus to the opener on close, and no longer leaks its global
+    Escape handler when unmounted while open.
+  - `VdOffcanvas` now presents as a modal dialog (`role="dialog"`,
+    `aria-modal`, focus trap) and resets the `document.body` scroll lock on
+    unmount, so unmounting while open can no longer leave the page locked.
+  - `VdTabs` now follows the WAI-ARIA tabs pattern: roving tabindex,
+    ArrowLeft/Right/Home/End keyboard navigation moving selection and focus,
+    per-tab `id`/`aria-controls`, a `role="tabpanel"` panel with
+    `aria-labelledby`, and `role="tablist"` on the tab list.
+  - `VdCustomSelect` now exposes `aria-controls` + `aria-activedescendant`
+    (with stable option ids) and no longer emits a dangling `aria-labelledby`.
+  - `VdRating` is now a valid radiogroup: exactly one `aria-checked` star, a
+    roving tabindex, and DOM focus that follows the arrow keys.
+  - `useTimepicker` is now keyboard-operable (Arrow keys move a roving
+    highlight with `aria-activedescendant`; Enter selects; Escape closes).
+  - `useKeyboardNav` now attaches its keydown listener on mount and removes it
+    on unmount (previously a no-op-prone, never-cleaned-up listener).
+- Sanitizer and composable hardening (`vd3-sanitize-coverage`), non-breaking:
+  - `sanitizeHtml` now keeps allow-listed SVG under `allowSvg`: the tag/attr
+    allowlist is matched case-insensitively, fixing a dead branch that stripped
+    every `<svg>` to text (an HTML-mode `DOMParser` lowercases SVG node names).
+  - `sanitizeHtml`'s `allowStyle` now applies a minimal CSS blocklist scrub
+    (dropping `style` values containing `url(`, `expression(`, or
+    `position: fixed|sticky`) instead of passing the raw value through verbatim.
+  - `useClickOutside` now attaches on mount when `enabled` is already true
+    (previously it reacted only to a false→true transition, contradicting its
+    JSDoc).
+  - `useStepper` no longer dispatches a spurious `stepper:change` on mount for
+    the initial (unchanged) step (`current === previous`). **Behavior change:** a
+    consumer that relied on the mount-time event should read the initial step
+    directly (or in `onMounted`) instead.
+  - Added the missing `.vd-validate-error` selector that styles the message
+    `useValidate` injects beneath an invalid field.
+
+### Changed
+
+- Housekeeping (`vd3-token-ci-hygiene`), non-breaking:
+  - Removed dead `btn btn-sm btn-outline` classes from `VdThemeCustomizer`'s
+    Reset button (it is already styled by `.customizer-reset`).
+  - Softened the `dist/tokens.json` `$description` so it no longer implies it is
+    the complete `--vd-*` set (non-color props ship only from
+    `css/core/tokens.css`).
+
 ## 1.0.0 — 2026-07-13
 
 First public release of `@vanduo-oss/vd3` — the standalone Vue 3 line of Vanduo

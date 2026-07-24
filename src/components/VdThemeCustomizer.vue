@@ -281,11 +281,7 @@ defineExpose({ open, close, toggle });
             </div>
           </div>
           <div class="tc-footer">
-            <button
-              type="button"
-              class="customizer-reset btn btn-sm btn-outline"
-              @click="reset"
-            >
+            <button type="button" class="customizer-reset" @click="reset">
               Reset to Defaults
             </button>
           </div>

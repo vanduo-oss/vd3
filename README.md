@@ -11,11 +11,7 @@ standalone: one package ships its own DTCG design tokens, CSS tree, and typed
 `Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
 no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**Status: 1.0.0 — first public release.** The full surface is in place — the
-token/CSS foundation, the pure-Vue component/composable carryover, the
-delegating-composable rewrites (`vd3-rewrites`), the new components/composables
-(`vd3-new-components`), and the hardening pass (`vd3-hardening`) have all
-landed.
+**Status: 1.1.0** (adds the VdModal `xl` size; on the 1.0.0 first-release line).
 
 ## Install
 
@@ -56,37 +52,18 @@ import { VdButton, VdCard } from "@vanduo-oss/vd3";
 
 ## Components & composables
 
-**52 components** — 45 `Vd*` components plus 7 layout primitives — and **~35
-composables**, all named exports from the package root (import only what you
-render; nothing registers globally).
+Everything is a named export from the package root — import only what you
+render; nothing registers globally.
 
-- **Form & input:** `VdButton`, `VdButtonGroup`, `VdInput`, `VdSelect`,
-  `VdCustomSelect`, `VdCheckboxGroup`, `VdRadioGroup`, `VdSwitch`, `VdSlider`,
-  `VdRating`, `VdTransfer`.
-- **Data display:** `VdTable`, `VdTree`, `VdTreeNode`, `VdCollection`, `VdCard`,
-  `VdBadge`, `VdChip`, `VdAvatar`.
-- **Feedback & status:** `VdAlert`, `VdModal`, `VdOffcanvas`, `VdToast`,
-  `VdToastContainer`, `VdProgress`, `VdSpinner`, `VdPreloader`, `VdSkeleton`.
-- **Navigation:** `VdNavbar`, `VdSidenav`, `VdMenu`, `VdTabs`, `VdBreadcrumb`,
-  `VdPagination`, `VdFooter`, `VdFab`.
-- **Content & utility:** `VdAccordion`, `VdCodeSnippet`, `VdIcon`, `VdSeparator`,
-  `VdTooltip`, `VdDocSearch`, `VdFlow`.
-- **Theme controls:** `VdThemeSwitcher`, `VdThemeCustomizer`.
-- **Layout primitives:** `VdBox`, `VdCenter`, `VdCover`, `VdFrame`, `VdInline`,
-  `VdStack`, `VdSwitcher`.
+- **52 components** — 45 `Vd*` components plus 7 layout primitives (`VdBox`,
+  `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
+- **~35 composables** — the theme layer (`useTheme`, `useThemeBridge`, and the
+  `useThemePreference` reactive singleton), plus form, overlay/dismissal,
+  motion/scroll, and layout/interaction helpers. The `sanitizeHtml` whitelist
+  sanitizer is exported too.
 
-Composables cover the theme layer (`useTheme`, `useThemeBridge`), forms
-(`useDatepicker`, `useTimepicker`, `useStepper`, `useSuggest`, `useSearch`,
-`useValidate`), overlays/dismissal (`useDropdown`, `usePopover`, `useTooltips`,
-`useToast`, `useImageBox`, `useSpotlight`, `useSidenav`, `useFocusTrap`,
-`useClickOutside`), motion/scroll (`useAffix`, `useScrollspy`, `useParallax`,
-`useWaypoint`, `useLazyLoad`, `useNavbarGlassScroll`, `useMorph`,
-`useMorphBadges`, `useRipple`, `useExpandingCards`, `useTimeline`), and layout/
-interaction (`useGrid` + `setGridSystem`, `useGlass`, `useTabs`, `useDocSearch`,
-`useDraggable`, `useFlow`, `useKeyboardNav`). `sanitizeHtml` is exported too.
-
-The full agent/LLM reference — with the per-group inventory and the theming
-contract — is in [SKILL.md](./SKILL.md).
+The full per-group inventory and the theming contract live in the agent/LLM
+reference, [SKILL.md](./SKILL.md).
 
 ### Theming
 

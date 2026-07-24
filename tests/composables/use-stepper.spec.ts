@@ -92,10 +92,12 @@ describe("useStepper", () => {
     expect(b!.classList.contains("is-active")).toBe(false);
   });
 
-  it("dispatches an initial stepper:change with the derived index on mount", () => {
+  it("does not dispatch stepper:change on mount (initial paint is silent)", () => {
+    // Applying the derived starting step is not a user-visible change, so no
+    // spurious stepper:change (current === previous) fires on mount.
     const c = collectChanges();
     mountHost(threeSteps());
-    expect(c.events).toContainEqual({ current: 1, previous: 1, total: 3 });
+    expect(c.events).toHaveLength(0);
     c.stop();
   });
 

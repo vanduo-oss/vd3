@@ -42,7 +42,10 @@ export function useStepper(root: Ref<HTMLElement | null>): StepperApi {
       );
       if (currentIndex === -1) currentIndex = 0;
 
-      const setStep = (index: number): void => {
+      // `dispatch` is false only for the initial paint below: applying the
+      // derived starting step is not a user-visible "change", so emitting
+      // `stepper:change` on mount (where current === previous) is spurious.
+      const setStep = (index: number, dispatch = true): void => {
         if (index < 0 || index >= items.length) return;
         const prev = currentIndex;
         currentIndex = index;
@@ -55,6 +58,7 @@ export function useStepper(root: Ref<HTMLElement | null>): StepperApi {
             item.setAttribute("aria-current", "step");
           }
         });
+        if (!dispatch) return;
         el.dispatchEvent(
           new CustomEvent("stepper:change", {
             detail: { current: index, previous: prev, total: items.length },
@@ -79,7 +83,8 @@ export function useStepper(root: Ref<HTMLElement | null>): StepperApi {
         });
       }
 
-      setStep(currentIndex);
+      // Initial paint: apply the derived step silently (no stepper:change).
+      setStep(currentIndex, false);
 
       instances.set(el, {
         setStep,

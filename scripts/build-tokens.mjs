@@ -244,7 +244,9 @@ const tokensDataTs =
 // ── tokens.json (flat, resolved + customizer — old core/dist/tokens.json shape). ──
 const tokensJson = {
   $description:
-    "Vanduo design tokens — resolved CSS custom properties + customizer options.",
+    "Vanduo design tokens — the token pipeline's resolved CSS custom properties " +
+    "(a subset of all --vd-* properties; non-color props authored directly in " +
+    "css/core/tokens.css are not included) + customizer options.",
   cssVariables: resolvedTokens,
   customizer: { ...opts },
 };

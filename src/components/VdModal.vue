@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onScopeDispose,
+  ref,
+  watch,
+} from "vue";
 import VdIcon from "./VdIcon.vue";
+import { useFocusTrap } from "../composables/useFocusTrap";
 
 interface Props {
   open: boolean;
   title?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   closeOnBackdrop?: boolean;
 }
 
@@ -21,6 +29,10 @@ const emit = defineEmits<{
 }>();
 
 const panel = ref<HTMLElement | null>(null);
+const { activate, deactivate } = useFocusTrap(panel);
+
+// The element focused before the dialog opened, restored on close.
+let previouslyFocused: HTMLElement | null = null;
 
 const sizeClass = computed(() => `vd-modal-panel-${props.size}`);
 
@@ -41,20 +53,38 @@ const onKeydown = (event: KeyboardEvent): void => {
   }
 };
 
+// Detach the global Escape listener unconditionally — a modal unmounted while
+// open must not leave a listener that hijacks Escape for the whole page.
+const removeKeydown = (): void => {
+  if (typeof window !== "undefined") {
+    window.removeEventListener("keydown", onKeydown);
+  }
+};
+
 watch(
   () => props.open,
   async (open) => {
     if (typeof window === "undefined") return;
     if (open) {
+      previouslyFocused = document.activeElement as HTMLElement | null;
       window.addEventListener("keydown", onKeydown);
       await nextTick();
-      panel.value?.focus();
+      activate();
+      if (panel.value && !panel.value.contains(document.activeElement)) {
+        panel.value.focus();
+      }
     } else {
-      window.removeEventListener("keydown", onKeydown);
+      removeKeydown();
+      deactivate();
+      previouslyFocused?.focus();
+      previouslyFocused = null;
     }
   },
   { immediate: true },
 );
+
+onBeforeUnmount(removeKeydown);
+onScopeDispose(removeKeydown);
 </script>
 
 <template>

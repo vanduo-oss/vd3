@@ -243,6 +243,16 @@ textarea.is-error:focus {
   box-shadow: 0 0 0 3px var(--vd-color-error-alpha-10);
 }
 
+/* Validation message — the `.vd-validate-error` element `useValidate` injects
+   (role="alert", linked via aria-describedby) beneath an invalid field. */
+.vd-validate-error {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: var(--vd-font-size-sm);
+  line-height: var(--vd-line-height-normal);
+  color: var(--vd-color-error);
+}
+
 /* Input States - Success */
 .vd-input-success,
 input.vd-input-success,

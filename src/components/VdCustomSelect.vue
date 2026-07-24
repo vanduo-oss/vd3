@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, useId } from "vue";
 
 interface CustomSelectOption {
   value: string;
@@ -26,7 +26,20 @@ const emit = defineEmits<{ "update:modelValue": [value: string] }>();
 const open = ref(false);
 const activeIndex = ref(-1);
 const wrapper = ref<HTMLElement | null>(null);
-const buttonId = computed(() => props.id || props.name || "custom-select");
+
+// Stable id base so instances without an id/name still get collision-free,
+// non-dangling listbox/option ARIA ids.
+const autoId = useId();
+const baseId = computed(() => props.id || props.name || autoId);
+const listboxId = computed(() => `${baseId.value}-listbox`);
+const optionId = (i: number): string => `${baseId.value}-option-${i}`;
+// The id of the active option while the listbox is open (absent otherwise, so
+// no dangling IDREF is ever exposed).
+const activeDescendant = computed(() =>
+  open.value && activeIndex.value >= 0
+    ? optionId(activeIndex.value)
+    : undefined,
+);
 
 const selectableIndexes = computed(() =>
   props.options.flatMap((o, i) => (o.disabled ? [] : [i])),
@@ -177,19 +190,22 @@ onBeforeUnmount(() => {
       class="custom-select-button"
       aria-haspopup="listbox"
       :aria-expanded="open ? 'true' : 'false'"
-      :aria-labelledby="buttonId"
+      :aria-controls="listboxId"
+      :aria-activedescendant="activeDescendant"
       @click.stop="toggle"
       @keydown="onKeydown"
     >
       {{ buttonText }}
     </button>
     <div
+      :id="listboxId"
       class="custom-select-dropdown"
       :class="{ 'is-open': open }"
       role="listbox"
     >
       <div
         v-for="(opt, i) in options"
+        :id="optionId(i)"
         :key="opt.value"
         class="custom-select-option"
         :class="{

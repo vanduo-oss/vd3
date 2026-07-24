@@ -10,7 +10,7 @@ context: |
   Build order: scripts/build-tokens.mjs -> scripts/build-css.mjs (lightningcss) ->
   vite build (lib es+cjs, externalize vue only) -> vue-tsc -> scripts/check-class-coverage.mjs.
   Exports: "." (components + composables + theme API + token data), "./css" (dist/vd3.min.css),
-  "./css/core", "./tokens.json". Fonts (10 families) + Phosphor icons (regular+fill only)
+  "./css/core", "./tokens.json". Fonts (11 families) + Phosphor icons (regular+fill only)
   copied to dist/ beside CSS. CSS classes use vd-* prefix; custom properties use --vd-*;
   theme via data-palette/-primary/-neutral/-radius/-theme/-font attributes; localStorage
   keys keep the vanduo-* prefix.

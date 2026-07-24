@@ -42,7 +42,7 @@ describe("VdModal", () => {
     wrapper.unmount();
   });
 
-  it.each(["sm", "md", "lg"] as const)(
+  it.each(["sm", "md", "lg", "xl"] as const)(
     "maps size=%s to vd-modal-panel-%s",
     (size) => {
       const wrapper = factory({ size });
@@ -134,5 +134,71 @@ describe("VdModal", () => {
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     expect(wrapper.emitted("close")).toBeUndefined();
     wrapper.unmount();
+  });
+
+  it("removes the global keydown handler on unmount so Escape does not leak while open", () => {
+    // Open at mount, then unmount without closing first. A leaked window
+    // handler would hijack Escape for the whole page.
+    const wrapper = factory({ title: "Leaky" });
+    wrapper.unmount();
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(wrapper.emitted("close")).toBeUndefined();
+    expect(wrapper.emitted("update:open")).toBeUndefined();
+  });
+
+  it("traps Tab focus within the panel (cycles first<->last)", async () => {
+    const wrapper = mount(VdModal, {
+      props: { open: true, title: "T" },
+      slots: {
+        default: "<p>Body</p>",
+        footer: "<button id='foot'>Save</button>",
+      },
+      global: { stubs: { teleport: true } },
+      attachTo: document.body,
+    });
+    await wrapper.vm.$nextTick();
+
+    const closeBtn = wrapper.get("button[aria-label='Close']")
+      .element as HTMLElement;
+    const footBtn = wrapper.get("#foot").element as HTMLElement;
+
+    // Tab from the last focusable wraps to the first.
+    footBtn.focus();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    expect(document.activeElement).toBe(closeBtn);
+
+    // Shift+Tab from the first wraps to the last.
+    closeBtn.focus();
+    window.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }),
+    );
+    expect(document.activeElement).toBe(footBtn);
+
+    wrapper.unmount();
+  });
+
+  it("returns focus to the opener element when it closes", async () => {
+    const opener = document.createElement("button");
+    opener.id = "opener";
+    document.body.appendChild(opener);
+    opener.focus();
+    expect(document.activeElement).toBe(opener);
+
+    const wrapper = mount(VdModal, {
+      props: { open: true },
+      slots: { default: "<button id='inner'>Inner</button>" },
+      global: { stubs: { teleport: true } },
+      attachTo: document.body,
+    });
+    await wrapper.vm.$nextTick();
+    // Focus moved into the dialog on open.
+    expect(document.activeElement).not.toBe(opener);
+
+    await wrapper.setProps({ open: false });
+    expect(document.activeElement).toBe(opener);
+
+    wrapper.unmount();
+    opener.remove();
   });
 });

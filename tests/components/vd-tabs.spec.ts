@@ -15,11 +15,13 @@ const factory = (props: Record<string, unknown> = {}) =>
   });
 
 describe("VdTabs", () => {
-  it("renders a role=tablist with one role=tab button per tab", () => {
+  it("renders role=tablist on the tab buttons' direct parent, not the root", () => {
     const wrapper = factory();
     expect(wrapper.classes()).toContain("vd-tabs");
-    expect(wrapper.attributes("role")).toBe("tablist");
-    expect(wrapper.find(".vd-tab-list").exists()).toBe(true);
+    // role=tablist belongs on the direct parent of the tabs, not the outer div.
+    expect(wrapper.attributes("role")).toBeUndefined();
+    const list = wrapper.get(".vd-tab-list");
+    expect(list.attributes("role")).toBe("tablist");
 
     const buttons = wrapper.findAll(".vd-tab");
     expect(buttons).toHaveLength(3);
@@ -28,6 +30,55 @@ describe("VdTabs", () => {
       expect(b.attributes("role")).toBe("tab");
       expect(b.attributes("type")).toBe("button");
     });
+  });
+
+  it("wires WAI-ARIA tab/tabpanel relationships and roving tabindex", () => {
+    const wrapper = factory({ modelValue: "two" });
+    const buttons = wrapper.findAll(".vd-tab");
+    const panel = wrapper.get(".vd-tab-panels");
+
+    // The panel is a tabpanel labelled by the active tab; each tab controls it.
+    expect(panel.attributes("role")).toBe("tabpanel");
+    const activeId = buttons[1].attributes("id");
+    expect(activeId).toBeTruthy();
+    expect(panel.attributes("aria-labelledby")).toBe(activeId);
+    const panelId = panel.attributes("id");
+    buttons.forEach((b) => expect(b.attributes("aria-controls")).toBe(panelId));
+
+    // Roving tabindex: only the active tab is a tab stop.
+    expect(buttons[0].attributes("tabindex")).toBe("-1");
+    expect(buttons[1].attributes("tabindex")).toBe("0");
+    expect(buttons[2].attributes("tabindex")).toBe("-1");
+  });
+
+  it("moves selection and focus with arrow keys and Home/End", async () => {
+    const wrapper = mount(VdTabs, {
+      props: { tabs, modelValue: "one" },
+      slots: { default: '<p class="panel">Panel body</p>' },
+      attachTo: document.body,
+    });
+    const buttons = () => wrapper.findAll(".vd-tab");
+
+    await buttons()[0].trigger("keydown", { key: "ArrowRight" });
+    expect(wrapper.emitted("update:modelValue")!.at(-1)).toEqual(["two"]);
+    expect(document.activeElement).toBe(buttons()[1].element);
+
+    // ArrowLeft from the first wraps to the last.
+    await wrapper.setProps({ modelValue: "one" });
+    await buttons()[0].trigger("keydown", { key: "ArrowLeft" });
+    expect(wrapper.emitted("update:modelValue")!.at(-1)).toEqual(["three"]);
+    expect(document.activeElement).toBe(buttons()[2].element);
+
+    // End jumps to the last, Home to the first.
+    await wrapper.setProps({ modelValue: "one" });
+    await buttons()[0].trigger("keydown", { key: "End" });
+    expect(wrapper.emitted("update:modelValue")!.at(-1)).toEqual(["three"]);
+
+    await wrapper.setProps({ modelValue: "three" });
+    await buttons()[2].trigger("keydown", { key: "Home" });
+    expect(wrapper.emitted("update:modelValue")!.at(-1)).toEqual(["one"]);
+
+    wrapper.unmount();
   });
 
   it("marks the modelValue tab active via is-active and aria-selected", () => {

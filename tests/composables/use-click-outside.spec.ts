@@ -23,8 +23,8 @@ const pointerDownFrom = (el: Element): void => {
 
 let wrapper: VueWrapper | null = null;
 
-function mountHost(handler: () => void) {
-  const enabled = ref(false);
+function mountHost(handler: () => void, initialEnabled = false) {
+  const enabled = ref(initialEnabled);
   wrapper = mount(
     defineComponent({
       setup() {
@@ -52,6 +52,17 @@ describe("useClickOutside", () => {
     const { enabled } = mountHost(handler);
 
     enabled.value = true;
+    await settle();
+
+    pointerDownFrom(document.body);
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it("attaches on mount when enabled is already true (immediate watch)", async () => {
+    const handler = vi.fn();
+    // enabled starts true — the watcher must run immediately and schedule the
+    // deferred attach, rather than waiting for a false→true transition.
+    mountHost(handler, true);
     await settle();
 
     pointerDownFrom(document.body);
