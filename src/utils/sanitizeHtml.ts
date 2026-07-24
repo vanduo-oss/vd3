@@ -77,12 +77,12 @@ const SAFE_SVG_ATTRS = new Set([
  */
 function isUnsafeStyle(value: string | null): boolean {
   if (!value) return false;
-  // Also reject CSS escape sequences (e.g. `url\0028`, `\75\72\6c(`) so the
-  // url()/expression() checks cannot be trivially escaped. Still a blunt
-  // heuristic, not a full CSS parser — allowStyle stays trusted-input-only.
-  return /url\(|expression\(|position\s*:\s*(?:fixed|sticky)|\\[0-9a-f]/i.test(
-    value,
-  );
+  // Reject ANY backslash: every CSS escape (`\28`, `\75\72\6c(`, `\(`) uses one,
+  // so this closes the whole escape-obfuscation class for url() / expression()
+  // at once. Legit inline styles almost never contain a backslash, and dropping
+  // one is a safe fail. A blunt heuristic, not a full CSS parser — allowStyle
+  // stays trusted-input-only (see the module header).
+  return /url\(|expression\(|position\s*:\s*(?:fixed|sticky)|\\/i.test(value);
 }
 
 /** Attribute-safe text escape — used as the SSR / no-DOMParser fallback. */

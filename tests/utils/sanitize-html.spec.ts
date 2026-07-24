@@ -149,6 +149,18 @@ describe("sanitizeHtml — allowStyle", () => {
     );
     expect(fixed.querySelector("div")?.hasAttribute("style")).toBe(false);
   });
+
+  it("scrubs escape-obfuscated styles (any backslash) under allowStyle:true", () => {
+    // `\28`/`\29` are CSS escapes for `(`/`)`, so `url\28 …\29` decodes to `url(…)`.
+    // Any backslash is treated as unsafe, closing the escape-obfuscation class.
+    const escaped = parse(
+      sanitizeHtml(
+        '<div style="background:url\\28 javascript:alert(1)\\29">x</div>',
+        { allowStyle: true },
+      ),
+    );
+    expect(escaped.querySelector("div")?.hasAttribute("style")).toBe(false);
+  });
 });
 
 describe("sanitizeHtml — SSR / no DOMParser", () => {
