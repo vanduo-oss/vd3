@@ -86,6 +86,12 @@ sibling, which is why the sibling spacing below is deliberately written to avoid
 Gap sizes follow the Fibonacci scale the button padding already uses: 2px at `sm`, 4px at `md`,
 6px at `lg`, with a constant 2px stroke.
 
+The gaps are `rem` — they are spacing, and should scale with the consumer's type scale. The
+stroke is **px**, matching `--vd-border-width`. That asymmetry is deliberate and was found by
+dogfooding: vd3-docs runs a 14.4px root font, where a `0.125rem` stroke computes to 1.8px, and
+browsers floor border widths to whole pixels, so the ring silently rendered as a 1px hairline.
+A hairline is a physical detail rather than a typographic one, so it does not scale.
+
 ## Reserving layout space
 
 The ring paints outside the border box, so it does not push neighbours away on its own. Two

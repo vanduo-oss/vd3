@@ -20,8 +20,8 @@ and the avatar technique does not transfer (see `design.md`).
 - A new opt-in modifier class **`.vd-btn-ring`**, composable with every existing variant, size
   and state. It draws a concentric outer stroke separated from the button by a transparent gap,
   using an absolutely positioned `::before`.
-- Six `--vd-btn-ring-*` custom properties in the existing `buttons.css` `:root` block (width,
-  gap, per-size gaps, colour), so consumers can retune the ring without overriding rules.
+- Five `--vd-btn-ring-*` custom properties in the existing `buttons.css` `:root` block (stroke
+  width, gap, per-size gaps, colour), so consumers can retune the ring without overriding rules.
 - `VdButton` gains a **`ring?: boolean`** prop (default `false`) that emits the class, so the
   look is reachable from the component API and not only from hand-written markup.
 - The ring is suppressed inside `.vd-btn-group` / `.vd-btn-group-vertical`, where buttons

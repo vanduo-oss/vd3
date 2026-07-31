@@ -27,6 +27,14 @@ does not carry it.
   two curves stay concentric
 - **AND** the gap SHALL follow the Fibonacci scale already used by the button padding
 
+#### Scenario: The stroke holds its weight under a rescaled root font
+
+- **GIVEN** a consumer whose root font size is below 16px
+- **WHEN** a ring button is rendered
+- **THEN** the ring stroke SHALL keep its full weight rather than collapsing to a hairline,
+  because the stroke is specified in pixels like `--vd-border-width` and not in `rem`
+- **AND** the gap SHALL still scale with the consumer's type scale, since it is spacing
+
 #### Scenario: The base button is unchanged
 
 - **GIVEN** the stylesheet before and after this change

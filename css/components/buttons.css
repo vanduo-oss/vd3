@@ -37,9 +37,11 @@
   /* Button Transitions */
   --vd-btn-transition: all 0.2s ease-in-out;
 
-  /* Button Ring (opt-in .vd-btn-ring; Fibonacci gaps, constant stroke) */
-  --vd-btn-ring-width: 0.125rem;
-  /* 2px - fib */
+  /* Button Ring (opt-in .vd-btn-ring; Fibonacci gaps, constant stroke).
+   * The stroke is px, not rem, matching --vd-border-width: a hairline is a
+   * physical detail, and browsers floor border widths to whole pixels — under
+   * a root font below 16px a rem stroke would silently collapse to 1px. */
+  --vd-btn-ring-width: 2px;
   --vd-btn-ring-gap: 0.25rem;
   /* 4px - fib */
   --vd-btn-ring-gap-sm: 0.125rem;
