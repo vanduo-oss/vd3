@@ -10,6 +10,7 @@ interface Props {
   size?: Size;
   loading?: boolean;
   disabled?: boolean;
+  ring?: boolean;
   type?: "button" | "submit" | "reset";
 }
 
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   size: "md",
   loading: false,
   disabled: false,
+  ring: false,
   type: "button",
 });
 
@@ -40,6 +42,7 @@ const onClick = (event: MouseEvent): void => {
       'vd-btn',
       `vd-btn-${variant}`,
       size !== 'md' ? `vd-btn-${size}` : null,
+      ring ? 'vd-btn-ring' : null,
       loading ? 'is-loading' : null,
     ]"
     @click="onClick"

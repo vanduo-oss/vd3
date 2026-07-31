@@ -36,6 +36,19 @@
 
   /* Button Transitions */
   --vd-btn-transition: all 0.2s ease-in-out;
+
+  /* Button Ring (opt-in .vd-btn-ring; Fibonacci gaps, constant stroke).
+   * The stroke is px, not rem, matching --vd-border-width: a hairline is a
+   * physical detail, and browsers floor border widths to whole pixels — under
+   * a root font below 16px a rem stroke would silently collapse to 1px. */
+  --vd-btn-ring-width: 2px;
+  --vd-btn-ring-gap: 0.25rem;
+  /* 4px - fib */
+  --vd-btn-ring-gap-sm: 0.125rem;
+  /* 2px - fib */
+  --vd-btn-ring-gap-lg: 0.375rem;
+  /* 6px - fib */
+  --vd-btn-ring-color: currentcolor;
 }
 
 /* Base Button */
@@ -485,6 +498,74 @@
 
 .vd-btn>*:first-child {
   margin-left: 0;
+}
+
+/* Ring Modifier — a concentric outer stroke with a transparent gap.
+ * Drawn on ::before because ::after carries the legacy loading spinner, and
+ * left off `outline` so :focus-visible keeps the system-wide focus ring.
+ * The gap is real transparency, so the ring reads correctly on cards, glass
+ * and imagery — a box-shadow ring would need an opaque gap colour. */
+.vd-btn-ring {
+  --vd-btn-ring-offset: calc(var(--vd-btn-ring-gap) + var(--vd-btn-ring-width));
+  --vd-btn-ring-radius: calc(var(--vd-btn-border-radius) + var(--vd-btn-ring-offset));
+
+  position: relative;
+  margin: var(--vd-btn-ring-offset);
+  margin-bottom: calc(0.5rem + var(--vd-btn-ring-offset));
+}
+
+.vd-btn-ring::before {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--vd-btn-ring-offset));
+  border: var(--vd-btn-ring-width) solid var(--vd-btn-ring-color);
+  border-radius: var(--vd-btn-ring-radius);
+  pointer-events: none;
+}
+
+/* .vd-btn+.vd-btn outranks .vd-btn-ring and would drop the reserved gap */
+.vd-btn+.vd-btn-ring {
+  margin-left: calc(0.5rem + var(--vd-btn-ring-offset));
+}
+
+.vd-btn-ring.vd-btn-sm {
+  --vd-btn-ring-gap: var(--vd-btn-ring-gap-sm);
+  --vd-btn-ring-radius: calc(var(--vd-btn-border-radius-sm) + var(--vd-btn-ring-offset));
+}
+
+.vd-btn-ring.vd-btn-lg {
+  --vd-btn-ring-gap: var(--vd-btn-ring-gap-lg);
+  --vd-btn-ring-radius: calc(var(--vd-btn-border-radius-lg) + var(--vd-btn-ring-offset));
+}
+
+/* Solid variants carry white/black text, so currentcolor would halo them */
+.vd-btn-ring.vd-btn-primary {
+  --vd-btn-ring-color: var(--vd-color-primary);
+}
+
+.vd-btn-ring.vd-btn-secondary {
+  --vd-btn-ring-color: var(--vd-color-secondary);
+}
+
+.vd-btn-ring.vd-btn-success {
+  --vd-btn-ring-color: var(--vd-color-success);
+}
+
+.vd-btn-ring.vd-btn-warning {
+  --vd-btn-ring-color: var(--vd-color-warning);
+}
+
+.vd-btn-ring.vd-btn-error,
+.vd-btn-ring.vd-btn-danger {
+  --vd-btn-ring-color: var(--vd-color-error);
+}
+
+.vd-btn-ring.vd-btn-info {
+  --vd-btn-ring-color: var(--vd-color-info);
+}
+
+.vd-btn-ring:focus-visible {
+  outline-offset: calc(var(--vd-btn-ring-offset) + 2px);
 }
 
 /* Link as Button */
