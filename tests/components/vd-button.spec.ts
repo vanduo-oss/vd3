@@ -42,6 +42,28 @@ describe("VdButton", () => {
     expect(md.some((c) => c === "vd-btn-sm" || c === "vd-btn-lg")).toBe(false);
   });
 
+  it("ring is opt-in: absent by default, adds vd-btn-ring when set", () => {
+    expect(mount(VdButton).classes()).not.toContain("vd-btn-ring");
+    expect(mount(VdButton, { props: { ring: true } }).classes()).toContain(
+      "vd-btn-ring",
+    );
+  });
+
+  it("ring composes with the variant and size classes", () => {
+    const classes = mount(VdButton, {
+      props: { ring: true, variant: "danger", size: "lg" },
+    }).classes();
+
+    expect(classes).toEqual(
+      expect.arrayContaining([
+        "vd-btn",
+        "vd-btn-danger",
+        "vd-btn-lg",
+        "vd-btn-ring",
+      ]),
+    );
+  });
+
   it("forwards the type prop to the native button", () => {
     const wrapper = mount(VdButton, { props: { type: "submit" } });
     expect(wrapper.attributes("type")).toBe("submit");

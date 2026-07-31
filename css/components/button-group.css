@@ -71,6 +71,19 @@
   padding: 0.625rem 1.25rem;
 }
 
+/* Ring Modifier — suppressed here: grouped buttons share edges by design, so a
+ * per-button ring would collide with the neighbour it overlaps. The -1px
+ * edge-sharing survives because :not(:first-child) outranks these selectors. */
+.vd-btn-group>.vd-btn-ring,
+.vd-btn-group-vertical>.vd-btn-ring {
+  margin: 0;
+}
+
+.vd-btn-group>.vd-btn-ring::before,
+.vd-btn-group-vertical>.vd-btn-ring::before {
+  content: none;
+}
+
 /* Full Width */
 .vd-btn-group-full {
   display: flex;

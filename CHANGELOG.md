@@ -3,6 +3,21 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.2.0 — 2026-07-31
+
+### Added
+
+- Buttons gain an opt-in **ring modifier** (`.vd-btn-ring`, or `:ring="true"` on
+  `VdButton`) — a concentric outer stroke separated from the button by a
+  transparent gap, for marking one action as the primary one on a screen that
+  already uses solid buttons throughout. It layers onto any existing variant,
+  size and state rather than being a variant of its own, and because the gap is
+  real transparency it reads correctly on cards, glass and imagery. Tunable
+  through five `--vd-btn-ring-*` custom properties. The ring is suppressed
+  inside `.vd-btn-group`, where buttons deliberately share edges. Additive and
+  backward-compatible — no button without the modifier renders differently —
+  which is why the release is a minor (`1.1.x → 1.2.0`).
+
 ## 1.1.0 — 2026-07-24
 
 ### Added
