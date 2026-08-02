@@ -112,13 +112,27 @@
 
 /* ========== Highlighted Target ========== */
 
+/*
+ * `.vd-spotlight-target` marks the real step target (tests / host styling).
+ * The visual cutout lives on body-level `.vd-spotlight-highlight` instead:
+ * targets often sit inside transformed ancestors (e.g. `.vd-card {
+ * transform: translateZ(0) }`), so a 9999px box-shadow on the target is
+ * trapped in that stacking context and later page siblings paint above it —
+ * looking like the focus jumped to the last bright card.
+ */
 .vd-spotlight-target {
-  position: relative;
+  /* Marker only — cutout is `.vd-spotlight-highlight` on body. */
+  scroll-margin-block: 1rem;
+}
+
+.vd-spotlight-highlight {
+  position: absolute;
   z-index: calc(var(--vd-spotlight-z-index) + 1);
-  isolation: isolate;
-  overflow: visible;
-  /* box-shadow cutout follows border-radius; !important wins over consumer utilities (e.g. docs demos) */
-  border-radius: var(--vd-spotlight-target-radius) !important;
+  pointer-events: none;
+  border-radius: var(--vd-spotlight-target-radius);
   box-shadow: 0 0 0 var(--vd-spotlight-highlight-padding) rgba(13, 110, 253, 0.25),
               0 0 0 9999px var(--vd-spotlight-overlay-bg);
+  /* Animate geometry between steps so focus tracks the current target. */
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease,
+    border-radius 0.25s ease;
 }

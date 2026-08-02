@@ -97,6 +97,9 @@ describe("useMorphBadges", () => {
     container.appendChild(badge);
     mountWith(ref(container));
 
+    const outgoingCurrent = badge.querySelector(".vd-morph-current");
+    const incomingNext = badge.querySelector(".vd-morph-next");
+
     click(badge);
     vi.advanceTimersByTime(750);
 
@@ -105,9 +108,14 @@ describe("useMorphBadges", () => {
     expect(badge.classList.contains("vd-badge")).toBe(true);
     expect(badge.classList.contains("vd-badge-warning")).toBe(false);
     expect(badge.classList.contains("vd-badge-success")).toBe(true);
+    // Roles swap (like useMorph): former next stays as the visible current.
+    expect(incomingNext?.classList.contains("vd-morph-current")).toBe(true);
+    expect(outgoingCurrent?.classList.contains("vd-morph-next")).toBe(true);
     // current now shows index 1, next is primed with index 2 (afterIdx).
     const current = badge.querySelector(".vd-morph-current");
     const next = badge.querySelector(".vd-morph-next");
+    expect(current).toBe(incomingNext);
+    expect(next).toBe(outgoingCurrent);
     expect(current?.textContent).toBe("Published");
     expect(current?.querySelector("i.ph.ph-check")).not.toBeNull();
     expect(next?.textContent).toBe("Archived");
@@ -125,9 +133,9 @@ describe("useMorphBadges", () => {
     mountWith(ref(container));
 
     click(badge); // -> index 1
-    vi.advanceTimersByTime(750);
+    vi.advanceTimersByTime(700);
     click(badge); // -> index 2
-    vi.advanceTimersByTime(750);
+    vi.advanceTimersByTime(700);
     expect(badge.classList.contains("vd-badge-neutral")).toBe(true);
     const current = badge.querySelector(".vd-morph-current");
     const next = badge.querySelector(".vd-morph-next");
@@ -136,7 +144,7 @@ describe("useMorphBadges", () => {
     expect(next?.textContent).toBe("Draft");
 
     click(badge); // -> index 0 (wrap)
-    vi.advanceTimersByTime(750);
+    vi.advanceTimersByTime(700);
     expect(badge.classList.contains("vd-badge-warning")).toBe(true);
     expect(badge.querySelector(".vd-morph-current")?.textContent).toBe("Draft");
   });
@@ -197,7 +205,7 @@ describe("useMorphBadges", () => {
     click(badge);
     vi.advanceTimersByTime(200);
     click(badge); // ignored while morphing
-    vi.advanceTimersByTime(550);
+    vi.advanceTimersByTime(500);
     expect(badge.classList.contains("vd-badge-success")).toBe(true); // index 1
     expect(badge.classList.contains("vd-badge-neutral")).toBe(false); // not index 2
   });

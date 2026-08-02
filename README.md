@@ -11,8 +11,9 @@ standalone: one package ships its own DTCG design tokens, CSS tree, and typed
 `Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
 no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**Status: 1.2.0** (adds the opt-in `.vd-btn-ring` button modifier; on the 1.0.0
-first-release line).
+**Status: 1.2.1** (loading-spinner visibility on outline/ghost, `VdModal`
+`glass`, spotlight cutout, morph settle, stepper reveal, button-group /
+transfer polish; 1.2.0 added the opt-in `.vd-btn-ring` modifier).
 
 ## Install
 

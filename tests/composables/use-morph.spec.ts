@@ -102,7 +102,7 @@ describe("useMorph", () => {
     expect(wave?.style.top).toBe("30px");
   });
 
-  it("after the default 750ms window removes is-morphing and swaps current/next", () => {
+  it("after the default 600ms window removes is-morphing and swaps current/next", () => {
     const el = buildMorph();
     container.appendChild(el);
     mountWith(ref(container));
@@ -110,7 +110,7 @@ describe("useMorph", () => {
     const b = el.querySelector(".vd-morph-next");
 
     clickAt(el, 5, 5);
-    vi.advanceTimersByTime(749);
+    vi.advanceTimersByTime(599);
     expect(el.classList.contains("is-morphing")).toBe(true);
     expect(a?.className).toBe("vd-morph-current");
 
@@ -144,7 +144,7 @@ describe("useMorph", () => {
     clickAt(el, 5, 5);
     vi.advanceTimersByTime(100);
     clickAt(el, 5, 5); // ignored: still morphing
-    vi.advanceTimersByTime(650); // resolves the first (and only) morph
+    vi.advanceTimersByTime(500); // resolves the first (and only) morph
     expect(a?.className).toBe("vd-morph-next"); // one swap, not two
   });
 
@@ -155,11 +155,26 @@ describe("useMorph", () => {
     const a = el.querySelector(".vd-morph-current");
 
     clickAt(el, 5, 5);
-    vi.advanceTimersByTime(750);
+    vi.advanceTimersByTime(600);
     expect(a?.className).toBe("vd-morph-next");
+    // Post-settle cooldown still holds the lock briefly.
     clickAt(el, 5, 5);
-    vi.advanceTimersByTime(750);
+    expect(el.classList.contains("is-morphing")).toBe(false);
+    vi.advanceTimersByTime(80);
+    clickAt(el, 5, 5);
+    vi.advanceTimersByTime(600);
     expect(a?.className).toBe("vd-morph-current"); // swapped back
+  });
+
+  it("settles without leaving is-morph-settling behind", () => {
+    const el = buildMorph();
+    container.appendChild(el);
+    mountWith(ref(container));
+
+    clickAt(el, 5, 5);
+    vi.advanceTimersByTime(600);
+    expect(el.classList.contains("is-morphing")).toBe(false);
+    expect(el.classList.contains("is-morph-settling")).toBe(false);
   });
 
   it("removes the click listener on unmount", () => {

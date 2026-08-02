@@ -88,9 +88,13 @@ interface ActiveTour {
   currentStep: number;
   overlay: HTMLElement;
   tooltip: HTMLElement;
+  /** Body-level cutout; keeps the dimming shadow outside transformed ancestors. */
+  highlight: HTMLElement;
   cleanup: Array<() => void>;
   triggerElement: HTMLElement | null;
   currentTarget: Element | null;
+  /** False until the first highlight geometry is applied (skip enter transition). */
+  highlightReady: boolean;
 }
 
 const TOOLTIP_GAP = 12;
@@ -168,6 +172,51 @@ function positionTooltip(tour: ActiveTour, target: Element): void {
   tooltip.style.left = left + "px";
 }
 
+/**
+ * Sync the body-level cutout to the target's viewport box. The cutout must
+ * live on `document.body` (not on the target): transformed ancestors trap a
+ * target-local 9999px box-shadow so later stacking contexts stay undimmed.
+ *
+ * Pass `animate: true` on step changes so the hole moves between targets;
+ * scroll/resize/settle updates pass `false` so tracking stays tight.
+ */
+function positionHighlight(
+  tour: ActiveTour,
+  target: Element | null,
+  animate = false,
+): void {
+  const { highlight } = tour;
+  if (!target || !target.isConnected) {
+    highlight.style.display = "none";
+    return;
+  }
+
+  const rect = target.getBoundingClientRect();
+  const useTransition = animate && tour.highlightReady;
+  if (!useTransition) {
+    highlight.style.transition = "none";
+  } else {
+    highlight.style.transition = "";
+  }
+
+  highlight.style.display = "block";
+  highlight.style.top = rect.top + window.scrollY + "px";
+  highlight.style.left = rect.left + window.scrollX + "px";
+  highlight.style.width = rect.width + "px";
+  highlight.style.height = rect.height + "px";
+
+  const radius = getComputedStyle(target).borderRadius;
+  if (radius) highlight.style.borderRadius = radius;
+
+  if (!useTransition) {
+    // Flush the no-transition write, then restore CSS transitions for the
+    // next animated step change.
+    void highlight.offsetWidth;
+    highlight.style.transition = "";
+  }
+  tour.highlightReady = true;
+}
+
 function showStep(tour: ActiveTour, index: number): void {
   const step = tour.steps[index];
   if (!step) return;
@@ -179,16 +228,17 @@ function showStep(tour: ActiveTour, index: number): void {
   const { tooltip } = tour;
   const { labels } = tour.config;
 
-  // Remove previous highlight
+  // Remove previous semantic mark
   document.querySelectorAll(".vd-spotlight-target").forEach((el) => {
     el.classList.remove("vd-spotlight-target");
   });
 
-  // Highlight target
+  // Mark target + scroll; visual cutout is the body-level highlight element.
   if (target) {
     target.classList.add("vd-spotlight-target");
     target.scrollIntoView({ behavior: "smooth", block: "center" });
   }
+  positionHighlight(tour, target, true);
 
   // Build tooltip content
   const total = tour.steps.length;
@@ -273,10 +323,13 @@ function showStep(tour: ActiveTour, index: number): void {
     let frames = 0;
     const settle = (): void => {
       if (activeTour !== tour || tour.currentTarget !== target) return;
+      positionHighlight(tour, target);
       positionTooltip(tour, target);
       if (frames++ < tour.config.settleFrames) requestAnimationFrame(settle);
     };
     requestAnimationFrame(settle);
+  } else {
+    positionHighlight(tour, null);
   }
 
   document.dispatchEvent(
@@ -323,10 +376,12 @@ function stopTour(): void {
 
   tour.overlay.remove();
   tour.tooltip.remove();
+  tour.highlight.remove();
 
   tour.cleanup.forEach((fn) => fn());
   tour.cleanup.length = 0;
   tour.currentTarget = null;
+  tour.highlightReady = false;
 
   if (
     tour.triggerElement &&
@@ -364,6 +419,13 @@ function startTour(
   overlay.setAttribute("aria-hidden", "true");
   document.body.appendChild(overlay);
 
+  // Body-level cutout (box-shadow dimmer) — must not be on the target itself.
+  const highlight = document.createElement("div");
+  highlight.className = "vd-spotlight-highlight";
+  highlight.setAttribute("aria-hidden", "true");
+  highlight.style.display = "none";
+  document.body.appendChild(highlight);
+
   // Create tooltip
   const tooltip = document.createElement("div");
   tooltip.className = "vd-spotlight-tooltip";
@@ -379,9 +441,11 @@ function startTour(
     currentStep: 0,
     overlay,
     tooltip,
+    highlight,
     cleanup: [],
     triggerElement,
     currentTarget: null,
+    highlightReady: false,
   };
   activeTour = tour;
 
@@ -395,11 +459,12 @@ function startTour(
   // Overlay click to close
   overlay.addEventListener("click", () => stopTour());
 
-  // Keep the tooltip glued to its target while active — through the smooth
-  // scrollIntoView and any late layout (e.g. content-visibility sections that
-  // only render their real geometry once scrolled into view).
+  // Keep the cutout + tooltip glued to the target while active — through the
+  // smooth scrollIntoView and any late layout (e.g. content-visibility sections
+  // that only render their real geometry once scrolled into view).
   const reposition = (): void => {
     if (activeTour === tour && tour.currentTarget) {
+      positionHighlight(tour, tour.currentTarget);
       positionTooltip(tour, tour.currentTarget);
     }
   };
@@ -419,11 +484,13 @@ function startTour(
  * `description` alias; entries without a usable target are dropped and
  * malformed JSON logs a console error and stays inert). Clicking a trigger
  * starts the tour: a body-appended `.vd-spotlight-overlay` (`aria-hidden`)
- * dims the page and a `.vd-spotlight-tooltip` (`role="dialog"`,
+ * catches clicks, a body-appended `.vd-spotlight-highlight` draws the
+ * box-shadow cutout over the active target (so dimming is not trapped inside
+ * transformed ancestors), and a `.vd-spotlight-tooltip` (`role="dialog"`,
  * `aria-modal="true"`) renders each step's title/description (ids wired to
  * `aria-labelledby` / `aria-describedby`), an "i / n" counter, and
  * Back/Skip/Next/Done buttons. The step's target gains `.vd-spotlight-target`
- * (the CSS box-shadow cutout) and is scrolled into view; the tooltip tracks
+ * (semantic mark) and is scrolled into view; the highlight + tooltip track
  * it through scroll/resize and a requestAnimationFrame settle window. Escape
  * and overlay click stop the tour. Stopping removes all generated DOM and
  * classes, restores focus to the trigger, and dispatches `spotlight:end` on

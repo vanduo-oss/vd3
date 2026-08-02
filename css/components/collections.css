@@ -182,6 +182,22 @@
   overflow: hidden;
 }
 
+/*
+ * Flush collection inside a card body: match the card's inner radius and clip
+ * item hover/active backgrounds so they don't square off past the card corners.
+ */
+.vd-card > .vd-card-body:first-child > .vd-collection {
+  border-top-left-radius: calc(var(--vd-card-border-radius) - var(--vd-card-border-width));
+  border-top-right-radius: calc(var(--vd-card-border-radius) - var(--vd-card-border-width));
+  overflow: hidden;
+}
+
+.vd-card > .vd-card-body:last-child > .vd-collection {
+  border-bottom-left-radius: calc(var(--vd-card-border-radius) - var(--vd-card-border-width));
+  border-bottom-right-radius: calc(var(--vd-card-border-radius) - var(--vd-card-border-width));
+  overflow: hidden;
+}
+
 .vd-collection-bordered .vd-collection-item {
   border-bottom: 1px solid var(--vd-collection-border-color);
 }

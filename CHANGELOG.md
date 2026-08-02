@@ -3,6 +3,47 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.2.1 — 2026-08-02
+
+### Added
+
+- `VdModal` gains an opt-in **`glass`** prop that applies the existing
+  `.vd-modal-glass` / `.vd-modal-glass-backdrop` classes (same idea as
+  `VdFab`’s `glass`). CSS was already shipped; the prop wires it for Vue
+  consumers. Fallthrough attrs bind on the dialog root (`inheritAttrs: false`)
+  so glass token overrides on `<VdModal>` land correctly through Teleport.
+- Opt-in **stepper scroll-reveal**: containers with `.vd-stepper-animated` get
+  a staggered IntersectionObserver reveal (mirrors timeline). `useStepper`
+  accepts optional `UseStepperOptions` (`staggerMs`, `maxStaggerIndex`);
+  prefers-reduced-motion and missing `IntersectionObserver` reveal immediately.
+
+### Fixed
+
+- Outline, ghost, and plain buttons with `.is-loading` now keep a **visible
+  spinner**. `.is-loading` blanks the label with `color: transparent`, and the
+  legacy `::after` spinner (and `.vd-btn-spinner`) used `currentColor`, so
+  transparent-fill treatments painted an invisible spinner. Solid variants
+  already pinned white/black; outline/ghost/plain now pin their accent colours
+  the same way.
+- **Spotlight** cutout is a body-level `.vd-spotlight-highlight` instead of a
+  9999px box-shadow on the target. Transformed ancestors (e.g. cards with
+  `translateZ(0)`) no longer trap the dimming shadow so later siblings stay
+  undimmed; geometry animates between steps.
+- **Morph** no longer reverse-animates (“bounce”) at end-of-swap: a short
+  `.is-morph-settling` freeze + cooldown blocks re-entrant clicks; default
+  duration/easing are snappier (no springy overshoot). Same settle path for
+  `useMorphBadges`.
+- **Vertical button groups** (`.vd-btn-group.vd-btn-group-vertical`) no longer
+  inherit horizontal edge-sharing margins/radii — jagged left edges and
+  squeezed label wrap are gone; labels stay `nowrap` and the stack sizes to
+  the widest button.
+- **Transfer** move buttons use Phosphor carets via `VdIcon`, match icon-button
+  sizing, and gain clearer hover/focus-visible styles.
+- **Collections** flush inside a card body clip to the card’s inner radius so
+  item hover backgrounds do not square off past rounded corners.
+- Stepper connector `::after` is `pointer-events: none` so decorative lines
+  never steal clicks from steps.
+
 ## 1.2.0 — 2026-07-31
 
 ### Added

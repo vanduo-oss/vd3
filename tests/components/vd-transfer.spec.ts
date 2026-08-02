@@ -42,6 +42,8 @@ describe("VdTransfer", () => {
     expect(buttons).toHaveLength(2);
     expect(buttons[0].attributes("aria-label")).toBe("Move to target");
     expect(buttons[1].attributes("aria-label")).toBe("Move to source");
+    expect(buttons[0].find(".ph-fill.ph-caret-right").exists()).toBe(true);
+    expect(buttons[1].find(".ph-fill.ph-caret-left").exists()).toBe(true);
   });
 
   it("starts with all items in the source list and live selection counts", () => {

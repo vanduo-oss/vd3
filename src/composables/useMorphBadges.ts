@@ -52,7 +52,7 @@ export function useMorphBadges(root: Ref<HTMLElement | null>): void {
         let idx = 0;
         let morphing = false;
 
-        let morphMs = 750;
+        let morphMs = 600;
         const d = getComputedStyle(badge)
           .getPropertyValue("--vd-morph-duration")
           .trim();
@@ -61,8 +61,33 @@ export function useMorphBadges(root: Ref<HTMLElement | null>): void {
           if (!isNaN(parsed)) morphMs = parsed * (d.includes("ms") ? 1 : 1000);
         }
 
+        const settleMorph = (nextIdx: number, afterIdx: number): void => {
+          badge.classList.add("is-morph-settling");
+          classes.forEach((c) => badge.classList.remove(c));
+          if (classes[nextIdx]) badge.classList.add(classes[nextIdx]);
+          const current = badge.querySelector(".vd-morph-current");
+          const nextEl = badge.querySelector(".vd-morph-next");
+          if (current && nextEl) {
+            current.classList.replace("vd-morph-current", "vd-morph-next");
+            nextEl.classList.replace("vd-morph-next", "vd-morph-current");
+            // Former current is now the hidden next — prime the following state.
+            setContent(current, icons[afterIdx] ?? "", states[afterIdx] ?? "");
+          }
+          badge.classList.remove("is-morphing");
+          void badge.offsetWidth;
+          badge.classList.remove("is-morph-settling");
+          idx = nextIdx;
+        };
+
         const onClick = (e: MouseEvent): void => {
-          if (morphing || states.length === 0) return;
+          if (
+            morphing ||
+            states.length === 0 ||
+            badge.classList.contains("is-morphing") ||
+            badge.classList.contains("is-morph-settling")
+          ) {
+            return;
+          }
           morphing = true;
           const nextIdx = (idx + 1) % states.length;
           const afterIdx = (nextIdx + 1) % states.length;
@@ -78,19 +103,14 @@ export function useMorphBadges(root: Ref<HTMLElement | null>): void {
             wave.style.top = `${(e.clientY || rect.top + rect.height / 2) - rect.top}px`;
           }
 
+          badge.classList.remove("is-morphing", "is-morph-settling");
+          void badge.offsetWidth;
           badge.classList.add("is-morphing");
           window.setTimeout(() => {
-            badge.classList.remove("is-morphing");
-            classes.forEach((c) => badge.classList.remove(c));
-            if (classes[nextIdx]) badge.classList.add(classes[nextIdx]);
-            const current = badge.querySelector(".vd-morph-current");
-            const nextEl = badge.querySelector(".vd-morph-next");
-            if (current)
-              setContent(current, icons[nextIdx] ?? "", states[nextIdx] ?? "");
-            if (nextEl)
-              setContent(nextEl, icons[afterIdx] ?? "", states[afterIdx] ?? "");
-            idx = nextIdx;
-            morphing = false;
+            settleMorph(nextIdx, afterIdx);
+            window.setTimeout(() => {
+              morphing = false;
+            }, 80);
           }, morphMs);
         };
 

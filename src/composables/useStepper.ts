@@ -1,5 +1,19 @@
 import { onMounted, onUnmounted, type Ref } from "vue";
 
+export interface UseStepperOptions {
+  /**
+   * vd3 extension: per-item reveal stagger step in milliseconds for
+   * `.vd-stepper-animated` containers (mirrors timeline `STAGGER_MS`).
+   * Default `140`.
+   */
+  staggerMs?: number;
+  /**
+   * vd3 extension: cap applied to the stagger index so late items share the
+   * same delay (mirrors timeline `MAX_STAGGER_INDEX`). Default `7`.
+   */
+  maxStaggerIndex?: number;
+}
+
 export interface StepperApi {
   /** Advance the given stepper element to the next step. */
   next(el: Element | null): void;
@@ -15,18 +29,79 @@ interface Instance {
   prev(): void;
 }
 
+const STAGGER_MS = 140;
+const MAX_STAGGER_INDEX = 7;
+
 /**
  * Ports framework/js/components/stepper.js — scans `root` for `.vd-stepper`
  * containers and manages step state. The active index is derived from the
  * initial `.is-active` item; `setStep` marks earlier items `.is-completed`,
  * the target `.is-active`, and dispatches `stepper:change` with
  * `{ current, previous, total }`. `.vd-stepper-clickable` steppers navigate on
- * item click. The returned imperative API lets the page wire the docs
- * `data-stepper-demo-control` Prev/Next buttons.
+ * item click. Containers that also carry `.vd-stepper-animated` get the same
+ * staggered IntersectionObserver reveal as timeline (per-item
+ * `--vd-stepper-reveal-delay`, `.is-revealed` on intersect). The returned
+ * imperative API lets the page wire the docs `data-stepper-demo-control`
+ * Prev/Next buttons.
  */
-export function useStepper(root: Ref<HTMLElement | null>): StepperApi {
+export function useStepper(
+  root: Ref<HTMLElement | null>,
+  options?: UseStepperOptions,
+): StepperApi {
+  const staggerMs = options?.staggerMs ?? STAGGER_MS;
+  const maxStaggerIndex = options?.maxStaggerIndex ?? MAX_STAGGER_INDEX;
+
   const instances = new Map<Element, Instance>();
   const cleanups: Array<() => void> = [];
+
+  const initAnimatedReveal = (items: HTMLElement[]): void => {
+    items.forEach((item, i) => {
+      const idx = Math.min(i, maxStaggerIndex);
+      item.style.setProperty(
+        "--vd-stepper-reveal-delay",
+        idx * staggerMs + "ms",
+      );
+    });
+
+    const reducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reducedMotion) {
+      items.forEach((item) => {
+        item.classList.add("is-revealed");
+      });
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      items.forEach((item) => {
+        item.classList.add("is-revealed");
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-revealed");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -10% 0px",
+        threshold: 0.15,
+      },
+    );
+
+    items.forEach((item) => {
+      observer.observe(item);
+    });
+
+    cleanups.push(() => observer.disconnect());
+  };
 
   onMounted(() => {
     const host = root.value;
@@ -81,6 +156,10 @@ export function useStepper(root: Ref<HTMLElement | null>): StepperApi {
           cleanups.push(() => item.removeEventListener("click", handler));
           cleanups.push(() => item.removeEventListener("keydown", keyHandler));
         });
+      }
+
+      if (el.classList.contains("vd-stepper-animated")) {
+        initAnimatedReveal(items);
       }
 
       // Initial paint: apply the derived step silently (no stepper:change).

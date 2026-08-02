@@ -129,27 +129,46 @@
 }
 
 .vd-transfer-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.125rem; /* 34px - fib, matches .vd-btn-icon */
+  height: 2.125rem;
   border: 1px solid var(--vd-transfer-border-color);
-  border-radius: 0.25rem;
+  border-radius: var(--vd-btn-border-radius, 0.3125rem);
   background: var(--vd-transfer-bg);
+  color: var(--vd-text-primary, #212529);
   cursor: pointer;
-  font-size: 0.875rem;
-  transition: background 0.15s ease;
   padding: 0;
+  box-shadow: var(--vd-shadow);
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.vd-transfer-btn:hover {
+.vd-transfer-btn .ph,
+.vd-transfer-btn .ph-fill {
+  line-height: 1;
+  font-size: 1.375rem; /* thicker caret presence in the 34px hit target */
+}
+
+.vd-transfer-btn:hover:not(:disabled) {
   background: var(--vd-transfer-item-hover-bg);
+  box-shadow: var(--vd-shadow-md);
+  border-color: var(--vd-text-muted, #6c757d);
+}
+
+.vd-transfer-btn:focus-visible {
+  outline: 2px solid var(--vd-color-primary, #0d6efd);
+  outline-offset: 2px;
 }
 
 .vd-transfer-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ========== Responsive ========== */

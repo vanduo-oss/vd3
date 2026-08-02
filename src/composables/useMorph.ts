@@ -1,6 +1,8 @@
 import { onMounted, onUnmounted, type Ref } from "vue";
 
-const MORPH_DURATION_MS = 750;
+const MORPH_DURATION_MS = 600;
+/** Brief lock after settle so a late click cannot reverse mid-settle. */
+const MORPH_SETTLE_COOLDOWN_MS = 80;
 
 /**
  * Reproduces `framework/js/components/morph.js`: a liquid wave content-swap on
@@ -30,6 +32,37 @@ export function useMorph(root: Ref<HTMLElement | null>): void {
     }
   };
 
+  const morphDurationMs = (el: HTMLElement): number => {
+    let duration = MORPH_DURATION_MS;
+    const custom = getComputedStyle(el)
+      .getPropertyValue("--vd-morph-duration")
+      .trim();
+    if (custom) {
+      const parsed = parseFloat(custom);
+      if (!isNaN(parsed))
+        duration = parsed * (custom.includes("ms") ? 1 : 1000);
+    }
+    return duration;
+  };
+
+  /**
+   * End the morph without a reverse-transition flash: freeze content
+   * transitions, swap faces, drop `is-morphing`, then unfreeze.
+   */
+  const settleMorph = (el: HTMLElement): void => {
+    el.classList.add("is-morph-settling");
+    const current = el.querySelector(".vd-morph-current");
+    const next = el.querySelector(".vd-morph-next");
+    if (current && next) {
+      current.classList.replace("vd-morph-current", "vd-morph-next");
+      next.classList.replace("vd-morph-next", "vd-morph-current");
+    }
+    el.classList.remove("is-morphing");
+    // Force layout so the frozen end-state paints before transitions return.
+    void el.offsetWidth;
+    el.classList.remove("is-morph-settling");
+  };
+
   const runMorph = (
     el: HTMLElement,
     e: MouseEvent | null,
@@ -46,25 +79,17 @@ export function useMorph(root: Ref<HTMLElement | null>): void {
       wave.style.top = `${py - rect.top}px`;
     }
 
+    // Restart CSS animations cleanly if a prior run left residual state.
+    el.classList.remove("is-morphing", "is-morph-settling");
+    void el.offsetWidth;
     el.classList.add("is-morphing");
 
-    let duration = MORPH_DURATION_MS;
-    const custom = getComputedStyle(el).getPropertyValue("--vd-morph-duration");
-    if (custom) {
-      const parsed = parseFloat(custom);
-      if (!isNaN(parsed))
-        duration = parsed * (custom.includes("ms") ? 1 : 1000);
-    }
+    const duration = morphDurationMs(el);
 
     window.setTimeout(() => {
-      el.classList.remove("is-morphing");
-      const current = el.querySelector(".vd-morph-current");
-      const next = el.querySelector(".vd-morph-next");
-      if (current && next) {
-        current.classList.replace("vd-morph-current", "vd-morph-next");
-        next.classList.replace("vd-morph-next", "vd-morph-current");
-      }
-      done();
+      settleMorph(el);
+      // Cooldown: keep the lock a beat past settle so late clicks don't bounce.
+      window.setTimeout(done, MORPH_SETTLE_COOLDOWN_MS);
     }, duration);
   };
 
@@ -78,9 +103,18 @@ export function useMorph(root: Ref<HTMLElement | null>): void {
         ensureLayers(el);
         let morphing = false;
         const onClick = (e: MouseEvent): void => {
-          if (morphing) return;
+          // Debounce: ignore while animating, settling, or in post-settle lock.
+          if (
+            morphing ||
+            el.classList.contains("is-morphing") ||
+            el.classList.contains("is-morph-settling")
+          ) {
+            return;
+          }
           morphing = true;
-          runMorph(el, e, () => (morphing = false));
+          runMorph(el, e, () => {
+            morphing = false;
+          });
         };
         el.addEventListener("click", onClick);
         cleanups.push(() => el.removeEventListener("click", onClick));
