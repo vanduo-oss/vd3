@@ -61,6 +61,41 @@ describe("VdModal", () => {
     wrapper.unmount();
   });
 
+  it("applies glass classes when glass=true", () => {
+    const wrapper = factory({ glass: true });
+    const modal = wrapper.get(".vd-modal");
+    expect(modal.classes()).toContain("vd-modal-glass");
+    expect(modal.get(".vd-modal-backdrop").classes()).toContain(
+      "vd-modal-glass-backdrop",
+    );
+    wrapper.unmount();
+  });
+
+  it("omits glass classes by default", () => {
+    const wrapper = factory();
+    expect(wrapper.get(".vd-modal").classes()).not.toContain("vd-modal-glass");
+    expect(wrapper.get(".vd-modal-backdrop").classes()).not.toContain(
+      "vd-modal-glass-backdrop",
+    );
+    wrapper.unmount();
+  });
+
+  it("forwards non-prop attrs (e.g. style) onto the teleported root", () => {
+    const wrapper = mount(VdModal, {
+      props: { open: true, glass: true },
+      attrs: {
+        style: { "--vd-glass-blur": "24px" },
+        class: "docs-glass-demo",
+      },
+      slots: { default: "<p>Body</p>" },
+      global: { stubs: { teleport: true } },
+    });
+    const modal = wrapper.get(".vd-modal");
+    expect(modal.classes()).toContain("docs-glass-demo");
+    expect(modal.attributes("style")).toContain("--vd-glass-blur: 24px");
+    wrapper.unmount();
+  });
+
   it("renders the header with title and close button only when titled or slotted", () => {
     const bare = factory();
     expect(bare.find(".vd-modal-header").exists()).toBe(false);

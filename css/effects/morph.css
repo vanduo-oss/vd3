@@ -12,8 +12,9 @@
  */
 
 :root {
-  --vd-morph-duration: 0.75s;
-  --vd-morph-easing: cubic-bezier(0.2, 0.8, 0.35, 1);
+  /* Snappy default; avoid springy overshoot (Y>1) in the easing curve. */
+  --vd-morph-duration: 0.6s;
+  --vd-morph-easing: cubic-bezier(0.33, 0, 0.2, 1);
   --vd-morph-blur-peak: 11px;
   --vd-morph-wave-color: var(--vd-color-primary, #3b82f6);
 }
@@ -26,6 +27,21 @@
   overflow: hidden;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Block re-entrant clicks for the whole morph window (debounce at CSS level). */
+.vd-morph.is-morphing,
+.vd-morph.is-morph-settling,
+[data-vd-morph].is-morphing,
+[data-vd-morph].is-morph-settling {
+  pointer-events: none;
+}
+
+/* Freeze face transitions during the current⇄next swap so removing
+   `.is-morphing` cannot reverse-animate (the end-of-morph “bounce”). */
+.vd-morph.is-morph-settling .vd-morph-content,
+[data-vd-morph].is-morph-settling .vd-morph-content {
+  transition: none !important;
 }
 
 /* ========== Wave Layer ========== */
@@ -151,7 +167,8 @@
 }
 
 .vd-morph.is-morphing .vd-morph-shine {
-  animation: vd-morph-shine 0.72s cubic-bezier(0.3, 0.65, 0.5, 1) 0.04s forwards;
+  animation: vd-morph-shine var(--vd-morph-duration) var(--vd-morph-easing) 0.03s
+    forwards;
 }
 
 @keyframes vd-morph-shine {
@@ -190,27 +207,27 @@
   filter: blur(0);
   z-index: 2;
   transition:
-    opacity 0.28s cubic-bezier(0.4, 0, 0.6, 1),
-    transform 0.28s cubic-bezier(0.4, 0, 0.6, 1),
-    filter 0.28s ease;
+    opacity 0.22s var(--vd-morph-easing),
+    transform 0.22s var(--vd-morph-easing),
+    filter 0.22s ease;
 }
 
 .vd-morph-next {
   opacity: 0;
-  transform: scale(0.86) translateY(4px);
-  filter: blur(3px);
+  transform: scale(0.94) translateY(2px);
+  filter: blur(2px);
   z-index: 1;
   transition:
-    opacity 0.3s cubic-bezier(0, 0, 0.2, 1),
-    transform 0.3s cubic-bezier(0, 0, 0.2, 1),
-    filter 0.3s ease;
+    opacity 0.24s var(--vd-morph-easing),
+    transform 0.24s var(--vd-morph-easing),
+    filter 0.24s ease;
 }
 
 .vd-morph.is-morphing .vd-morph-current {
   opacity: 0;
-  transform: scale(0.82) translateY(-4px);
-  filter: blur(4px);
-  transition-duration: 0.2s;
+  transform: scale(0.94) translateY(-2px);
+  filter: blur(3px);
+  transition-duration: 0.18s;
   transition-delay: 0s;
 }
 
@@ -218,20 +235,20 @@
   opacity: 1;
   transform: scale(1) translateY(0);
   filter: blur(0);
-  transition-duration: 0.3s;
-  transition-delay: 0.25s;
+  transition-duration: 0.26s;
+  transition-delay: 0.14s;
 }
 
 /* ========== Size Variants ========== */
 
 .vd-morph-sm {
-  --vd-morph-duration: 0.5s;
+  --vd-morph-duration: 0.4s;
   --vd-morph-blur-peak: 7px;
 }
 
 .vd-morph-lg {
-  --vd-morph-duration: 1s;
-  --vd-morph-blur-peak: 16px;
+  --vd-morph-duration: 0.75s;
+  --vd-morph-blur-peak: 14px;
 }
 
 /* ========== Accessibility ========== */

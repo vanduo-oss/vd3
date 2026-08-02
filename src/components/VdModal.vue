@@ -15,13 +15,19 @@ interface Props {
   title?: string;
   size?: "sm" | "md" | "lg" | "xl";
   closeOnBackdrop?: boolean;
+  /** Frosted glass panel + backdrop (`.vd-modal-glass` / `.vd-modal-glass-backdrop`). */
+  glass?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: "",
   size: "md",
   closeOnBackdrop: true,
+  glass: false,
 });
+
+// Teleport is not a DOM node — fallthrough attrs must be bound on the dialog root.
+defineOptions({ inheritAttrs: false });
 
 const emit = defineEmits<{
   "update:open": [value: boolean];
@@ -92,12 +98,18 @@ onScopeDispose(removeKeydown);
     <div
       v-if="open"
       class="vd-modal vd-modal-open"
+      :class="{ 'vd-modal-glass': glass }"
+      v-bind="$attrs"
       role="dialog"
       aria-modal="true"
       :aria-label="title || 'Dialog'"
       data-vd-modal
     >
-      <div class="vd-modal-backdrop" @click="onBackdrop" />
+      <div
+        class="vd-modal-backdrop"
+        :class="{ 'vd-modal-glass-backdrop': glass }"
+        @click="onBackdrop"
+      />
       <div ref="panel" :class="['vd-modal-panel', sizeClass]" tabindex="-1">
         <header v-if="title || $slots.header" class="vd-modal-header">
           <h2 v-if="title" class="vd-modal-title">

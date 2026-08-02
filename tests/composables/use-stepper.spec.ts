@@ -1,9 +1,47 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import { defineComponent, h, ref } from "vue";
 import { useStepper, type StepperApi } from "../../src/composables/useStepper";
 
 const mounted: VueWrapper[] = [];
+
+// jsdom lacks IntersectionObserver; this mock records instances/options and
+// lets a test drive the intersection callback synchronously.
+class MockIntersectionObserver {
+  static instances: MockIntersectionObserver[] = [];
+  callback: IntersectionObserverCallback;
+  options: IntersectionObserverInit | undefined;
+  observed: Element[] = [];
+  unobserved: Element[] = [];
+  disconnected = false;
+  constructor(
+    cb: IntersectionObserverCallback,
+    options?: IntersectionObserverInit,
+  ) {
+    this.callback = cb;
+    this.options = options;
+    MockIntersectionObserver.instances.push(this);
+  }
+  observe(el: Element): void {
+    this.observed.push(el);
+  }
+  unobserve(el: Element): void {
+    this.unobserved.push(el);
+  }
+  disconnect(): void {
+    this.disconnected = true;
+  }
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+  emit(targets: Element[], isIntersecting = true): void {
+    const entries = targets.map(
+      (target) =>
+        ({ isIntersecting, target }) as unknown as IntersectionObserverEntry,
+    );
+    this.callback(entries, this as unknown as IntersectionObserver);
+  }
+}
 
 function mountHost(html: string): { wrapper: VueWrapper; api: StepperApi } {
   let api!: StepperApi;
@@ -42,6 +80,11 @@ function collectChanges(): {
   };
 }
 
+beforeEach(() => {
+  MockIntersectionObserver.instances = [];
+  vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+});
+
 afterEach(() => {
   for (const w of mounted) {
     try {
@@ -51,6 +94,7 @@ afterEach(() => {
     }
   }
   mounted.length = 0;
+  vi.unstubAllGlobals();
 });
 
 const threeSteps = (opts = ""): string => `
@@ -150,6 +194,20 @@ describe("useStepper", () => {
     expect(c!.classList.contains("is-active")).toBe(true);
   });
 
+  it("navigates on item click for vertical clickable steppers", () => {
+    const { wrapper } = mountHost(
+      threeSteps("vd-stepper-vertical vd-stepper-clickable"),
+    );
+    items(wrapper)[0]!.dispatchEvent(
+      new MouseEvent("click", { bubbles: true }),
+    );
+
+    const [a, b] = items(wrapper);
+    expect(a!.classList.contains("is-active")).toBe(true);
+    expect(b!.classList.contains("is-active")).toBe(false);
+    expect(b!.classList.contains("is-completed")).toBe(false);
+  });
+
   it("navigates on Enter/Space keydown for clickable steppers (with preventDefault)", () => {
     const { wrapper } = mountHost(threeSteps("vd-stepper-clickable"));
     const third = items(wrapper)[2]!;
@@ -208,5 +266,62 @@ describe("useStepper", () => {
     third.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     expect(third.className).toBe(before);
     expect(changes).toHaveLength(0);
+  });
+
+  it("staggers reveal delays for .vd-stepper-animated (140ms steps, index capped at 7)", () => {
+    const many = Array.from(
+      { length: 10 },
+      (_, i) =>
+        `<li class="vd-stepper-item${i === 0 ? " is-active" : ""}">S${i}</li>`,
+    ).join("");
+    const { wrapper } = mountHost(
+      `<ol class="vd-stepper vd-stepper-animated">${many}</ol>`,
+    );
+    const els = items(wrapper);
+    const delays = els.map((i) =>
+      i.style.getPropertyValue("--vd-stepper-reveal-delay"),
+    );
+    expect(delays.slice(0, 3)).toEqual(["0ms", "140ms", "280ms"]);
+    expect(delays[7]).toBe("980ms");
+    expect(delays[8]).toBe("980ms");
+    expect(delays[9]).toBe("980ms");
+  });
+
+  it("observes animated items and reveals on intersection", () => {
+    const { wrapper } = mountHost(threeSteps("vd-stepper-animated"));
+    const els = items(wrapper);
+
+    expect(MockIntersectionObserver.instances).toHaveLength(1);
+    const io = MockIntersectionObserver.instances[0]!;
+    expect(io.options?.rootMargin).toBe("0px 0px -10% 0px");
+    expect(io.options?.threshold).toBe(0.15);
+    expect(io.observed).toEqual(els);
+    expect(els.every((i) => !i.classList.contains("is-revealed"))).toBe(true);
+
+    io.emit([els[0]!], false);
+    expect(els[0]!.classList.contains("is-revealed")).toBe(false);
+
+    io.emit([els[0]!, els[1]!]);
+    expect(els[0]!.classList.contains("is-revealed")).toBe(true);
+    expect(els[1]!.classList.contains("is-revealed")).toBe(true);
+    expect(els[2]!.classList.contains("is-revealed")).toBe(false);
+    expect(io.unobserved).toEqual([els[0], els[1]]);
+  });
+
+  it("ignores plain steppers without the animated opt-in", () => {
+    mountHost(threeSteps());
+    expect(MockIntersectionObserver.instances).toHaveLength(0);
+  });
+
+  it("reveals all animated items immediately under prefers-reduced-motion", () => {
+    const matchMedia = vi.fn().mockReturnValue({ matches: true });
+    vi.stubGlobal("matchMedia", matchMedia);
+
+    const { wrapper } = mountHost(threeSteps("vd-stepper-animated"));
+    expect(MockIntersectionObserver.instances).toHaveLength(0);
+    expect(
+      items(wrapper).every((i) => i.classList.contains("is-revealed")),
+    ).toBe(true);
+    expect(matchMedia).toHaveBeenCalledWith("(prefers-reduced-motion: reduce)");
   });
 });

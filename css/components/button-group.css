@@ -10,63 +10,133 @@
   vertical-align: middle;
 }
 
-.vd-btn-group>.vd-btn {
+.vd-btn-group > .vd-btn {
   position: relative;
   flex: 0 1 auto;
   margin-bottom: 0;
+  white-space: nowrap;
 }
 
 /* Remove inner border-radius for adjacent buttons */
-.vd-btn-group>.vd-btn:not(:first-child) {
+.vd-btn-group > .vd-btn:not(:first-child) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   margin-left: -1px;
 }
 
-.vd-btn-group>.vd-btn:not(:last-child) {
+.vd-btn-group > .vd-btn:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
 /* Ensure z-index for focus/active states */
-.vd-btn-group>.vd-btn:hover,
-.vd-btn-group>.vd-btn:focus,
-.vd-btn-group>.vd-btn:active,
-.vd-btn-group>.vd-btn.is-active {
+.vd-btn-group > .vd-btn:hover,
+.vd-btn-group > .vd-btn:focus,
+.vd-btn-group > .vd-btn:active,
+.vd-btn-group > .vd-btn.is-active {
   z-index: 1;
 }
 
-/* Button Group - Vertical */
+/* Button Group - Vertical
+ * Size the stack to the widest label (flex-start + width:100%), then stretch
+ * every button to that width. nowrap keeps single-word labels from wrapping. */
 .vd-btn-group-vertical {
   display: inline-flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
   justify-content: center;
+  position: relative;
+  vertical-align: middle;
 }
 
-.vd-btn-group-vertical>.vd-btn {
+.vd-btn-group-vertical > .vd-btn {
+  position: relative;
   width: 100%;
+  flex: 0 0 auto;
   margin-bottom: 0;
+  margin-left: 0;
+  white-space: nowrap;
 }
 
-.vd-btn-group-vertical>.vd-btn:not(:first-child) {
+.vd-btn-group-vertical > .vd-btn:not(:first-child) {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   margin-top: -1px;
 }
 
-.vd-btn-group-vertical>.vd-btn:not(:last-child) {
+.vd-btn-group-vertical > .vd-btn:not(:last-child) {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
+/*
+ * VdButtonGroup always keeps .vd-btn-group and adds .vd-btn-group-vertical.
+ * Horizontal edge-sharing (margin-left / side radii) must not leak into the
+ * stack — that caused jagged left edges and 1px-squeezed label wrap.
+ */
+.vd-btn-group.vd-btn-group-vertical > .vd-btn:not(:first-child) {
+  margin-left: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.vd-btn-group.vd-btn-group-vertical > .vd-btn:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.vd-btn-group.vd-btn-group-vertical > .vd-btn:first-child {
+  border-top-left-radius: var(--vd-btn-border-radius);
+  border-top-right-radius: var(--vd-btn-border-radius);
+}
+
+.vd-btn-group.vd-btn-group-vertical > .vd-btn:last-child {
+  border-bottom-left-radius: var(--vd-btn-border-radius);
+  border-bottom-right-radius: var(--vd-btn-border-radius);
+}
+
+.vd-btn-group.vd-btn-group-vertical > .vd-btn:first-child:last-child {
+  border-radius: var(--vd-btn-border-radius);
+}
+
+.vd-btn-group.vd-btn-group-vertical.vd-btn-group-sm > .vd-btn:first-child {
+  border-top-left-radius: var(--vd-btn-border-radius-sm);
+  border-top-right-radius: var(--vd-btn-border-radius-sm);
+}
+
+.vd-btn-group.vd-btn-group-vertical.vd-btn-group-sm > .vd-btn:last-child {
+  border-bottom-left-radius: var(--vd-btn-border-radius-sm);
+  border-bottom-right-radius: var(--vd-btn-border-radius-sm);
+}
+
+.vd-btn-group.vd-btn-group-vertical.vd-btn-group-sm > .vd-btn:first-child:last-child {
+  border-radius: var(--vd-btn-border-radius-sm);
+}
+
+.vd-btn-group.vd-btn-group-vertical.vd-btn-group-lg > .vd-btn:first-child {
+  border-top-left-radius: var(--vd-btn-border-radius-lg);
+  border-top-right-radius: var(--vd-btn-border-radius-lg);
+}
+
+.vd-btn-group.vd-btn-group-vertical.vd-btn-group-lg > .vd-btn:last-child {
+  border-bottom-left-radius: var(--vd-btn-border-radius-lg);
+  border-bottom-right-radius: var(--vd-btn-border-radius-lg);
+}
+
+.vd-btn-group.vd-btn-group-vertical.vd-btn-group-lg > .vd-btn:first-child:last-child {
+  border-radius: var(--vd-btn-border-radius-lg);
+}
+
 /* Sizing - inherit from button sizes */
-.vd-btn-group-sm>.vd-btn {
+.vd-btn-group-sm > .vd-btn {
   font-size: var(--vd-font-size-sm);
   padding: 0.3125rem 0.625rem;
 }
 
-.vd-btn-group-lg>.vd-btn {
+.vd-btn-group-lg > .vd-btn {
   font-size: var(--vd-font-size-lg);
   padding: 0.625rem 1.25rem;
 }
@@ -74,13 +144,13 @@
 /* Ring Modifier — suppressed here: grouped buttons share edges by design, so a
  * per-button ring would collide with the neighbour it overlaps. The -1px
  * edge-sharing survives because :not(:first-child) outranks these selectors. */
-.vd-btn-group>.vd-btn-ring,
-.vd-btn-group-vertical>.vd-btn-ring {
+.vd-btn-group > .vd-btn-ring,
+.vd-btn-group-vertical > .vd-btn-ring {
   margin: 0;
 }
 
-.vd-btn-group>.vd-btn-ring::before,
-.vd-btn-group-vertical>.vd-btn-ring::before {
+.vd-btn-group > .vd-btn-ring::before,
+.vd-btn-group-vertical > .vd-btn-ring::before {
   content: none;
 }
 
@@ -90,6 +160,11 @@
   width: 100%;
 }
 
-.vd-btn-group-full>.vd-btn {
+.vd-btn-group-full > .vd-btn {
   flex: 1 1 auto;
+}
+
+/* Vertical + full-width: stretch the stack across the container */
+.vd-btn-group-vertical.vd-btn-group-full {
+  align-items: stretch;
 }

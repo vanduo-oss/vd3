@@ -613,6 +613,52 @@ a.vd-btn:hover {
   border-right-color: transparent;
 }
 
+/* Transparent-fill treatments: .is-loading blanks the label with
+   color: transparent, so currentColor on the ::after spinner is also
+   invisible unless we pin an accent colour (solids already do above). */
+.vd-btn.is-loading::after,
+.vd-btn-outline.is-loading::after,
+.vd-btn-outline-primary.is-loading::after,
+.vd-btn-ghost.is-loading::after,
+.vd-btn-ghost-primary.is-loading::after {
+  border-color: var(--vd-color-primary);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-secondary.is-loading::after,
+.vd-btn-ghost-secondary.is-loading::after {
+  border-color: var(--vd-color-secondary);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-success.is-loading::after,
+.vd-btn-ghost-success.is-loading::after {
+  border-color: var(--vd-color-success);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-warning.is-loading::after {
+  border-color: var(--vd-color-warning);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-error.is-loading::after,
+.vd-btn-outline-danger.is-loading::after,
+.vd-btn-ghost-error.is-loading::after {
+  border-color: var(--vd-color-error);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-info.is-loading::after {
+  border-color: var(--vd-color-info);
+  border-right-color: transparent;
+}
+
+.vd-btn-ghost-subtle.is-loading::after {
+  border-color: var(--vd-text-muted);
+  border-right-color: transparent;
+}
+
 @keyframes btn-spinner {
   to {
     transform: rotate(360deg);
@@ -654,6 +700,40 @@ a.vd-btn:hover {
 
 .vd-btn-warning .vd-btn-spinner {
   border-color: var(--vd-color-black);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-secondary .vd-btn-spinner,
+.vd-btn-ghost-secondary .vd-btn-spinner {
+  border-color: var(--vd-color-secondary);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-success .vd-btn-spinner,
+.vd-btn-ghost-success .vd-btn-spinner {
+  border-color: var(--vd-color-success);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-warning .vd-btn-spinner {
+  border-color: var(--vd-color-warning);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-error .vd-btn-spinner,
+.vd-btn-outline-danger .vd-btn-spinner,
+.vd-btn-ghost-error .vd-btn-spinner {
+  border-color: var(--vd-color-error);
+  border-right-color: transparent;
+}
+
+.vd-btn-outline-info .vd-btn-spinner {
+  border-color: var(--vd-color-info);
+  border-right-color: transparent;
+}
+
+.vd-btn-ghost-subtle .vd-btn-spinner {
+  border-color: var(--vd-text-muted);
   border-right-color: transparent;
 }
 

@@ -91,7 +91,9 @@ afterEach(() => {
   mounted.length = 0;
   // Safety net for any tour a test left behind (module-level singleton state).
   document
-    .querySelectorAll(".vd-spotlight-overlay, .vd-spotlight-tooltip")
+    .querySelectorAll(
+      ".vd-spotlight-overlay, .vd-spotlight-tooltip, .vd-spotlight-highlight",
+    )
     .forEach((n) => n.remove());
   targets().forEach((n) => n.classList.remove("vd-spotlight-target"));
   Element.prototype.scrollIntoView = originalScrollIntoView;
@@ -120,13 +122,17 @@ describe("useSpotlight — trigger start", () => {
 
     const ov = overlay();
     const tt = tooltip();
+    const hole = document.querySelector<HTMLElement>(".vd-spotlight-highlight");
     expect(ov).not.toBeNull();
     expect(tt).not.toBeNull();
+    expect(hole).not.toBeNull();
     // Overlay/tooltip ARIA (vanilla parity).
     expect(ov?.getAttribute("aria-hidden")).toBe("true");
     expect(tt?.getAttribute("role")).toBe("dialog");
     expect(tt?.getAttribute("aria-modal")).toBe("true");
     expect(tt?.tabIndex).toBe(-1);
+    expect(hole?.getAttribute("aria-hidden")).toBe("true");
+    expect(hole?.style.display).not.toBe("none");
 
     // Step 1's target is highlighted and scrolled into view.
     const t1 = wrapper.get("#t1").element;

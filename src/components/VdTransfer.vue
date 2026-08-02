@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import VdIcon from "./VdIcon.vue";
 
 /**
  * Reactive reimplementation of framework/js/components/transfer.js — a dual-list
@@ -139,7 +140,7 @@ defineExpose({
         :disabled="sourceSelected.size === 0"
         @click="moveRight"
       >
-        &#8250;
+        <VdIcon name="caret-right" filled />
       </button>
       <button
         type="button"
@@ -148,7 +149,7 @@ defineExpose({
         :disabled="targetSelected.size === 0"
         @click="moveLeft"
       >
-        &#8249;
+        <VdIcon name="caret-left" filled />
       </button>
     </div>
 
