@@ -71,11 +71,7 @@ export function useMorphBadges(root: Ref<HTMLElement | null>): void {
             current.classList.replace("vd-morph-current", "vd-morph-next");
             nextEl.classList.replace("vd-morph-next", "vd-morph-current");
             // Former current is now the hidden next — prime the following state.
-            setContent(
-              current,
-              icons[afterIdx] ?? "",
-              states[afterIdx] ?? "",
-            );
+            setContent(current, icons[afterIdx] ?? "", states[afterIdx] ?? "");
           }
           badge.classList.remove("is-morphing");
           void badge.offsetWidth;
