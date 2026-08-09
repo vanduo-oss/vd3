@@ -94,6 +94,7 @@
 @import url('effects/parallax.css');
 @import url('effects/glass.css');
 @import url('effects/morph.css');
+@import url('effects/liquid-gradient.css');
 
 /* Layer 6: Print */
 @import url('utilities/print.css');

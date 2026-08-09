@@ -19,3 +19,12 @@ Copyright (c) 2026 Zed Dash
 License: MIT
 Source: https://codepen.io/z-/pen/OBPJKK
 Adapted in: css/components/expanding-cards.css
+
+Interactive Liquid Gradient (CodePen)
+-------------------------------------
+Copyright (c) Cameron Knight
+License: MIT (public CodePen)
+Source: https://codepen.io/cameronknight/pen/ogxWmBP
+Adapted in: css/effects/liquid-gradient.css,
+  src/effects/createLiquidGradient.ts
+  (vanilla WebGL reimplementation; no Three.js)

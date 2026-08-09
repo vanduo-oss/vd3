@@ -5,6 +5,14 @@ tracks the package only — never docs-site content.
 
 ## 1.2.2 — 2026-08-09
 
+### Added
+
+- **Liquid Gradient** effect: vanilla WebGL interactive atmosphere bound to
+  primary / neutral / background theme tokens, with `--vd-liquid-*`
+  customization knobs. Opt-in via `.vd-liquid-gradient` +
+  `useLiquidGradient(root)` / `createLiquidGradient(canvas)`. Inspired by
+  Cameron Knight’s MIT CodePen (vanilla reimplementation; no Three.js).
+
 ### Fixed
 
 - Native `<select>` (and custom-select button) **chevron no longer tiles**
