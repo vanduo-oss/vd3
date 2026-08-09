@@ -61,6 +61,7 @@ export function useLiquidGradient(
   let attrObserver: MutationObserver | null = null;
   let motionQuery: MediaQueryList | null = null;
   let pointerBound = false;
+  let resizeRaf = 0;
 
   const reducedMotion = (): boolean =>
     options.reducedMotion ?? prefersReducedMotion();
@@ -84,8 +85,14 @@ export function useLiquidGradient(
     pointerBound = false;
   };
 
-  const onResize = (): void => {
+  const flushResize = (): void => {
+    resizeRaf = 0;
     for (const b of bindings) b.engine?.resize();
+  };
+
+  const onResize = (): void => {
+    if (resizeRaf) return;
+    resizeRaf = requestAnimationFrame(flushResize);
   };
 
   const syncActive = (b: HostBinding): void => {
@@ -196,6 +203,10 @@ export function useLiquidGradient(
   onUnmounted(() => {
     unbindPointer();
     window.removeEventListener("resize", onResize);
+    if (resizeRaf) {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = 0;
+    }
     themeObserver?.disconnect();
     themeObserver = null;
     attrObserver?.disconnect();

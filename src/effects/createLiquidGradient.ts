@@ -574,8 +574,6 @@ export function createLiquidGradient(
       time += delta;
       touch.update();
     }
-    // Re-read CSS knobs each frame so live --vd-liquid-* overrides apply.
-    syncKnobs();
     gl.viewport(0, 0, width, height);
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.BLEND);
