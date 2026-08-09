@@ -66,7 +66,9 @@ package root and register nothing globally — import only what you render.
 
 **Form & input (11):** `VdButton`, `VdButtonGroup`, `VdInput`, `VdSelect`,
 `VdCustomSelect`, `VdCheckboxGroup`, `VdRadioGroup`, `VdSwitch`, `VdSlider`,
-`VdRating`, `VdTransfer`
+`VdRating`, `VdTransfer`. Native `<select>` / `select.vd-input` carets use
+`background-image`; tint with `background-color` (not the `background`
+shorthand) so focus/dark overrides cannot tile the chevron.
 
 **Data display (8):** `VdTable`, `VdTree`, `VdTreeNode`, `VdCollection`,
 `VdCard`, `VdBadge`, `VdChip`, `VdAvatar`

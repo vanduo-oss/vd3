@@ -12,7 +12,7 @@
 // VdThemeCustomizer, VdDocSearch) and four composables (useClickOutside,
 // useDocSearch, useLazyLoad, useGrid + `setGridSystem`).
 
-export const VD3_VERSION = "1.2.1";
+export const VD3_VERSION = "1.2.2";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
@@ -88,6 +88,7 @@ export * from "./composables/useGrid";
 export * from "./composables/useImageBox";
 export * from "./composables/useKeyboardNav";
 export * from "./composables/useLazyLoad";
+export * from "./composables/useLiquidGradient";
 export * from "./composables/useMorph";
 export * from "./composables/useMorphBadges";
 export * from "./composables/useNavbarGlassScroll";
@@ -110,9 +111,16 @@ export * from "./composables/useTooltips";
 export * from "./composables/useValidate";
 export * from "./composables/useWaypoint";
 
+// ── Effects (factories) ──────────────────────────────────────
+export { createLiquidGradient } from "./effects/createLiquidGradient";
+export type {
+  LiquidGradientEngine,
+  LiquidGradientOptions,
+  Rgb,
+} from "./effects/createLiquidGradient";
+
 // ── Utilities ────────────────────────────────────────────────
 export * from "./utils/sanitizeHtml";
-
 // ── Shared types ──────────────────────────────────────────────
 export type { StatusVariant } from "./types";
 
