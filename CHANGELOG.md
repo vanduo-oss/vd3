@@ -3,6 +3,17 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.2.2 — 2026-08-09
+
+### Fixed
+
+- Native `<select>` (and custom-select button) **chevron no longer tiles**
+  when a consumer overrides fill with the `background` shorthand. Focus /
+  disabled / dark theme rules that swap the caret `background-image` now
+  also re-declare `background-repeat`, `background-position`, and
+  `background-size`. Prefer `background-color` (or explicit longhands) when
+  tinting selects so other background layers stay intact.
+
 ## 1.2.1 — 2026-08-02
 
 ### Added

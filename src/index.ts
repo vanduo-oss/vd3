@@ -12,7 +12,7 @@
 // VdThemeCustomizer, VdDocSearch) and four composables (useClickOutside,
 // useDocSearch, useLazyLoad, useGrid + `setGridSystem`).
 
-export const VD3_VERSION = "1.2.1";
+export const VD3_VERSION = "1.2.2";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
