@@ -93,9 +93,7 @@ describe("native select chevron longhands (built bundle)", () => {
     // Dark focus stroke is #3bc9db → %233bc9db in the data URI.
     const darkFocusStroke = "stroke='%233bc9db'";
     const idx = minified.indexOf(darkFocusStroke);
-    expect(idx, "dark focus caret SVG missing from bundle").toBeGreaterThan(
-      -1,
-    );
+    expect(idx, "dark focus caret SVG missing from bundle").toBeGreaterThan(-1);
     // Look at a window around the SVG for the co-declared longhands.
     const window = minified.slice(Math.max(0, idx - 200), idx + 400);
     expect(window).toContain("background-repeat:no-repeat");

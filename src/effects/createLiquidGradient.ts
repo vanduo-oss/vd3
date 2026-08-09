@@ -198,7 +198,11 @@ export function parseCssColor(value: string | null | undefined): Rgb | null {
   const v = value.trim();
   if (v.startsWith("#")) {
     let hex = v.slice(1);
-    if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+    if (hex.length === 3)
+      hex = hex
+        .split("")
+        .map((c) => c + c)
+        .join("");
     if (hex.length !== 6) return null;
     return [
       Number.parseInt(hex.slice(0, 2), 16) / 255,
@@ -496,9 +500,7 @@ export function createLiquidGradient(
 
     colors.primary = primary;
     colors.primarySoft = mixRgb(primary, base, isDark ? 0.25 : 0.35);
-    colors.neutralA = isDark
-      ? mixRgb(n8, base, 0.35)
-      : mixRgb(n2, base, 0.2);
+    colors.neutralA = isDark ? mixRgb(n8, base, 0.35) : mixRgb(n2, base, 0.2);
     colors.neutralB = isDark
       ? mixRgb(n6, primary, 0.12)
       : mixRgb(n6, primary, 0.08);
@@ -508,13 +510,21 @@ export function createLiquidGradient(
   function syncKnobs(root?: HTMLElement): void {
     const el = resolveStyleRoot(root);
     const styles = getComputedStyle(el);
-    knobs.speed = readCssNumber(styles, "--vd-liquid-speed", DEFAULT_KNOBS.speed);
+    knobs.speed = readCssNumber(
+      styles,
+      "--vd-liquid-speed",
+      DEFAULT_KNOBS.speed,
+    );
     knobs.intensity = readCssNumber(
       styles,
       "--vd-liquid-intensity",
       DEFAULT_KNOBS.intensity,
     );
-    knobs.grain = readCssNumber(styles, "--vd-liquid-grain", DEFAULT_KNOBS.grain);
+    knobs.grain = readCssNumber(
+      styles,
+      "--vd-liquid-grain",
+      DEFAULT_KNOBS.grain,
+    );
     knobs.distort = readCssNumber(
       styles,
       "--vd-liquid-distort",
@@ -535,7 +545,11 @@ export function createLiquidGradient(
       "--vd-liquid-neutral-weight",
       DEFAULT_KNOBS.neutralWeight,
     );
-    knobs.alpha = readCssNumber(styles, "--vd-liquid-alpha", DEFAULT_KNOBS.alpha);
+    knobs.alpha = readCssNumber(
+      styles,
+      "--vd-liquid-alpha",
+      DEFAULT_KNOBS.alpha,
+    );
   }
 
   function resize(): void {

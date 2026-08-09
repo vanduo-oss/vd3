@@ -84,7 +84,9 @@ describe("useLiquidGradient", () => {
     const wrapper = mountWith(rootRef);
     await nextTick();
 
-    expect(host.querySelector("canvas.vd-liquid-gradient-canvas")).not.toBeNull();
+    expect(
+      host.querySelector("canvas.vd-liquid-gradient-canvas"),
+    ).not.toBeNull();
 
     const removeSpy = vi.spyOn(window, "removeEventListener");
     wrapper.unmount();

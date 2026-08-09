@@ -23,11 +23,7 @@ describe("liquid gradient color helpers", () => {
       0x66 / 255,
       0xff / 255,
     ]);
-    expect(parseCssColor("#abc")).toEqual([
-      0xaa / 255,
-      0xbb / 255,
-      0xcc / 255,
-    ]);
+    expect(parseCssColor("#abc")).toEqual([0xaa / 255, 0xbb / 255, 0xcc / 255]);
     expect(parseCssColor("rgb(10, 20, 30)")).toEqual([
       10 / 255,
       20 / 255,

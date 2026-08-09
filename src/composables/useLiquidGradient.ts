@@ -162,7 +162,14 @@ export function useLiquidGradient(
     themeObserver = new MutationObserver(() => syncAllThemes());
     themeObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-theme", "style", "class", "data-primary", "data-neutral", "data-palette"],
+      attributeFilter: [
+        "data-theme",
+        "style",
+        "class",
+        "data-primary",
+        "data-neutral",
+        "data-palette",
+      ],
     });
 
     attrObserver = new MutationObserver(() => {
@@ -181,8 +188,9 @@ export function useLiquidGradient(
     const onMotionChange = (): void => recreateEngines();
     motionQuery.addEventListener?.("change", onMotionChange);
     // Stash for teardown via property to avoid extra closure fields.
-    (motionQuery as MediaQueryList & { __vdOnChange?: () => void }).__vdOnChange =
-      onMotionChange;
+    (
+      motionQuery as MediaQueryList & { __vdOnChange?: () => void }
+    ).__vdOnChange = onMotionChange;
   });
 
   onUnmounted(() => {
