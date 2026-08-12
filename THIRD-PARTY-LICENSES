@@ -28,3 +28,13 @@ Source: https://codepen.io/cameronknight/pen/ogxWmBP
 Adapted in: css/effects/liquid-gradient.css,
   src/effects/createLiquidGradient.ts
   (vanilla WebGL reimplementation; no Three.js)
+
+Apple Liquid Glass UI (CodePen)
+------------------------------
+Copyright (c) Avaz Bokiev (samarkandiy)
+License: MIT (public CodePen / CSS Script republication)
+Source: https://codepen.io/samarkandiy/pen/MYwQwZZ
+Adapted in: css/components/navbar.css
+  (layered translucent wash + inset specular highlight + soft elevation
+  for `.vd-navbar-glass` / `.vd-navbar-float`; Seemore fib tokens;
+  no SVG displacement layer — performance-conscious)

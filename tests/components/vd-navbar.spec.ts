@@ -131,10 +131,14 @@ describe("VdNavbar", () => {
     expect(factory({ position: "sticky" }).find("nav").classes()).toContain(
       "vd-navbar-sticky",
     );
+    expect(factory({ float: true }).find("nav").classes()).toContain(
+      "vd-navbar-float",
+    );
     // solid + static → none of the surface/position modifiers
     const plain = factory().find("nav").classes();
     expect(plain).not.toContain("vd-navbar-glass");
     expect(plain).not.toContain("vd-navbar-fixed");
+    expect(plain).not.toContain("vd-navbar-float");
   });
 
   it("toggles the open state machine (menu/toggle/body/overlay/aria)", async () => {

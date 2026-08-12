@@ -56,8 +56,16 @@
 }
 
 .vd-modal-backdrop.vd-modal-glass-backdrop {
-  backdrop-filter: blur(calc(var(--vd-glass-blur) * 0.5));
-  -webkit-backdrop-filter: blur(calc(var(--vd-glass-blur) * 0.5));
+  /* Soft wash — keep the page/Surface readable under frost, not a black plate */
+  background-color: color-mix(
+    in srgb,
+    var(--vd-bg-primary) 28%,
+    rgba(12, 18, 32, 0.22)
+  );
+  backdrop-filter: blur(calc(var(--vd-glass-blur) * 0.55))
+    saturate(calc(var(--vd-glass-saturate) * 0.85));
+  -webkit-backdrop-filter: blur(calc(var(--vd-glass-blur) * 0.55))
+    saturate(calc(var(--vd-glass-saturate) * 0.85));
 }
 
 .vd-modal-backdrop.is-visible {
@@ -121,11 +129,22 @@
 }
 
 .vd-modal-glass .vd-modal-content {
-  background: var(--vd-glass-bg-light);
-  border-color: var(--vd-glass-border-light);
+  /* Step-13 overlay defaults — light frost, not opaque chrome */
+  --vd-glass-blur: 16px;
+  --vd-glass-saturate: 2.05;
+  --vd-glass-bg-opacity: 0.42;
+  --vd-glass-border-alpha: 0.4;
+  --vd-glass-highlight-alpha: 0.32;
+  --vd-glass-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+
+  background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
+  border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
   box-shadow: var(--vd-glass-shadow);
   backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--vd-glass-blur))
+    saturate(var(--vd-glass-saturate));
+  isolation: isolate;
+  overflow: hidden;
 }
 
 /* Modal Header */
@@ -354,13 +373,84 @@
 .vd-modal-panel-lg { --vd-modal-dialog-max-width: var(--vd-modal-width-lg); }
 .vd-modal-panel-xl { --vd-modal-dialog-max-width: var(--vd-modal-width-xl); }
 
-/* Glass variant parity with .vd-modal-glass .vd-modal-content */
+/* Glass variant — light frosted panel (Seemore), not dark opaque chrome */
+.vd-modal-glass {
+  --vd-glass-blur: 16px;
+  --vd-glass-saturate: 2.05;
+  --vd-glass-bg-opacity: 0.42;
+  --vd-glass-border-alpha: 0.4;
+  --vd-glass-highlight-alpha: 0.32;
+  --vd-glass-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+}
+
 .vd-modal-glass .vd-modal-panel {
-  background: var(--vd-glass-bg-light);
-  border-color: var(--vd-glass-border-light);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
+  border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
   box-shadow: var(--vd-glass-shadow);
   backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--vd-glass-blur)) saturate(var(--vd-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--vd-glass-blur))
+    saturate(var(--vd-glass-saturate));
+  transform: translateZ(0) scale(0.95);
+}
+
+.vd-modal.vd-modal-open.vd-modal-glass .vd-modal-panel {
+  transform: translateZ(0) scale(1);
+}
+
+.vd-modal-glass .vd-modal-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, var(--vd-glass-highlight-alpha)) 0%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vd-modal-glass .vd-modal-panel > * {
+  position: relative;
+  z-index: 2;
+}
+
+[data-theme="dark"] .vd-modal-glass .vd-modal-panel,
+[data-theme="dark"] .vd-modal-glass .vd-modal-content {
+  /* Keep a luminous frost wash even in dark theme */
+  --vd-glass-bg-opacity: 0.18;
+  --vd-glass-border-alpha: 0.34;
+
+  background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
+  border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .vd-modal-glass .vd-modal-panel,
+  :root:not([data-theme]) .vd-modal-glass .vd-modal-content {
+    --vd-glass-bg-opacity: 0.18;
+    --vd-glass-border-alpha: 0.34;
+
+    background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
+    border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .vd-modal-glass .vd-modal-panel,
+  .vd-modal-glass .vd-modal-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--vd-bg-primary) !important;
+    border-color: var(--vd-border-color);
+  }
+
+  .vd-modal-glass .vd-modal-panel::before {
+    display: none;
+  }
 }
 
 @media (max-width: 575.98px) {

@@ -1,0 +1,231 @@
+/**
+ * Vanduo Framework - Decorative Surfaces
+ * Rich backdrop fills for heroes, marketing bands, and Seemore Glass demos
+ */
+
+:root {
+  --vd-surface-intensity: 1;
+  --vd-surface-contrast: 1;
+  --vd-surface-min-height: 12rem;
+}
+
+.vd-surface {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: var(--vd-surface-min-height);
+  background-color: var(--vd-bg-secondary, #1a1d27);
+  color: var(--vd-text-primary, inherit);
+}
+
+/* Fibonacci intensity: pattern-layer opacity/contrast (not blur) */
+.vd-surface-3 {
+  --vd-surface-intensity: 0.72;
+  --vd-surface-contrast: 0.85;
+}
+
+.vd-surface-5 {
+  --vd-surface-intensity: 1;
+  --vd-surface-contrast: 1;
+}
+
+.vd-surface-8 {
+  --vd-surface-intensity: 1.28;
+  --vd-surface-contrast: 1.18;
+}
+
+/* Mesh — soft radial wash + diagonal micro-stripes over a warm spectrum */
+.vd-surface-mesh {
+  --vd-surface-base: linear-gradient(
+    140deg,
+    #5b8cff 0%,
+    #a65eea 38%,
+    #e05f8b 70%,
+    #f7b267 100%
+  );
+
+  background:
+    radial-gradient(
+      circle at 78% 20%,
+      rgba(255, 255, 255, calc(0.22 * var(--vd-surface-intensity))),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 20% 75%,
+      rgba(10, 26, 76, calc(0.36 * var(--vd-surface-contrast))),
+      transparent 46%
+    ),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, calc(0.12 * var(--vd-surface-intensity))) 0 18px,
+      rgba(0, 0, 0, calc(0.07 * var(--vd-surface-contrast))) 18px 36px
+    ),
+    var(--vd-surface-base);
+}
+
+/* Stripe — bold diagonal bands over blue → purple → orange */
+.vd-surface-stripe {
+  --vd-surface-base: linear-gradient(
+    135deg,
+    #2563eb 0%,
+    #9333ea 52%,
+    #f97316 100%
+  );
+
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, calc(0.18 * var(--vd-surface-intensity))) 0 16px,
+      rgba(0, 0, 0, calc(0.11 * var(--vd-surface-contrast))) 16px 32px
+    ),
+    var(--vd-surface-base);
+}
+
+/* Noise — grainy radial stipple over slate / indigo / magenta */
+.vd-surface-noise {
+  --vd-surface-base: linear-gradient(
+    155deg,
+    #334155 0%,
+    #4338ca 48%,
+    #be185d 100%
+  );
+
+  background:
+    radial-gradient(
+      circle at 12% 14%,
+      rgba(255, 255, 255, calc(0.18 * var(--vd-surface-intensity))),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 82% 78%,
+      rgba(0, 0, 0, calc(0.34 * var(--vd-surface-contrast))),
+      transparent 44%
+    ),
+    repeating-radial-gradient(
+      circle at 18% 15%,
+      rgba(255, 255, 255, calc(0.065 * var(--vd-surface-intensity))) 0 2px,
+      rgba(0, 0, 0, calc(0.055 * var(--vd-surface-contrast))) 2px 5px
+    ),
+    var(--vd-surface-base);
+}
+
+/* Aurora — soft overlapping color ribbons */
+.vd-surface-aurora {
+  --vd-surface-base: linear-gradient(
+    160deg,
+    #0f172a 0%,
+    #1e1b4b 40%,
+    #312e81 100%
+  );
+
+  background:
+    radial-gradient(
+      ellipse 80% 55% at 20% 30%,
+      rgba(56, 189, 248, calc(0.55 * var(--vd-surface-intensity))),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 75% 25%,
+      rgba(167, 139, 250, calc(0.5 * var(--vd-surface-intensity))),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 65% 45% at 55% 80%,
+      rgba(52, 211, 153, calc(0.42 * var(--vd-surface-intensity))),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 90% 70%,
+      rgba(244, 114, 182, calc(0.35 * var(--vd-surface-contrast))),
+      transparent 40%
+    ),
+    var(--vd-surface-base);
+}
+
+/* Dots — polka stipple on a cool field */
+.vd-surface-dots {
+  --vd-surface-base: linear-gradient(
+    125deg,
+    #0ea5e9 0%,
+    #6366f1 45%,
+    #a855f7 100%
+  );
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, calc(0.28 * var(--vd-surface-intensity))) 1.25px,
+      transparent 1.35px
+    ),
+    radial-gradient(
+      circle,
+      rgba(0, 0, 0, calc(0.12 * var(--vd-surface-contrast))) 1px,
+      transparent 1.15px
+    ),
+    var(--vd-surface-base);
+  background-size:
+    14px 14px,
+    14px 14px,
+    auto;
+  background-position:
+    0 0,
+    7px 7px,
+    0 0;
+}
+
+/* Grid — fine technical lattice */
+.vd-surface-grid {
+  --vd-surface-base: linear-gradient(
+    145deg,
+    #111827 0%,
+    #1f2937 50%,
+    #0f766e 100%
+  );
+
+  background:
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, calc(0.1 * var(--vd-surface-intensity))) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, calc(0.1 * var(--vd-surface-intensity))) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to right,
+      rgba(45, 212, 191, calc(0.08 * var(--vd-surface-contrast))) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(45, 212, 191, calc(0.08 * var(--vd-surface-contrast))) 1px,
+      transparent 1px
+    ),
+    var(--vd-surface-base);
+  background-size:
+    24px 24px,
+    24px 24px,
+    120px 120px,
+    120px 120px,
+    auto;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .vd-surface-mesh,
+  .vd-surface-stripe,
+  .vd-surface-noise,
+  .vd-surface-aurora,
+  .vd-surface-dots,
+  .vd-surface-grid {
+    --vd-surface-intensity: 0.55;
+    --vd-surface-contrast: 0.7;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .vd-surface {
+    --vd-surface-contrast: 1.35;
+  }
+}

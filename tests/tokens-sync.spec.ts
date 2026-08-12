@@ -72,6 +72,7 @@ const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
 const CSS_ONLY_ALLOW: ReadonlyArray<{ re: RegExp; why: string }> = [
   // Effect / utility families with no DTCG primitive.
   { re: /^--vd-glass-/, why: "glass surface effect tokens" },
+  { re: /^--vd-surface-/, why: "decorative surface effect tokens" },
   { re: /^--vd-transition-/, why: "motion timing tokens" },
   { re: /^--vd-z-/, why: "z-index layering scale" },
   { re: /^--vd-font-family-/, why: "font-stack strings" },

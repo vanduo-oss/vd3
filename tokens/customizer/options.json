@@ -36,6 +36,7 @@
   "fonts": [
     { "key": "jetbrains-mono", "name": "JetBrains Mono" },
     { "key": "system", "name": "System Default" },
+    { "key": "nunito", "name": "Nunito" },
     { "key": "ubuntu", "name": "Ubuntu" },
     { "key": "lato", "name": "Lato" },
     { "key": "open-sans", "name": "Open Sans" }
