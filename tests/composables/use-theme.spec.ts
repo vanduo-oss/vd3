@@ -263,6 +263,14 @@ describe("useTheme storagePrefix", () => {
     expect(DEFAULT_STORAGE_PREFIX).toBe("vanduo-");
   });
 
+  it("rejects empty or non-string prefixes", () => {
+    expect(() => setStoragePrefix("")).toThrow(/non-empty string/);
+    expect(() => setStoragePrefix(null as unknown as string)).toThrow(
+      /non-empty string/,
+    );
+    expect(getStoragePrefix()).toBe(DEFAULT_STORAGE_PREFIX);
+  });
+
   it("remaps persist and load under a custom prefix", () => {
     setStoragePrefix("ts-school-");
     expect(getStoragePrefix()).toBe("ts-school-");

@@ -109,6 +109,11 @@ export const getStoragePrefix = (): string => storagePrefix;
  * Does not migrate values between namespaces.
  */
 export const setStoragePrefix = (prefix: string): string => {
+  if (typeof prefix !== "string" || prefix.length === 0) {
+    throw new Error(
+      "setStoragePrefix requires a non-empty string (e.g. \"app-name-\")",
+    );
+  }
   storagePrefix = prefix;
   return storagePrefix;
 };
