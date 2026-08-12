@@ -249,10 +249,10 @@ describe("VdThemeCustomizer controls write through the theme layer", () => {
 
     const root = document.documentElement;
     expect(root.getAttribute("data-radius")).toBe("0.5"); // DEFAULTS.RADIUS
-    expect(root.getAttribute("data-font")).toBe("nunito"); // DEFAULTS.FONT
+    expect(root.getAttribute("data-font")).toBe("ubuntu"); // DEFAULTS.FONT
     expect(window.localStorage.getItem("vanduo-radius")).toBe("0.5");
     expect(window.localStorage.getItem("vanduo-font-preference")).toBe(
-      "nunito",
+      "ubuntu",
     );
   });
 });

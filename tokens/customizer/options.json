@@ -48,7 +48,7 @@
     "primaryDark": "amber",
     "neutral": "charcoal",
     "radius": "0.5",
-    "font": "nunito",
+    "font": "ubuntu",
     "theme": "system"
   }
 }

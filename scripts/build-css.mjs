@@ -122,14 +122,14 @@ function copyAssets() {
 
 /**
  * Re-emit unprefixed `backdrop-filter` alongside each `-webkit-backdrop-filter`
- * declaration LightningCSS left behind.
+ * *declaration* LightningCSS left behind. Only match values terminated by `;`
+ * so `@supports (…-webkit-backdrop-filter: blur(1px))` conditions are skipped.
  */
 function restoreUnprefixedBackdropFilter(css) {
   return css.replace(
-    /-webkit-backdrop-filter\s*:\s*([^;}]+);?/g,
+    /-webkit-backdrop-filter\s*:\s*([^;]+);/g,
     (match, value) => {
       const trimmed = value.trim();
-      // Avoid doubling when a following unprefixed twin already exists.
       return `-webkit-backdrop-filter:${trimmed};backdrop-filter:${trimmed};`;
     },
   );
@@ -257,12 +257,15 @@ function buildCSS(isMinify, banner, { variant = "full" } = {}) {
     // only. Chromium applies the unprefixed property and ignores a lone
     // `-webkit-` declaration — without this restore, Seemore / navbar glass
     // paints a flat wash (grey fog on dark) instead of frosted blur.
-    const transformedCSS = restoreUnprefixedBackdropFilter(code.toString());
+    const rawCSS = code.toString();
+    const transformedCSS = restoreUnprefixedBackdropFilter(rawCSS);
+    const restored = transformedCSS !== rawCSS;
 
     // Prepend banner to CSS
     const finalCSS = banner + "\n" + transformedCSS;
     writeFileSync(outputPath, finalCSS);
-    if (map) {
+    // Skip stale maps when the post-transform restore rewrites byte offsets.
+    if (map && !restored) {
       writeFileSync(outputPath + ".map", map);
     }
 

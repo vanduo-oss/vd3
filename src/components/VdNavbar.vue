@@ -11,7 +11,10 @@ interface Props {
   position?: "static" | "fixed" | "fixed-bottom" | "sticky";
   /**
    * Inset floating capsule (`.vd-navbar-float`) — Fibonacci margin from
-   * viewport edges + large radius. Pair with `variant="glass"` for frosted bar.
+   * viewport edges + large radius. Requires `position` `fixed` / `sticky`
+   * (or CSS `.vd-navbar-fixed` / `.vd-navbar-sticky`); with the default
+   * `static` position only optical padding applies. Pair with
+   * `variant="glass"` for frosted chrome.
    */
   float?: boolean;
   /** Scroll distance (px) before `vd-navbar-scrolled` engages for glass/transparent. */
