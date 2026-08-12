@@ -1,13 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULTS,
+  DEFAULT_STORAGE_PREFIX,
   applyPreference,
   defaultPreference,
   defaultPrimary,
+  getStoragePrefix,
   getThemeDefaults,
   isDefaultPrimary,
   loadPreference,
   persistPreference,
+  setStoragePrefix,
   setThemeDefaults,
   type ThemePreference,
 } from "../../src/composables/useTheme";
@@ -67,6 +70,7 @@ beforeEach(() => {
 afterEach(() => {
   // Restore the defaults singleton to the generated baseline for the next test.
   setThemeDefaults({ ...DEFAULTS });
+  setStoragePrefix(DEFAULT_STORAGE_PREFIX);
   window.localStorage.clear();
   cleanRoot();
   vi.unstubAllGlobals();
@@ -250,5 +254,38 @@ describe("useTheme persistPreference", () => {
     persistPreference(prefs);
     const loaded = loadPreference();
     expect(loaded).toEqual(prefs);
+  });
+});
+
+describe("useTheme storagePrefix", () => {
+  it("defaults to vanduo-", () => {
+    expect(getStoragePrefix()).toBe(DEFAULT_STORAGE_PREFIX);
+    expect(DEFAULT_STORAGE_PREFIX).toBe("vanduo-");
+  });
+
+  it("remaps persist and load under a custom prefix", () => {
+    setStoragePrefix("ts-school-");
+    expect(getStoragePrefix()).toBe("ts-school-");
+
+    persistPreference(basePrefs({ theme: "dark", primary: "teal" }));
+
+    expect(window.localStorage.getItem("ts-school-palette")).toBe("open-color");
+    expect(window.localStorage.getItem("ts-school-theme-preference")).toBe(
+      "dark",
+    );
+    expect(window.localStorage.getItem("ts-school-primary-color")).toBe("teal");
+    expect(window.localStorage.getItem("ts-school-neutral-color")).toBe(
+      "slate",
+    );
+    expect(window.localStorage.getItem("ts-school-radius")).toBe("0.25");
+    expect(window.localStorage.getItem("ts-school-font-preference")).toBe(
+      "lato",
+    );
+    // Default namespace stays empty.
+    expect(window.localStorage.getItem("vanduo-palette")).toBeNull();
+
+    expect(loadPreference()).toEqual(
+      basePrefs({ theme: "dark", primary: "teal" }),
+    );
   });
 });

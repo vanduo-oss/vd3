@@ -11,7 +11,9 @@
  * Applications that need site-specific defaults (e.g. a different default dark
  * primary) override them with `setThemeDefaults()` — typically via
  * `app.use(VanduoVue, { themeDefaults })` — before the theme model first reads
- * them.
+ * them. Multi-app same-origin hosts MAY pass `storagePrefix` (or call
+ * `setStoragePrefix`) before the first storage read so preference keys do not
+ * collide.
  */
 import { getCurrentInstance, onBeforeUnmount, onMounted, reactive } from "vue";
 import {
@@ -80,6 +82,46 @@ export const setThemeDefaults = (
   return activeDefaults;
 };
 
+/** Default localStorage key prefix (back-compat for existing installs). */
+export const DEFAULT_STORAGE_PREFIX = "vanduo-";
+
+const STORAGE_SUFFIXES = {
+  PALETTE: "palette",
+  PRIMARY: "primary-color",
+  NEUTRAL: "neutral-color",
+  RADIUS: "radius",
+  FONT: "font-preference",
+  THEME: "theme-preference",
+} as const;
+
+let storagePrefix = DEFAULT_STORAGE_PREFIX;
+
+/**
+ * Current theme-preference localStorage prefix. Defaults to `vanduo-`.
+ * Call `setStoragePrefix` (or `app.use(VanduoVue, { storagePrefix })`) before
+ * the theme model first reads storage.
+ */
+export const getStoragePrefix = (): string => storagePrefix;
+
+/**
+ * Remap the six theme preference keys by replacing the `vanduo-` prefix.
+ * Must run at bootstrap before `loadPreference` / `useThemePreference`.
+ * Does not migrate values between namespaces.
+ */
+export const setStoragePrefix = (prefix: string): string => {
+  storagePrefix = prefix;
+  return storagePrefix;
+};
+
+const storageKeys = () => ({
+  PALETTE: `${storagePrefix}${STORAGE_SUFFIXES.PALETTE}`,
+  PRIMARY: `${storagePrefix}${STORAGE_SUFFIXES.PRIMARY}`,
+  NEUTRAL: `${storagePrefix}${STORAGE_SUFFIXES.NEUTRAL}`,
+  RADIUS: `${storagePrefix}${STORAGE_SUFFIXES.RADIUS}`,
+  FONT: `${storagePrefix}${STORAGE_SUFFIXES.FONT}`,
+  THEME: `${storagePrefix}${STORAGE_SUFFIXES.THEME}`,
+});
+
 const PALETTE_KEYS = PALETTE_OPTIONS.map((p) => p.key);
 const isPalette = (value: string): value is Palette =>
   (PALETTE_KEYS as readonly string[]).includes(value);
@@ -92,15 +134,6 @@ export interface ThemePreference {
   radius: RadiusOption;
   font: string;
 }
-
-const STORAGE_KEYS = {
-  PALETTE: "vanduo-palette",
-  PRIMARY: "vanduo-primary-color",
-  NEUTRAL: "vanduo-neutral-color",
-  RADIUS: "vanduo-radius",
-  FONT: "vanduo-font-preference",
-  THEME: "vanduo-theme-preference",
-} as const;
 
 const isClient = (): boolean => typeof window !== "undefined";
 
@@ -150,19 +183,17 @@ export const defaultPreference = (): ThemePreference => ({
 });
 
 export const loadPreference = (): ThemePreference => {
-  const theme = read(STORAGE_KEYS.THEME, activeDefaults.THEME) as ThemeMode;
-  const radius = read(
-    STORAGE_KEYS.RADIUS,
-    activeDefaults.RADIUS,
-  ) as RadiusOption;
-  const palette = read(STORAGE_KEYS.PALETTE, activeDefaults.PALETTE);
+  const keys = storageKeys();
+  const theme = read(keys.THEME, activeDefaults.THEME) as ThemeMode;
+  const radius = read(keys.RADIUS, activeDefaults.RADIUS) as RadiusOption;
+  const palette = read(keys.PALETTE, activeDefaults.PALETTE);
   return {
     palette: isPalette(palette) ? palette : activeDefaults.PALETTE,
     theme: THEME_MODES.includes(theme) ? theme : activeDefaults.THEME,
-    primary: read(STORAGE_KEYS.PRIMARY, defaultPrimary(theme)),
-    neutral: read(STORAGE_KEYS.NEUTRAL, activeDefaults.NEUTRAL),
+    primary: read(keys.PRIMARY, defaultPrimary(theme)),
+    neutral: read(keys.NEUTRAL, activeDefaults.NEUTRAL),
     radius: RADIUS_OPTIONS.includes(radius) ? radius : activeDefaults.RADIUS,
-    font: read(STORAGE_KEYS.FONT, activeDefaults.FONT),
+    font: read(keys.FONT, activeDefaults.FONT),
   };
 };
 
@@ -200,12 +231,13 @@ export const applyPreference = (prefs: ThemePreference): void => {
 };
 
 export const persistPreference = (prefs: ThemePreference): void => {
-  write(STORAGE_KEYS.PALETTE, prefs.palette);
-  write(STORAGE_KEYS.THEME, prefs.theme);
-  write(STORAGE_KEYS.PRIMARY, prefs.primary);
-  write(STORAGE_KEYS.NEUTRAL, prefs.neutral);
-  write(STORAGE_KEYS.RADIUS, prefs.radius);
-  write(STORAGE_KEYS.FONT, prefs.font);
+  const keys = storageKeys();
+  write(keys.PALETTE, prefs.palette);
+  write(keys.THEME, prefs.theme);
+  write(keys.PRIMARY, prefs.primary);
+  write(keys.NEUTRAL, prefs.neutral);
+  write(keys.RADIUS, prefs.radius);
+  write(keys.FONT, prefs.font);
 };
 
 export { isDefaultPrimary };

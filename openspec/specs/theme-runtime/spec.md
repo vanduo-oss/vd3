@@ -37,10 +37,13 @@ generated baseline, copy-on-read), `defaultPreference()`, `loadPreference()`
 `--vd-radius-scale`, and removing `data-font`/`data-theme` for the
 `system` values), `persistPreference()`, `defaultPrimary(theme)` (system
 scheme resolved via `prefers-color-scheme`), and `isDefaultPrimary()`.
-Storage SHALL keep the `vanduo-*` localStorage keys (`vanduo-palette`,
+Storage SHALL default to the `vanduo-*` localStorage keys (`vanduo-palette`,
 `vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`,
-`vanduo-font-preference`, `vanduo-theme-preference`) and every storage or
-DOM access MUST be client-guarded (SSR-safe, storage failures swallowed).
+`vanduo-font-preference`, `vanduo-theme-preference`). The package MUST also
+export `getStoragePrefix()` / `setStoragePrefix(prefix)` so consumers MAY
+remap those six keys by replacing the `vanduo-` prefix (suffixes unchanged)
+before the theme model first reads storage. Every storage or DOM access MUST
+be client-guarded (SSR-safe, storage failures swallowed).
 
 #### Scenario: apply sets the attribute contract
 
@@ -70,6 +73,13 @@ DOM access MUST be client-guarded (SSR-safe, storage failures swallowed).
 - **THEN** `PRIMARY_DARK` is `blue` and all other keys keep the generated
   baseline values
 
+#### Scenario: custom storage prefix remaps keys
+
+- **GIVEN** `setStoragePrefix("ts-school-")` before any theme read
+- **WHEN** `persistPreference()` writes a preference
+- **THEN** values land under `ts-school-palette` (and the other five
+  `ts-school-*` keys), not under `vanduo-*`
+
 ### Requirement: theme-bridge
 
 `useThemeBridge(mode)` MUST carry unchanged: given an app-owned
@@ -87,16 +97,23 @@ same `data-theme` contract.
 ### Requirement: vanduo-vue-plugin
 
 The package MUST export a Vue plugin named `VanduoVue` whose `install`
-applies `options.themeDefaults` synchronously via `setThemeDefaults` — and
-does nothing else. The old `loadVanduoRuntime` export and all IIFE-loading
-machinery MUST NOT exist; installing the plugin SHALL NOT touch
-`window.Vanduo*` or import `@vanduo-oss/framework`.
+applies `options.storagePrefix` (when provided) via `setStoragePrefix` and
+`options.themeDefaults` via `setThemeDefaults` synchronously — storage
+prefix first — and does nothing else. The old `loadVanduoRuntime` export and
+all IIFE-loading machinery MUST NOT exist; installing the plugin SHALL NOT
+touch `window.Vanduo*` or import `@vanduo-oss/framework`.
 
 #### Scenario: install applies theme defaults
 
 - **GIVEN** `app.use(VanduoVue, { themeDefaults: { PRIMARY_DARK: "blue" } })`
 - **WHEN** `getThemeDefaults()` is read immediately after
 - **THEN** `PRIMARY_DARK` is `blue`
+
+#### Scenario: install applies storage prefix
+
+- **GIVEN** `app.use(VanduoVue, { storagePrefix: "labs-" })`
+- **WHEN** `getStoragePrefix()` is read immediately after
+- **THEN** the prefix is `labs-`
 
 #### Scenario: no runtime loader
 
@@ -118,8 +135,9 @@ expose the six reactive preference fields (`palette`, `theme`, `primary`,
 — `setTheme`, `setPalette`, `setPrimary`, `setNeutral`, `setRadius`,
 `setFont`, and `reset` (restoring `defaultPreference()`). Every setter
 MUST route through the existing `applyPreference()` and
-`persistPreference()` so the `data-*` attribute contract and `vanduo-*`
-storage keys stay the single source of truth; `setTheme` SHALL re-derive
+`persistPreference()` so the `data-*` attribute contract and storage keys
+(default `vanduo-*`, or the configured `storagePrefix`) stay the single
+source of truth; `setTheme` SHALL re-derive
 the default primary per the existing `defaultPrimary` rules. While the
 preference is `system`, the singleton MUST track
 `prefers-color-scheme` changes and re-apply — the media listener is
