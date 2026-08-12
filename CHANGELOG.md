@@ -3,6 +3,43 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.3.0 — 2026-08-12
+
+### Added
+
+- **Seemore Glass** — Fibonacci strength-step frosted material system.
+  Canonical modifiers `.vd-glass-{1,2,3,5,8,13,21,34,55,89}` bundle blur, tint,
+  border, saturate, grain, and elevation so thickness reads as one coherent
+  step. Steps 34/55/89 extend toward a ~100 marketing ceiling (89 extreme;
+  next fib 144 omitted). Blur rises only modestly past the 20px GPU soft-cap;
+  tint / edge / saturate / grain / elevation carry most of the extra weight.
+  Prefer 1–21 for UI chrome. Base `.vd-glass` / `.vd-glass-md` map to step 5.
+  Legacy `.vd-glass-sm|lg|xl` remain as aliases for steps 3 / 8 / 13. New
+  `.vd-glass-adaptive` applies a theme-aware tint wash on top of any step.
+  Scroll-activated glass and navbar glass no longer transition
+  `backdrop-filter` (proxy opacity / fill / border only). Navbar scrolled
+  frost clamps to the step-21 soft-cap (20px). Reduced transparency /
+  contrast / motion preferences are baked into the shared glass rules.
+  `VdModal` `glass` uses a light frosted panel (step-13 defaults) over a soft
+  wash backdrop — not opaque dark chrome.
+- **Decorative Surfaces** — Layer 5 `.vd-surface` with variants
+  `mesh`, `stripe`, `noise`, `aurora`, `dots`, `grid` and Fibonacci intensity
+  modifiers `.vd-surface-{3,5,8}` for reusable hero / marketing backdrops
+  (especially under Seemore Glass).
+- **Floating navbar** — opt-in `.vd-navbar-float` (and `VdNavbar` `float`
+  prop) insets fixed/sticky top bars with responsive Fibonacci spacing and a
+  large capsule radius. Default navbar stays edge-to-edge. Glass chrome uses a
+  light frosted wash + inset specular highlight inspired by Avaz Bokiev’s
+  MIT CodePen “Apple Liquid Glass UI (2025)”
+  (https://codepen.io/samarkandiy/pen/MYwQwZZ); still no
+  `backdrop-filter` animation; reduced-transparency hardens to solid.
+  Scrolled frost keeps a translucent **white** wash in light *and* dark
+  (near-transparent in dark — no grey fog / `--vd-glass-bg-dark`). Float
+  capsules optically center brand/content (`padding-top`/`padding-bottom`
+  tweak + brand `line-height: 1` / zero bottom margin). Dist CSS restore
+  keeps unprefixed `backdrop-filter` (LightningCSS otherwise emits only
+  `-webkit-`, which Chromium ignores — that was the dark grey-fog glitch).
+
 ## 1.2.3 — 2026-08-12
 
 ### Added

@@ -99,7 +99,7 @@ describe("VdThemeCustomizer structure + a11y", () => {
     expect(q(".tc-radius-group")).not.toBeNull();
     expect(document.querySelectorAll(".tc-radius-btn").length).toBe(5);
     expect(q(".tc-font-select")).not.toBeNull();
-    expect(document.querySelectorAll(".tc-font-select option").length).toBe(5);
+    expect(document.querySelectorAll(".tc-font-select option").length).toBe(6);
     expect(q(".customizer-reset")).not.toBeNull();
   });
 });
@@ -249,10 +249,10 @@ describe("VdThemeCustomizer controls write through the theme layer", () => {
 
     const root = document.documentElement;
     expect(root.getAttribute("data-radius")).toBe("0.5"); // DEFAULTS.RADIUS
-    expect(root.getAttribute("data-font")).toBe("ubuntu"); // DEFAULTS.FONT
+    expect(root.getAttribute("data-font")).toBe("nunito"); // DEFAULTS.FONT
     expect(window.localStorage.getItem("vanduo-radius")).toBe("0.5");
     expect(window.localStorage.getItem("vanduo-font-preference")).toBe(
-      "ubuntu",
+      "nunito",
     );
   });
 });

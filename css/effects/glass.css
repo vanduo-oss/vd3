@@ -1,6 +1,6 @@
 /**
- * Vanduo Framework - Glass Effects
- * Frosted glass utility surfaces and modifiers
+ * Vanduo Framework - Seemore Glass Effects
+ * Fibonacci strength-step frosted surfaces (blur + tint + edge + elevation)
  */
 
 :root {
@@ -8,8 +8,22 @@
   --vd-glass-float-translate-y: -2px;
 }
 
+/* Shared material shell — defaults = Fibonacci step 5 */
 .vd-glass,
-.vd-glass-md {
+.vd-glass-md,
+.vd-glass-1,
+.vd-glass-2,
+.vd-glass-3,
+.vd-glass-5,
+.vd-glass-8,
+.vd-glass-13,
+.vd-glass-21,
+.vd-glass-34,
+.vd-glass-55,
+.vd-glass-89,
+.vd-glass-sm,
+.vd-glass-lg,
+.vd-glass-xl {
   position: relative;
   overflow: hidden;
   background: var(--vd-glass-bg-light);
@@ -19,13 +33,29 @@
   -webkit-backdrop-filter: blur(var(--vd-glass-blur))
     saturate(var(--vd-glass-saturate));
   isolation: isolate;
+  /* Promote compositing; do not animate backdrop-filter */
+  transform: translateZ(0);
 }
 
 .vd-glass::before,
-.vd-glass-md::before {
+.vd-glass-md::before,
+.vd-glass-1::before,
+.vd-glass-2::before,
+.vd-glass-3::before,
+.vd-glass-5::before,
+.vd-glass-8::before,
+.vd-glass-13::before,
+.vd-glass-21::before,
+.vd-glass-34::before,
+.vd-glass-55::before,
+.vd-glass-89::before,
+.vd-glass-sm::before,
+.vd-glass-lg::before,
+.vd-glass-xl::before {
   content: "";
   position: absolute;
   inset: 0;
+  /* Single consistent light direction (top → bottom rim highlight) */
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, var(--vd-glass-highlight-alpha)) 0%,
@@ -33,10 +63,24 @@
   );
   pointer-events: none;
   z-index: 1;
+  transition: opacity var(--vd-transition-normal, 0.25s ease);
 }
 
 .vd-glass::after,
-.vd-glass-md::after {
+.vd-glass-md::after,
+.vd-glass-1::after,
+.vd-glass-2::after,
+.vd-glass-3::after,
+.vd-glass-5::after,
+.vd-glass-8::after,
+.vd-glass-13::after,
+.vd-glass-21::after,
+.vd-glass-34::after,
+.vd-glass-55::after,
+.vd-glass-89::after,
+.vd-glass-sm::after,
+.vd-glass-lg::after,
+.vd-glass-xl::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -49,30 +93,165 @@
   opacity: var(--vd-glass-noise-opacity);
   pointer-events: none;
   z-index: 2;
+  transition: opacity var(--vd-transition-normal, 0.25s ease);
 }
 
 .vd-glass > *,
-.vd-glass-md > * {
+.vd-glass-md > *,
+.vd-glass-1 > *,
+.vd-glass-2 > *,
+.vd-glass-3 > *,
+.vd-glass-5 > *,
+.vd-glass-8 > *,
+.vd-glass-13 > *,
+.vd-glass-21 > *,
+.vd-glass-34 > *,
+.vd-glass-55 > *,
+.vd-glass-89 > *,
+.vd-glass-sm > *,
+.vd-glass-lg > *,
+.vd-glass-xl > * {
   position: relative;
   z-index: 3;
 }
 
-.vd-glass-sm {
-  --vd-glass-blur: 6px;
-  --vd-glass-saturate: 1.4;
+/* --- Fibonacci strength steps (canonical) --- */
+
+.vd-glass-1 {
+  --vd-glass-blur: 2px;
+  --vd-glass-saturate: 1.2;
+  --vd-glass-bg-opacity: 0.08;
+  --vd-glass-border-alpha: 0.12;
+  --vd-glass-highlight-alpha: 0.12;
+  --vd-glass-noise-opacity: 0.015;
+  --vd-glass-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.vd-glass-2 {
+  --vd-glass-blur: 3px;
+  --vd-glass-saturate: 1.3;
+  --vd-glass-bg-opacity: 0.12;
+  --vd-glass-border-alpha: 0.16;
+  --vd-glass-highlight-alpha: 0.14;
+  --vd-glass-noise-opacity: 0.02;
+  --vd-glass-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
+}
+
+.vd-glass-3 {
+  --vd-glass-blur: 5px;
+  --vd-glass-saturate: 1.45;
+  --vd-glass-bg-opacity: 0.16;
+  --vd-glass-border-alpha: 0.2;
+  --vd-glass-highlight-alpha: 0.18;
+  --vd-glass-noise-opacity: 0.025;
+  --vd-glass-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
+}
+
+.vd-glass-5 {
+  --vd-glass-blur: 8px;
+  --vd-glass-saturate: 1.7;
+  --vd-glass-bg-opacity: 0.2;
+  --vd-glass-border-alpha: 0.24;
+  --vd-glass-highlight-alpha: 0.22;
+  --vd-glass-noise-opacity: 0.035;
+  --vd-glass-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+}
+
+.vd-glass-8 {
+  --vd-glass-blur: 13px;
+  --vd-glass-saturate: 1.9;
+  --vd-glass-bg-opacity: 0.28;
+  --vd-glass-border-alpha: 0.3;
+  --vd-glass-highlight-alpha: 0.26;
+  --vd-glass-noise-opacity: 0.04;
+  --vd-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.16);
+}
+
+.vd-glass-13 {
+  --vd-glass-blur: 16px;
+  --vd-glass-saturate: 2.05;
+  --vd-glass-bg-opacity: 0.32;
+  --vd-glass-border-alpha: 0.34;
+  --vd-glass-highlight-alpha: 0.28;
+  --vd-glass-noise-opacity: 0.045;
+  --vd-glass-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+}
+
+.vd-glass-21 {
+  --vd-glass-blur: 20px;
+  --vd-glass-saturate: 2.2;
+  --vd-glass-bg-opacity: 0.38;
+  --vd-glass-border-alpha: 0.38;
+  --vd-glass-highlight-alpha: 0.3;
+  --vd-glass-noise-opacity: 0.05;
+  --vd-glass-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+/*
+ * Extended marketing / hero steps (near ~100 ceiling).
+ * Blur rises only modestly past the 20px GPU soft-cap; tint, edge, saturate,
+ * grain, and elevation carry most of the thickness. Step 89 is the extreme
+ * ceiling (next fib 144 is out of range). Prefer 1–21 for UI chrome.
+ */
+.vd-glass-34 {
+  --vd-glass-blur: 22px;
+  --vd-glass-saturate: 2.35;
+  --vd-glass-bg-opacity: 0.46;
+  --vd-glass-border-alpha: 0.44;
+  --vd-glass-highlight-alpha: 0.34;
+  --vd-glass-noise-opacity: 0.06;
+  --vd-glass-shadow: 0 20px 56px rgba(0, 0, 0, 0.24);
+}
+
+.vd-glass-55 {
+  --vd-glass-blur: 24px;
+  --vd-glass-saturate: 2.5;
   --vd-glass-bg-opacity: 0.55;
+  --vd-glass-border-alpha: 0.5;
+  --vd-glass-highlight-alpha: 0.38;
+  --vd-glass-noise-opacity: 0.07;
+  --vd-glass-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+}
+
+.vd-glass-89 {
+  --vd-glass-blur: 26px;
+  --vd-glass-saturate: 2.7;
+  --vd-glass-bg-opacity: 0.66;
+  --vd-glass-border-alpha: 0.58;
+  --vd-glass-highlight-alpha: 0.42;
+  --vd-glass-noise-opacity: 0.085;
+  --vd-glass-shadow: 0 28px 72px rgba(0, 0, 0, 0.32);
+}
+
+/* Legacy size aliases → fib steps 3 / 8 / 13 */
+.vd-glass-sm {
+  --vd-glass-blur: 5px;
+  --vd-glass-saturate: 1.45;
+  --vd-glass-bg-opacity: 0.16;
+  --vd-glass-border-alpha: 0.2;
+  --vd-glass-highlight-alpha: 0.18;
+  --vd-glass-noise-opacity: 0.025;
+  --vd-glass-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
 }
 
 .vd-glass-lg {
-  --vd-glass-blur: 20px;
-  --vd-glass-saturate: 2;
-  --vd-glass-bg-opacity: 0.72;
+  --vd-glass-blur: 13px;
+  --vd-glass-saturate: 1.9;
+  --vd-glass-bg-opacity: 0.28;
+  --vd-glass-border-alpha: 0.3;
+  --vd-glass-highlight-alpha: 0.26;
+  --vd-glass-noise-opacity: 0.04;
+  --vd-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.16);
 }
 
 .vd-glass-xl {
-  --vd-glass-blur: 28px;
-  --vd-glass-saturate: 2.2;
-  --vd-glass-bg-opacity: 0.78;
+  --vd-glass-blur: 16px;
+  --vd-glass-saturate: 2.05;
+  --vd-glass-bg-opacity: 0.32;
+  --vd-glass-border-alpha: 0.34;
+  --vd-glass-highlight-alpha: 0.28;
+  --vd-glass-noise-opacity: 0.045;
+  --vd-glass-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
 }
 
 .vd-glass-tinted {
@@ -85,6 +264,23 @@
     var(--vd-glass-bg-light);
 }
 
+/* Theme-aware adaptive wash (behavior on top of a fib step) */
+.vd-glass-adaptive {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--vd-color-primary) 18%, var(--vd-glass-bg-light))
+        0%,
+      color-mix(in srgb, var(--vd-bg-primary) 40%, var(--vd-glass-bg-light))
+        100%
+    );
+  border-color: color-mix(
+    in srgb,
+    var(--vd-color-primary) 22%,
+    var(--vd-glass-border-light)
+  );
+}
+
 .vd-glass-floating {
   transition:
     transform var(--vd-transition-normal),
@@ -93,7 +289,7 @@
 
 .vd-glass-floating:hover,
 .vd-glass-floating:focus-within {
-  transform: translateY(var(--vd-glass-float-translate-y));
+  transform: translateY(var(--vd-glass-float-translate-y)) translateZ(0);
   box-shadow: var(--vd-glass-float-shadow);
 }
 
@@ -102,13 +298,12 @@
   --vd-glass-border-alpha: 0.26;
 }
 
-/* Scroll-activated glass: inactive until .is-glass-active is set by glass.js */
+/* Scroll-activated glass: proxy transitions only (never backdrop-filter) */
 [data-glass-scroll] {
   transition:
     background var(--vd-transition-normal, 0.25s ease),
     border-color var(--vd-transition-normal, 0.25s ease),
-    box-shadow var(--vd-transition-normal, 0.25s ease),
-    backdrop-filter var(--vd-transition-normal, 0.25s ease);
+    box-shadow var(--vd-transition-normal, 0.25s ease);
 }
 
 [data-glass-scroll]:not(.is-glass-active) {
@@ -128,38 +323,123 @@
   (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
 ) {
   .vd-glass,
-  .vd-glass-md {
+  .vd-glass-md,
+  .vd-glass-1,
+  .vd-glass-2,
+  .vd-glass-3,
+  .vd-glass-5,
+  .vd-glass-8,
+  .vd-glass-13,
+  .vd-glass-21,
+  .vd-glass-34,
+  .vd-glass-55,
+  .vd-glass-89,
+  .vd-glass-sm,
+  .vd-glass-lg,
+  .vd-glass-xl {
     background: var(--vd-bg-primary);
+    --vd-glass-bg-opacity: 0.95;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
   .vd-glass,
-  .vd-glass-sm,
   .vd-glass-md,
+  .vd-glass-1,
+  .vd-glass-2,
+  .vd-glass-3,
+  .vd-glass-5,
+  .vd-glass-8,
+  .vd-glass-13,
+  .vd-glass-21,
+  .vd-glass-34,
+  .vd-glass-55,
+  .vd-glass-89,
+  .vd-glass-sm,
+  .vd-glass-lg,
+  .vd-glass-xl,
+  .vd-glass-adaptive,
+  .vd-glass-tinted,
+  .vd-glass-contrast {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--vd-bg-primary) !important;
+    border-color: var(--vd-border-color);
+    --vd-glass-bg-opacity: 0.95;
+  }
+
+  .vd-glass::before,
+  .vd-glass::after,
+  .vd-glass-md::before,
+  .vd-glass-md::after,
+  .vd-glass-1::before,
+  .vd-glass-1::after,
+  .vd-glass-2::before,
+  .vd-glass-2::after,
+  .vd-glass-3::before,
+  .vd-glass-3::after,
+  .vd-glass-5::before,
+  .vd-glass-5::after,
+  .vd-glass-8::before,
+  .vd-glass-8::after,
+  .vd-glass-13::before,
+  .vd-glass-13::after,
+  .vd-glass-21::before,
+  .vd-glass-21::after,
+  .vd-glass-34::before,
+  .vd-glass-34::after,
+  .vd-glass-55::before,
+  .vd-glass-55::after,
+  .vd-glass-89::before,
+  .vd-glass-89::after,
+  .vd-glass-sm::before,
+  .vd-glass-sm::after,
+  .vd-glass-lg::before,
+  .vd-glass-lg::after,
+  .vd-glass-xl::before,
+  .vd-glass-xl::after {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .vd-glass,
+  .vd-glass-md,
+  .vd-glass-1,
+  .vd-glass-2,
+  .vd-glass-3,
+  .vd-glass-5,
+  .vd-glass-8,
+  .vd-glass-13,
+  .vd-glass-21,
+  .vd-glass-34,
+  .vd-glass-55,
+  .vd-glass-89,
+  .vd-glass-sm,
   .vd-glass-lg,
   .vd-glass-xl {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: var(--vd-bg-primary);
-    border-color: var(--vd-border-color);
+    --vd-glass-bg-opacity: 0.88;
+    --vd-glass-border-alpha: 0.55;
+
+    border-width: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-glass-floating,
+  [data-glass-scroll] {
+    transition: none;
+  }
+
+  .vd-glass-floating:hover,
+  .vd-glass-floating:focus-within {
+    transform: translateZ(0);
   }
 
   .vd-glass::before,
   .vd-glass::after,
   .vd-glass-md::before,
   .vd-glass-md::after {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .vd-glass-floating {
     transition: none;
-  }
-
-  .vd-glass-floating:hover,
-  .vd-glass-floating:focus-within {
-    transform: none;
   }
 }

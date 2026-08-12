@@ -9,6 +9,11 @@ interface Props {
   dark?: boolean;
   /** Positioning modifier. */
   position?: "static" | "fixed" | "fixed-bottom" | "sticky";
+  /**
+   * Inset floating capsule (`.vd-navbar-float`) — Fibonacci margin from
+   * viewport edges + large radius. Pair with `variant="glass"` for frosted bar.
+   */
+  float?: boolean;
   /** Scroll distance (px) before `vd-navbar-scrolled` engages for glass/transparent. */
   scrollThreshold?: number;
   /** Accessible label for the mobile hamburger toggle. */
@@ -21,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
   variant: "solid",
   dark: false,
   position: "static",
+  float: false,
   scrollThreshold: undefined,
   toggleLabel: "Toggle navigation",
   closeOnNavigate: true,
@@ -52,6 +58,7 @@ const rootClasses = computed(() => [
   props.position === "fixed" ? "vd-navbar-fixed" : null,
   props.position === "fixed-bottom" ? "vd-navbar-fixed-bottom" : null,
   props.position === "sticky" ? "vd-navbar-sticky" : null,
+  props.float ? "vd-navbar-float" : null,
   isScrolled.value ? "vd-navbar-scrolled" : null,
 ]);
 

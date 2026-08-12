@@ -37,6 +37,10 @@
   --vd-font-family-sans: 'Ubuntu', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+[data-font="nunito"] {
+  --vd-font-family-sans: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 [data-font="lato"] {
   --vd-font-family-sans: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
 }

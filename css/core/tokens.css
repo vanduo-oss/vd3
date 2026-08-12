@@ -194,19 +194,25 @@
   --vd-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
 
   /* ============================================
-   * GLASS TOKENS
+   * GLASS TOKENS (Seemore Glass — Fibonacci step 5 defaults)
+   * Steps 1/2/3/5/8/13/21/34/55/89 live as modifier bundles in effects/glass.css
+   * Blur soft-cap ~20–26px; step 89 is the marketing extreme (~100 ceiling).
    * ============================================ */
-  --vd-glass-blur: 12px;
-  --vd-glass-saturate: 1.8;
-  --vd-glass-bg-opacity: 0.65;
+  --vd-glass-blur: 8px;
+  --vd-glass-saturate: 1.7;
+  --vd-glass-bg-opacity: 0.2;
   --vd-glass-bg-light: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
   --vd-glass-bg-dark: rgba(30, 30, 30, var(--vd-glass-bg-opacity));
-  --vd-glass-border-alpha: 0.18;
+  --vd-glass-border-alpha: 0.24;
   --vd-glass-border-light: rgba(255, 255, 255, var(--vd-glass-border-alpha));
-  --vd-glass-border-dark: rgba(255, 255, 255, 0.08);
-  --vd-glass-highlight-alpha: 0.25;
-  --vd-glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  --vd-glass-noise-opacity: 0.03;
+  --vd-glass-border-dark: rgba(255, 255, 255, 0.12);
+  --vd-glass-highlight-alpha: 0.22;
+  --vd-glass-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+  --vd-glass-noise-opacity: 0.035;
+  /* Decorative Surfaces (effects/surfaces.css) */
+  --vd-surface-intensity: 1;
+  --vd-surface-contrast: 1;
+  --vd-surface-min-height: 12rem;
 
   /* ============================================
    * TRANSITION TOKENS
