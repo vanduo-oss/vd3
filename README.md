@@ -37,9 +37,11 @@ import App from "./App.vue";
 createApp(App).use(VanduoVue).mount("#app");
 ```
 
-`app.use(VanduoVue)` accepts an optional `{ themeDefaults }` to override the
-generic baseline before the theme model first reads it (e.g.
-`app.use(VanduoVue, { themeDefaults: { PRIMARY_DARK: "blue" } })`).
+`app.use(VanduoVue)` accepts optional `{ themeDefaults, storagePrefix }` —
+`themeDefaults` overrides the generic baseline before the theme model first
+reads it; `storagePrefix` remaps the six preference `localStorage` keys
+(default `"vanduo-"`) so multi-app same-origin hosts do not collide (e.g.
+`app.use(VanduoVue, { themeDefaults: { PRIMARY_DARK: "blue" }, storagePrefix: "ts-school-" })`).
 
 ```vue
 <script setup lang="ts">
@@ -73,9 +75,12 @@ reference, [SKILL.md](./SKILL.md).
 The theme layer (`useTheme`) drives six `data-*` attributes on `<html>` —
 `data-palette`, `data-primary`, `data-neutral`, `data-radius`, `data-theme`,
 `data-font` — which the CSS resolves into `--vd-*` custom properties (e.g.
-`--vd-radius-scale`). Preferences persist to six `localStorage` keys
-(`vanduo-palette`, `vanduo-primary-color`, `vanduo-neutral-color`,
-`vanduo-radius`, `vanduo-theme-preference`, `vanduo-font-preference`).
+`--vd-radius-scale`). Preferences persist to six `localStorage` keys under a
+configurable prefix (default `vanduo-`): `vanduo-palette`,
+`vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`,
+`vanduo-theme-preference`, `vanduo-font-preference`. Pass
+`storagePrefix: "app-"` (or call `setStoragePrefix`) at bootstrap to isolate
+namespaces; no automatic migration between prefixes.
 
 `useThemePreference()` is a module-scope reactive singleton (no pinia) that is
 the single source of truth behind `VdThemeSwitcher` and `VdThemeCustomizer`;

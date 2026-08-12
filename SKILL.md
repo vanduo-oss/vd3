@@ -30,11 +30,16 @@ import App from "./App.vue";
 createApp(App).use(VanduoVue).mount("#app");
 ```
 
-`app.use(VanduoVue)` takes an optional `{ themeDefaults }` to override the
-generic baseline before the theme model first reads it:
+`app.use(VanduoVue)` takes optional `{ themeDefaults, storagePrefix }` —
+`themeDefaults` overrides the generic baseline before the theme model first
+reads it; `storagePrefix` remaps preference `localStorage` keys (default
+`"vanduo-"`):
 
 ```ts
-app.use(VanduoVue, { themeDefaults: { PRIMARY_DARK: "blue" } });
+app.use(VanduoVue, {
+  themeDefaults: { PRIMARY_DARK: "blue" },
+  storagePrefix: "ts-school-",
+});
 ```
 
 Then render components in any template:
@@ -145,9 +150,11 @@ the package root — the same surface the old `@vanduo-oss/core` shipped.
 these into `--vd-*` custom properties (e.g. `--vd-radius-scale`). Omitting
 `data-theme` / `data-font` selects the system/default.
 
-**Storage keys** (`localStorage`): `vanduo-palette`, `vanduo-primary-color`,
-`vanduo-neutral-color`, `vanduo-radius`, `vanduo-theme-preference`,
-`vanduo-font-preference`.
+**Storage keys** (`localStorage`): under a configurable prefix (default
+`vanduo-`) — `vanduo-palette`, `vanduo-primary-color`, `vanduo-neutral-color`,
+`vanduo-radius`, `vanduo-theme-preference`, `vanduo-font-preference`. Set via
+`app.use(VanduoVue, { storagePrefix })` or `setStoragePrefix` at bootstrap
+(before first theme read); no automatic cross-prefix migration.
 
 ## SSR
 

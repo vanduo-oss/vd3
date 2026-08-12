@@ -3,17 +3,21 @@ import { createApp } from "vue";
 import VanduoVue, * as pluginModule from "../src/plugin";
 import {
   DEFAULTS,
+  DEFAULT_STORAGE_PREFIX,
+  getStoragePrefix,
   getThemeDefaults,
+  setStoragePrefix,
   setThemeDefaults,
 } from "../src/composables/useTheme";
 
 /**
- * The plugin's only side effect is applying `themeDefaults` through the
- * module-scope defaults singleton, so every test restores that singleton to the
- * generated baseline afterwards.
+ * The plugin's only side effects are applying `storagePrefix` /
+ * `themeDefaults` through the module-scope singletons, so every test restores
+ * those singletons to the generated baseline afterwards.
  */
 afterEach(() => {
   setThemeDefaults({ ...DEFAULTS });
+  setStoragePrefix(DEFAULT_STORAGE_PREFIX);
 });
 
 describe("VanduoVue plugin", () => {
@@ -30,10 +34,22 @@ describe("VanduoVue plugin", () => {
     expect(getThemeDefaults().FONT).toBe(DEFAULTS.FONT);
   });
 
+  it("applies storagePrefix on install before themeDefaults", () => {
+    const app = createApp({ render: () => null });
+    app.use(VanduoVue, {
+      storagePrefix: "labs-",
+      themeDefaults: { PRIMARY_DARK: "blue" },
+    });
+
+    expect(getStoragePrefix()).toBe("labs-");
+    expect(getThemeDefaults().PRIMARY_DARK).toBe("blue");
+  });
+
   it("leaves the baseline defaults intact when installed without themeDefaults", () => {
     const app = createApp({ render: () => null });
     app.use(VanduoVue, {});
     expect(getThemeDefaults()).toEqual({ ...DEFAULTS });
+    expect(getStoragePrefix()).toBe(DEFAULT_STORAGE_PREFIX);
   });
 
   it("does not export loadVanduoRuntime (the IIFE runtime loader is gone)", () => {

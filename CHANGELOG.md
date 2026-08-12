@@ -3,6 +3,15 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.2.3 — 2026-08-12
+
+### Added
+
+- Optional **`storagePrefix`** on `app.use(VanduoVue, { storagePrefix })` and
+  `setStoragePrefix` / `getStoragePrefix` so multi-app same-origin hosts can
+  isolate theme preference `localStorage` keys. Default remains `vanduo-*`
+  (back-compat); no automatic migration between prefixes.
+
 ## 1.2.2 — 2026-08-09
 
 ### Added
