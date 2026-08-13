@@ -34,9 +34,11 @@ The theme layer MUST carry the old vue package's preference model unchanged:
 generated baseline, copy-on-read), `defaultPreference()`, `loadPreference()`
 (validating stored values against the option lists), `applyPreference()`
 (setting `data-palette`, `data-primary`, `data-neutral`, `data-radius`,
-`--vd-radius-scale`, and removing `data-font`/`data-theme` for the
-`system` values), `persistPreference()`, `defaultPrimary(theme)` (system
-scheme resolved via `prefers-color-scheme`), and `isDefaultPrimary()`.
+`--vd-radius-scale`, removing `data-font` for the `system` font value, and
+always setting `data-theme` to a **resolved** `light` or `dark` — never
+leaving it absent and never writing `data-theme="system"`), 
+`resolveThemeScheme(theme)`, `persistPreference()`, `defaultPrimary(theme)`
+(system scheme resolved via `prefers-color-scheme`), and `isDefaultPrimary()`.
 Storage SHALL default to the `vanduo-*` localStorage keys (`vanduo-palette`,
 `vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`,
 `vanduo-font-preference`, `vanduo-theme-preference`). The package MUST also
@@ -53,11 +55,18 @@ be client-guarded (SSR-safe, storage failures swallowed).
   `data-theme="dark"`, `data-radius="0.25"`, and
   `--vd-radius-scale: 0.25`
 
-#### Scenario: system values remove attributes
+#### Scenario: system preference resolves data-theme
 
 - **GIVEN** a preference with `theme: "system"` and `font: "system"`
-- **WHEN** `applyPreference()` runs
-- **THEN** `data-theme` and `data-font` are absent from `<html>`
+- **WHEN** `applyPreference()` runs and `prefers-color-scheme: dark` matches
+- **THEN** `<html>` has `data-theme="dark"` (not absent, not `"system"`),
+  `color-scheme` is `dark`, and `data-font` is absent
+
+#### Scenario: system preference resolves to light
+
+- **GIVEN** a preference with `theme: "system"`
+- **WHEN** `applyPreference()` runs and `prefers-color-scheme: dark` does not match
+- **THEN** `<html>` has `data-theme="light"`
 
 #### Scenario: invalid stored values fall back to defaults
 

@@ -10,6 +10,7 @@ import {
   isDefaultPrimary,
   loadPreference,
   persistPreference,
+  resolveThemeScheme,
   setStoragePrefix,
   setThemeDefaults,
   type ThemePreference,
@@ -119,6 +120,15 @@ describe("useTheme defaultPrimary / isDefaultPrimary", () => {
     expect(defaultPrimary("light")).toBe(DEFAULTS.PRIMARY_LIGHT); // black
   });
 
+  it("resolveThemeScheme never returns system", () => {
+    expect(resolveThemeScheme("light")).toBe("light");
+    expect(resolveThemeScheme("dark")).toBe("dark");
+    stubMatchMedia(true);
+    expect(resolveThemeScheme("system")).toBe("dark");
+    stubMatchMedia(false);
+    expect(resolveThemeScheme("system")).toBe("light");
+  });
+
   it("system falls to PRIMARY_LIGHT when matchMedia is absent (jsdom default)", () => {
     // No matchMedia stub: prefersDark() short-circuits to false.
     expect(defaultPrimary("system")).toBe(DEFAULTS.PRIMARY_LIGHT);
@@ -161,10 +171,29 @@ describe("useTheme applyPreference DOM side effects", () => {
     expect(document.documentElement.hasAttribute("data-font")).toBe(false);
   });
 
-  it("theme 'system' removes data-theme instead of setting it", () => {
+  it("theme 'system' resolves data-theme to light|dark (never leaves it unset)", () => {
     document.documentElement.setAttribute("data-theme", "stale");
+    stubMatchMedia(true);
     applyPreference(basePrefs({ theme: "system", primary: "blue" }));
-    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(
+      document.documentElement.style.getPropertyValue("color-scheme"),
+    ).toBe("dark");
+
+    stubMatchMedia(false);
+    applyPreference(basePrefs({ theme: "system", primary: "blue" }));
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+    expect(
+      document.documentElement.style.getPropertyValue("color-scheme"),
+    ).toBe("light");
+  });
+
+  it("theme 'system' never writes data-theme=system", () => {
+    stubMatchMedia(true);
+    applyPreference(basePrefs({ theme: "system", primary: "blue" }));
+    expect(document.documentElement.getAttribute("data-theme")).not.toBe(
+      "system",
+    );
   });
 
   it("re-derives a default primary to the dark accent when theme is dark", () => {

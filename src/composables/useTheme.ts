@@ -148,14 +148,23 @@ const prefersDark = (): boolean => {
   return !!mq && mq.matches;
 };
 
+/** Visual scheme only — never `"system"`. */
+export type ResolvedTheme = "light" | "dark";
+
+/**
+ * Map a stored preference (`light` | `dark` | `system`) to the scheme the DOM
+ * and CSS must use. `"system"` follows `prefers-color-scheme`; missing matchMedia
+ * (SSR / jsdom) resolves to `"light"`.
+ */
+export const resolveThemeScheme = (theme: ThemeMode): ResolvedTheme => {
+  if (theme === "light" || theme === "dark") return theme;
+  return prefersDark() ? "dark" : "light";
+};
+
 /** Default primary depends on the effective light/dark scheme. */
 export const defaultPrimary = (theme: ThemeMode): string => {
-  if (theme === "system") {
-    return prefersDark()
-      ? activeDefaults.PRIMARY_DARK
-      : activeDefaults.PRIMARY_LIGHT;
-  }
-  return theme === "dark"
+  const scheme = resolveThemeScheme(theme);
+  return scheme === "dark"
     ? activeDefaults.PRIMARY_DARK
     : activeDefaults.PRIMARY_LIGHT;
 };
@@ -228,11 +237,12 @@ export const applyPreference = (prefs: ThemePreference): void => {
     root.setAttribute("data-font", prefs.font);
   }
 
-  if (prefs.theme === "system") {
-    root.removeAttribute("data-theme");
-  } else {
-    root.setAttribute("data-theme", prefs.theme);
-  }
+  // Preference may be "system", but styling has only two visual states.
+  // Always stamp a resolved light|dark `data-theme` so components that key off
+  // `[data-theme="dark"]` (and not prefers-color-scheme) stay consistent.
+  const resolved = resolveThemeScheme(prefs.theme);
+  root.setAttribute("data-theme", resolved);
+  root.style.setProperty("color-scheme", resolved);
 };
 
 export const persistPreference = (prefs: ThemePreference): void => {
