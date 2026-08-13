@@ -36,10 +36,20 @@
   border-radius: var(--vd-btn-border-radius);
 }
 
+/* Nested component markup is `nav.vd-breadcrumbs > ol.vd-breadcrumb`.
+   Both classes share the trail box; drop the wrapper's copy so padding
+   and margin apply once (size variants still pad the list). */
+.vd-breadcrumbs:has(> .vd-breadcrumb) {
+  padding: 0;
+  margin-bottom: 0;
+}
+
 /* Breadcrumb Item */
 .vd-breadcrumb-item {
   display: flex;
   align-items: center;
+  /* typography.css `li { margin-bottom: 0.25em }` — keep the trail on one line */
+  margin-bottom: 0;
 }
 
 .vd-breadcrumb-item + .vd-breadcrumb-item {
@@ -93,32 +103,34 @@
   text-decoration: none;
 }
 
-/* Breadcrumb Variants - With Icons */
-.vd-breadcrumb-item > svg,
-.vd-breadcrumb-item > i {
+/* Breadcrumb Variants - With Icons (direct or inside the link) */
+.vd-breadcrumb-item svg,
+.vd-breadcrumb-item i {
   margin-right: 0.25rem;
   vertical-align: middle;
 }
 
-/* Custom Separators */
-.vd-breadcrumb-separator-slash::before {
-  content: "/";
+/* Custom separators: set the glyph used by
+   `.vd-breadcrumb-item + .vd-breadcrumb-item::before`.
+   Do not paint ::before on the list — that leads the first item. */
+.vd-breadcrumb-separator-slash {
+  --vd-breadcrumb-separator: "/";
 }
 
-.vd-breadcrumb-separator-chevron::before {
-  content: "›";
+.vd-breadcrumb-separator-chevron {
+  --vd-breadcrumb-separator: "›";
 }
 
-.vd-breadcrumb-separator-arrow::before {
-  content: "→";
+.vd-breadcrumb-separator-arrow {
+  --vd-breadcrumb-separator: "→";
 }
 
-.vd-breadcrumb-separator-dot::before {
-  content: "·";
+.vd-breadcrumb-separator-dot {
+  --vd-breadcrumb-separator: "·";
 }
 
-.vd-breadcrumb-separator-pipe::before {
-  content: "|";
+.vd-breadcrumb-separator-pipe {
+  --vd-breadcrumb-separator: "|";
 }
 
 /* Breadcrumb Sizes */
