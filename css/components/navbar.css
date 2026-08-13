@@ -353,12 +353,23 @@
   gap: 0;
 }
 
+/* Kill typography.css `li { margin-bottom: 0.25em }` — leftover bottom
+   margin inflates the flex row and makes desktop links sit high. */
+.vd-navbar-nav > li {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
 .vd-navbar-nav .vd-nav-link {
   padding: 0.5rem 1rem;
   color: var(--vd-navbar-link-color);
   text-decoration: none;
   transition: color 0.2s ease, background-color 0.2s ease;
-  display: block;
+  display: flex;
+  align-items: center;
+  line-height: 1;
 }
 
 .vd-navbar-nav .vd-nav-link:hover,
@@ -621,10 +632,13 @@
   .vd-navbar-nav {
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
     gap: 0.5rem var(--vd-navbar-nav-gap);
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
   }
 

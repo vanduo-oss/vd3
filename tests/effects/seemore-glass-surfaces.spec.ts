@@ -126,6 +126,10 @@ describe("Seemore Glass + Surfaces CSS contract", () => {
     expect(navbar).toMatch(
       /\.vd-navbar-float\s*\{[^}]*padding-top:\s*0\.65rem/,
     );
+    expect(navbar).toMatch(/\.vd-navbar-nav\s*>\s*li\s*\{[^}]*margin:\s*0/);
+    expect(navbar).toMatch(
+      /left:\s*50%;\s*top:\s*50%;\s*transform:\s*translate\(-50%,\s*-50%\)/,
+    );
     expect(navbar).toMatch(/codepen\.io\/samarkandiy\/pen\/MYwQwZZ/);
   });
 
