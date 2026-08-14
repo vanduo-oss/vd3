@@ -12,7 +12,7 @@
 // VdThemeCustomizer, VdDocSearch) and four composables (useClickOutside,
 // useDocSearch, useLazyLoad, useGrid + `setGridSystem`).
 
-export const VD3_VERSION = "1.3.0";
+export const VD3_VERSION = "1.4.0";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
@@ -20,27 +20,34 @@ export { VanduoVue } from "./plugin";
 // ── Components ───────────────────────────────────────────────
 export { default as VdAccordion } from "./components/VdAccordion.vue";
 export { default as VdAlert } from "./components/VdAlert.vue";
+export { default as VdAuthCard } from "./components/VdAuthCard.vue";
 export { default as VdAvatar } from "./components/VdAvatar.vue";
 export { default as VdBadge } from "./components/VdBadge.vue";
 export { default as VdBreadcrumb } from "./components/VdBreadcrumb.vue";
 export { default as VdButton } from "./components/VdButton.vue";
 export { default as VdButtonGroup } from "./components/VdButtonGroup.vue";
 export { default as VdCard } from "./components/VdCard.vue";
+export { default as VdCheckbox } from "./components/VdCheckbox.vue";
 export { default as VdCheckboxGroup } from "./components/VdCheckboxGroup.vue";
 export { default as VdChip } from "./components/VdChip.vue";
 export { default as VdCodeSnippet } from "./components/VdCodeSnippet.vue";
 export { default as VdCollection } from "./components/VdCollection.vue";
 export { default as VdCustomSelect } from "./components/VdCustomSelect.vue";
+export { default as VdDataTable } from "./components/VdDataTable.vue";
 export { default as VdDocSearch } from "./components/VdDocSearch.vue";
+export { default as VdEmptyState } from "./components/VdEmptyState.vue";
 export { default as VdFab } from "./components/VdFab.vue";
 export { default as VdFlow } from "./components/VdFlow.vue";
 export { default as VdFooter } from "./components/VdFooter.vue";
+export { default as VdForgotPassword } from "./components/VdForgotPassword.vue";
 export { default as VdIcon } from "./components/VdIcon.vue";
 export { default as VdInput } from "./components/VdInput.vue";
+export { default as VdLogin } from "./components/VdLogin.vue";
 export { default as VdMenu } from "./components/VdMenu.vue";
 export { default as VdModal } from "./components/VdModal.vue";
 export { default as VdNavbar } from "./components/VdNavbar.vue";
 export { default as VdOffcanvas } from "./components/VdOffcanvas.vue";
+export { default as VdOtpInput } from "./components/VdOtpInput.vue";
 export { default as VdPagination } from "./components/VdPagination.vue";
 export { default as VdPreloader } from "./components/VdPreloader.vue";
 export { default as VdProgress } from "./components/VdProgress.vue";
@@ -49,6 +56,7 @@ export { default as VdRating } from "./components/VdRating.vue";
 export { default as VdSelect } from "./components/VdSelect.vue";
 export { default as VdSeparator } from "./components/VdSeparator.vue";
 export { default as VdSidenav } from "./components/VdSidenav.vue";
+export { default as VdSignUp } from "./components/VdSignUp.vue";
 export { default as VdSkeleton } from "./components/VdSkeleton.vue";
 export { default as VdSlider } from "./components/VdSlider.vue";
 export { default as VdSpinner } from "./components/VdSpinner.vue";
@@ -101,6 +109,7 @@ export * from "./composables/useSidenav";
 export * from "./composables/useSpotlight";
 export * from "./composables/useStepper";
 export * from "./composables/useSuggest";
+export * from "./composables/useTableState";
 export * from "./composables/useTabs";
 export * from "./composables/useTheme";
 export * from "./composables/useThemeBridge";
@@ -127,3 +136,15 @@ export type { StatusVariant } from "./types";
 // ── Re-exported component types ───────────────────────────────
 export type { BreadcrumbItem } from "./components/VdBreadcrumb.vue";
 export type { TreeNode } from "./components/VdTreeNode.vue";
+export type {
+  AuthProvider,
+  ForgotPasswordSubmit,
+  LoginSubmit,
+  SignUpSubmit,
+} from "./components/auth-types";
+export type {
+  DataTableAlign,
+  DataTableColumn,
+  DataTableSelectable,
+  DataTableVariant,
+} from "./components/VdDataTable.vue";

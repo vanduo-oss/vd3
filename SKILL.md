@@ -1,6 +1,6 @@
 ---
 name: vanduo-vd3
-description: Use when building UIs with @vanduo-oss/vd3 — the standalone Vue 3 design system line of Vanduo (52 Vd* components, ~35 composables, a runtime theme layer, and its own DTCG tokens + CSS). Covers install, the VanduoVue plugin, the component/composable inventory, the data-*/--vd-*/vanduo-* theming contract, and SSR safety.
+description: Use when building UIs with @vanduo-oss/vd3 — the standalone Vue 3 design system line of Vanduo (60 Vd* components, ~36 composables, a runtime theme layer, and its own DTCG tokens + CSS). Covers install, the VanduoVue plugin, the component/composable inventory, the data-*/--vd-*/vanduo-* theming contract, and SSR safety.
 ---
 
 # @vanduo-oss/vd3
@@ -64,19 +64,26 @@ Stylesheet import options:
 | `@vanduo-oss/vd3/css/core`      | Tokens-only stylesheet (no icon fonts)     |
 | `@vanduo-oss/vd3/tokens.json`   | Resolved DTCG token data (JSON)            |
 
-## Components (52)
+## Components (60)
 
-45 `Vd*` components plus 7 layout primitives. All are named exports from the
+53 `Vd*` components plus 7 layout primitives. All are named exports from the
 package root and register nothing globally — import only what you render.
 
-**Form & input (11):** `VdButton`, `VdButtonGroup`, `VdInput`, `VdSelect`,
-`VdCustomSelect`, `VdCheckboxGroup`, `VdRadioGroup`, `VdSwitch`, `VdSlider`,
-`VdRating`, `VdTransfer`. Native `<select>` / `select.vd-input` carets use
-`background-image`; tint with `background-color` (not the `background`
-shorthand) so focus/dark overrides cannot tile the chevron.
+**Form & input (13):** `VdButton`, `VdButtonGroup`, `VdInput`, `VdSelect`,
+`VdCustomSelect`, `VdCheckbox`, `VdCheckboxGroup`, `VdRadioGroup`, `VdSwitch`,
+`VdSlider`, `VdRating`, `VdTransfer`, `VdOtpInput`. Native `<select>` /
+`select.vd-input` carets use `background-image`; tint with `background-color`
+(not the `background` shorthand) so focus/dark overrides cannot tile the chevron.
+Password fields may set `revealPassword` for a suffix eye toggle.
 
-**Data display (8):** `VdTable`, `VdTree`, `VdTreeNode`, `VdCollection`,
-`VdCard`, `VdBadge`, `VdChip`, `VdAvatar`
+**Auth (4):** `VdAuthCard`, `VdLogin`, `VdSignUp`, `VdForgotPassword`. Headless
+screens — they emit `submit` / `social` and never fetch. Compose `VdAvatar` in
+the brand slot. Parents own sessions, CSRF tokens, and OAuth SDKs.
+
+**Data display (10):** `VdTable`, `VdDataTable`, `VdEmptyState`, `VdTree`,
+`VdTreeNode`, `VdCollection`, `VdCard`, `VdBadge`, `VdChip`, `VdAvatar`.
+`VdTable` is presentational text cells; `VdDataTable` adds sort, search,
+selection, pagination, and cell slots.
 
 **Feedback & status (9):** `VdAlert`, `VdModal`, `VdOffcanvas`, `VdToast`,
 `VdToastContainer`, `VdProgress`, `VdSpinner`, `VdPreloader`, `VdSkeleton`
@@ -93,10 +100,12 @@ shorthand) so focus/dark overrides cannot tile the chevron.
 `VdInline`, `VdStack`, `VdSwitcher`
 
 Two component types are also re-exported: `BreadcrumbItem` (from `VdBreadcrumb`)
-and `TreeNode` (from `VdTreeNode`). The shared `StatusVariant` type is exported
-for prop typing.
+and `TreeNode` (from `VdTreeNode`), plus auth payload types (`AuthProvider`,
+`LoginSubmit`, `SignUpSubmit`, `ForgotPasswordSubmit`) and data-table types
+(`DataTableColumn`, `TableSort`, `TableRow`). The shared `StatusVariant` type
+is exported for prop typing.
 
-## Composables (~35)
+## Composables (~36)
 
 Named exports from the package root. Each keeps the `useX(root?)` shape from the
 old `@vanduo-oss/vue` surface, rewritten as pure Vue (no DOM-scan runtime).
@@ -107,6 +116,9 @@ external `Ref<ThemeMode>` onto the `data-theme` attribute).
 
 **Form & validation (6):** `useDatepicker`, `useTimepicker`, `useStepper`,
 `useSuggest`, `useSearch`, `useValidate`.
+
+**Data (1):** `useTableState` (search → sort → page plus selection; `manual`
+skips the client pipeline).
 
 **Overlay & dismissal (9):** `useDropdown`, `usePopover`, `useTooltips`,
 `useToast` (module-scope singleton, paired with `useToastStore` — no pinia),

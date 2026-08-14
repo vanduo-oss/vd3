@@ -36,11 +36,13 @@
 @import url('utilities/transforms.css');
 @import url('utilities/media.css');
 @import url('utilities/table.css');
+@import url('components/data-table.css');
 @import url('utilities/color-utilities.css');
 
 /* Layer 4: Components */
 @import url('components/buttons.css');
 @import url('components/forms.css');
+@import url('components/auth.css');
 @import url('components/cards.css');
 @import url('components/accordion.css');
 @import url('components/separator.css');

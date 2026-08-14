@@ -3,6 +3,23 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.4.0 — 2026-08-14
+
+### Added
+
+- **Auth screens** — headless `VdAuthCard`, `VdLogin`, `VdSignUp`, and
+  `VdForgotPassword`. They emit `submit` / `social` and never fetch; parents
+  own sessions, CSRF tokens, and OAuth SDKs. Password fields use WHATWG
+  autocomplete tokens (`current-password` / `new-password` / `email`) and a
+  real reveal button (`aria-pressed`), never `autocomplete="off"`.
+- **Form primitives for those screens** — `VdCheckbox` (boolean v-model),
+  `VdOtpInput` (paste-to-fill, `autocomplete="one-time-code"`), `VdInput`
+  `#prefix` / `#suffix` slots plus `revealPassword`, `VdCard` `glass`.
+- **Data table** — `useTableState` (search → sort → page, or `manual` for
+  server-sliced rows) and `VdDataTable` (sortable `aria-sort` headers, cell
+  slots, selection, sticky header, skeleton loading, `VdEmptyState`, composed
+  `VdPagination`). Presentational `VdTable` is unchanged.
+
 ## 1.3.0 — 2026-08-12
 
 ### Added

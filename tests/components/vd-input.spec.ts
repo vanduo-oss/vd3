@@ -143,4 +143,89 @@ describe("VdInput", () => {
     expect(wrapper.emitted("blur")).toHaveLength(1);
     expect(wrapper.emitted("blur")![0]![0]).toBeInstanceOf(FocusEvent);
   });
+
+  it("renders prefix and suffix slots, falling back to the string props", () => {
+    const slotted = mount(VdInput, {
+      props: { modelValue: "", prefix: "€", suffix: "kg" },
+      slots: { prefix: "USD", suffix: "lb" },
+    });
+    expect(slotted.get(".vd-input-group-prefix").text()).toBe("USD");
+    expect(slotted.get(".vd-input-group-suffix").text()).toBe("lb");
+  });
+
+  it("adds label-required when the field is required", () => {
+    const wrapper = factory({ label: "Email", required: true });
+    expect(wrapper.get("label").classes()).toContain("label-required");
+  });
+
+  it("toggles password visibility with aria-pressed on the reveal button", async () => {
+    const wrapper = factory({
+      type: "password",
+      revealPassword: true,
+      label: "Password",
+    });
+    const input = wrapper.get("input");
+    expect(input.attributes("type")).toBe("password");
+    expect(input.attributes("spellcheck")).toBe("false");
+    expect(input.attributes("autocapitalize")).toBe("none");
+
+    const button = wrapper.get("button.vd-input-reveal");
+    expect(button.attributes("type")).toBe("button");
+    expect(button.attributes("aria-pressed")).toBe("false");
+    expect(button.attributes("aria-label")).toBe("Show password");
+
+    await button.trigger("click");
+    expect(wrapper.get("input").attributes("type")).toBe("text");
+    expect(button.attributes("aria-pressed")).toBe("true");
+    expect(button.attributes("aria-label")).toBe("Hide password");
+
+    await button.trigger("click");
+    expect(wrapper.get("input").attributes("type")).toBe("password");
+    expect(button.attributes("aria-pressed")).toBe("false");
+  });
+
+  it("ignores revealPassword when type is not password", () => {
+    const wrapper = factory({ type: "text", revealPassword: true });
+    expect(wrapper.find("button.vd-input-reveal").exists()).toBe(false);
+  });
+
+  it("forwards inputmode, enterkeyhint, and explicit spellcheck/autocapitalize", () => {
+    const wrapper = factory({
+      type: "email",
+      inputmode: "email",
+      enterkeyhint: "next",
+      spellcheck: true,
+      autocapitalize: "none",
+    });
+    const attrs = wrapper.get("input").attributes();
+    expect(attrs.inputmode).toBe("email");
+    expect(attrs.enterkeyhint).toBe("next");
+    expect(attrs.spellcheck).toBe("true");
+    expect(attrs.autocapitalize).toBe("none");
+  });
+
+  it("defaults email fields to spellcheck false and autocapitalize none", () => {
+    const wrapper = factory({ type: "email" });
+    const attrs = wrapper.get("input").attributes();
+    expect(attrs.spellcheck).toBe("false");
+    expect(attrs.autocapitalize).toBe("none");
+  });
+
+  it("omits credential defaults on ordinary text fields", () => {
+    const wrapper = factory({ type: "text" });
+    const attrs = wrapper.get("input").attributes();
+    expect(attrs.spellcheck).toBeUndefined();
+    expect(attrs.autocapitalize).toBeUndefined();
+  });
+
+  it("disables the reveal button when the field is disabled", () => {
+    const wrapper = factory({
+      type: "password",
+      revealPassword: true,
+      disabled: true,
+    });
+    expect(wrapper.get("button.vd-input-reveal").attributes("disabled")).toBe(
+      "",
+    );
+  });
 });

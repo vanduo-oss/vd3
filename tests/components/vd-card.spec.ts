@@ -74,4 +74,11 @@ describe("VdCard", () => {
       "vd-card-footer",
     ]);
   });
+
+  it("glass adds vd-card-glass and is absent by default", () => {
+    expect(mount(VdCard).classes()).not.toContain("vd-card-glass");
+    expect(mount(VdCard, { props: { glass: true } }).classes()).toContain(
+      "vd-card-glass",
+    );
+  });
 });
