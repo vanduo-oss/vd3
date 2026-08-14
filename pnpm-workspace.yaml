@@ -18,3 +18,10 @@ overrides:
   # delimiter). Dev-only (never shipped in dist); keeps
   # `pnpm audit --audit-level=moderate` green.
   "fast-uri@>=3.0.0 <=3.1.3": "^3.1.4"
+
+  # Security: force the transitive nanoid (pulled via
+  # stylelint > postcss > nanoid) to a patched release —
+  # GHSA-2v37-7h3g-55p8 (custom generators can loop indefinitely when size
+  # is zero). Dev-only (never shipped in dist); keeps
+  # `pnpm audit --audit-level=moderate` green.
+  "nanoid@<3.3.18": "^3.3.18"
