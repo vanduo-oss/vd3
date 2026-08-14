@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, useId } from "vue";
+import { computed, ref, useId, useSlots } from "vue";
+import VdIcon from "./VdIcon.vue";
 
 type Size = "sm" | "md" | "lg";
 // Validation state. `danger` replaces the former `error` spelling.
@@ -33,6 +34,21 @@ interface Props {
   step?: number | string;
   pattern?: string;
   autocomplete?: string;
+  inputmode?:
+    | "none"
+    | "text"
+    | "decimal"
+    | "numeric"
+    | "tel"
+    | "search"
+    | "email"
+    | "url";
+  enterkeyhint?:
+    "enter" | "done" | "go" | "next" | "previous" | "search" | "send";
+  autocapitalize?: string;
+  spellcheck?: boolean;
+  /** Show a type=button that toggles password visibility. Ignored unless type is password. */
+  revealPassword?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +73,11 @@ const props = withDefaults(defineProps<Props>(), {
   step: undefined,
   pattern: "",
   autocomplete: "",
+  inputmode: undefined,
+  enterkeyhint: undefined,
+  autocapitalize: "",
+  spellcheck: undefined,
+  revealPassword: false,
 });
 
 const emit = defineEmits<{
@@ -66,8 +87,33 @@ const emit = defineEmits<{
   focus: [event: FocusEvent];
 }>();
 
+const slots = useSlots();
 const autoId = useId();
 const inputId = computed(() => props.id || props.name || autoId);
+const revealed = ref(false);
+
+const isPasswordType = computed(() => props.type === "password");
+const showReveal = computed(() => props.revealPassword && isPasswordType.value);
+const showPrefix = computed(() => Boolean(slots.prefix || props.prefix));
+const showSuffix = computed(
+  () => Boolean(slots.suffix || props.suffix) || showReveal.value,
+);
+const inputType = computed(() =>
+  showReveal.value && revealed.value ? "text" : props.type,
+);
+
+const isCredentialType = computed(
+  () => props.type === "password" || props.type === "email",
+);
+const resolvedSpellcheck = computed(() => {
+  if (props.spellcheck !== undefined) return props.spellcheck;
+  return isCredentialType.value ? false : undefined;
+});
+const resolvedAutocapitalize = computed(() => {
+  if (props.autocapitalize) return props.autocapitalize;
+  return isCredentialType.value ? "none" : undefined;
+});
+
 const stateClass = computed(() =>
   props.error
     ? "vd-input-danger"
@@ -91,16 +137,29 @@ const onInput = (event: Event): void => {
       : target.value;
   emit("update:modelValue", value);
 };
+
+const toggleReveal = (): void => {
+  revealed.value = !revealed.value;
+};
 </script>
 
 <template>
   <div class="vd-form-group">
-    <label v-if="label" :for="inputId" class="vd-form-label">{{ label }}</label>
+    <label
+      v-if="label"
+      :for="inputId"
+      class="vd-form-label"
+      :class="{ 'label-required': required }"
+    >
+      {{ label }}
+    </label>
     <div class="vd-input-group">
-      <span v-if="prefix" class="vd-input-group-prefix">{{ prefix }}</span>
+      <span v-if="showPrefix" class="vd-input-group-prefix">
+        <slot name="prefix">{{ prefix }}</slot>
+      </span>
       <input
         :id="inputId"
-        :type="type"
+        :type="inputType"
         :name="name"
         :value="modelValue"
         :placeholder="placeholder"
@@ -114,6 +173,10 @@ const onInput = (event: Event): void => {
         :step="step"
         :pattern="pattern || undefined"
         :autocomplete="autocomplete || undefined"
+        :inputmode="inputmode || undefined"
+        :enterkeyhint="enterkeyhint || undefined"
+        :autocapitalize="resolvedAutocapitalize"
+        :spellcheck="resolvedSpellcheck"
         :aria-invalid="error ? true : undefined"
         :aria-describedby="describedBy"
         class="vd-input"
@@ -122,7 +185,20 @@ const onInput = (event: Event): void => {
         @blur="(e) => emit('blur', e as FocusEvent)"
         @focus="(e) => emit('focus', e as FocusEvent)"
       />
-      <span v-if="suffix" class="vd-input-group-suffix">{{ suffix }}</span>
+      <span v-if="showSuffix" class="vd-input-group-suffix">
+        <slot name="suffix">{{ suffix }}</slot>
+        <button
+          v-if="showReveal"
+          type="button"
+          class="vd-input-reveal"
+          :aria-pressed="revealed"
+          :aria-label="revealed ? 'Hide password' : 'Show password'"
+          :disabled="disabled"
+          @click="toggleReveal"
+        >
+          <VdIcon :name="revealed ? 'eye-slash' : 'eye'" size="sm" />
+        </button>
+      </span>
     </div>
     <span v-if="error" :id="`${inputId}-error`" class="vd-form-error">{{
       error

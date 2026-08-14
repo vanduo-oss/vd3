@@ -1,0 +1,60 @@
+/**
+ * Auth screens + OTP — additive CSS for VdAuthCard / VdLogin / VdOtpInput.
+ */
+
+.vd-auth {
+  width: 100%;
+}
+
+.vd-auth-brand {
+  display: flex;
+  justify-content: center;
+}
+
+.vd-auth-title,
+.vd-auth-alert,
+.vd-auth-footer,
+.vd-auth-form {
+  width: 100%;
+}
+
+.vd-auth-heading {
+  margin: 0;
+  font-size: var(--vd-font-size-xl);
+  font-weight: var(--vd-font-weight-semibold);
+  text-align: center;
+  color: var(--vd-text-primary);
+}
+
+.vd-auth-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  /* 8px - fib */
+  font-size: var(--vd-font-size-sm);
+}
+
+.vd-auth-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* 8px - fib */
+}
+
+.vd-otp {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  /* 8px - fib */
+}
+
+.vd-otp-cell {
+  width: 2.625rem;
+  /* 42px */
+  flex: 0 0 2.625rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding-left: 0;
+  padding-right: 0;
+}

@@ -1,0 +1,118 @@
+/**
+ * Empty state + data-table chrome. Table visuals stay on utilities/table.css.
+ */
+
+.vd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* 8px - fib */
+  padding: 2.125rem 1.3125rem;
+  /* 34px 21px - fib */
+  text-align: center;
+  color: var(--vd-text-muted);
+}
+
+.vd-empty-icon {
+  color: var(--vd-text-muted);
+}
+
+.vd-empty-title {
+  margin: 0;
+  font-size: var(--vd-font-size-lg);
+  font-weight: var(--vd-font-weight-semibold);
+  color: var(--vd-text-primary);
+}
+
+.vd-empty-description {
+  margin: 0;
+  font-size: var(--vd-font-size-sm);
+}
+
+.vd-empty-action {
+  margin-top: 0.5rem;
+  /* 8px - fib */
+}
+
+.vd-data-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8125rem;
+  /* 13px - fib */
+}
+
+.vd-data-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8125rem;
+  /* 13px - fib */
+}
+
+.vd-data-table-search {
+  margin-bottom: 0;
+  max-width: 21rem;
+}
+
+.vd-data-table-scroll {
+  max-height: var(--vd-data-table-max-height, none);
+}
+
+.vd-data-table-scroll .vd-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--vd-bg-secondary);
+}
+
+.vd-data-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  /* 5px - fib */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.vd-data-table-sort:focus-visible {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+}
+
+.vd-data-table-select {
+  width: 2.625rem;
+  /* 42px */
+  text-align: center;
+}
+
+.vd-data-table-select .vd-form-check {
+  margin-bottom: 0;
+  justify-content: center;
+}
+
+.vd-data-table-select .vd-form-check-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.vd-data-table-footer {
+  display: flex;
+  justify-content: center;
+}

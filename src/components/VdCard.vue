@@ -2,11 +2,14 @@
 interface Props {
   elevated?: boolean;
   interactive?: boolean;
+  /** Frosted glass panel (`.vd-card-glass`). */
+  glass?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   elevated: false,
   interactive: false,
+  glass: false,
 });
 </script>
 
@@ -16,6 +19,7 @@ withDefaults(defineProps<Props>(), {
     :class="[
       elevated ? 'vd-card-elevated' : null,
       interactive ? 'vd-card-interactive' : null,
+      glass ? 'vd-card-glass' : null,
     ]"
   >
     <header v-if="$slots.header" class="vd-card-header">

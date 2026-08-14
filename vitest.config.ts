@@ -20,5 +20,27 @@ export default defineConfig({
       include: ["tests/types/**/*.test-d.ts"],
       tsconfig: "./tsconfig.json",
     },
+    coverage: {
+      provider: "v8",
+      include: [
+        "src/components/VdInput.vue",
+        "src/components/VdCard.vue",
+        "src/components/VdCheckbox.vue",
+        "src/components/VdOtpInput.vue",
+        "src/components/VdAuthCard.vue",
+        "src/components/VdLogin.vue",
+        "src/components/VdSignUp.vue",
+        "src/components/VdForgotPassword.vue",
+        "src/components/VdEmptyState.vue",
+        "src/components/VdDataTable.vue",
+        "src/composables/useTableState.ts",
+      ],
+      thresholds: {
+        lines: 100,
+        branches: 100,
+        functions: 100,
+        statements: 100,
+      },
+    },
   },
 });

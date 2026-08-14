@@ -442,6 +442,34 @@ label.label-lg {
   border-right: 0;
 }
 
+.vd-input-group-suffix:has(.vd-input-reveal) {
+  gap: 0.5rem;
+  /* 8px - fib */
+}
+
+.vd-input-reveal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.vd-input-reveal:focus-visible {
+  outline: 2px solid var(--vd-color-primary);
+  outline-offset: 2px;
+}
+
+.vd-input-reveal:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* ============================================
    Phase 4: Custom Form Controls
    ============================================ */
