@@ -146,10 +146,17 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     }
   };
 
-  const applyRest = (target: DockPlacement): void => {
+  let chosenPlacement = initialPlacement;
+
+  const applyVisual = (target: DockPlacement): void => {
     placement.value = target;
     orientation.value = dockOrientationOf(target);
     visualPhase.value = orientation.value;
+  };
+
+  const applyRest = (target: DockPlacement): void => {
+    applyVisual(target);
+    chosenPlacement = target;
     writeStored(storageKey, target);
   };
 
@@ -214,22 +221,23 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     isNarrow.value = window.matchMedia(narrowQuery).matches;
     const stored = readStored(storageKey);
     const value = stored ?? initialPlacement;
+    chosenPlacement = value;
     if (isNarrow.value) {
-      placement.value = dockHorizontalOf(value);
-      orientation.value = "horizontal";
-      visualPhase.value = "horizontal";
+      applyVisual(dockHorizontalOf(value));
       return;
     }
-    placement.value = value;
-    orientation.value = dockOrientationOf(value);
-    visualPhase.value = orientation.value;
+    applyVisual(value);
   };
 
   const onNarrowChange = (event: MediaQueryListEvent): void => {
     isNarrow.value = event.matches;
     if (event.matches) {
-      snapToPlacement(dockHorizontalOf(placement.value));
+      clearMorphTimer();
+      isMorphing.value = false;
+      applyVisual(dockHorizontalOf(chosenPlacement));
+      return;
     }
+    applyVisual(readStored(storageKey) ?? chosenPlacement);
   };
 
   onMounted(() => {

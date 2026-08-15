@@ -32,7 +32,8 @@ true the storage key SHALL be `getStoragePrefix() + "dock-orient"` unless
 `vd-dock-edge-{placement}`.
 
 Narrow viewports MUST force the pair's horizontal edge (`left` → `bottom`,
-`right` → `top`).
+`right` → `top`) without writing storage. Widening MUST restore the last
+chosen or stored edge.
 
 #### Scenario: square waypoint
 

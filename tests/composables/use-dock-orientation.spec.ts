@@ -204,6 +204,30 @@ describe("useDockOrientation", () => {
     expect(api.placement.value).toBe("top");
   });
 
+  it("does not persist a narrow-forced horizontal edge", () => {
+    const { api } = mountDock({ persist: true });
+    api.snapToPlacement("left");
+    expect(localStorage.getItem("vanduo-dock-orient")).toBe("left");
+    dispatchMedia(DOCK_NARROW_QUERY, true);
+    expect(api.placement.value).toBe("bottom");
+    expect(api.orientation.value).toBe("horizontal");
+    expect(localStorage.getItem("vanduo-dock-orient")).toBe("left");
+    dispatchMedia(DOCK_NARROW_QUERY, false);
+    expect(api.placement.value).toBe("left");
+    expect(api.orientation.value).toBe("vertical");
+    expect(localStorage.getItem("vanduo-dock-orient")).toBe("left");
+  });
+
+  it("restores an in-session vertical edge after the viewport widens", () => {
+    const { api } = mountDock();
+    api.snapToPlacement("right");
+    dispatchMedia(DOCK_NARROW_QUERY, true);
+    expect(api.placement.value).toBe("top");
+    expect(localStorage.getItem("vanduo-dock-orient")).toBeNull();
+    dispatchMedia(DOCK_NARROW_QUERY, false);
+    expect(api.placement.value).toBe("right");
+  });
+
   it("snaps under reduced motion", () => {
     stubMatchMedia({ reducedMotion: true });
     const { api } = mountDock();

@@ -23,7 +23,9 @@ tracks the package only — never docs-site content.
   Persist is opt-in via
   `getStoragePrefix() + "dock-orient"`. Instance-scoped morph state (not a
   module singleton). Brand is a slot; the package does not bake an oola / ū
-  mark.
+  mark. A narrow viewport forces the pair's horizontal edge without
+  overwriting that stored preference, and the brand hover style does not
+  apply while the control is `aria-disabled`.
 
 ## 1.4.0 — 2026-08-14
 

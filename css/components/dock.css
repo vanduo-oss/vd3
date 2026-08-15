@@ -357,7 +357,7 @@
   flex-shrink: 0;
 }
 
-.vd-dock-brand:hover:not(:disabled) {
+.vd-dock-brand:hover:not(:disabled):not([aria-disabled="true"]) {
   opacity: 0.92;
 }
 
