@@ -12,7 +12,7 @@
 // VdThemeCustomizer, VdDocSearch) and four composables (useClickOutside,
 // useDocSearch, useLazyLoad, useGrid + `setGridSystem`).
 
-export const VD3_VERSION = "1.4.0";
+export const VD3_VERSION = "1.5.0";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
@@ -35,6 +35,8 @@ export { default as VdCollection } from "./components/VdCollection.vue";
 export { default as VdCustomSelect } from "./components/VdCustomSelect.vue";
 export { default as VdDataTable } from "./components/VdDataTable.vue";
 export { default as VdDocSearch } from "./components/VdDocSearch.vue";
+export { default as VdDock } from "./components/VdDock.vue";
+export { default as VdDockItem } from "./components/VdDockItem.vue";
 export { default as VdEmptyState } from "./components/VdEmptyState.vue";
 export { default as VdFab } from "./components/VdFab.vue";
 export { default as VdFlow } from "./components/VdFlow.vue";
@@ -86,6 +88,7 @@ export * from "./composables/useAffix";
 export * from "./composables/useClickOutside";
 export * from "./composables/useDatepicker";
 export * from "./composables/useDocSearch";
+export * from "./composables/useDockOrientation";
 export * from "./composables/useDraggable";
 export * from "./composables/useDropdown";
 export * from "./composables/useExpandingCards";

@@ -58,15 +58,15 @@ import { VdButton, VdCard } from "@vanduo-oss/vd3";
 
 Stylesheet import options:
 
-| Import                          | Contents                                   |
-| ------------------------------- | ------------------------------------------ |
-| `@vanduo-oss/vd3/css`           | Full stylesheet — tokens + components + icons |
-| `@vanduo-oss/vd3/css/core`      | Tokens-only stylesheet (no icon fonts)     |
-| `@vanduo-oss/vd3/tokens.json`   | Resolved DTCG token data (JSON)            |
+| Import                        | Contents                                      |
+| ----------------------------- | --------------------------------------------- |
+| `@vanduo-oss/vd3/css`         | Full stylesheet — tokens + components + icons |
+| `@vanduo-oss/vd3/css/core`    | Tokens-only stylesheet (no icon fonts)        |
+| `@vanduo-oss/vd3/tokens.json` | Resolved DTCG token data (JSON)               |
 
-## Components (60)
+## Components (62)
 
-53 `Vd*` components plus 7 layout primitives. All are named exports from the
+55 `Vd*` components plus 7 layout primitives. All are named exports from the
 package root and register nothing globally — import only what you render.
 
 **Form & input (13):** `VdButton`, `VdButtonGroup`, `VdInput`, `VdSelect`,
@@ -88,8 +88,13 @@ selection, pagination, and cell slots.
 **Feedback & status (9):** `VdAlert`, `VdModal`, `VdOffcanvas`, `VdToast`,
 `VdToastContainer`, `VdProgress`, `VdSpinner`, `VdPreloader`, `VdSkeleton`
 
-**Navigation (8):** `VdNavbar`, `VdSidenav`, `VdMenu`, `VdTabs`, `VdBreadcrumb`,
-`VdPagination`, `VdFooter`, `VdFab`
+**Navigation (10):** `VdNavbar`, `VdDock`, `VdDockItem`, `VdSidenav`, `VdMenu`,
+`VdTabs`, `VdBreadcrumb`, `VdPagination`, `VdFooter`, `VdFab`. `VdDock` is the
+Oola Dock — a morphing glass pill (`useDockOrientation`). Brand is a slot;
+`--vd-dock-radius` is independent of the theme 0.5rem radius cap.
+`placement` is `bottom` | `top` | `left` | `right` (default `bottom`).
+Brand click morphs the pair (`bottom` ↔ `left`, `top` ↔ `right`) unless
+`cycle="edges"` walks all four.
 
 **Content & utility (7):** `VdAccordion`, `VdCodeSnippet`, `VdIcon`,
 `VdSeparator`, `VdTooltip`, `VdDocSearch`, `VdFlow`
@@ -105,7 +110,7 @@ and `TreeNode` (from `VdTreeNode`), plus auth payload types (`AuthProvider`,
 (`DataTableColumn`, `TableSort`, `TableRow`). The shared `StatusVariant` type
 is exported for prop typing.
 
-## Composables (~36)
+## Composables (~37)
 
 Named exports from the package root. Each keeps the `useX(root?)` shape from the
 old `@vanduo-oss/vue` surface, rewritten as pure Vue (no DOM-scan runtime).
@@ -124,9 +129,9 @@ skips the client pipeline).
 `useToast` (module-scope singleton, paired with `useToastStore` — no pinia),
 `useImageBox`, `useSpotlight`, `useSidenav`, `useFocusTrap`, `useClickOutside`.
 
-**Motion & scroll (11):** `useAffix`, `useScrollspy`, `useParallax`,
-`useWaypoint`, `useLazyLoad`, `useNavbarGlassScroll`, `useMorph`,
-`useMorphBadges`, `useRipple`, `useExpandingCards`, `useTimeline`.
+**Motion & scroll (12):** `useAffix`, `useScrollspy`, `useParallax`,
+`useWaypoint`, `useLazyLoad`, `useNavbarGlassScroll`, `useDockOrientation`,
+`useMorph`, `useMorphBadges`, `useRipple`, `useExpandingCards`, `useTimeline`.
 
 **Layout, navigation & interaction (7):** `useGrid` (+ `setGridSystem` for the
 document-level standard/fibonacci mode), `useGlass`, `useTabs`, `useDocSearch`,
