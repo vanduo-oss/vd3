@@ -237,7 +237,9 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
       applyVisual(dockHorizontalOf(chosenPlacement));
       return;
     }
-    applyVisual(readStored(storageKey) ?? chosenPlacement);
+    const restored = readStored(storageKey) ?? chosenPlacement;
+    chosenPlacement = restored;
+    applyVisual(restored);
   };
 
   onMounted(() => {

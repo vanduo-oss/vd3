@@ -228,6 +228,17 @@ describe("useDockOrientation", () => {
     expect(api.placement.value).toBe("right");
   });
 
+  it("re-syncs the chosen edge from storage when the viewport widens", () => {
+    const { api } = mountDock({ persist: true });
+    api.snapToPlacement("left");
+    dispatchMedia(DOCK_NARROW_QUERY, true);
+    localStorage.setItem("vanduo-dock-orient", "right");
+    dispatchMedia(DOCK_NARROW_QUERY, false);
+    expect(api.placement.value).toBe("right");
+    dispatchMedia(DOCK_NARROW_QUERY, true);
+    expect(api.placement.value).toBe("top");
+  });
+
   it("snaps under reduced motion", () => {
     stubMatchMedia({ reducedMotion: true });
     const { api } = mountDock();
