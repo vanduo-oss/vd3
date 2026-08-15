@@ -34,6 +34,9 @@ export default defineConfig({
         "src/components/VdEmptyState.vue",
         "src/components/VdDataTable.vue",
         "src/composables/useTableState.ts",
+        "src/components/VdDock.vue",
+        "src/components/VdDockItem.vue",
+        "src/composables/useDockOrientation.ts",
       ],
       thresholds: {
         lines: 100,

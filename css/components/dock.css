@@ -1,0 +1,555 @@
+/**
+ * Vanduo Framework - Oola Dock
+ * Fat glass pill that morphs horizontal ↔ vertical through a square waypoint.
+ * Radius is dock-own (--vd-dock-radius) and is not --vd-radius-scale.
+ */
+
+:root {
+  --vd-dock-height: 5.4rem;
+  --vd-dock-inset: 1.3125rem; /* 21px fib */
+  --vd-dock-radius: 1.25rem;
+  --vd-dock-max-width: 1680px;
+  --vd-dock-morph: 480ms;
+  --vd-dock-morph-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --vd-dock-z-index: 1000;
+  --vd-dock-brand-size: 2.025rem;
+}
+
+.vd-dock {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: var(--vd-dock-radius);
+  color: var(--vd-text-primary);
+  transition:
+    width var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    height var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    min-height var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    max-width var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    left var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    right var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    top var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    bottom var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    transform var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    padding var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    gap var(--vd-dock-morph) var(--vd-dock-morph-ease),
+    flex-direction 0ms linear;
+}
+
+/* Beat .vd-glass { position: relative } (imported later, same specificity). */
+.vd-dock.vd-dock-fixed {
+  position: fixed;
+  z-index: var(--vd-dock-z-index);
+}
+
+.vd-dock.vd-dock-contained {
+  position: absolute;
+  z-index: 1;
+}
+
+.vd-dock-edge-bottom,
+.vd-dock-edge-top,
+.vd-dock-edge-left,
+.vd-dock-edge-right {
+  --vd-dock-edge: 1;
+}
+
+.vd-dock.is-horizontal {
+  --vd-dock-morph: 720ms;
+
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  transform: translateX(-50%);
+  flex-direction: row;
+  width: min(var(--vd-dock-max-width), calc(100% - 2 * var(--vd-dock-inset)));
+  max-width: none;
+  height: var(--vd-dock-height);
+  min-height: var(--vd-dock-height);
+  padding: 0.65rem 1.25rem;
+}
+
+.vd-dock-contained.is-horizontal {
+  left: var(--vd-dock-inset);
+  right: var(--vd-dock-inset);
+  width: auto;
+  transform: none;
+}
+
+.vd-dock.is-horizontal .vd-dock-nav {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.vd-dock.is-horizontal .vd-dock-actions {
+  margin-left: 0;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.vd-dock.is-square {
+  --vd-dock-morph: 480ms;
+
+  left: var(--vd-dock-inset);
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  transform: none;
+  flex-direction: row;
+  width: var(--vd-dock-height);
+  max-width: var(--vd-dock-height);
+  height: var(--vd-dock-height);
+  min-height: var(--vd-dock-height);
+  padding: 0.5rem;
+  justify-content: center;
+  gap: 0;
+}
+
+.vd-dock.is-vertical {
+  --vd-dock-morph: 720ms;
+
+  left: var(--vd-dock-inset);
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  transform: none;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: space-between;
+  width: var(--vd-dock-height);
+  max-width: var(--vd-dock-height);
+  height: calc(100% - 2 * var(--vd-dock-inset));
+  min-height: 0;
+  max-height: calc(100% - 2 * var(--vd-dock-inset));
+  padding: 0.75rem 0.55rem;
+  gap: 0.55rem;
+}
+
+.vd-dock.is-vertical .vd-dock-nav,
+.vd-dock.is-vertical .vd-dock-actions {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  flex: 0 0 auto;
+}
+
+.vd-dock.is-vertical .vd-dock-nav {
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vd-dock.is-vertical .vd-dock-links {
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0.25rem;
+}
+
+.vd-dock.is-vertical .vd-dock-item {
+  min-width: 0;
+  width: 100%;
+  padding: 0.4rem 0.25rem;
+}
+
+.vd-dock.is-vertical .vd-dock-actions {
+  margin-left: 0;
+  margin-bottom: 0;
+  width: 100%;
+  justify-content: center;
+}
+
+.vd-dock.is-vertical .vd-dock-brand {
+  margin: 0;
+  max-width: 100%;
+  padding: 0.35rem 0.15rem;
+  white-space: normal;
+  justify-content: center;
+}
+
+.vd-dock-edge-top.is-horizontal {
+  top: var(--vd-dock-inset);
+  bottom: auto;
+  flex-direction: row-reverse;
+}
+
+.vd-dock-edge-right.is-vertical {
+  left: auto;
+  right: var(--vd-dock-inset);
+  flex-direction: column;
+}
+
+.vd-dock-edge-top.is-square,
+.vd-dock-edge-right.is-square {
+  left: auto;
+  right: var(--vd-dock-inset);
+  top: var(--vd-dock-inset);
+  bottom: auto;
+}
+
+/*
+ * Placement is the rest-geometry source of truth. A leftover is-vertical
+ * (or is-horizontal) class must not keep a bottom/top dock as a side rail.
+ * :not(.is-square) leaves the morph waypoint on the pair's origin corner.
+ */
+.vd-dock.vd-dock-edge-bottom:not(.is-square) {
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  transform: translateX(-50%);
+  flex-direction: row;
+  width: min(var(--vd-dock-max-width), calc(100% - 2 * var(--vd-dock-inset)));
+  max-width: none;
+  height: var(--vd-dock-height);
+  min-height: var(--vd-dock-height);
+  max-height: var(--vd-dock-height);
+}
+
+.vd-dock.vd-dock-edge-top:not(.is-square) {
+  left: 50%;
+  right: auto;
+  top: var(--vd-dock-inset);
+  bottom: auto;
+  transform: translateX(-50%);
+  flex-direction: row-reverse;
+  width: min(var(--vd-dock-max-width), calc(100% - 2 * var(--vd-dock-inset)));
+  max-width: none;
+  height: var(--vd-dock-height);
+  min-height: var(--vd-dock-height);
+  max-height: var(--vd-dock-height);
+}
+
+.vd-dock.vd-dock-edge-left:not(.is-square) {
+  left: var(--vd-dock-inset);
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  transform: none;
+  flex-direction: column-reverse;
+  width: var(--vd-dock-height);
+  max-width: var(--vd-dock-height);
+  height: calc(100% - 2 * var(--vd-dock-inset));
+  min-height: 0;
+  max-height: calc(100% - 2 * var(--vd-dock-inset));
+}
+
+.vd-dock.vd-dock-edge-right:not(.is-square) {
+  left: auto;
+  right: var(--vd-dock-inset);
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  transform: none;
+  flex-direction: column;
+  width: var(--vd-dock-height);
+  max-width: var(--vd-dock-height);
+  height: calc(100% - 2 * var(--vd-dock-inset));
+  min-height: 0;
+  max-height: calc(100% - 2 * var(--vd-dock-inset));
+}
+
+.vd-dock-contained.vd-dock-edge-bottom:not(.is-square),
+.vd-dock-contained.vd-dock-edge-top:not(.is-square) {
+  left: var(--vd-dock-inset);
+  right: var(--vd-dock-inset);
+  width: auto;
+  transform: none;
+}
+
+.vd-dock-contained.vd-dock-edge-left:not(.is-square),
+.vd-dock-contained.vd-dock-edge-right:not(.is-square) {
+  top: var(--vd-dock-inset);
+  bottom: var(--vd-dock-inset);
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.vd-dock.is-morphing,
+.vd-dock.is-square {
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+}
+
+.vd-dock.is-morphing .vd-dock-nav,
+.vd-dock.is-morphing .vd-dock-actions,
+.vd-dock.is-square .vd-dock-nav,
+.vd-dock.is-square .vd-dock-actions {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  min-width: 0;
+  min-height: 0;
+  max-width: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  flex: 0 0 0;
+}
+
+.vd-dock.is-morphing .vd-dock-brand,
+.vd-dock.is-square .vd-dock-brand {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.vd-dock-nav {
+  position: relative;
+}
+
+.vd-dock-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vd-dock-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.vd-dock-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 0.15rem 0.35rem;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  white-space: nowrap;
+  line-height: 1;
+  user-select: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.vd-dock-brand:hover:not(:disabled):not([aria-disabled="true"]) {
+  opacity: 0.92;
+}
+
+.vd-dock-brand:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.vd-dock-brand:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--vd-text-primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.vd-dock-brand:disabled,
+.vd-dock-brand[aria-disabled="true"] {
+  cursor: default;
+  opacity: 1;
+}
+
+.vd-dock-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 4.25rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.75rem;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.72;
+}
+
+.vd-dock-items-inline .vd-dock-item {
+  flex-direction: row;
+  min-width: 0;
+  gap: 0.4rem;
+}
+
+.vd-dock-item:hover,
+.vd-dock-item:focus-visible {
+  opacity: 1;
+  background: transparent;
+  outline: none;
+}
+
+.vd-dock-item:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--vd-text-primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.vd-dock-item.is-active {
+  opacity: 1;
+}
+
+.vd-dock-label {
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.vd-dock-item.is-active .vd-dock-label {
+  font-weight: 700;
+  opacity: 1;
+}
+
+.vd-dock .vd-theme-switcher-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  color: var(--vd-text-secondary);
+}
+
+.vd-dock .vd-theme-switcher-toggle:hover {
+  color: var(--vd-text-primary);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.vd-dock .vd-theme-switcher-toggle:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--vd-text-primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+/* Always-dark near-black frost — beats Seemore wash / navbar glass ::before */
+.vd-dock.vd-dock-dark.vd-glass,
+.vd-dock.vd-dock-dark.vd-glass-1,
+.vd-dock.vd-dock-dark.vd-glass-2,
+.vd-dock.vd-dock-dark.vd-glass-3,
+.vd-dock.vd-dock-dark.vd-glass-5,
+.vd-dock.vd-dock-dark.vd-glass-8,
+.vd-dock.vd-dock-dark.vd-glass-13,
+.vd-dock.vd-dock-dark.vd-glass-21,
+.vd-dock.vd-dock-dark.vd-glass-34 {
+  --vd-text-primary: #f4f4f5;
+  --vd-text-secondary: #a1a1aa;
+  --vd-glass-blur: 22px;
+  --vd-glass-saturate: 1.8;
+  --vd-glass-bg-opacity: 0.9;
+  --vd-glass-highlight-alpha: 0;
+  --vd-glass-border-alpha: 0.22;
+
+  background: color-mix(in srgb, #0a0a0a 90%, transparent);
+  background-image: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 10px 36px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #f4f4f5;
+}
+
+.vd-dock.vd-dock-dark.vd-glass::before,
+.vd-dock.vd-dock-dark.vd-glass-1::before,
+.vd-dock.vd-dock-dark.vd-glass-2::before,
+.vd-dock.vd-dock-dark.vd-glass-3::before,
+.vd-dock.vd-dock-dark.vd-glass-5::before,
+.vd-dock.vd-dock-dark.vd-glass-8::before,
+.vd-dock.vd-dock-dark.vd-glass-13::before,
+.vd-dock.vd-dock-dark.vd-glass-21::before,
+.vd-dock.vd-dock-dark.vd-glass-34::before {
+  background: none;
+  background-image: none;
+  opacity: 0;
+}
+
+.vd-dock-tint-red {
+  --vd-dock-tint: var(--vd-oc-red-6);
+}
+
+.vd-dock-tint-orange {
+  --vd-dock-tint: var(--vd-oc-orange-6);
+}
+
+.vd-dock-tint-yellow {
+  --vd-dock-tint: var(--vd-oc-yellow-6);
+}
+
+.vd-dock-tint-green {
+  --vd-dock-tint: var(--vd-oc-green-6);
+}
+
+.vd-dock-tint-teal {
+  --vd-dock-tint: var(--vd-oc-teal-6);
+}
+
+.vd-dock-tint-blue {
+  --vd-dock-tint: var(--vd-oc-blue-6);
+}
+
+.vd-dock-tint-violet {
+  --vd-dock-tint: var(--vd-oc-violet-6);
+}
+
+.vd-dock-tint-pink {
+  --vd-dock-tint: var(--vd-oc-pink-6);
+}
+
+.vd-dock.vd-dock-dark[class*="vd-dock-tint-"] {
+  background: color-mix(in srgb, var(--vd-dock-tint) 38%, #0a0a0a);
+}
+
+.vd-dock-items-stack .vd-dock-item {
+  flex-direction: column;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-dock {
+    transition: none;
+  }
+}
+
+@media (max-width: 520px) {
+  :root {
+    --vd-dock-height: 4.8rem;
+    --vd-dock-brand-size: 1.1rem;
+  }
+}

@@ -3,6 +3,30 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.5.0 — 2026-08-15
+
+### Added
+
+- **Oola Dock** — `VdDock` + `VdDockItem` + `useDockOrientation`. Fat Seemore
+  glass pill that morphs horizontal ↔ vertical through a square waypoint
+  (480ms / 720ms). Slots `#brand`, default items, `#actions`. `position`
+  `fixed` (viewport chrome) or `contained` (absolute in a relative parent).
+  Dock-own `--vd-dock-radius` (default 1.25rem, up to a full pill) — not the
+  theme `RadiusOption` cap of 0.5rem. Optional Open Color `tint`, Seemore
+  `glass` step (default 34), `itemLayout` stack/inline, and `placement`
+  (`bottom` | `top` | `left` | `right`, default `bottom` — morph pairs
+  `bottom` ↔ `left` and `top` ↔ `right`). Opt-in `cycle="edges"` walks
+  brand click through `bottom` → `left` → `top` → `right` without changing
+  default `toggle()`. When both `v-model:placement` and
+  `v-model:orientation` are bound, placement wins if those updates land out
+  of order — a stale orientation no longer snaps back to the previous edge.
+  Persist is opt-in via
+  `getStoragePrefix() + "dock-orient"`. Instance-scoped morph state (not a
+  module singleton). Brand is a slot; the package does not bake an oola / ū
+  mark. A narrow viewport forces the pair's horizontal edge without
+  overwriting that stored preference, and the brand hover style does not
+  apply while the control is `aria-disabled`.
+
 ## 1.4.0 — 2026-08-14
 
 ### Added
@@ -50,7 +74,7 @@ tracks the package only — never docs-site content.
   MIT CodePen “Apple Liquid Glass UI (2025)”
   (https://codepen.io/samarkandiy/pen/MYwQwZZ); still no
   `backdrop-filter` animation; reduced-transparency hardens to solid.
-  Scrolled frost keeps a translucent **white** wash in light *and* dark
+  Scrolled frost keeps a translucent **white** wash in light _and_ dark
   (near-transparent in dark — no grey fog / `--vd-glass-bg-dark`). Float
   capsules optically center brand/content (`padding-top`/`padding-bottom`
   tweak + brand `line-height: 1` / zero bottom margin). Dist CSS restore
