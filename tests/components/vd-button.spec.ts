@@ -25,6 +25,7 @@ describe("VdButton", () => {
     "danger",
     "info",
     "ghost",
+    "ink",
   ] as const)("variant=%s maps to vd-btn-%s", (variant) => {
     const wrapper = mount(VdButton, { props: { variant } });
     expect(wrapper.classes()).toContain(`vd-btn-${variant}`);
@@ -40,6 +41,13 @@ describe("VdButton", () => {
     const md = mount(VdButton, { props: { size: "md" } }).classes();
     expect(md).not.toContain("vd-btn-md");
     expect(md.some((c) => c === "vd-btn-sm" || c === "vd-btn-lg")).toBe(false);
+  });
+
+  it("ink is a variant, not a ring or outline class", () => {
+    const classes = mount(VdButton, { props: { variant: "ink" } }).classes();
+    expect(classes).toContain("vd-btn-ink");
+    expect(classes).not.toContain("vd-btn-outline");
+    expect(classes).not.toContain("vd-btn-ring");
   });
 
   it("ring is opt-in: absent by default, adds vd-btn-ring when set", () => {

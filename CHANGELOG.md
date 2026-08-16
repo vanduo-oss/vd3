@@ -15,6 +15,16 @@ tracks the package only — never docs-site content.
   via `v-html`; without it, source is text-interpolated. vd3 does not
   tokenize and does not depend on cbun or highlight.js. Cbun `.vd-tk-*`
   spans map onto `--vd-code-*` inside `.vd-code-snippet`.
+- **`VdButton` `ink` variant** — `.vd-btn-ink`: transparent fill, a single
+  2px outline (not `.vd-btn-ring`). Hover fills black in light and primary
+  in dark; the label uses `--vd-text-on-primary`. Existing `outline` /
+  `ghost` / ring treatments are unchanged.
+
+### Fixed
+
+- **Button SR children** — a `.vd-visually-hidden` child inside `.vd-btn`
+  is taken out of flow so a new-tab hint cannot wrap onto a second line
+  and un-center the label.
 
 ## 1.5.0 — 2026-08-15
 
