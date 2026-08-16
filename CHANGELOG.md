@@ -14,7 +14,9 @@ tracks the package only — never docs-site content.
   is unchanged. Optional `highlight(code, language)` injects escaped HTML
   via `v-html`; without it, source is text-interpolated. vd3 does not
   tokenize and does not depend on cbun or highlight.js. Cbun `.vd-tk-*`
-  spans map onto `--vd-code-*` inside `.vd-code-snippet`.
+  spans map onto `--vd-code-*` inside `.vd-code-snippet`. In both simple
+  and chrome modes, Copy lives in the snippet header (top-right), not
+  overlaid on the code body.
 - **`VdButton` `ink` variant** — `.vd-btn-ink`: transparent fill, a single
   2px outline (not `.vd-btn-ring`). Hover fills black in light and primary
   in dark; the label uses `--vd-text-on-primary`. Existing `outline` /
@@ -22,6 +24,9 @@ tracks the package only — never docs-site content.
 
 ### Fixed
 
+- **Snippet Copy header** — Copy stays in `.vd-code-snippet-header` (top-right)
+  for simple and chrome modes. Simple mode no longer paints the control over
+  the `<pre>`.
 - **Button SR children** — a `.vd-visually-hidden` child inside `.vd-btn`
   is taken out of flow so a new-tab hint cannot wrap onto a second line
   and un-center the label.

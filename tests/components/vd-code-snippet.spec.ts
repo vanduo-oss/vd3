@@ -63,7 +63,7 @@ describe("VdCodeSnippet", () => {
     const figure = wrapper.get("figure.vd-code-snippet-simple");
     expect(figure.classes()).toContain("vd-code-snippet-single");
     const header = figure.get(".vd-code-snippet-header");
-    expect(header.get("button.vd-code-snippet-copy").exists()).toBe(true);
+    expect(header.find("button.vd-code-snippet-copy").exists()).toBe(true);
     expect(figure.find("pre + button").exists()).toBe(false);
   });
 
@@ -174,7 +174,7 @@ describe("VdCodeSnippet chrome mode", () => {
       wrapper.get(".vd-code-snippet-content").attributes("data-visible"),
     ).toBe("false");
     expect(pane.text()).toBe("<p>hello pane</p>");
-    expect(wrapper.get("button.vd-code-snippet-copy").exists()).toBe(true);
+    expect(wrapper.find("button.vd-code-snippet-copy").exists()).toBe(true);
   });
 
   it("toggles collapse and sets tabindex on the active pane when expanded", async () => {

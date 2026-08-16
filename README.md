@@ -11,7 +11,7 @@ standalone: one package ships its own DTCG design tokens, CSS tree, and typed
 `Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
 no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**Status: 1.6.0** (`VdCodeSnippet` chrome mode; 1.5.0 Oola Dock / `VdDock`; 1.4.0 auth screens + data table;
+**Status: 1.6.0** (`VdCodeSnippet` chrome + Copy header; `VdButton` ink; 1.5.0 Oola Dock / `VdDock`; 1.4.0 auth screens + data table;
 1.3.0 Seemore Glass / surfaces / floating navbar; 1.2.3 `storagePrefix`).
 
 ## Install
