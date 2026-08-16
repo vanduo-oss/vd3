@@ -160,6 +160,19 @@ describe("VdCodeSnippet chrome mode", () => {
     expect(tabs[0]!.attributes("aria-selected")).toBe("true");
     expect(tabs[1]!.attributes("aria-selected")).toBe("false");
     expect(tabs[0]!.classes()).toContain("is-active");
+    expect(tabs[0]!.attributes("tabindex")).toBe("0");
+    expect(tabs[1]!.attributes("tabindex")).toBe("-1");
+    const panes = wrapper.findAll('[role="tabpanel"]');
+    expect(panes).toHaveLength(2);
+    expect(tabs[0]!.attributes("aria-controls")).toBe(
+      panes[0]!.attributes("id"),
+    );
+    expect(tabs[1]!.attributes("aria-controls")).toBe(
+      panes[1]!.attributes("id"),
+    );
+    expect(panes[0]!.attributes("aria-labelledby")).toBe(
+      tabs[0]!.attributes("id"),
+    );
   });
 
   it("shows the View Code toggle and pane text while collapsed", () => {
@@ -218,6 +231,51 @@ describe("VdCodeSnippet chrome mode", () => {
     expect(panes[1]!.attributes("tabindex")).toBe("0");
     expect(panes[1]!.classes()).toContain("is-active");
     expect(panes[1]!.get("code").text()).toBe("C");
+    expect(tabs[0]!.attributes("tabindex")).toBe("-1");
+    expect(tabs[1]!.attributes("tabindex")).toBe("0");
+  });
+
+  it("moves the active tab with arrow keys, Home, and End", async () => {
+    const wrapper = mount(VdCodeSnippet, {
+      props: { html: "H", css: "C", js: "J", defaultOpen: true },
+    });
+    const tabs = wrapper.findAll('[role="tab"]');
+
+    await tabs[0]!.trigger("keydown", { key: "ArrowRight" });
+    expect(tabs[1]!.attributes("aria-selected")).toBe("true");
+    expect(wrapper.get("pre.is-active").text()).toBe("C");
+
+    await tabs[1]!.trigger("keydown", { key: "End" });
+    expect(tabs[2]!.attributes("aria-selected")).toBe("true");
+    expect(wrapper.get("pre.is-active").text()).toBe("J");
+
+    await tabs[2]!.trigger("keydown", { key: "Home" });
+    expect(tabs[0]!.attributes("aria-selected")).toBe("true");
+    expect(wrapper.get("pre.is-active").text()).toBe("H");
+
+    await tabs[0]!.trigger("keydown", { key: "ArrowLeft" });
+    expect(tabs[2]!.attributes("aria-selected")).toBe("true");
+  });
+
+  it("clamps the active tab when lang props change after mount", async () => {
+    const wrapper = mount(VdCodeSnippet, {
+      props: { html: "H", js: "J", defaultOpen: true },
+    });
+    const tabs = wrapper.findAll('[role="tab"]');
+    await tabs[1]!.trigger("click");
+    expect(wrapper.get("pre.is-active").text()).toBe("J");
+
+    await wrapper.setProps({ html: "", js: "J" });
+    expect(wrapper.get("pre.is-active").text()).toBe("J");
+
+    await wrapper.setProps({ html: "", js: "", css: "C" });
+    expect(wrapper.findAll('[role="tab"]').map((t) => t.text())).toEqual([
+      "CSS",
+    ]);
+    expect(wrapper.get("pre.is-active").text()).toBe("C");
+    expect(wrapper.get('[role="tab"]').attributes("aria-selected")).toBe(
+      "true",
+    );
   });
 
   it("omits data-collapsible and the toggle when collapsible is false", () => {

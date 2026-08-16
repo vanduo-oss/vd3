@@ -30,6 +30,10 @@ tracks the package only — never docs-site content.
 - **Button SR children** — a `.vd-visually-hidden` child inside `.vd-btn`
   is taken out of flow so a new-tab hint cannot wrap onto a second line
   and un-center the label.
+- **Snippet chrome tabs** — the active tab stays a key that still exists
+  when `html` / `css` / `js` / … props change after mount. Tabs get
+  `aria-controls` / pane `role="tabpanel"` linkage and Left/Right/Home/End
+  navigation, matching `VdTabs`.
 
 ## 1.5.0 — 2026-08-15
 
