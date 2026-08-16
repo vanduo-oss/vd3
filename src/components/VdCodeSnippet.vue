@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, useId, type ComponentPublicInstance } from "vue";
 import VdIcon from "./VdIcon.vue";
 
 const TAB_ORDER = [
@@ -74,14 +74,64 @@ const simpleHtml = computed(() =>
 );
 
 const expanded = ref(props.defaultOpen);
-const active = ref<TabKey>(langs.value[0]?.key ?? "html");
+const selected = ref<TabKey | null>(null);
 const copied = ref(false);
+
+const groupId = useId();
+const tabId = (key: TabKey): string => `${groupId}-tab-${key}`;
+const paneId = (key: TabKey): string => `${groupId}-pane-${key}`;
+
+const active = computed({
+  get(): TabKey {
+    const keys = langs.value.map((l) => l.key);
+    if (selected.value && keys.includes(selected.value)) return selected.value;
+    return keys[0] ?? "html";
+  },
+  set(key: TabKey) {
+    selected.value = key;
+  },
+});
 
 const chromeExpanded = computed(() => !props.collapsible || expanded.value);
 
 const activeCode = computed(
   () => langs.value.find((l) => l.key === active.value)?.code ?? props.code,
 );
+
+const tabButtons: HTMLButtonElement[] = [];
+const setTabBtn = (
+  el: Element | ComponentPublicInstance | null,
+  index: number,
+): void => {
+  if (el instanceof HTMLElement) tabButtons[index] = el as HTMLButtonElement;
+};
+
+const onTabKeydown = (event: KeyboardEvent, index: number): void => {
+  const count = langs.value.length;
+  if (count === 0) return;
+  let next: number;
+  switch (event.key) {
+    case "ArrowRight":
+      next = (index + 1) % count;
+      break;
+    case "ArrowLeft":
+      next = (index - 1 + count) % count;
+      break;
+    case "Home":
+      next = 0;
+      break;
+    case "End":
+      next = count - 1;
+      break;
+    default:
+      return;
+  }
+  event.preventDefault();
+  const tab = langs.value[next];
+  if (!tab) return;
+  active.value = tab.key;
+  tabButtons[next]?.focus();
+};
 
 const toggle = (): void => {
   expanded.value = !expanded.value;
@@ -125,15 +175,20 @@ const onCopy = async (code: string): Promise<void> => {
       <div class="vd-code-snippet-header">
         <div class="vd-code-snippet-tabs" role="tablist">
           <button
-            v-for="l in langs"
+            v-for="(l, index) in langs"
+            :id="tabId(l.key)"
             :key="l.key"
+            :ref="(el) => setTabBtn(el, index)"
             class="vd-code-snippet-tab"
             :class="{ 'is-active': active === l.key }"
             :data-lang="l.key"
             type="button"
             role="tab"
             :aria-selected="active === l.key"
+            :aria-controls="paneId(l.key)"
+            :tabindex="active === l.key ? 0 : -1"
             @click="active = l.key"
+            @keydown="onTabKeydown($event, index)"
           >
             {{ l.label }}
           </button>
@@ -156,10 +211,13 @@ const onCopy = async (code: string): Promise<void> => {
         <!-- highlight() MUST return escaped HTML; default path interpolates. -->
         <pre
           v-for="l in panes"
+          :id="paneId(l.key)"
           :key="l.key"
           class="vd-code-snippet-pane"
           :class="{ 'is-active': active === l.key }"
           :data-lang="l.key"
+          role="tabpanel"
+          :aria-labelledby="tabId(l.key)"
           :tabindex="chromeExpanded && active === l.key ? 0 : -1"
         ><code v-if="l.html != null" v-html="l.html" /><code v-else>{{ l.code }}</code></pre>
       </div>

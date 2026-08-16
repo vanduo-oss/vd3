@@ -16,7 +16,9 @@ Chrome mode SHALL accept `defaultOpen` (default false), `toggleLabel`
 (default true). `data-collapsible` MUST be omitted when `collapsible` is
 false so CSS presence selectors hide the toggle and show content. The
 toggle MUST set `aria-expanded`. Tabs MUST use `role="tablist"`,
-`role="tab"`, and `aria-selected`. The active pane MUST have
+`role="tab"`, `aria-selected`, and `aria-controls` pointing at the
+matching pane. Panes MUST use `role="tabpanel"` and `aria-labelledby`.
+Arrow Left/Right and Home/End MUST move the active tab. The active pane MUST have
 `tabindex="0"` when expanded and `tabindex="-1"` otherwise (axe
 `scrollable-region-focusable`). Copy MUST write the **raw** active-tab
 source, never highlighted HTML. Exactly one copy button MAY render.
