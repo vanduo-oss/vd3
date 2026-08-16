@@ -456,10 +456,12 @@
    Single Language Variant (No Tabs)
    ========================================================================== */
 
+.vd-code-snippet-simple .vd-code-snippet-header,
 .vd-code-snippet-single .vd-code-snippet-header {
   justify-content: flex-end;
 }
 
+.vd-code-snippet-simple .vd-code-snippet-tabs,
 .vd-code-snippet-single .vd-code-snippet-tabs {
   display: none;
 }
@@ -598,9 +600,11 @@
 }
 
 /* ==========================================================================
-   Simple-mode VdCodeSnippet <pre> (additive; added in @vanduo-oss/vue 1.6.1)
-   Simple mode: figure.vd-code-snippet > pre.vd-code-snippet-pre > code
-   Chrome mode uses .vd-code-snippet-pane instead.
+   Simple-mode VdCodeSnippet <pre>
+   Simple mode: figure.vd-code-snippet.vd-code-snippet-simple
+     > .vd-code-snippet-header > .vd-code-snippet-copy (top-right)
+     > pre.vd-code-snippet-pre > code
+   Chrome mode uses .vd-code-snippet-pane and keeps Copy in the header.
    ========================================================================== */
 .vd-code-snippet-pre {
   margin: 0;

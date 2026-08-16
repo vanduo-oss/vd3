@@ -142,6 +142,7 @@ const onCopy = async (code: string): Promise<void> => {
           v-if="copyable"
           type="button"
           class="vd-code-snippet-copy"
+          :class="{ 'is-copied': copied }"
           :aria-label="copied ? 'Copied' : 'Copy code'"
           @click="onCopy(activeCode)"
         >
@@ -164,20 +165,25 @@ const onCopy = async (code: string): Promise<void> => {
       </div>
     </div>
   </div>
-  <figure v-else class="vd-code-snippet">
+  <figure
+    v-else
+    class="vd-code-snippet vd-code-snippet-simple vd-code-snippet-single"
+  >
+    <div v-if="copyable" class="vd-code-snippet-header">
+      <button
+        type="button"
+        class="vd-btn vd-btn-ghost vd-btn-sm vd-code-snippet-copy"
+        :class="{ 'is-copied': copied }"
+        :aria-label="copied ? 'Copied' : 'Copy code'"
+        @click="onCopy(code)"
+      >
+        <VdIcon :name="copied ? 'check' : 'copy'" />
+        <span>{{ copied ? "Copied" : "Copy" }}</span>
+      </button>
+    </div>
     <pre
       :class="['vd-code-snippet-pre', `language-${language}`]"
       :data-language="language"
     ><code v-if="simpleHtml != null" v-html="simpleHtml" /><code v-else>{{ code }}</code></pre>
-    <button
-      v-if="copyable"
-      type="button"
-      class="vd-btn vd-btn-ghost vd-btn-sm vd-code-snippet-copy"
-      :aria-label="copied ? 'Copied' : 'Copy code'"
-      @click="onCopy(code)"
-    >
-      <VdIcon :name="copied ? 'check' : 'copy'" />
-      <span>{{ copied ? "Copied" : "Copy" }}</span>
-    </button>
   </figure>
 </template>

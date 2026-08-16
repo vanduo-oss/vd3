@@ -58,6 +58,15 @@ describe("VdCodeSnippet", () => {
     expect(button.find("i.ph-copy").exists()).toBe(true);
   });
 
+  it("places the simple-mode copy button in the header, not after the pre", () => {
+    const wrapper = mount(VdCodeSnippet, { props: { code: "x" } });
+    const figure = wrapper.get("figure.vd-code-snippet-simple");
+    expect(figure.classes()).toContain("vd-code-snippet-single");
+    const header = figure.get(".vd-code-snippet-header");
+    expect(header.get("button.vd-code-snippet-copy").exists()).toBe(true);
+    expect(figure.find("pre + button").exists()).toBe(false);
+  });
+
   it("hides the copy button when copyable=false", () => {
     const wrapper = mount(VdCodeSnippet, {
       props: { code: "x", copyable: false },
@@ -151,6 +160,21 @@ describe("VdCodeSnippet chrome mode", () => {
     expect(tabs[0]!.attributes("aria-selected")).toBe("true");
     expect(tabs[1]!.attributes("aria-selected")).toBe("false");
     expect(tabs[0]!.classes()).toContain("is-active");
+  });
+
+  it("shows the View Code toggle and pane text while collapsed", () => {
+    const wrapper = mount(VdCodeSnippet, {
+      props: { html: "<p>hello pane</p>" },
+    });
+    const toggle = wrapper.get("button.vd-code-snippet-toggle");
+    const pane = wrapper.get("pre.vd-code-snippet-pane");
+    expect(toggle.text()).toContain("View Code");
+    expect(toggle.attributes("aria-expanded")).toBe("false");
+    expect(
+      wrapper.get(".vd-code-snippet-content").attributes("data-visible"),
+    ).toBe("false");
+    expect(pane.text()).toBe("<p>hello pane</p>");
+    expect(wrapper.get("button.vd-code-snippet-copy").exists()).toBe(true);
   });
 
   it("toggles collapse and sets tabindex on the active pane when expanded", async () => {
