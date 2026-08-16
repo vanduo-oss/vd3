@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { StatusVariant } from "../types";
 
-// Status palette + the `ghost` style.
-type Variant = StatusVariant | "ghost";
+// Status palette + ghost (no stroke) + ink (fat outline, scheme-aware fill).
+type Variant = StatusVariant | "ghost" | "ink";
 type Size = "sm" | "md" | "lg";
 
 interface Props {

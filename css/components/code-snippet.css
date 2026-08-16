@@ -390,7 +390,7 @@
    Syntax Highlighting Classes
    ========================================================================== */
 
-/* HTML Syntax */
+/* Legacy hand-span contract. VdCodeSnippet does not emit these. */
 .code-tag { color: var(--vd-code-tag); }
 .code-attr { color: var(--vd-code-attr); }
 .code-string { color: var(--vd-code-string); }
@@ -409,14 +409,59 @@
 .code-operator { color: var(--vd-code-operator); }
 .code-punctuation { color: var(--vd-code-punctuation); }
 
+/* Cbun token spans theme via --vd-code-* inside snippets (no cbun CSS). */
+.vd-code-snippet .vd-tk-comment {
+  color: var(--vd-code-comment);
+  font-style: italic;
+}
+.vd-code-snippet .vd-tk-keyword {
+  color: var(--vd-code-keyword);
+}
+.vd-code-snippet .vd-tk-string,
+.vd-code-snippet .vd-tk-regex {
+  color: var(--vd-code-string);
+}
+.vd-code-snippet .vd-tk-number {
+  color: var(--vd-code-number);
+}
+.vd-code-snippet .vd-tk-boolean,
+.vd-code-snippet .vd-tk-null {
+  color: var(--vd-code-keyword);
+}
+.vd-code-snippet .vd-tk-function,
+.vd-code-snippet .vd-tk-builtin {
+  color: var(--vd-code-function);
+}
+.vd-code-snippet .vd-tk-operator {
+  color: var(--vd-code-operator);
+}
+.vd-code-snippet .vd-tk-punctuation {
+  color: var(--vd-code-punctuation);
+}
+.vd-code-snippet .vd-tk-property {
+  color: var(--vd-code-property);
+}
+.vd-code-snippet .vd-tk-tag {
+  color: var(--vd-code-tag);
+}
+.vd-code-snippet .vd-tk-attribute,
+.vd-code-snippet .vd-tk-meta {
+  color: var(--vd-code-attr);
+}
+.vd-code-snippet .vd-tk-variable {
+  color: var(--vd-code-text);
+}
+
 /* ==========================================================================
    Single Language Variant (No Tabs)
    ========================================================================== */
 
+.vd-code-snippet-simple .vd-code-snippet-header,
 .vd-code-snippet-single .vd-code-snippet-header {
   justify-content: flex-end;
 }
 
+.vd-code-snippet-simple .vd-code-snippet-tabs,
 .vd-code-snippet-single .vd-code-snippet-tabs {
   display: none;
 }
@@ -555,8 +600,11 @@
 }
 
 /* ==========================================================================
-   @vanduo-oss/vue VdCodeSnippet <pre> (additive; added in 1.6.1)
-   VdCodeSnippet renders `figure.vd-code-snippet > pre.vd-code-snippet-pre > code`.
+   Simple-mode VdCodeSnippet <pre>
+   Simple mode: figure.vd-code-snippet.vd-code-snippet-simple
+     > .vd-code-snippet-header > .vd-code-snippet-copy (top-right)
+     > pre.vd-code-snippet-pre > code
+   Chrome mode uses .vd-code-snippet-pane and keeps Copy in the header.
    ========================================================================== */
 .vd-code-snippet-pre {
   margin: 0;

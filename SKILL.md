@@ -97,7 +97,11 @@ Brand click morphs the pair (`bottom` ↔ `left`, `top` ↔ `right`) unless
 `cycle="edges"` walks all four.
 
 **Content & utility (7):** `VdAccordion`, `VdCodeSnippet`, `VdIcon`,
-`VdSeparator`, `VdTooltip`, `VdDocSearch`, `VdFlow`
+`VdSeparator`, `VdTooltip`, `VdDocSearch`, `VdFlow`.
+`VdCodeSnippet` does not highlight unless the caller passes `highlight`
+(must return escaped HTML; copy stays raw). Simple mode is `code` /
+`language` / `copyable`. Chrome mode (any of `html` / `css` / `js` /
+`shell` / `vue` / `json`) is the collapsible tabbed widget.
 
 **Theme controls (2):** `VdThemeSwitcher`, `VdThemeCustomizer`
 
