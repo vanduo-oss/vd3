@@ -28,7 +28,7 @@
 
 ## 4. Downstream
 
-- [ ] 4.1 Docs sync in `vd3-docs`: bump `@vanduo-oss/vd3` to `^1.2.1` and remove
+- [x] 4.1 Docs sync in `vd3-docs`: bump `@vanduo-oss/vd3` to `^1.2.1` and remove
   the temporary outline/ghost loading compensate from `src/styles/docs.css`.
-- [ ] 4.2 Open the PR `dev-v121 → main` and wait for the auto-review agent (do
+- [x] 4.2 Open the PR `dev-v121 → main` and wait for the auto-review agent (do
   not merge).

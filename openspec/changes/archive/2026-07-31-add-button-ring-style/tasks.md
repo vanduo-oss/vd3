@@ -28,6 +28,6 @@
 - [x] 13. Bump to `1.2.0` in `package.json` and `VD3_VERSION` (`src/index.ts`, asserted by
   `tests/smoke.spec.ts`), update the README status line, and add the CHANGELOG entry (packages
   only — no docs-site content).
-- [ ] 14. Docs sync in `vd3-docs`: a ring demo on `/components/button`, the class-reference and
+- [x] 14. Docs sync in `vd3-docs`: a ring demo on `/components/button`, the class-reference and
   component-API rows, nav keywords, the `1.2.0` changelog card, and a refreshed visual baseline.
-- [ ] 15. Open the PR `dev-v1.2.0 → main` and wait for the auto-review agent (do not merge).
+- [x] 15. Open the PR `dev-v1.2.0 → main` and wait for the auto-review agent (do not merge).

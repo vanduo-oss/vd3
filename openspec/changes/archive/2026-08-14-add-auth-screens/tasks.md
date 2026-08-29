@@ -17,4 +17,4 @@
       format:check, typecheck.
 - [x] 10. Docs sync in vd3-docs (separate change): live auth page, forms reveal
       upgrade, security-guide Auth UI subsection.
-- [ ] 11. Do not push or open a PR until local gates are green and the human reviews.
+- [x] 11. Do not push or open a PR until local gates are green and the human reviews.

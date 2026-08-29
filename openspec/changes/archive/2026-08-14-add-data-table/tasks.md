@@ -16,4 +16,4 @@
       `check:classes`.
 - [x] 9. Docs sync: live table page with VdDataTable + dashboard recipe;
       fix the unused `columns.variant` lie.
-- [ ] 10. Do not push or open a PR until local gates are green and the human reviews.
+- [x] 10. Do not push or open a PR until local gates are green and the human reviews.
