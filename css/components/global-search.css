@@ -9,12 +9,14 @@
   --vd-global-search-modal-top: 15vh;
   --vd-global-search-glass-opacity: 0.9;
   --vd-global-search-glass-blur: 20px;
+  --vd-global-search-overlay-z-index: 9998;
+  --vd-global-search-modal-z-index: 9999;
 }
 
 .vd-global-search-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9998;
+  z-index: var(--vd-global-search-overlay-z-index);
   background: var(--vd-global-search-overlay-bg);
   backdrop-filter: blur(var(--vd-global-search-overlay-blur));
   -webkit-backdrop-filter: blur(var(--vd-global-search-overlay-blur));
@@ -36,7 +38,7 @@
   top: var(--vd-global-search-modal-top);
   left: 50%;
   transform: translateX(-50%) scale(0.96);
-  z-index: 9999;
+  z-index: var(--vd-global-search-modal-z-index);
   width: 92%;
   max-width: var(--vd-global-search-modal-max-width);
   background: color-mix(in srgb, var(--vd-bg-primary) 90%, transparent);

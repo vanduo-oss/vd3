@@ -16,6 +16,14 @@ const hits: GlobalSearchHit[] = [
     category: "Components",
     categoryPath: "Components › Core",
   },
+  {
+    id: "badge",
+    title: "Badge",
+    route: "/components/badge",
+    icon: "tag",
+    category: "Components",
+    categoryPath: "Components › Core",
+  },
 ];
 
 const adapter: GlobalSearchAdapter = {
@@ -107,5 +115,77 @@ describe("VdGlobalSearch", () => {
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await nextTick();
     expect(wrapper.emitted("select")?.[0]?.[0]).toMatchObject({ id: "button" });
+  });
+
+  it("advances one result per ArrowDown", async () => {
+    vi.useFakeTimers();
+    const wrapper = factory();
+    await (wrapper.vm as unknown as { open: () => void }).open();
+    await typeAndSettle("but");
+
+    const input = document.body.querySelector(
+      "input.vd-global-search-input",
+    ) as HTMLInputElement;
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+    );
+    await nextTick();
+
+    // The composable also listens on document; if the event reaches both the
+    // selection jumps straight back to the first result.
+    const results = document.body.querySelectorAll(".vd-global-search-result");
+    expect(results).toHaveLength(2);
+    expect(results[1]?.classList.contains("is-active")).toBe(true);
+  });
+
+  it("stays in the searching state for the whole debounce window", async () => {
+    vi.useFakeTimers();
+    const wrapper = factory();
+    await (wrapper.vm as unknown as { open: () => void }).open();
+
+    const input = document.body.querySelector(
+      "input.vd-global-search-input",
+    ) as HTMLInputElement;
+    input.value = "but";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    await nextTick();
+
+    expect(document.body.querySelector(".vd-global-search-empty")).toBeFalsy();
+    expect(document.body.querySelector(".vd-global-search-hint")).toBeTruthy();
+  });
+
+  it("takes the dialog out of the tab order while closed", async () => {
+    vi.useFakeTimers();
+    const wrapper = factory();
+    const modal = document.body.querySelector(
+      ".vd-global-search-modal",
+    ) as HTMLElement;
+    expect(modal.hasAttribute("inert")).toBe(true);
+
+    await (wrapper.vm as unknown as { open: () => void }).open();
+    await nextTick();
+    expect(modal.hasAttribute("inert")).toBe(false);
+  });
+
+  it("lets a bound aiEnabled prop own the toggle", async () => {
+    vi.useFakeTimers();
+    const wrapper = factory({ aiEnabled: false });
+    const toggle = document.body.querySelector(
+      ".vd-form-switch input",
+    ) as HTMLInputElement;
+
+    toggle.click();
+    await nextTick();
+
+    expect(wrapper.emitted("update:aiEnabled")?.[0]).toEqual([true]);
+    // Controlled: the parent has not echoed the change back yet.
+    expect(
+      document.body.querySelector(".vd-global-search-ai-notice"),
+    ).toBeFalsy();
+
+    await wrapper.setProps({ aiEnabled: true });
+    expect(
+      document.body.querySelector(".vd-global-search-ai-notice"),
+    ).toBeTruthy();
   });
 });

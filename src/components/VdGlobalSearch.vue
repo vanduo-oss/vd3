@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, useId } from "vue";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  useId,
+  watch,
+} from "vue";
 import {
   useGlobalSearch,
   type GlobalSearchAdapter,
@@ -11,10 +19,20 @@ import VdSwitch from "./VdSwitch.vue";
 
 interface Props {
   adapter: GlobalSearchAdapter;
+  /**
+   * Read once on mount, like the rest of the composable's options. Re-key the
+   * component to change them.
+   */
   minQueryLength?: number;
   debounceMs?: number;
   shortcut?: GlobalSearchShortcutOptions;
   ai?: UseGlobalSearchAiOptions;
+  /**
+   * Bind to take control of the AI toggle: the component then renders from
+   * this value and reports changes through `update:aiEnabled` instead of
+   * flipping its own state. Leave unbound to let `ai` own the initial value.
+   */
+  aiEnabled?: boolean;
   showAiToggle?: boolean;
   progressMessage?: string;
   placeholder?: string;
@@ -33,6 +51,7 @@ const props = withDefaults(defineProps<Props>(), {
   minQueryLength: 2,
   debounceMs: 350,
   shortcut: true,
+  aiEnabled: undefined,
   showAiToggle: true,
   progressMessage: "",
   placeholder: "Search everything…",
@@ -58,9 +77,13 @@ const emit = defineEmits<{
 const inputRef = ref<HTMLInputElement | null>(null);
 const aiNoticeId = useId();
 
+// Snapshot to match the composable, which reads its options once. Deriving
+// `hasQuery` from the live prop instead would let the two disagree.
+const minQueryLength = props.minQueryLength;
+
 const controller = useGlobalSearch({
   adapter: props.adapter,
-  minQueryLength: props.minQueryLength,
+  minQueryLength,
   debounceMs: props.debounceMs,
   shortcut: false,
   ai: props.ai,
@@ -78,7 +101,7 @@ const {
   groups,
   ordered,
   searching,
-  aiEnabled,
+  aiEnabled: aiOn,
   open,
   close,
   move,
@@ -88,8 +111,20 @@ const {
   runNow,
 } = controller;
 
-const hasQuery = computed(
-  () => query.value.trim().length >= props.minQueryLength,
+const hasQuery = computed(() => query.value.trim().length >= minQueryLength);
+
+/**
+ * Controlled when `aiEnabled` is bound: the parent owns the value and the
+ * composable follows it, so search runs with whatever the parent last set.
+ */
+const isAiControlled = computed(() => props.aiEnabled !== undefined);
+
+watch(
+  () => props.aiEnabled,
+  (value) => {
+    if (value !== undefined && value !== aiOn.value) setAiEnabled(value);
+  },
+  { immediate: true },
 );
 
 const indexOf = (hit: GlobalSearchHit): number =>
@@ -105,24 +140,28 @@ const onSelectRoute = (hit: GlobalSearchHit): void => {
 };
 
 const onAiToggle = (enabled: boolean): void => {
-  setAiEnabled(enabled);
+  if (!isAiControlled.value) setAiEnabled(enabled);
   emit("update:aiEnabled", enabled);
 };
 
 const onInputKeydown = (event: KeyboardEvent): void => {
-  if (event.key === "Escape") {
-    event.preventDefault();
-    close();
-  } else if (event.key === "ArrowDown") {
-    event.preventDefault();
-    move(1);
-  } else if (event.key === "ArrowUp") {
-    event.preventDefault();
-    move(-1);
-  } else if (event.key === "Enter") {
-    event.preventDefault();
-    select();
-  }
+  const handled =
+    event.key === "Escape" ||
+    event.key === "ArrowDown" ||
+    event.key === "ArrowUp" ||
+    event.key === "Enter";
+  if (!handled) return;
+
+  // The composable listens on document for the same keys, so this has to stop
+  // the event here. Letting it bubble runs both handlers on one keypress and
+  // the arrows step two results at a time.
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (event.key === "Escape") close();
+  else if (event.key === "ArrowDown") move(1);
+  else if (event.key === "ArrowUp") move(-1);
+  else select();
 };
 
 const isEditable = (el: EventTarget | null): boolean => {
@@ -191,6 +230,7 @@ defineExpose({ open: openAndFocus, close, runNow });
       role="dialog"
       aria-modal="true"
       :aria-label="dialogLabel"
+      :inert="!isOpen || undefined"
     >
       <div class="vd-global-search-header">
         <i
@@ -270,17 +310,13 @@ defineExpose({ open: openAndFocus, close, runNow });
       <div class="vd-global-search-footer">
         <div v-if="showAiToggle" class="vd-global-search-footer-controls">
           <VdSwitch
-            :model-value="aiEnabled"
+            :model-value="aiOn"
             :label="aiToggleLabel"
             size="sm"
-            :aria-describedby="aiEnabled ? aiNoticeId : undefined"
+            :aria-describedby="aiOn ? aiNoticeId : undefined"
             @update:model-value="onAiToggle"
           />
-          <p
-            v-if="aiEnabled"
-            :id="aiNoticeId"
-            class="vd-global-search-ai-notice"
-          >
+          <p v-if="aiOn" :id="aiNoticeId" class="vd-global-search-ai-notice">
             <slot name="ai-notice">
               <strong>AI-assisted search</strong> runs a local embedding model
               in your browser. Your queries are processed on-device and are not
@@ -296,7 +332,7 @@ defineExpose({ open: openAndFocus, close, runNow });
           <span><kbd>↵</kbd> select</span>
           <span><kbd>esc</kbd> close</span>
           <span
-            v-if="aiEnabled && progressMessage"
+            v-if="aiOn && progressMessage"
             class="vd-global-search-footer-status"
             aria-live="polite"
           >

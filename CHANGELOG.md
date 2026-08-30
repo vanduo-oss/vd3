@@ -11,7 +11,12 @@ tracks the package only — never docs-site content.
   overlay modal) with grouped results, keyboard navigation, optional AI opt-in
   toggle + disclaimer slot, and engine-agnostic `GlobalSearchAdapter` injection.
   Shortcut: Cmd/Ctrl+K and `/` (disable on co-mounted `VdDocSearch` via
-  `:keyboard-shortcut="false"`).
+  `:keyboard-shortcut="false"`). Bind `aiEnabled` to control the AI toggle
+  from the parent and read `update:aiEnabled`; every other prop is read once
+  on mount. Layering is themable through
+  `--vd-global-search-overlay-z-index` / `--vd-global-search-modal-z-index`,
+  and the dialog is `inert` while closed so it stays out of the tab order and
+  the accessibility tree.
 - **`VdThemeCustomizer` swatches variant** — a `variant` prop (`panel` |
   `swatches`, default `panel`). `panel` is the existing slide-in editor,
   untouched. `swatches` swaps it for a hinged primary-only fan: blades pivot

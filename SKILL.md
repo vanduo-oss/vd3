@@ -104,7 +104,9 @@ items and the brand slot to consume).
 site-wide command palette (`⌘K` / `/`) built on `useGlobalSearch`. It is
 engine-agnostic — pass a `GlobalSearchAdapter` and it never imports a search
 engine itself. AI answers are opt-in behind a toggle that stays off until the
-user flips it.
+user flips it; bind `aiEnabled` to take control of that toggle and read
+`update:aiEnabled`. Every other prop is read once on mount. Stack it with
+`--vd-global-search-overlay-z-index` / `--vd-global-search-modal-z-index`.
 `VdCodeSnippet` does not highlight unless the caller passes `highlight`
 (must return escaped HTML; copy stays raw). Simple mode is `code` /
 `language` / `copyable`. Chrome mode (any of `html` / `css` / `js` /

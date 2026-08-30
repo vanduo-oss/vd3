@@ -51,6 +51,11 @@ export interface UseGlobalSearchAiOptions {
   persistKey?: string;
 }
 
+/**
+ * Every option except `progressMessage` is read once when the composable is
+ * created. Pass `progressMessage` as a ref or getter to keep it live; change
+ * any other option by re-creating the controller.
+ */
 export interface UseGlobalSearchOptions {
   adapter: GlobalSearchAdapter;
   minQueryLength?: number;
@@ -211,6 +216,10 @@ export function useGlobalSearch(
       searching.value = false;
       return;
     }
+    // Mark pending up front: without this the UI has no results and no
+    // in-flight flag during the debounce window, so an empty state flashes
+    // between the first keystroke and the request actually starting.
+    searching.value = true;
     debounceTimer = setTimeout(() => {
       void runSearch(raw);
     }, debounceMs);
