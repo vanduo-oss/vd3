@@ -35,6 +35,15 @@
 
   /* Tooltip Max Width */
   --vd-tooltip-max-width: 233px; /* fib */
+
+  /* Dock variant — frosted chrome tips for icon-only dock controls. Defaults
+     are ink; the light-scheme block below swaps in a light frost. */
+  --vd-tooltip-dock-bg: color-mix(in srgb, #12141a 78%, transparent);
+  --vd-tooltip-dock-color: #f4f4f5;
+  --vd-tooltip-dock-border: color-mix(in srgb, #fff 22%, transparent);
+  --vd-tooltip-dock-shadow:
+    0 8px 28px color-mix(in srgb, #000 45%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 12%, transparent);
 }
 
 /* Dark Theme Overrides */
@@ -174,6 +183,64 @@
 .vd-tooltip-glass.vd-tooltip-right::before,
 .vd-tooltip-glass[data-placement="right"]::before {
   border-color: transparent var(--vd-glass-bg-light) transparent transparent;
+}
+
+/* Tooltip Variants - Dock
+   Denser frost than `glass`, sized for icon-only dock chrome. */
+.vd-tooltip.vd-tooltip-dock {
+  background: var(--vd-tooltip-dock-bg);
+  color: var(--vd-tooltip-dock-color);
+  border: 1px solid var(--vd-tooltip-dock-border);
+  box-shadow: var(--vd-tooltip-dock-shadow);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  /* useTooltips already positions with a gap, so the per-placement arrow
+     margin would double-shift a dock tip off its computed centre. Two classes
+     out-specify the single-class placement rules without `!important`. */
+  margin: 0;
+}
+
+.vd-tooltip.vd-tooltip-dock.vd-tooltip-top::before,
+.vd-tooltip.vd-tooltip-dock[data-placement="top"]::before {
+  border-color: var(--vd-tooltip-dock-bg) transparent transparent;
+}
+
+.vd-tooltip.vd-tooltip-dock.vd-tooltip-bottom::before,
+.vd-tooltip.vd-tooltip-dock[data-placement="bottom"]::before {
+  border-color: transparent transparent var(--vd-tooltip-dock-bg);
+}
+
+.vd-tooltip.vd-tooltip-dock.vd-tooltip-left::before,
+.vd-tooltip.vd-tooltip-dock[data-placement="left"]::before {
+  border-color: transparent transparent transparent var(--vd-tooltip-dock-bg);
+}
+
+.vd-tooltip.vd-tooltip-dock.vd-tooltip-right::before,
+.vd-tooltip.vd-tooltip-dock[data-placement="right"]::before {
+  border-color: transparent var(--vd-tooltip-dock-bg) transparent transparent;
+}
+
+/* Light page behind an ink dock: a dark tip disappears into the pill, so the
+   dock variant flips to light frost. `:not([data-theme="dark"])` rather than
+   `:not([data-theme])` so an explicit `data-theme="system"` still resolves. */
+[data-theme="light"] {
+  --vd-tooltip-dock-bg: color-mix(in srgb, #fff 88%, transparent);
+  --vd-tooltip-dock-color: #18181b;
+  --vd-tooltip-dock-border: color-mix(in srgb, #000 10%, transparent);
+  --vd-tooltip-dock-shadow:
+    0 8px 24px color-mix(in srgb, #000 14%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 65%, transparent);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --vd-tooltip-dock-bg: color-mix(in srgb, #fff 88%, transparent);
+    --vd-tooltip-dock-color: #18181b;
+    --vd-tooltip-dock-border: color-mix(in srgb, #000 10%, transparent);
+    --vd-tooltip-dock-shadow:
+      0 8px 24px color-mix(in srgb, #000 14%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 65%, transparent);
+  }
 }
 
 /* Tooltip Variants - Light */

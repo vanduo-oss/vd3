@@ -87,4 +87,44 @@ describe("built CSS bundle — glass noise filter", () => {
     expect(minified).not.toContain("effects/%23");
     expect(minified).not.toContain("effects/#n");
   });
+
+  // The class-coverage gate reads the built bundle, so a component can ship a
+  // class whose selector only exists in the authored tree. These assert the
+  // 1.7.0 additions actually survive bundling. Assertions are reduced to
+  // booleans/short slices first — a bare toContain against the 580 KB bundle
+  // dumps the whole thing into the failure output.
+  const has = (needle: string): boolean => minified.includes(needle);
+
+  it("bundles the swatches fan selectors", () => {
+    for (const sel of [
+      ".vd-theme-customizer-fan",
+      ".tc-fan-item",
+      ".tc-fan-label",
+      ".tc-fan-swatch",
+    ]) {
+      expect(has(sel), `${sel} missing from bundle`).toBe(true);
+    }
+  });
+
+  it("bundles the dock accent tint selector without !important", () => {
+    expect(has(".vd-dock-tint-accent")).toBe(true);
+    const accentRule = minified
+      .split("}")
+      .find((chunk) => chunk.includes(".vd-dock-tint-accent"));
+    expect(accentRule).toBeDefined();
+    expect(accentRule).not.toContain("!important");
+  });
+
+  it("bundles the dock tooltip variant with all four arrows", () => {
+    expect(has(".vd-tooltip-dock")).toBe(true);
+    for (const placement of ["top", "bottom", "left", "right"]) {
+      // The minifier drops the quotes around attribute values.
+      const arrow = new RegExp(
+        `\\.vd-tooltip-dock[^{}]*\\[data-placement=["']?${placement}["']?\\]`,
+      );
+      expect(arrow.test(minified), `${placement} arrow rule missing`).toBe(
+        true,
+      );
+    }
+  });
 });

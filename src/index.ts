@@ -35,6 +35,7 @@ export { default as VdCollection } from "./components/VdCollection.vue";
 export { default as VdCustomSelect } from "./components/VdCustomSelect.vue";
 export { default as VdDataTable } from "./components/VdDataTable.vue";
 export { default as VdDocSearch } from "./components/VdDocSearch.vue";
+export { default as VdGlobalSearch } from "./components/VdGlobalSearch.vue";
 export { default as VdDock } from "./components/VdDock.vue";
 export { default as VdDockItem } from "./components/VdDockItem.vue";
 export { default as VdEmptyState } from "./components/VdEmptyState.vue";
@@ -88,6 +89,7 @@ export * from "./composables/useAffix";
 export * from "./composables/useClickOutside";
 export * from "./composables/useDatepicker";
 export * from "./composables/useDocSearch";
+export * from "./composables/useGlobalSearch";
 export * from "./composables/useDockOrientation";
 export * from "./composables/useDraggable";
 export * from "./composables/useDropdown";
@@ -134,7 +136,12 @@ export type {
 // ── Utilities ────────────────────────────────────────────────
 export * from "./utils/sanitizeHtml";
 // ── Shared types ──────────────────────────────────────────────
-export type { StatusVariant } from "./types";
+export type {
+  StatusVariant,
+  SwatchFanDirection,
+  SwatchFanDirectionOption,
+  ThemeCustomizerVariant,
+} from "./types";
 
 // ── Re-exported component types ───────────────────────────────
 export type { BreadcrumbItem } from "./components/VdBreadcrumb.vue";

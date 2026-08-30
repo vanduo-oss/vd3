@@ -50,8 +50,8 @@ of `PRIMARY_COLORS`, and unknown keys MUST be ignored.
 
 A **`direction` prop (`auto` | `up` | `down` | `left` | `right`, default
 `auto`)** SHALL set the fan axis and apply `.fan-{direction}` to the fan root.
-`auto` MUST resolve from the trigger rect to the side with the most room and
-MUST re-resolve on reposition.
+`auto` MUST resolve from the trigger rect by fanning away from the nearest
+viewport edge, and MUST re-resolve on reposition.
 
 A **`preview` prop (default true)** SHALL apply a blade's hue on pointer enter
 and restore the value captured at open time when the pointer leaves the fan or

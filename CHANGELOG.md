@@ -7,6 +7,29 @@ tracks the package only — never docs-site content.
 
 ### Added
 
+- **`VdGlobalSearch` + `useGlobalSearch`** — site-wide command palette (Teleport
+  overlay modal) with grouped results, keyboard navigation, optional AI opt-in
+  toggle + disclaimer slot, and engine-agnostic `GlobalSearchAdapter` injection.
+  Shortcut: Cmd/Ctrl+K and `/` (disable on co-mounted `VdDocSearch` via
+  `:keyboard-shortcut="false"`).
+- **`VdThemeCustomizer` swatches variant** — a `variant` prop (`panel` |
+  `swatches`, default `panel`). `panel` is the existing slide-in editor,
+  untouched. `swatches` swaps it for a hinged primary-only fan: blades pivot
+  around the trigger like a hand fan, unfolding along `direction` (`auto` |
+  `up` | `down` | `left` | `right`) and shrinking their arc to stay inside the
+  viewport. Built for dock and toolbar chrome that has no room for a 320px
+  panel. `swatches` restricts the fan to given `PRIMARY_COLORS` keys (all 18
+  make for a crowded fan), and `preview` applies a hue on hover and restores
+  the opening value if the fan closes uncommitted. The fan reuses the panel's
+  overlay contract: Escape, outside pointerdown, `vd:open-customizer`, and the
+  same `open` / `close` / `toggle` expose.
+- **`VdThemeCustomizer` controlled primary** — binding `primary` switches
+  either variant into controlled mode: the component renders from the prop and
+  reports changes through `update:primary` instead of writing the
+  `useThemePreference()` singleton. Apps that wrap theming in their own store
+  (clamping the offered hues, forcing other fields) can now drive the
+  customizer without it writing behind their back. Unbound, behavior is
+  unchanged.
 - **`VdDock` accent tint mode** — a `tintMode` prop (`surface` | `accent`,
   default `surface`). `surface` keeps painting the pill from the tint hue.
   `accent` adds `.vd-dock-tint-accent` so the pill stays constant ink while

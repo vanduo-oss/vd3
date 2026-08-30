@@ -94,7 +94,9 @@ Oola Dock — a morphing glass pill (`useDockOrientation`). Brand is a slot;
 `--vd-dock-radius` is independent of the theme 0.5rem radius cap.
 `placement` is `bottom` | `top` | `left` | `right` (default `bottom`).
 Brand click morphs the pair (`bottom` ↔ `left`, `top` ↔ `right`) unless
-`cycle="edges"` walks all four.
+`cycle="edges"` walks all four. `tintMode` is `surface` (default — `tint`
+paints the pill) or `accent` (pill stays ink, `--vd-dock-tint` is left for
+items and the brand slot to consume).
 
 **Content & utility (7):** `VdAccordion`, `VdCodeSnippet`, `VdIcon`,
 `VdSeparator`, `VdTooltip`, `VdDocSearch`, `VdFlow`.
@@ -103,7 +105,13 @@ Brand click morphs the pair (`bottom` ↔ `left`, `top` ↔ `right`) unless
 `language` / `copyable`. Chrome mode (any of `html` / `css` / `js` /
 `shell` / `vue` / `json`) is the collapsible tabbed widget.
 
-**Theme controls (2):** `VdThemeSwitcher`, `VdThemeCustomizer`
+**Theme controls (2):** `VdThemeSwitcher`, `VdThemeCustomizer`.
+`VdThemeCustomizer` has two presentations via `variant`: `panel` (default —
+the full palette / primary / neutral / radius / font editor) and `swatches`
+(primary only, as a fan hinged at the trigger for dock and toolbar chrome;
+`swatches` narrows the hues, `direction` sets the axis, `preview` applies on
+hover). Bind `primary` + listen to `update:primary` to keep an app-side store
+authoritative instead of the `useThemePreference()` singleton.
 
 **Layout primitives (7):** `VdBox`, `VdCenter`, `VdCover`, `VdFrame`,
 `VdInline`, `VdStack`, `VdSwitcher`

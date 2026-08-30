@@ -14,6 +14,14 @@
   --vd-customizer-border: var(--vd-border-color);
   --vd-customizer-shadow: var(--vd-shadow-lg);
   --vd-customizer-z-index: 1050;
+
+  /* Swatches-variant fan */
+  --vd-customizer-fan-z-index: 1100;
+  --vd-customizer-fan-blade-width: 6.25rem;
+  --vd-customizer-fan-blade-radius: 999px;
+  --vd-customizer-fan-dot-size: 1.2rem;
+  --vd-customizer-fan-label-size: 0.68rem;
+  --vd-customizer-fan-stagger: 30ms;
 }
 
 /* ==========================================================================
@@ -885,4 +893,180 @@ body > .vd-theme-customizer-panel.is-open {
 .customizer-reset:focus-visible {
   outline: 2px solid var(--vd-color-primary);
   outline-offset: 1px;
+}
+
+/* ==========================================================================
+   Swatches variant — radial fan (appended to body)
+   ========================================================================== */
+
+/* Zero-size hinge anchored at the trigger center by the component. */
+.vd-theme-customizer-fan {
+  position: fixed;
+  z-index: var(--vd-customizer-fan-z-index);
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.vd-theme-customizer-fan.is-open {
+  pointer-events: auto;
+}
+
+.tc-fan-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* Hinge: the blade's left-center sits exactly on the trigger center, so
+     rotate() spins blades around the trigger like a hand fan. */
+  translate: 0 -50%;
+  z-index: var(--fan-z, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  /* Uniform blade length so the arc reads as one fan, not a ragged edge. */
+  width: var(--vd-customizer-fan-blade-width);
+  padding: 0.35rem 0.45rem 0.35rem 0.55rem;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--vd-text-primary) 14%, transparent);
+  border-radius: var(--vd-customizer-fan-blade-radius);
+  /* Theme-aware glass: light frost in light mode, dark frost in dark mode. */
+  background: color-mix(in srgb, var(--vd-bg-secondary) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow:
+    0 4px 18px color-mix(in srgb, #000 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
+  color: var(--vd-text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0;
+  transform: var(--fan-transform-closed);
+  transform-origin: left center;
+  will-change: transform, opacity, scale;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.22s ease,
+    scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+  transition-delay: calc(var(--i, 0) * var(--vd-customizer-fan-stagger));
+}
+
+.vd-theme-customizer-fan.is-open .tc-fan-item {
+  opacity: 1;
+  transform: var(--fan-transform-open);
+}
+
+.tc-fan-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--vd-customizer-fan-label-size);
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--vd-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.25s ease;
+}
+
+/* Color dot on the outer (far) edge of each blade. */
+.tc-fan-swatch {
+  flex-shrink: 0;
+  width: var(--vd-customizer-fan-dot-size);
+  height: var(--vd-customizer-fan-dot-size);
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--vd-swatch-color);
+  border: 2px solid color-mix(in srgb, var(--vd-text-primary) 18%, transparent);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, #000 12%, transparent);
+  transition:
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Lifts the hovered blade over its neighbours. Beats the base `--fan-z`
+   declaration on specificity, so the component can keep setting that variable
+   inline without needing `!important` here. */
+.tc-fan-item:hover,
+.tc-fan-item:focus-visible,
+.tc-fan-item.is-hovered {
+  z-index: 100;
+  scale: 1.1;
+  border-color: color-mix(in srgb, var(--vd-primary-6) 55%, transparent);
+  background: color-mix(in srgb, var(--vd-bg-secondary) 95%, transparent);
+  box-shadow:
+    0 10px 28px color-mix(in srgb, var(--vd-primary-6) 28%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 24%, transparent);
+  outline: none;
+}
+
+.tc-fan-item:hover .tc-fan-swatch,
+.tc-fan-item.is-hovered .tc-fan-swatch {
+  transform: scale(1.15);
+  border-color: var(--vd-primary-6);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--vd-primary-3) 55%, transparent),
+    inset 0 1px 2px color-mix(in srgb, #000 12%, transparent);
+}
+
+.tc-fan-item.is-active {
+  border-color: color-mix(in srgb, var(--vd-primary-6) 45%, transparent);
+}
+
+.tc-fan-item.is-active .tc-fan-swatch {
+  border-color: var(--vd-primary-6);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--vd-primary-3) 65%, transparent),
+    inset 0 1px 2px color-mix(in srgb, #000 12%, transparent);
+}
+
+@media (max-width: 520px) {
+  .tc-fan-item {
+    gap: 0.35rem;
+    width: 5.5rem;
+    padding: 0.28rem 0.55rem 0.28rem 0.32rem;
+  }
+
+  .tc-fan-swatch {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .tc-fan-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-fan-item {
+    transition:
+      opacity 0.01ms linear,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      background 0.25s ease;
+    transition-delay: 0s;
+  }
+
+  .tc-fan-item:hover,
+  .tc-fan-item:focus-visible,
+  .tc-fan-item.is-hovered {
+    scale: 1;
+  }
+
+  .tc-fan-swatch {
+    transition:
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .tc-fan-item:hover .tc-fan-swatch,
+  .tc-fan-item.is-hovered .tc-fan-swatch {
+    transform: none;
+  }
 }

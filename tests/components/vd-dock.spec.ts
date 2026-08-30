@@ -87,6 +87,45 @@ describe("VdDock", () => {
     expect(nav.attributes("style")).toContain("--vd-dock-radius: 9999px");
   });
 
+  it("keeps the hue but drops the tinted surface in accent tint mode", () => {
+    const wrapper = mount(VdDock, {
+      props: { tint: "blue", tintMode: "accent" },
+      slots,
+    });
+    const nav = wrapper.get("nav.vd-dock");
+    // The hue class still sets --vd-dock-tint for items and the brand slot;
+    // the accent class is what the CSS uses to keep the pill ink.
+    expect(nav.classes()).toContain("vd-dock-tint-blue");
+    expect(nav.classes()).toContain("vd-dock-tint-accent");
+  });
+
+  it("defaults to surface tint mode and ignores accent without a tint", () => {
+    const surface = mount(VdDock, { props: { tint: "blue" }, slots });
+    expect(surface.get("nav.vd-dock").classes()).toContain("vd-dock-tint-blue");
+    expect(surface.get("nav.vd-dock").classes()).not.toContain(
+      "vd-dock-tint-accent",
+    );
+
+    // Accent is meaningless with nothing to accent with.
+    const untinted = mount(VdDock, { props: { tintMode: "accent" }, slots });
+    expect(untinted.get("nav.vd-dock").classes()).not.toContain(
+      "vd-dock-tint-accent",
+    );
+  });
+
+  it("falls back to surface for an invalid tint mode", () => {
+    const wrapper = mount(VdDock, {
+      props: {
+        tint: "blue",
+        tintMode: "translucent" as unknown as "accent",
+      },
+      slots,
+    });
+    expect(wrapper.get("nav.vd-dock").classes()).not.toContain(
+      "vd-dock-tint-accent",
+    );
+  });
+
   it("falls back for invalid glass, radius, and tint", () => {
     const wrapper = mount(VdDock, {
       props: {

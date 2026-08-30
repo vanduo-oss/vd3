@@ -6,8 +6,14 @@ import type {
   DockPlacement,
   DockRadius,
   DockTint,
+  DockTintMode,
   DockVisualPhase,
 } from "../../src/composables/useDockOrientation";
+import type {
+  SwatchFanDirection,
+  SwatchFanDirectionOption,
+  ThemeCustomizerVariant,
+} from "../../src/types";
 
 describe("dock public API (type lock)", () => {
   it("locks orientation and phase", () => {
@@ -35,6 +41,19 @@ describe("dock public API (type lock)", () => {
     expectTypeOf<DockGlass>().toEqualTypeOf<1 | 2 | 3 | 5 | 8 | 13 | 21 | 34>();
     expectTypeOf<DockRadius>().toEqualTypeOf<
       "0.5" | "0.75" | "1" | "1.25" | "1.5" | "2" | "9999"
+    >();
+    expectTypeOf<DockTintMode>().toEqualTypeOf<"surface" | "accent">();
+  });
+
+  it("locks the theme customizer variant and swatch fan direction", () => {
+    expectTypeOf<ThemeCustomizerVariant>().toEqualTypeOf<
+      "panel" | "swatches"
+    >();
+    expectTypeOf<SwatchFanDirection>().toEqualTypeOf<
+      "up" | "down" | "left" | "right"
+    >();
+    expectTypeOf<SwatchFanDirectionOption>().toEqualTypeOf<
+      "auto" | "up" | "down" | "left" | "right"
     >();
   });
 });

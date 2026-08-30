@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import VdThemeCustomizer from "../../src/components/VdThemeCustomizer.vue";
+import { PRIMARY_COLORS } from "../../src/composables/useTheme";
 
 /**
  * VdThemeCustomizer is the de-pinia'd promotion of the vd2 donor. It teleports
@@ -292,5 +293,254 @@ describe("VdThemeCustomizer lifecycle cleanup", () => {
     expect(events).toContain("keydown");
     expect(events).toContain("vd:open-customizer");
     expect(events).toContain("resize");
+  });
+
+  it("removes the fan's scroll listener on unmount", () => {
+    const spy = vi.spyOn(window, "removeEventListener");
+    const w = mountCustomizer({ variant: "swatches" });
+    w.unmount();
+    wrapper = null;
+
+    expect(spy.mock.calls.map((c) => c[0])).toContain("scroll");
+  });
+});
+
+/**
+ * Swatches variant — the hinged primary-only fan. Like the panel it teleports
+ * to <body>, so structure is queried off `document`. Blade geometry is written
+ * as custom properties, which is what the CSS consumes, so the assertions read
+ * those rather than a computed transform jsdom would not resolve.
+ */
+describe("VdThemeCustomizer swatches variant", () => {
+  const fan = (): HTMLElement | null => q(".vd-theme-customizer-fan");
+  const blades = (): HTMLElement[] =>
+    Array.from(document.querySelectorAll<HTMLElement>(".tc-fan-item"));
+
+  it("fans the restricted swatch set in PRIMARY_COLORS order", async () => {
+    const w = mountCustomizer({
+      variant: "swatches",
+      // Reversed against PRIMARY_COLORS (teal precedes blue there), plus a key
+      // that does not exist.
+      swatches: ["blue", "teal", "nope"],
+    });
+    await openViaTrigger(w);
+
+    const list = fan()!;
+    expect(list.getAttribute("role")).toBe("listbox");
+    expect(list.getAttribute("aria-label")).toBe("Primary color");
+    expect(list.classList.contains("is-open")).toBe(true);
+
+    // Unknown keys dropped; survivors follow PRIMARY_COLORS, not prop order.
+    expect(blades().map((b) => b.dataset.color)).toEqual(["teal", "blue"]);
+    // The panel presentation is not rendered at all.
+    expect(panel()).toBeNull();
+  });
+
+  it("uses the swatches trigger icon and offers every hue when unrestricted", () => {
+    const w = mountCustomizer({ variant: "swatches" });
+
+    expect(w.get(".vd-theme-customizer-trigger i").classes()).toContain(
+      "ph-swatches",
+    );
+    expect(w.get(".vd-theme-customizer-trigger").attributes("aria-label")).toBe(
+      "Choose theme color",
+    );
+    expect(blades().length).toBe(PRIMARY_COLORS.length);
+  });
+
+  it("marks blades with option ARIA and tracks the active hue", async () => {
+    const w = mountCustomizer({ variant: "swatches", swatches: ["blue"] });
+    await openViaTrigger(w);
+
+    const blade = blades()[0]!;
+    expect(blade.getAttribute("role")).toBe("option");
+    expect(blade.getAttribute("aria-label")).toBe("Blue");
+    expect(blade.querySelector(".tc-fan-label")?.textContent).toBe("Blue");
+
+    blade.click();
+    await nextTick();
+    expect(blade.getAttribute("aria-selected")).toBe("true");
+    expect(blade.classList.contains("is-active")).toBe(true);
+  });
+
+  it("writes the theme singleton when uncontrolled", async () => {
+    const w = mountCustomizer({ variant: "swatches", swatches: ["pink"] });
+    await openViaTrigger(w);
+
+    blades()[0]!.click();
+    await nextTick();
+
+    expect(document.documentElement.getAttribute("data-primary")).toBe("pink");
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBe("pink");
+    // Committing closes the fan.
+    expect(fan()!.classList.contains("is-open")).toBe(false);
+  });
+
+  it("emits update:primary without touching the singleton when controlled", async () => {
+    const w = mountCustomizer({
+      variant: "swatches",
+      swatches: ["blue", "teal"],
+      primary: "blue",
+    });
+    await openViaTrigger(w);
+
+    // The singleton stamps <html> with its own default on mount, so the proof
+    // that we stayed out of it is that the click leaves that value alone.
+    const before = document.documentElement.getAttribute("data-primary");
+    const teal = blades().find((b) => b.dataset.color === "teal")!;
+    teal.click();
+    await nextTick();
+
+    expect(w.emitted("update:primary")?.at(-1)).toEqual(["teal"]);
+    // The parent owns persistence — nothing was written on our behalf.
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBeNull();
+    expect(document.documentElement.getAttribute("data-primary")).toBe(before);
+    // And the active blade still reflects the prop, not the click.
+    expect(teal.getAttribute("aria-selected")).toBe("false");
+  });
+
+  it("previews on hover and restores the opening hue on cancel", async () => {
+    const root = document.documentElement;
+    const w = mountCustomizer({
+      variant: "swatches",
+      swatches: ["blue", "pink"],
+    });
+
+    // Establish a committed starting hue, then reopen.
+    await openViaTrigger(w);
+    blades()
+      .find((b) => b.dataset.color === "blue")!
+      .click();
+    await nextTick();
+    expect(root.getAttribute("data-primary")).toBe("blue");
+
+    await openViaTrigger(w);
+    const pink = blades().find((b) => b.dataset.color === "pink")!;
+    pink.dispatchEvent(new MouseEvent("mouseenter"));
+    await nextTick();
+    expect(root.getAttribute("data-primary")).toBe("pink");
+    expect(pink.classList.contains("is-hovered")).toBe(true);
+
+    // Leaving the fan entirely is a cancel.
+    fan()!.dispatchEvent(new MouseEvent("mouseleave"));
+    await nextTick();
+    expect(root.getAttribute("data-primary")).toBe("blue");
+  });
+
+  it("does not preview when preview is false", async () => {
+    const w = mountCustomizer({
+      variant: "swatches",
+      swatches: ["blue", "pink"],
+      preview: false,
+    });
+    await openViaTrigger(w);
+
+    const before = document.documentElement.getAttribute("data-primary");
+    const pink = blades().find((b) => b.dataset.color === "pink")!;
+    pink.dispatchEvent(new MouseEvent("mouseenter"));
+    await nextTick();
+
+    expect(document.documentElement.getAttribute("data-primary")).toBe(before);
+    expect(pink.classList.contains("is-hovered")).toBe(false);
+
+    // An explicit pick still commits.
+    pink.click();
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-primary")).toBe("pink");
+  });
+
+  it("restores the opening hue when closed by Escape", async () => {
+    const root = document.documentElement;
+    const w = mountCustomizer({
+      variant: "swatches",
+      swatches: ["blue", "pink"],
+    });
+
+    await openViaTrigger(w);
+    blades()
+      .find((b) => b.dataset.color === "blue")!
+      .click();
+    await nextTick();
+
+    await openViaTrigger(w);
+    blades()
+      .find((b) => b.dataset.color === "pink")!
+      .dispatchEvent(new MouseEvent("mouseenter"));
+    await nextTick();
+    expect(root.getAttribute("data-primary")).toBe("pink");
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    await nextTick();
+
+    expect(fan()!.classList.contains("is-open")).toBe(false);
+    expect(root.getAttribute("data-primary")).toBe("blue");
+  });
+
+  it("closes on an outside pointerdown", async () => {
+    const w = mountCustomizer({ variant: "swatches", swatches: ["blue"] });
+    await openViaTrigger(w);
+    await settle();
+
+    document.body.dispatchEvent(
+      new MouseEvent("pointerdown", { bubbles: true }),
+    );
+    await nextTick();
+
+    expect(fan()!.classList.contains("is-open")).toBe(false);
+  });
+
+  it("applies the explicit fan direction and re-fits when it changes", async () => {
+    const w = mountCustomizer({
+      variant: "swatches",
+      swatches: ["blue", "teal", "pink"],
+      direction: "right",
+    });
+    await openViaTrigger(w);
+
+    expect(fan()!.classList.contains("fan-right")).toBe(true);
+
+    await w.setProps({ direction: "down" });
+    await nextTick();
+    expect(fan()!.classList.contains("fan-down")).toBe(true);
+    expect(fan()!.classList.contains("fan-right")).toBe(false);
+  });
+
+  it("poses blades from hinge custom properties, staggered and stacked", async () => {
+    const w = mountCustomizer({
+      variant: "swatches",
+      swatches: ["blue", "teal", "pink"],
+      direction: "up",
+    });
+    await openViaTrigger(w);
+
+    const [first, middle, last] = blades();
+
+    for (const blade of [first!, middle!, last!]) {
+      expect(blade.style.getPropertyValue("--fan-transform-open")).toMatch(
+        /^rotate\(-?[\d.]+deg\) translateX\(26px\)$/,
+      );
+      expect(blade.style.getPropertyValue("--fan-transform-closed")).toContain(
+        "scale(0.5)",
+      );
+    }
+
+    // Open stagger runs outward from the first blade.
+    expect(blades().map((b) => b.style.getPropertyValue("--i"))).toEqual([
+      "0",
+      "1",
+      "2",
+    ]);
+    // Centre blade stacks above its neighbours.
+    expect(middle!.style.getPropertyValue("--fan-z")).toBe("3");
+    expect(first!.style.getPropertyValue("--fan-z")).toBe("2");
+  });
+
+  it("opens on the vd:open-customizer window event", async () => {
+    mountCustomizer({ variant: "swatches", swatches: ["blue"] });
+
+    window.dispatchEvent(new Event("vd:open-customizer"));
+    await nextTick();
+
+    expect(fan()!.classList.contains("is-open")).toBe(true);
   });
 });

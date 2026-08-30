@@ -77,10 +77,17 @@ base-angle tilt that centers it. `L` is measured from a real `.tc-fan-item`
 ### `direction="auto"`
 
 The docs site knows its dock edge and passes an explicit direction. A generic
-consumer does not, so `auto` resolves from the trigger rect: pick the axis
-(vertical vs horizontal) with more room, then the side of that axis with more
-room. It is recomputed on every reposition, so a fixed trigger that moves
-(dock edge change) re-resolves without the parent doing anything.
+consumer does not, so `auto` resolves from the trigger rect by finding the
+**nearest viewport edge and fanning away from it**. Ties favor `up`, the
+common bottom-dock case.
+
+"Fan toward the most room" was the obvious first cut and is wrong: a trigger
+in the right-hand third of a bottom dock has more room to its left than above
+it, so it would fan sideways across the dock instead of up off it. Nearest
+edge gets that case right because the bottom edge is what constrains it.
+
+It is recomputed on every reposition, so a fixed trigger that moves (dock edge
+change) re-resolves without the parent doing anything.
 
 Explicit directions are the escape hatch and are what docs will pass, mapping
 dock placement → fan direction (bottom→up, top→down, left→right, right→left).
