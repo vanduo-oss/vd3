@@ -3,6 +3,30 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.0 — unreleased
+
+### Added
+
+- **`VdDock` accent tint mode** — a `tintMode` prop (`surface` | `accent`,
+  default `surface`). `surface` keeps painting the pill from the tint hue.
+  `accent` adds `.vd-dock-tint-accent` so the pill stays constant ink while
+  `--vd-dock-tint` remains set for items and the `#brand` slot to consume —
+  the treatment chrome wants when it floats over light page content. The
+  accent rule out-specifies the surface rule on selector weight alone, so no
+  `!important` and no source-order dependency. `tintMode="accent"` without a
+  `tint` is a no-op, and an out-of-range value falls back to `surface`.
+  `DOCK_TINT_MODES` and `DockTintMode` join the other `DOCK_*` exports.
+- **`useTooltips` show delay** — `useTooltips(root, { showDelay })` holds a
+  tooltip back until the pointer or focus has rested on the trigger, which
+  keeps icon-only dock chrome from flashing labels on pass-through. A
+  per-trigger `data-tooltip-delay` overrides the option; `0` shows
+  synchronously. A pending show is cancelled on leave, blur, and unmount.
+  The composable now also rescans its root through a `MutationObserver`
+  (guarded for SSR), so triggers added or relabelled after mount get wired —
+  needed because dock chrome moves controls between `#actions` and the item
+  strip at the narrow breakpoint. Rescans are idempotent via a `WeakSet`, and
+  every listener plus the observer detaches on unmount.
+
 ## 1.6.0 — 2026-08-16
 
 ### Added

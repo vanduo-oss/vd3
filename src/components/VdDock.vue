@@ -3,6 +3,7 @@ import { computed, watch } from "vue";
 import {
   DOCK_GLASS_STEPS,
   DOCK_RADIUS_OPTIONS,
+  DOCK_TINT_MODES,
   DOCK_TINTS,
   dockOrientationOf,
   useDockOrientation,
@@ -12,6 +13,7 @@ import {
   type DockPlacement,
   type DockRadius,
   type DockTint,
+  type DockTintMode,
 } from "../composables/useDockOrientation";
 
 interface Props {
@@ -20,6 +22,8 @@ interface Props {
   position?: "fixed" | "contained";
   dark?: boolean;
   tint?: DockTint | "";
+  /** `surface` tints the pill; `accent` keeps it ink and tints icons only. */
+  tintMode?: DockTintMode;
   glass?: DockGlass;
   radius?: DockRadius | string;
   itemLayout?: DockItemLayout;
@@ -37,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
   position: "fixed",
   dark: true,
   tint: "",
+  tintMode: "surface",
   glass: 34,
   radius: "1.25",
   itemLayout: "stack",
@@ -122,6 +127,12 @@ const resolvedTint = computed(() =>
   (DOCK_TINTS as readonly string[]).includes(props.tint) ? props.tint : "",
 );
 
+const resolvedTintMode = computed<DockTintMode>(() =>
+  (DOCK_TINT_MODES as readonly string[]).includes(props.tintMode)
+    ? props.tintMode
+    : "surface",
+);
+
 const edgeClass = computed(() => `vd-dock-edge-${placement.value}`);
 
 const rootClasses = computed(() => [
@@ -135,6 +146,9 @@ const rootClasses = computed(() => [
     ? "vd-dock-items-inline"
     : "vd-dock-items-stack",
   resolvedTint.value ? `vd-dock-tint-${resolvedTint.value}` : null,
+  resolvedTint.value && resolvedTintMode.value === "accent"
+    ? "vd-dock-tint-accent"
+    : null,
   edgeClass.value,
   dockClasses.value,
 ]);

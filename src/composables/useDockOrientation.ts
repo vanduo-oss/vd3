@@ -30,6 +30,13 @@ export const DOCK_TINTS = [
 ] as const;
 export type DockTint = (typeof DOCK_TINTS)[number];
 
+/**
+ * How `tint` is applied. `surface` paints the dock background from the hue;
+ * `accent` keeps the pill ink and leaves the hue to items / the brand slot.
+ */
+export const DOCK_TINT_MODES = ["surface", "accent"] as const;
+export type DockTintMode = (typeof DOCK_TINT_MODES)[number];
+
 export const DOCK_GLASS_STEPS = [1, 2, 3, 5, 8, 13, 21, 34] as const;
 export type DockGlass = (typeof DOCK_GLASS_STEPS)[number];
 

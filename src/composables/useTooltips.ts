@@ -1,6 +1,11 @@
 import { onMounted, onUnmounted, type Ref } from "vue";
 import { sanitizeHtml } from "../utils/sanitizeHtml";
 
+export type UseTooltipsOptions = {
+  /** Default show delay (ms) when a trigger has no data-tooltip-delay. */
+  showDelay?: number;
+};
+
 /**
  * Reproduces the framework's `Vanduo.init()` tooltip wiring in Vue: scans a root
  * element for `[data-tooltip]` / `[data-tooltip-html]` triggers and shows a
@@ -10,11 +15,24 @@ import { sanitizeHtml } from "../utils/sanitizeHtml";
  * mirroring the framework's tooltips.js, which sanitizes too. (`data-tooltip`
  * stays plain text via textContent.)
  */
-export function useTooltips(root: Ref<HTMLElement | null>): void {
+export function useTooltips(
+  root: Ref<HTMLElement | null>,
+  options: UseTooltipsOptions = {},
+): void {
   let current: HTMLElement | null = null;
+  let showTimer: ReturnType<typeof setTimeout> | null = null;
+  const wired = new WeakSet<HTMLElement>();
   const cleanups: Array<() => void> = [];
 
+  const clearShowTimer = (): void => {
+    if (showTimer !== null) {
+      clearTimeout(showTimer);
+      showTimer = null;
+    }
+  };
+
   const hide = (): void => {
+    clearShowTimer();
     if (current) {
       current.remove();
       current = null;
@@ -79,26 +97,78 @@ export function useTooltips(root: Ref<HTMLElement | null>): void {
     current = tip;
   };
 
+  const resolveDelay = (trigger: HTMLElement): number => {
+    const attr = trigger.getAttribute("data-tooltip-delay");
+    if (attr !== null && attr !== "") {
+      const parsed = Number.parseInt(attr, 10);
+      if (!Number.isNaN(parsed) && parsed >= 0) return parsed;
+    }
+    return options.showDelay ?? 0;
+  };
+
+  const scheduleShow = (trigger: HTMLElement): void => {
+    clearShowTimer();
+    const delay = resolveDelay(trigger);
+    if (delay <= 0) {
+      show(trigger);
+      return;
+    }
+    showTimer = setTimeout(() => {
+      showTimer = null;
+      show(trigger);
+    }, delay);
+  };
+
+  const wireTrigger = (trigger: HTMLElement): void => {
+    if (wired.has(trigger)) return;
+    if (
+      !trigger.hasAttribute("data-tooltip") &&
+      !trigger.hasAttribute("data-tooltip-html")
+    ) {
+      return;
+    }
+    wired.add(trigger);
+    const onEnter = (): void => scheduleShow(trigger);
+    const onLeave = (): void => hide();
+    trigger.addEventListener("mouseenter", onEnter);
+    trigger.addEventListener("mouseleave", onLeave);
+    trigger.addEventListener("focus", onEnter);
+    trigger.addEventListener("blur", onLeave);
+    cleanups.push(() => {
+      trigger.removeEventListener("mouseenter", onEnter);
+      trigger.removeEventListener("mouseleave", onLeave);
+      trigger.removeEventListener("focus", onEnter);
+      trigger.removeEventListener("blur", onLeave);
+    });
+  };
+
+  const scan = (el: HTMLElement): void => {
+    if (el.matches("[data-tooltip],[data-tooltip-html]") && !wired.has(el)) {
+      wireTrigger(el);
+    }
+    el.querySelectorAll<HTMLElement>(
+      "[data-tooltip],[data-tooltip-html]",
+    ).forEach(wireTrigger);
+  };
+
   onMounted(() => {
     const el = root.value;
     if (!el) return;
-    const triggers = el.querySelectorAll<HTMLElement>(
-      "[data-tooltip],[data-tooltip-html]",
-    );
-    triggers.forEach((trigger) => {
-      const onEnter = (): void => show(trigger);
-      const onLeave = (): void => hide();
-      trigger.addEventListener("mouseenter", onEnter);
-      trigger.addEventListener("mouseleave", onLeave);
-      trigger.addEventListener("focus", onEnter);
-      trigger.addEventListener("blur", onLeave);
-      cleanups.push(() => {
-        trigger.removeEventListener("mouseenter", onEnter);
-        trigger.removeEventListener("mouseleave", onLeave);
-        trigger.removeEventListener("focus", onEnter);
-        trigger.removeEventListener("blur", onLeave);
+    scan(el);
+    if (typeof MutationObserver !== "undefined") {
+      const mo = new MutationObserver(() => scan(el));
+      mo.observe(el, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: [
+          "data-tooltip",
+          "data-tooltip-html",
+          "data-tooltip-delay",
+        ],
       });
-    });
+      cleanups.push(() => mo.disconnect());
+    }
   });
 
   onUnmounted(() => {

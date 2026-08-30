@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref, type VNode } from "vue";
 import { mount, type VueWrapper } from "@vue/test-utils";
-import { useTooltips } from "../../src/composables/useTooltips";
+import {
+  useTooltips,
+  type UseTooltipsOptions,
+} from "../../src/composables/useTooltips";
 
 /**
  * useTooltips scans a root element for [data-tooltip]/[data-tooltip-html]
@@ -13,11 +16,14 @@ import { useTooltips } from "../../src/composables/useTooltips";
 type Attrs = Record<string, string>;
 
 /** Mount a host whose root holds one button per attribute record. */
-function mountTooltips(triggers: Attrs[]): VueWrapper {
+function mountTooltips(
+  triggers: Attrs[],
+  options: UseTooltipsOptions = {},
+): VueWrapper {
   const Host = defineComponent({
     setup() {
       const root = ref<HTMLElement | null>(null);
-      useTooltips(root);
+      useTooltips(root, options);
       return () =>
         h(
           "div",
@@ -96,6 +102,51 @@ describe("useTooltips show on hover/focus", () => {
     const wrapper = mountTooltips([{ "data-tooltip": "" }]);
     await wrapper.find("button").trigger("mouseenter");
     expect(tips()).toHaveLength(0);
+    wrapper.unmount();
+  });
+});
+
+describe("useTooltips show delay", () => {
+  it("waits for the default showDelay before appearing", async () => {
+    vi.useFakeTimers();
+    const wrapper = mountTooltips([{ "data-tooltip": "Delayed" }], {
+      showDelay: 400,
+    });
+    await wrapper.find("button").trigger("mouseenter");
+    expect(tips()).toHaveLength(0);
+    await vi.advanceTimersByTimeAsync(399);
+    expect(tips()).toHaveLength(0);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(tips()).toHaveLength(1);
+    vi.useRealTimers();
+    wrapper.unmount();
+  });
+
+  it("honours data-tooltip-delay on a trigger", async () => {
+    vi.useFakeTimers();
+    const wrapper = mountTooltips([
+      { "data-tooltip": "Custom", "data-tooltip-delay": "250" },
+    ]);
+    await wrapper.find("button").trigger("mouseenter");
+    await vi.advanceTimersByTimeAsync(249);
+    expect(tips()).toHaveLength(0);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(tips()).toHaveLength(1);
+    vi.useRealTimers();
+    wrapper.unmount();
+  });
+
+  it("cancels a pending tooltip on mouseleave", async () => {
+    vi.useFakeTimers();
+    const wrapper = mountTooltips([{ "data-tooltip": "Gone" }], {
+      showDelay: 500,
+    });
+    const btn = wrapper.find("button");
+    await btn.trigger("mouseenter");
+    await btn.trigger("mouseleave");
+    await vi.advanceTimersByTimeAsync(500);
+    expect(tips()).toHaveLength(0);
+    vi.useRealTimers();
     wrapper.unmount();
   });
 });

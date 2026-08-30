@@ -537,6 +537,14 @@
   background: color-mix(in srgb, var(--vd-dock-tint) 38%, #0a0a0a);
 }
 
+/* Accent tint mode: constant ink pill, hue left to items and the brand slot.
+   One class more than the surface rule above, so weight alone picks the winner
+   and neither `!important` nor source order is load-bearing. */
+.vd-dock.vd-dock-dark.vd-dock-tint-accent[class*="vd-dock-tint-"] {
+  background: color-mix(in srgb, #0a0a0a 90%, transparent);
+  background-image: none;
+}
+
 .vd-dock-items-stack .vd-dock-item {
   flex-direction: column;
 }
