@@ -119,13 +119,14 @@ const hasQuery = computed(() => query.value.trim().length >= minQueryLength);
  */
 const isAiControlled = computed(() => props.aiEnabled !== undefined);
 
-watch(
-  () => props.aiEnabled,
-  (value) => {
-    if (value !== undefined && value !== aiOn.value) setAiEnabled(value);
-  },
-  { immediate: true },
-);
+const syncAiFromProp = (value: boolean | undefined): void => {
+  if (value !== undefined && value !== aiOn.value) setAiEnabled(value);
+};
+
+// Deliberately not `immediate`: enabling runs `adapter.warmup`, and an
+// immediate watch would fire that during setup — on the server under SSR, and
+// on the client before mount. The initial sync happens in `onMounted` instead.
+watch(() => props.aiEnabled, syncAiFromProp);
 
 const indexOf = (hit: GlobalSearchHit): number =>
   ordered.value.findIndex((r) => r.id === hit.id);
@@ -199,6 +200,7 @@ const onOpenEvent = (): void => {
 };
 
 onMounted(() => {
+  syncAiFromProp(props.aiEnabled);
   if (typeof window === "undefined") return;
   window.addEventListener("keydown", onGlobalKeydown);
   if (props.openEventName) {

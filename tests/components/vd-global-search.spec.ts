@@ -167,6 +167,19 @@ describe("VdGlobalSearch", () => {
     expect(modal.hasAttribute("inert")).toBe(false);
   });
 
+  it("defers warmup for a pre-enabled aiEnabled prop until mount", async () => {
+    vi.useFakeTimers();
+    factory({ aiEnabled: true });
+    await nextTick();
+
+    // Applied, but only from onMounted — never during setup, where it would
+    // also run on the server under SSR.
+    expect(adapter.warmup).toHaveBeenCalledWith(true);
+    expect(
+      document.body.querySelector(".vd-global-search-ai-notice"),
+    ).toBeTruthy();
+  });
+
   it("lets a bound aiEnabled prop own the toggle", async () => {
     vi.useFakeTimers();
     const wrapper = factory({ aiEnabled: false });
