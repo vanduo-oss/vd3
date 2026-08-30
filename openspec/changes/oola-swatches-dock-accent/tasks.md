@@ -29,8 +29,9 @@
 - [x] 9. `tests/types/dock-api.test-d.ts` lock for `DockTintMode` and the
       customizer variant / fan direction types; `tests/generated-css.spec.ts`
       for the new classes.
-- [ ] 10. `pnpm build` (includes `check:classes`), `pnpm test`, lint,
-      stylelint, format:check, typecheck.
+- [x] 10. `pnpm build` (includes `check:classes`), `pnpm test`, lint,
+      stylelint, format:check, typecheck. All green: 1367 tests / 116 files,
+      class coverage 398 static + 28 dynamic.
 - [ ] 11. Docs sync in vd3-docs (separate change `docs-oola-swatches`):
       adopt `tint-mode` + the swatches variant, retire the
       `useDocsDockTooltips` fork and the site-local fan / tooltip / dock
