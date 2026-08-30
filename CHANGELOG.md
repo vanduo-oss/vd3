@@ -3,7 +3,7 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
-## 1.7.0 — unreleased
+## 1.7.0 — 2026-08-30
 
 ### Added
 

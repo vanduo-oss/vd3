@@ -60,9 +60,9 @@ import { VdButton, VdCard } from "@vanduo-oss/vd3";
 Everything is a named export from the package root — import only what you
 render; nothing registers globally.
 
-- **52 components** — 45 `Vd*` components plus 7 layout primitives (`VdBox`,
+- **63 components** — 56 `Vd*` components plus 7 layout primitives (`VdBox`,
   `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
-- **~35 composables** — the theme layer (`useTheme`, `useThemeBridge`, and the
+- **40 composables** — the theme layer (`useTheme`, `useThemeBridge`, and the
   `useThemePreference` reactive singleton), plus form, overlay/dismissal,
   motion/scroll, and layout/interaction helpers. The `sanitizeHtml` whitelist
   sanitizer is exported too.
