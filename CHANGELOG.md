@@ -3,6 +3,58 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.0 — 2026-08-30
+
+### Added
+
+- **`VdGlobalSearch` + `useGlobalSearch`** — site-wide command palette (Teleport
+  overlay modal) with grouped results, keyboard navigation, optional AI opt-in
+  toggle + disclaimer slot, and engine-agnostic `GlobalSearchAdapter` injection.
+  Shortcut: Cmd/Ctrl+K and `/` (disable on co-mounted `VdDocSearch` via
+  `:keyboard-shortcut="false"`). Bind `aiEnabled` to control the AI toggle
+  from the parent and read `update:aiEnabled`; every other prop is read once
+  on mount. Layering is themable through
+  `--vd-global-search-overlay-z-index` / `--vd-global-search-modal-z-index`,
+  and the dialog is `inert` while closed so it stays out of the tab order and
+  the accessibility tree.
+- **`VdThemeCustomizer` swatches variant** — a `variant` prop (`panel` |
+  `swatches`, default `panel`). `panel` is the existing slide-in editor,
+  untouched. `swatches` swaps it for a hinged primary-only fan: blades pivot
+  around the trigger like a hand fan, unfolding along `direction` (`auto` |
+  `up` | `down` | `left` | `right`) and shrinking their arc to stay inside the
+  viewport. Built for dock and toolbar chrome that has no room for a 320px
+  panel. `swatches` restricts the fan to given `PRIMARY_COLORS` keys (all 18
+  make for a crowded fan), and `preview` applies a hue on hover and restores
+  the opening value if the fan closes uncommitted. The fan reuses the panel's
+  overlay contract: Escape, outside pointerdown, `vd:open-customizer`, and the
+  same `open` / `close` / `toggle` expose.
+- **`VdThemeCustomizer` controlled primary** — binding `primary` switches
+  either variant into controlled mode: the component renders from the prop and
+  reports changes through `update:primary` instead of writing the
+  `useThemePreference()` singleton. Apps that wrap theming in their own store
+  (clamping the offered hues, forcing other fields) can now drive the
+  customizer without it writing behind their back. Unbound, behavior is
+  unchanged.
+- **`VdDock` accent tint mode** — a `tintMode` prop (`surface` | `accent`,
+  default `surface`). `surface` keeps painting the pill from the tint hue.
+  `accent` adds `.vd-dock-tint-accent` so the pill stays constant ink while
+  `--vd-dock-tint` remains set for items and the `#brand` slot to consume —
+  the treatment chrome wants when it floats over light page content. The
+  accent rule out-specifies the surface rule on selector weight alone, so no
+  `!important` and no source-order dependency. `tintMode="accent"` without a
+  `tint` is a no-op, and an out-of-range value falls back to `surface`.
+  `DOCK_TINT_MODES` and `DockTintMode` join the other `DOCK_*` exports.
+- **`useTooltips` show delay** — `useTooltips(root, { showDelay })` holds a
+  tooltip back until the pointer or focus has rested on the trigger, which
+  keeps icon-only dock chrome from flashing labels on pass-through. A
+  per-trigger `data-tooltip-delay` overrides the option; `0` shows
+  synchronously. A pending show is cancelled on leave, blur, and unmount.
+  The composable now also rescans its root through a `MutationObserver`
+  (guarded for SSR), so triggers added or relabelled after mount get wired —
+  needed because dock chrome moves controls between `#actions` and the item
+  strip at the narrow breakpoint. Rescans are idempotent via a `WeakSet`, and
+  every listener plus the observer detaches on unmount.
+
 ## 1.6.0 — 2026-08-16
 
 ### Added

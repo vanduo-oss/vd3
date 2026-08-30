@@ -11,7 +11,9 @@ standalone: one package ships its own DTCG design tokens, CSS tree, and typed
 `Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
 no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
 
-**Status: 1.6.0** (`VdCodeSnippet` chrome + Copy header; `VdButton` ink; 1.5.0 Oola Dock / `VdDock`; 1.4.0 auth screens + data table;
+**Status: 1.7.0** (`VdThemeCustomizer` swatches palette + controlled primary, dock accent tint mode, tooltip show delay;
+1.6.0 `VdCodeSnippet` chrome + Copy header, `VdButton` ink;
+1.5.0 Oola Dock / `VdDock`; 1.4.0 auth screens + data table;
 1.3.0 Seemore Glass / surfaces / floating navbar; 1.2.3 `storagePrefix`).
 
 ## Install
@@ -58,9 +60,9 @@ import { VdButton, VdCard } from "@vanduo-oss/vd3";
 Everything is a named export from the package root — import only what you
 render; nothing registers globally.
 
-- **52 components** — 45 `Vd*` components plus 7 layout primitives (`VdBox`,
+- **63 components** — 56 `Vd*` components plus 7 layout primitives (`VdBox`,
   `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
-- **~35 composables** — the theme layer (`useTheme`, `useThemeBridge`, and the
+- **40 composables** — the theme layer (`useTheme`, `useThemeBridge`, and the
   `useThemePreference` reactive singleton), plus form, overlay/dismissal,
   motion/scroll, and layout/interaction helpers. The `sanitizeHtml` whitelist
   sanitizer is exported too.
