@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { nextTick } from "vue";
+import { createSSRApp, nextTick } from "vue";
+import { renderToString } from "vue/server-renderer";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import VdGlobalSearch from "../../src/components/VdGlobalSearch.vue";
 import type {
@@ -167,17 +168,35 @@ describe("VdGlobalSearch", () => {
     expect(modal.hasAttribute("inert")).toBe(false);
   });
 
-  it("defers warmup for a pre-enabled aiEnabled prop until mount", async () => {
+  it("applies a pre-enabled aiEnabled prop on mount", async () => {
     vi.useFakeTimers();
     factory({ aiEnabled: true });
     await nextTick();
 
-    // Applied, but only from onMounted — never during setup, where it would
-    // also run on the server under SSR.
     expect(adapter.warmup).toHaveBeenCalledWith(true);
     expect(
       document.body.querySelector(".vd-global-search-ai-notice"),
     ).toBeTruthy();
+  });
+
+  it("never warms the adapter up during server rendering", async () => {
+    // mount() runs setup and onMounted in one tick, so only a server render
+    // can prove the warmup is deferred rather than merely eventual.
+    const warmup = vi.fn(async () => {});
+    const ssrAdapter: GlobalSearchAdapter = {
+      search: vi.fn(async () => hits),
+      warmup,
+    };
+
+    await renderToString(
+      createSSRApp(VdGlobalSearch, {
+        adapter: ssrAdapter,
+        aiEnabled: true,
+        shortcut: false,
+      }),
+    );
+
+    expect(warmup).not.toHaveBeenCalled();
   });
 
   it("lets a bound aiEnabled prop own the toggle", async () => {
