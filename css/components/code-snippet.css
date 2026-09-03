@@ -522,32 +522,32 @@
 
 @media (max-width: 640px) {
   .vd-code-snippet-header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 0.5rem;
     padding: 0.5rem;
   }
-  
+
   .vd-code-snippet-tabs {
-    order: 2;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  
+
   .vd-code-snippet-tabs::-webkit-scrollbar {
     display: none;
   }
-  
+
   .vd-code-snippet-copy {
-    order: 1;
+    flex-shrink: 0;
     margin-left: auto;
   }
-  
+
   .vd-code-snippet-pane {
     padding: 0.75rem;
   }
-  
+
   .vd-code-snippet-pane code {
     font-size: 0.8125rem;
   }

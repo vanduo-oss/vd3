@@ -3,6 +3,14 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## Unreleased
+
+### Fixed
+
+- **Snippet Copy header (mobile)** — at viewports ≤640px, Copy and language
+  tabs stay on one `.vd-code-snippet-header` row instead of wrapping Copy onto
+  its own row above the tablist.
+
 ## 1.7.0 — 2026-08-30
 
 ### Added
