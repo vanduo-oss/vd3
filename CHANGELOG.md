@@ -3,6 +3,16 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.1 — 2026-09-03
+
+### Fixed
+
+- **Snippet Copy header (mobile)** — at viewports ≤640px, Copy and language
+  tabs stay on one `.vd-code-snippet-header` row instead of wrapping Copy onto
+  its own row above the tablist.
+- **CI audit** — pin transitive `fast-uri` (via stylelint) to `^3.1.6` so
+  `pnpm audit --audit-level=moderate` stays green. Dev-only; not shipped.
+
 ## 1.7.0 — 2026-08-30
 
 ### Added

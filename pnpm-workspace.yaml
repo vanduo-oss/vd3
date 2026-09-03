@@ -14,10 +14,12 @@ overrides:
 
   # Security: force the transitive fast-uri (pulled via
   # stylelint > table > ajv > fast-uri) to a patched release —
-  # GHSA-v2hh-gcrm-f6hx (host confusion via a literal backslash authority
-  # delimiter). Dev-only (never shipped in dist); keeps
-  # `pnpm audit --audit-level=moderate` green.
-  "fast-uri@>=3.0.0 <=3.1.3": "^3.1.4"
+  # GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc, GHSA-fph4-wmhf-6fwf,
+  # GHSA-jqff-g426-hqxp (host confusion / SSRF in URI normalization).
+  # Dev-only (never shipped in dist); keeps
+  # `pnpm audit --audit-level=moderate` green. 3.1.4/3.1.5 remain in
+  # the vulnerable range, so the pin is ^3.1.6.
+  "fast-uri@>=3.0.0 <3.1.6": "^3.1.6"
 
   # Security: force the transitive nanoid (pulled via
   # stylelint > postcss > nanoid) to a patched release —
