@@ -2,20 +2,15 @@
 
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-> Vanduo UI for Vue 3 — design system and component library (the vd3 line).
+> Vanduo UI for Vue 3 — design system and component library.
 
-The Vue3-only line of the [Vanduo](https://vanduo.dev) design system. Unlike
-the previous three-package split (`@vanduo-oss/core` tokens +
-`@vanduo-oss/framework` CSS/JS + `@vanduo-oss/vue` components), vd3 is fully
-standalone: one package ships its own DTCG design tokens, CSS tree, and typed
-`Vd*` components/composables. Sole peer dependency: `vue >=3.3` — no pinia, and
-no framework IIFE runtime (`loadVanduoRuntime` / `window.Vanduo*` are gone).
+Standalone [Vanduo](https://vanduo.dev) package: DTCG tokens, CSS, and typed
+`Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
+runtime.
 
-**Status: 1.7.1** (snippet Copy + tabs stay on one mobile header row;
-1.7.0 `VdThemeCustomizer` swatches palette + controlled primary, dock accent tint mode, tooltip show delay;
-1.6.0 `VdCodeSnippet` chrome + Copy header, `VdButton` ink;
-1.5.0 Oola Dock / `VdDock`; 1.4.0 auth screens + data table;
-1.3.0 Seemore Glass / surfaces / floating navbar; 1.2.3 `storagePrefix`).
+**Status: 1.7.2** — contrast-aware on-fill ink (`--vd-text-on-primary`,
+`--vd-text-on-primary-hover`, `--vd-text-on-status`). Bright fills use dark
+ink in light and dark; override the tokens for custom primaries.
 
 ## Install
 
@@ -92,6 +87,12 @@ re-exported from the package root, or import raw JSON from
 `@vanduo-oss/vd3/tokens.json`. Ship the token-only stylesheet with
 `@vanduo-oss/vd3/css/core`.
 
+Filled primary surfaces use `--vd-text-on-primary` (hover:
+`--vd-text-on-primary-hover`). Status fills use `--vd-text-on-status`.
+Override those on `<html>` for a custom primary that the built-in hue matrix
+does not cover. `--vd-text-inverse` is the dark-surface token, not on-fill
+ink. Light `.vd-btn-ink:hover` stays white on black.
+
 ### SSR
 
 The package is SSR / `vite-ssg`-safe: all browser access is client-guarded with
@@ -164,12 +165,14 @@ pnpm test          # vitest (jsdom) — token/DTCG/palette contracts + smoke
 pnpm build         # full chain (see Build pipeline)
 ```
 
-Requires Node >= 24 and pnpm >= 10 (`packageManager: pnpm@10.28.2`).
+Consumers: Node >= 20.19. Contributors / CI: Node 24 and pnpm >= 10
+(`packageManager: pnpm@10.28.2`). See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Documentation
 
 - Agent / LLM reference — [SKILL.md](./SKILL.md)
 - Changelog — [CHANGELOG.md](./CHANGELOG.md)
+- Contributing — [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 

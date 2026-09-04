@@ -1,7 +1,7 @@
 # design-tokens Specification
 
 ## Purpose
-TBD - created by archiving change vd3-token-css-foundation. Update Purpose after archive.
+DTCG token sources, the token build, and the CSS/DTCG value-sync gate for `@vanduo-oss/vd3`.
 ## Requirements
 ### Requirement: dtcg-token-sources
 

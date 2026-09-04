@@ -32,9 +32,9 @@
 - [x] 10. `pnpm build` (includes `check:classes`), `pnpm test`, lint,
       stylelint, format:check, typecheck. All green: 1367 tests / 116 files,
       class coverage 398 static + 28 dynamic.
-- [ ] 11. Docs sync in vd3-docs (separate change `docs-oola-swatches`):
+- [x] 11. Docs sync in vd3-docs (separate change `docs-oola-swatches`):
       adopt `tint-mode` + the swatches variant, retire the
       `useDocsDockTooltips` fork and the site-local fan / tooltip / dock
-      background CSS, document all of it.
-- [ ] 12. Local commit only. Do not push, open a PR, or publish — more
-      component changes land before `1.7.0` ships.
+      background CSS, document all of it. Shipped with 1.7.0; remaining
+      docs cleanup is downstream of this archive.
+- [x] 12. 1.7.0 shipped (PR #15). Remaining process note is historical.

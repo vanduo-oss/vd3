@@ -228,32 +228,32 @@
 /* Color Variants */
 .vd-avatar-primary {
   background-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-avatar-secondary {
   background-color: var(--vd-color-secondary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-avatar-success {
   background-color: var(--vd-color-success);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-avatar-warning {
   background-color: var(--vd-color-warning);
-  color: var(--vd-color-gray-900);
+  color: var(--vd-text-on-status);
 }
 
 .vd-avatar-error {
   background-color: var(--vd-color-error);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-avatar-info {
   background-color: var(--vd-color-info);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 /* Clickable Avatar */

@@ -106,13 +106,13 @@
 .vd-btn-primary {
   background-color: var(--vd-color-primary);
   border-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-btn-primary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-primary-dark);
   border-color: var(--vd-color-primary-dark);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary-hover);
 }
 
 .vd-btn-primary:active:not(:disabled):not(.disabled):not(.is-disabled) {
@@ -125,13 +125,13 @@
 .vd-btn-secondary {
   background-color: var(--vd-color-secondary);
   border-color: var(--vd-color-secondary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-secondary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-secondary-dark);
   border-color: var(--vd-color-secondary-dark);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-secondary:active:not(:disabled):not(.disabled):not(.is-disabled) {
@@ -144,13 +144,13 @@
 .vd-btn-success {
   background-color: var(--vd-color-success);
   border-color: var(--vd-color-success);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-success:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-success-dark);
   border-color: var(--vd-color-success-dark);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-success:active:not(:disabled):not(.disabled):not(.is-disabled) {
@@ -163,13 +163,13 @@
 .vd-btn-warning {
   background-color: var(--vd-color-warning);
   border-color: var(--vd-color-warning);
-  color: var(--vd-color-black);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-warning:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-warning-dark);
   border-color: var(--vd-color-warning-dark);
-  color: var(--vd-color-black);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-warning:active:not(:disabled):not(.disabled):not(.is-disabled) {
@@ -183,14 +183,14 @@
 .vd-btn-danger {
   background-color: var(--vd-color-error);
   border-color: var(--vd-color-error);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-error:hover:not(:disabled):not(.disabled):not(.is-disabled),
 .vd-btn-danger:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-error-dark);
   border-color: var(--vd-color-error-dark);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-error:active:not(:disabled):not(.disabled):not(.is-disabled),
@@ -204,13 +204,13 @@
 .vd-btn-info {
   background-color: var(--vd-color-info);
   border-color: var(--vd-color-info);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-info:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-info-dark);
   border-color: var(--vd-color-info-dark);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-info:active:not(:disabled):not(.disabled):not(.is-disabled) {
@@ -229,7 +229,7 @@
 .vd-btn-outline:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-primary);
   border-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-btn-outline-primary {
@@ -241,7 +241,7 @@
 .vd-btn-outline-primary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-primary);
   border-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-btn-outline-secondary {
@@ -253,7 +253,7 @@
 .vd-btn-outline-secondary:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-secondary);
   border-color: var(--vd-color-secondary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-outline-success {
@@ -265,7 +265,7 @@
 .vd-btn-outline-success:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-success);
   border-color: var(--vd-color-success);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-outline-warning {
@@ -277,7 +277,7 @@
 .vd-btn-outline-warning:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-warning);
   border-color: var(--vd-color-warning);
-  color: var(--vd-color-black);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-outline-error,
@@ -291,7 +291,7 @@
 .vd-btn-outline-danger:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-error);
   border-color: var(--vd-color-error);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-btn-outline-info {
@@ -303,7 +303,7 @@
 .vd-btn-outline-info:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-info);
   border-color: var(--vd-color-info);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 /* Button Variants - Ghost/Text */
@@ -458,7 +458,7 @@
 .vd-btn-ink:hover:not(:disabled):not(.disabled):not(.is-disabled) {
   background-color: var(--vd-color-black);
   border-color: var(--vd-color-black);
-  color: var(--vd-text-on-primary);
+  color: var(--vd-color-white);
 }
 
 .vd-btn-ink:active:not(:disabled):not(.disabled):not(.is-disabled) {
@@ -652,18 +652,18 @@ a.vd-btn:hover {
   animation: btn-spinner 0.6s linear infinite;
 }
 
-.vd-btn-primary.is-loading::after,
+.vd-btn-primary.is-loading::after {
+  border-color: var(--vd-text-on-primary);
+  border-right-color: transparent;
+}
+
 .vd-btn-secondary.is-loading::after,
 .vd-btn-success.is-loading::after,
 .vd-btn-error.is-loading::after,
 .vd-btn-danger.is-loading::after,
-.vd-btn-info.is-loading::after {
-  border-color: var(--vd-color-white);
-  border-right-color: transparent;
-}
-
+.vd-btn-info.is-loading::after,
 .vd-btn-warning.is-loading::after {
-  border-color: var(--vd-color-black);
+  border-color: var(--vd-text-on-status);
   border-right-color: transparent;
 }
 
@@ -743,18 +743,18 @@ a.vd-btn:hover {
   animation: btn-spinner 0.6s linear infinite;
 }
 
-.vd-btn-primary .vd-btn-spinner,
+.vd-btn-primary .vd-btn-spinner {
+  border-color: var(--vd-text-on-primary);
+  border-right-color: transparent;
+}
+
 .vd-btn-secondary .vd-btn-spinner,
 .vd-btn-success .vd-btn-spinner,
 .vd-btn-danger .vd-btn-spinner,
 .vd-btn-error .vd-btn-spinner,
-.vd-btn-info .vd-btn-spinner {
-  border-color: var(--vd-color-white);
-  border-right-color: transparent;
-}
-
+.vd-btn-info .vd-btn-spinner,
 .vd-btn-warning .vd-btn-spinner {
-  border-color: var(--vd-color-black);
+  border-color: var(--vd-text-on-status);
   border-right-color: transparent;
 }
 

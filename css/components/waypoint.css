@@ -42,7 +42,7 @@
 /* Pill variant */
 .vd-waypoint-nav.vd-waypoint-pill a.is-active {
   background-color: var(--vd-waypoint-active-color);
-  color: #fff;
+  color: var(--vd-text-on-primary);
   border-radius: 1rem;
   padding: 0.25rem 0.8125rem; /* 4px 13px */
 }

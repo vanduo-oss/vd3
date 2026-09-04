@@ -91,7 +91,7 @@ const CSS_ONLY_ALLOW: ReadonlyArray<{ re: RegExp; why: string }> = [
     re: /^--vd-color-(success|warning|error|info)-(hover|active)$/,
     why: "hover/active state variants",
   },
-  { re: /^--vd-text-(tertiary|disabled|on-primary)$/, why: "extra text roles" },
+  { re: /^--vd-text-(tertiary|disabled)$/, why: "extra text roles" },
 ];
 
 const cssRoot = rootDecls("tokens.css");

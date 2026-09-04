@@ -1,18 +1,7 @@
-// @vanduo-oss/vd3 — Vanduo UI for Vue 3 (the vd3 line).
-// Auto-organized barrel. Tree-shakeable named exports.
-//
-// The pure-Vue surface of the old @vanduo-oss/vue package, minus
-// `loadVanduoRuntime` (vd3 is standalone — there is no IIFE runtime).
-// The `vd3-rewrites` change restored `VdMenu` plus the 12 previously
-// deferred delegating/DOM-scan composables (useDropdown, useDraggable,
-// useImageBox, useRipple, useSpotlight, useTimeline, useExpandingCards,
-// useFlow, useTabs, useValidate, useSearch, usePopover) as pure Vue
-// composables; the `vd3-new-components` change added seven new components
-// (VdBreadcrumb, VdFooter, VdFab, VdNavbar, VdThemeSwitcher,
-// VdThemeCustomizer, VdDocSearch) and four composables (useClickOutside,
-// useDocSearch, useLazyLoad, useGrid + `setGridSystem`).
+// @vanduo-oss/vd3 — Vanduo UI for Vue 3. Tree-shakeable named exports.
+// Standalone: no IIFE runtime, no `loadVanduoRuntime`.
 
-export const VD3_VERSION = "1.7.1";
+export const VD3_VERSION = "1.7.2";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";

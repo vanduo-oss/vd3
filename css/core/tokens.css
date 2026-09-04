@@ -117,7 +117,9 @@
   --vd-text-light: var(--vd-color-gray-400);
   --vd-text-tertiary: var(--vd-text-secondary);
   --vd-text-disabled: var(--vd-text-muted);
-  --vd-text-on-primary: var(--vd-color-white);
+  --vd-text-on-primary: var(--vd-color-black);
+  --vd-text-on-primary-hover: var(--vd-color-white);
+  --vd-text-on-status: var(--vd-color-black);
   --vd-text-inverse: var(--vd-color-white);
 
   /* ============================================
@@ -244,6 +246,24 @@
   /* 2xl: 1400px */
 }
 
+/* On-fill ink: default indigo rest fails 4.5:1 against white. Light hover
+ * (step 7) is dark enough for white except the bright mid-tones below. */
+html[data-primary="black"] {
+  --vd-text-on-primary: var(--vd-color-white);
+  --vd-text-on-primary-hover: var(--vd-color-white);
+}
+
+html[data-primary="red"],
+html[data-primary="orange"],
+html[data-primary="yellow"],
+html[data-primary="lime"],
+html[data-primary="green"],
+html[data-primary="teal"],
+html[data-primary="cyan"],
+html[data-primary="blue"] {
+  --vd-text-on-primary-hover: var(--vd-color-black);
+}
+
 /* ============================================
  * DARK MODE TOKENS
  * ============================================ */
@@ -258,6 +278,9 @@
   --vd-text-secondary: var(--vd-color-gray-400);
   --vd-text-muted: var(--vd-color-gray-500);
   --vd-text-light: var(--vd-color-gray-600);
+  --vd-text-on-primary: var(--vd-color-black);
+  --vd-text-on-primary-hover: var(--vd-color-black);
+  --vd-text-on-status: var(--vd-color-black);
   --vd-text-inverse: var(--vd-color-gray-900);
 
   --vd-border-color: var(--vd-color-gray-700);
@@ -282,6 +305,12 @@
   --vd-glass-highlight-alpha: 0.16;
 }
 
+/* Dark + black primary: rest fill (#a3a3a3) fails with white; hover (#525252) passes. */
+html[data-theme="dark"][data-primary="black"] {
+  --vd-text-on-primary: var(--vd-color-black);
+  --vd-text-on-primary-hover: var(--vd-color-white);
+}
+
 /* Dark mode via prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
@@ -295,6 +324,9 @@
     --vd-text-secondary: var(--vd-color-gray-400);
     --vd-text-muted: var(--vd-color-gray-500);
     --vd-text-light: var(--vd-color-gray-600);
+    --vd-text-on-primary: var(--vd-color-black);
+    --vd-text-on-primary-hover: var(--vd-color-black);
+    --vd-text-on-status: var(--vd-color-black);
     --vd-text-inverse: var(--vd-color-gray-900);
 
     --vd-border-color: var(--vd-color-gray-700);
@@ -317,5 +349,10 @@
     --vd-glass-border-light: var(--vd-glass-border-dark);
     --vd-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
     --vd-glass-highlight-alpha: 0.16;
+  }
+
+  :root:not([data-theme])[data-primary="black"] {
+    --vd-text-on-primary: var(--vd-color-black);
+    --vd-text-on-primary-hover: var(--vd-color-white);
   }
 }

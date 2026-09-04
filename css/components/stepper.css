@@ -97,7 +97,7 @@
 .vd-stepper-item.is-active .vd-stepper-circle {
   border-color: var(--vd-stepper-active-color);
   background: var(--vd-stepper-active-color);
-  color: #fff;
+  color: var(--vd-text-on-primary);
 }
 
 .vd-stepper-item.is-active .vd-stepper-label {
@@ -108,7 +108,7 @@
 .vd-stepper-item.is-completed .vd-stepper-circle {
   border-color: var(--vd-stepper-completed-color);
   background: var(--vd-stepper-completed-color);
-  color: #fff;
+  color: var(--vd-text-on-status);
 }
 
 .vd-stepper-item.is-completed::after {
@@ -122,7 +122,7 @@
 .vd-stepper-item.is-error .vd-stepper-circle {
   border-color: var(--vd-stepper-error-color);
   background: var(--vd-stepper-error-color);
-  color: #fff;
+  color: var(--vd-text-on-status);
 }
 
 .vd-stepper-item.is-error .vd-stepper-label {

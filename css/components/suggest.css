@@ -11,7 +11,7 @@
   --vd-suggest-shadow: 0 0.25rem 0.8125rem rgba(0, 0, 0, 0.1); /* 4px 13px - fib */
   --vd-suggest-item-hover-bg: var(--vd-bg-secondary, #f8f9fa);
   --vd-suggest-item-active-bg: var(--vd-color-primary, #0d6efd);
-  --vd-suggest-item-active-color: #fff;
+  --vd-suggest-item-active-color: var(--vd-text-on-primary);
   --vd-suggest-highlight-color: var(--vd-color-primary, #0d6efd);
 
   /* Suggest Spacing (Fibonacci) */

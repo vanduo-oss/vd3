@@ -127,7 +127,7 @@
 .table-primary,
 .table-primary>th,
 .table-primary>td {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
   background-color: var(--vd-color-primary);
 }
 
@@ -137,7 +137,7 @@
 .table-secondary,
 .table-secondary>th,
 .table-secondary>td {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
   background-color: var(--vd-color-secondary);
 }
 
@@ -147,7 +147,7 @@
 .table-success,
 .table-success>th,
 .table-success>td {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
   background-color: var(--vd-color-success);
 }
 
@@ -157,7 +157,7 @@
 .table-warning,
 .table-warning>th,
 .table-warning>td {
-  color: var(--vd-color-gray-900);
+  color: var(--vd-text-on-status);
   background-color: var(--vd-color-warning);
 }
 
@@ -167,7 +167,7 @@
 .table-error,
 .table-error>th,
 .table-error>td {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
   background-color: var(--vd-color-error);
 }
 
@@ -177,7 +177,7 @@
 .table-info,
 .table-info>th,
 .table-info>td {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
   background-color: var(--vd-color-info);
 }
 
