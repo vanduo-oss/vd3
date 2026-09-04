@@ -6,4 +6,4 @@
 - [x] 4. Add Vitest contrast/token contract tests (matrix + selector + negatives)
 - [x] 5. Refresh README, SKILL, CONTRIBUTING, changelog; bump to 1.7.2
 - [x] 6. `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm stylelint`, `pnpm build`
-- [ ] 7. Docs sync in vd3-docs: consume local 1.7.2, drop compensation CSS
+- [x] 7. Docs sync in vd3-docs: consume local 1.7.2, drop compensation CSS
