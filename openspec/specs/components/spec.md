@@ -999,7 +999,7 @@ and emit that class. The variant MUST NOT alter `.vd-btn-outline*`,
 - **GIVEN** an enabled `.vd-btn-ink` in a light scheme
 - **WHEN** it is hovered
 - **THEN** the fill and border SHALL be `--vd-color-black` and the label
-  SHALL use `--vd-text-on-primary`
+  SHALL use `--vd-color-white`
 - **AND GIVEN** the same control in a dark scheme (`[data-theme="dark"]`,
   or `prefers-color-scheme: dark` when `data-theme` is unset)
 - **THEN** the fill and border SHALL be `--vd-color-primary` and the label

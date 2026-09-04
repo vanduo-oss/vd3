@@ -212,6 +212,10 @@ describe("useDockOrientation", () => {
     expect(api.placement.value).toBe("bottom");
     expect(api.orientation.value).toBe("horizontal");
     expect(localStorage.getItem("vanduo-dock-orient")).toBe("left");
+    api.playTo("vertical");
+    api.playToPlacement("right");
+    expect(api.placement.value).toBe("bottom");
+    expect(localStorage.getItem("vanduo-dock-orient")).toBe("left");
     dispatchMedia(DOCK_NARROW_QUERY, false);
     expect(api.placement.value).toBe("left");
     expect(api.orientation.value).toBe("vertical");

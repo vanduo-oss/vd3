@@ -17,7 +17,7 @@ checkbox glyphs, large timeline markers, and footer-social hover.
 Hover fills MUST remain the existing solid primary / `*-dark` language.
 Light `.vd-btn-ink:hover` MUST stay white on `--vd-color-black`. Intentional
 white-on-dark treatments (`.vd-badge-dark`, `.vd-table-dark`, tooltips,
-`.vd-spinner-light`, lightbox close/caption) MUST keep light ink.
+`.vd-spinner-light`, image-box close/caption) MUST keep light ink.
 
 #### Scenario: filled primary button consumes the token
 

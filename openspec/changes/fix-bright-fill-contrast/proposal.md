@@ -20,7 +20,7 @@ every consumer gets readable filled chrome in light and dark.
   table status rows, checkbox glyphs, timeline markers).
 - Keep light-mode `.vd-btn-ink:hover` white-on-black. Do not change hover
   fill colors. Do not touch intentional white-on-dark surfaces
-  (`.vd-badge-dark`, `.vd-table-dark`, tooltips, lightbox chrome).
+  (`.vd-badge-dark`, `.vd-table-dark`, tooltips, image-box chrome).
 
 ## Capabilities
 

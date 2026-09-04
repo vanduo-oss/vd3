@@ -183,7 +183,7 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
   ): void => {
     if (typeof window === "undefined") return;
     if (isNarrow.value) {
-      snapToPlacement(dockHorizontalOf(placement.value));
+      applyVisual(dockHorizontalOf(chosenPlacement));
       return;
     }
     if (isMorphing.value) {

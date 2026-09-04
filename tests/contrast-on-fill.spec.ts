@@ -41,7 +41,7 @@ const BLACK = "#000000";
 const inkFor = (fill: string) =>
   contrast(WHITE, fill) >= 4.5 ? "white" : "black";
 
-/** Open Color rest (step 5) / hover (step 7) / dark rest (step 4). */
+/** Shipped primary rest (step 5) / hover (step 7) / dark rest (step 4). */
 const OC_PRIMARY: Record<string, { 4: string; 5: string; 7: string }> = {
   black: { 4: "#a3a3a3", 5: "#525252", 7: "#262626" },
   red: { 4: "#ff8787", 5: "#ff6b6b", 7: "#f03e3e" },
@@ -50,6 +50,7 @@ const OC_PRIMARY: Record<string, { 4: string; 5: string; 7: string }> = {
   yellow: { 4: "#ffd43b", 5: "#fcc419", 7: "#f59f00" },
   lime: { 4: "#a9e34b", 5: "#94d82d", 7: "#74b816" },
   green: { 4: "#69db7c", 5: "#51cf66", 7: "#37b24d" },
+  emerald: { 4: "#34d399", 5: "#10b981", 7: "#047857" },
   teal: { 4: "#38d9a9", 5: "#20c997", 7: "#0ca678" },
   cyan: { 4: "#3bc9db", 5: "#22b8cf", 7: "#1098ad" },
   sky: { 4: "#38bdf8", 5: "#0ea5e9", 7: "#0369a1" },
@@ -183,17 +184,23 @@ describe("filled selectors consume on-fill tokens", () => {
 
   it("known filled families no longer hardcode white ink", () => {
     const leftover: string[] = [];
-    const allowWhiteVar = /buttons\.css$|table\.css$|badges\.css$/;
+    const expectedWhiteVarCounts: Record<string, number> = {
+      "css/components/buttons.css": 1,
+      "css/components/badges.css": 1,
+      "css/utilities/table.css": 1,
+    };
     for (const rel of files) {
       const css = read(rel);
-      if (
-        /color:\s*var\(--vd-color-white\)/.test(css) &&
-        !allowWhiteVar.test(rel)
-      ) {
-        leftover.push(`${rel} still has color: var(--vd-color-white)`);
+      const whiteVarCount =
+        css.match(/^\s*color:\s*var\(--vd-color-white\)/gm)?.length ?? 0;
+      const expectedWhiteVarCount = expectedWhiteVarCounts[rel] ?? 0;
+      if (whiteVarCount !== expectedWhiteVarCount) {
+        leftover.push(
+          `${rel} has ${whiteVarCount} direct white-token foregrounds; expected ${expectedWhiteVarCount}`,
+        );
       }
-      if (/color:\s*#fff\b/i.test(css)) {
-        leftover.push(`${rel} still has color: #fff`);
+      if (/^\s*color:\s*#(?:fff|ffffff)\b/im.test(css)) {
+        leftover.push(`${rel} still has a literal white foreground`);
       }
     }
     // Light ink hover is the one intentional white-on-black in buttons.css.
@@ -237,11 +244,14 @@ describe("filled selectors consume on-fill tokens", () => {
         ),
       );
     }
+    expect(css).toMatch(
+      /\.vd-btn-error,\s*\.vd-btn-danger\s*\{[^}]*color:\s*var\(--vd-text-on-status\)/,
+    );
   });
 });
 
 describe("intentional white-on-dark negatives", () => {
-  it("keeps light ink on dark surfaces", () => {
+  it("keeps light ink on dark surfaces and media overlays", () => {
     expect(read("css/components/badges.css")).toMatch(
       /\.vd-badge-dark\s*\{[^}]*color:\s*var\(--vd-color-white\)/,
     );
@@ -253,6 +263,19 @@ describe("intentional white-on-dark negatives", () => {
     );
     expect(read("css/components/tooltips.css")).toContain(
       "--vd-tooltip-text-color: var(--vd-color-white)",
+    );
+    const imageBox = read("css/components/image-box.css");
+    expect(imageBox).toMatch(
+      /\.vd-image-box-close\s*\{[^}]*color:\s*var\(--vd-color-white\)/,
+    );
+    expect(imageBox).toMatch(
+      /\.vd-image-box-caption\s*\{[^}]*color:\s*var\(--vd-color-white\)/,
+    );
+    expect(read("css/components/flow.css")).toMatch(
+      /\.vd-flow-caption\s*\{[^}]*color:\s*#fff/,
+    );
+    expect(read("css/components/expanding-cards.css")).toMatch(
+      /\.vd-expanding-card-info\s*\{[^}]*color:\s*#fff/,
     );
   });
 });

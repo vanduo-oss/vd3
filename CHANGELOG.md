@@ -12,8 +12,8 @@ tracks the package only — never docs-site content.
   instead of hardcoded white. Bright hues (yellow, orange, lime, …) and the
   default indigo rest fill get dark ink; light-theme hover may stay white only
   when the darker stop clears 4.5:1. Dark theme does not flip bright fills
-  back to white. Spinners inherit the same on-fill ink. Light `.vd-btn-ink`
-  hover stays white-on-black.
+  back to white. Button loading spinners inherit the same on-fill ink. Light
+  `.vd-btn-ink` hover stays white-on-black.
 
 ### Changed
 

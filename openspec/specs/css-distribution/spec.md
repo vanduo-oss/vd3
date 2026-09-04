@@ -169,9 +169,10 @@ filter.
 
 `css/components/theme-customizer.css` MUST carry the swatches-variant fan
 alongside the existing panel rules: `.vd-theme-customizer-fan` (fixed-position
-hinge root, `fan-up` / `fan-down` / `fan-left` / `fan-right` axis modifiers,
-`is-open` state) and `.tc-fan-item` blades with `.tc-fan-label` and
-`.tc-fan-swatch` children.
+hinge root and `is-open` state) and `.tc-fan-item` blades with `.tc-fan-label`
+and `.tc-fan-swatch` children. `VdThemeCustomizer` MUST apply a `fan-up`,
+`fan-down`, `fan-left`, or `fan-right` marker class for the component-computed
+fan axis; those markers do not require dedicated CSS selectors.
 
 Blades MUST hinge at their own left-center (`transform-origin`) and MUST take
 their pose from the component-supplied `--fan-transform-open` /
