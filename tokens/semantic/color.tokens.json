@@ -49,7 +49,10 @@
     "secondary": { "$type": "color", "$value": "{color.gray-600}" },
     "muted": { "$type": "color", "$value": "{color.gray-500}" },
     "light": { "$type": "color", "$value": "{color.gray-400}" },
-    "inverse": { "$type": "color", "$value": "{color.white}" }
+    "inverse": { "$type": "color", "$value": "{color.white}" },
+    "on-primary": { "$type": "color", "$value": "{color.black}" },
+    "on-primary-hover": { "$type": "color", "$value": "{color.white}" },
+    "on-status": { "$type": "color", "$value": "{color.black}" }
   },
   "border": {
     "color": { "$type": "color", "$value": "{color.gray-300}" },

@@ -7,7 +7,7 @@
   /* Timeline Colors */
   --vd-timeline-line-color: var(--vd-border-color, #dee2e6);
   --vd-timeline-marker-bg: var(--vd-color-primary, #0d6efd);
-  --vd-timeline-marker-color: #fff;
+  --vd-timeline-marker-color: var(--vd-text-on-primary);
   --vd-timeline-content-bg: var(--vd-card-bg, #fff);
   --vd-timeline-content-border: var(--vd-border-color, #dee2e6);
 

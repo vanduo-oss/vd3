@@ -9,10 +9,10 @@
   --vd-dp-border-color: var(--vd-border-color, #dee2e6);
   --vd-dp-shadow: 0 0.25rem 0.8125rem rgba(0, 0, 0, 0.12); /* 4px 13px fib */
   --vd-dp-header-bg: var(--vd-color-primary, #0d6efd);
-  --vd-dp-header-color: #fff;
+  --vd-dp-header-color: var(--vd-text-on-primary);
   --vd-dp-day-hover-bg: var(--vd-bg-secondary, #f8f9fa);
   --vd-dp-day-selected-bg: var(--vd-color-primary, #0d6efd);
-  --vd-dp-day-selected-color: #fff;
+  --vd-dp-day-selected-color: var(--vd-text-on-primary);
   --vd-dp-day-today-color: var(--vd-color-primary, #0d6efd);
   --vd-dp-day-outside-color: var(--vd-text-muted, #6c757d);
   --vd-dp-day-disabled-color: var(--vd-text-disabled, #adb5bd);

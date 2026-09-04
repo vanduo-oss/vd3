@@ -11,7 +11,7 @@
   --vd-pagination-link-bg: var(--vd-color-white);
   --vd-pagination-link-bg-hover: var(--vd-bg-secondary);
   --vd-pagination-link-bg-active: var(--vd-color-primary);
-  --vd-pagination-link-color-active: var(--vd-color-white);
+  --vd-pagination-link-color-active: var(--vd-text-on-primary);
   --vd-pagination-link-color-disabled: var(--vd-text-muted);
   
   /* Pagination Spacing (Fibonacci pairs: x/y ratio ~ phi) */

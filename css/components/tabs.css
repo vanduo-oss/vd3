@@ -168,7 +168,7 @@
 .vd-tabs-pills .vd-tab-link.is-active,
 .vd-tabs-pills .vd-tab-item.is-active .vd-tab-link {
   background-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 /* Tab Variants - Bordered */

@@ -24,7 +24,7 @@
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
-  color: #fff;
+  color: var(--vd-text-on-primary);
   text-align: center;
   white-space: nowrap;
   background-color: var(--vd-progress-bar-bg);
@@ -33,10 +33,25 @@
 }
 
 /* Variants */
-.vd-progress-bar.vd-progress-success { background-color: var(--vd-color-success); }
-.vd-progress-bar.vd-progress-warning { background-color: var(--vd-color-warning); }
-.vd-progress-bar.vd-progress-error { background-color: var(--vd-color-error); }
-.vd-progress-bar.vd-progress-info { background-color: var(--vd-color-info); }
+.vd-progress-bar.vd-progress-success {
+  background-color: var(--vd-color-success);
+  color: var(--vd-text-on-status);
+}
+
+.vd-progress-bar.vd-progress-warning {
+  background-color: var(--vd-color-warning);
+  color: var(--vd-text-on-status);
+}
+
+.vd-progress-bar.vd-progress-error {
+  background-color: var(--vd-color-error);
+  color: var(--vd-text-on-status);
+}
+
+.vd-progress-bar.vd-progress-info {
+  background-color: var(--vd-color-info);
+  color: var(--vd-text-on-status);
+}
 
 /* Sizes */
 .vd-progress-xs { --vd-progress-height: 3px; }

@@ -5,12 +5,8 @@ description: Use when building UIs with @vanduo-oss/vd3 — the standalone Vue 3
 
 # @vanduo-oss/vd3
 
-The **Vue3-only line** of the Vanduo design system: one standalone package
-that ships its own DTCG tokens, CSS tree, and typed `Vd*` components and
-composables. It replaces the old three-package split (`@vanduo-oss/core`
-tokens + `@vanduo-oss/framework` CSS/JS + `@vanduo-oss/vue` components) with a
-single dependency. Sole peer: `vue >=3.3` — **no pinia**, no framework IIFE
-runtime, no `window.Vanduo*` globals.
+Standalone Vue 3 Vanduo package: DTCG tokens, CSS, and typed `Vd*`
+components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE runtime.
 
 ## Install
 
@@ -131,8 +127,8 @@ is exported for prop typing.
 
 ## Composables (40)
 
-Named exports from the package root. Each keeps the `useX(root?)` shape from the
-old `@vanduo-oss/vue` surface, rewritten as pure Vue (no DOM-scan runtime).
+Named exports from the package root. Each keeps the `useX(root?)` shape;
+implementations are pure Vue (no DOM-scan runtime).
 
 **Theme (2):** `useTheme` (the theme layer — see below — plus the
 `useThemePreference` reactive singleton) and `useThemeBridge` (mirror an
@@ -189,7 +185,15 @@ attributes the CSS reads. Exported functions:
 
 Token data (`DEFAULTS`, `PALETTE_OPTIONS`, `PRIMARY_COLORS`, `NEUTRAL_COLORS`,
 `RADIUS_OPTIONS`, `FONT_OPTIONS`, `THEME_MODES`, `tokens`) is re-exported from
-the package root — the same surface the old `@vanduo-oss/core` shipped.
+the package root.
+
+**On-fill ink:** `--vd-text-on-primary` (rest fill),
+`--vd-text-on-primary-hover` (primary-dark / hover fill),
+`--vd-text-on-status` (success / warning / error / info / secondary fills).
+Bright hues and the default indigo rest fill resolve to black; dark theme
+does not flip those back to white. Override the three tokens on `<html>`
+for a custom primary. `--vd-text-inverse` is for dark surfaces, not filled
+primaries. Light `.vd-btn-ink:hover` stays `--vd-color-white` on black.
 
 **Attribute contract** (set on `<html>`): `data-palette`, `data-primary`,
 `data-neutral`, `data-radius`, `data-theme`, `data-font`. The CSS resolves

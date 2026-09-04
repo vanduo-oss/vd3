@@ -102,7 +102,7 @@
 
 .vd-spotlight-btn-primary {
   background: var(--vd-color-primary, #0d6efd);
-  color: #fff;
+  color: var(--vd-text-on-primary);
   border-color: var(--vd-color-primary, #0d6efd);
 }
 

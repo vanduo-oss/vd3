@@ -68,25 +68,25 @@
 .vd-chip-primary,
 .tag-primary {
   background-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-chip-secondary,
 .tag-secondary {
   background-color: var(--vd-color-secondary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-chip-success,
 .tag-success {
   background-color: var(--vd-color-success);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-chip-warning,
 .tag-warning {
   background-color: var(--vd-color-warning);
-  color: var(--vd-color-gray-900);
+  color: var(--vd-text-on-status);
 }
 
 .vd-chip-error,
@@ -94,13 +94,13 @@
 .vd-chip-danger,
 .tag-danger {
   background-color: var(--vd-color-error);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-chip-info,
 .tag-info {
   background-color: var(--vd-color-info);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 /* Outline Variants */

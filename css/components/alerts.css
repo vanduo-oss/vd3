@@ -183,32 +183,32 @@
 .vd-alert-solid.vd-alert-primary {
   background-color: var(--vd-color-primary);
   border-color: var(--vd-color-primary);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-alert-solid.vd-alert-success {
   background-color: var(--vd-color-success);
   border-color: var(--vd-color-success);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-alert-solid.vd-alert-warning {
   background-color: var(--vd-color-warning);
   border-color: var(--vd-color-warning);
-  color: var(--vd-color-gray-900);
+  color: var(--vd-text-on-status);
 }
 
 .vd-alert-solid.vd-alert-error,
 .vd-alert-solid.vd-alert-danger {
   background-color: var(--vd-color-error);
   border-color: var(--vd-color-error);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-alert-solid.vd-alert-info {
   background-color: var(--vd-color-info);
   border-color: var(--vd-color-info);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 /* Outline Variants */

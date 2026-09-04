@@ -1,0 +1,6 @@
+- [x] Add `useGlobalSearch.ts` composable
+- [x] Add `VdGlobalSearch.vue` + `global-search.css`
+- [x] Export from `src/index.ts`; import in `vd3.css`
+- [x] Unit + type tests
+- [x] CHANGELOG 1.7.0 entry
+- [x] `pnpm build && pnpm test && pnpm typecheck`

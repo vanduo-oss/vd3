@@ -1,7 +1,7 @@
 # theme-runtime Specification
 
 ## Purpose
-TBD - created by archiving change vd3-carryover. Update Purpose after archive.
+Theme defaults, preference persistence, `VanduoVue` plugin, and the `useThemePreference` singleton.
 ## Requirements
 ### Requirement: theme-data-from-generated-module
 

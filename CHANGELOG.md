@@ -3,6 +3,27 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.2 — 2026-09-04
+
+### Fixed
+
+- **On-fill contrast** — filled primary and status surfaces use semantic
+  `--vd-text-on-primary` / `--vd-text-on-primary-hover` / `--vd-text-on-status`
+  instead of hardcoded white. Bright hues (yellow, orange, lime, …) and the
+  default indigo rest fill get dark ink; light-theme hover may stay white only
+  when the darker stop clears 4.5:1. Dark theme does not flip bright fills
+  back to white. Spinners inherit the same on-fill ink. Light `.vd-btn-ink`
+  hover stays white-on-black.
+
+### Changed
+
+- OpenSpec: archived shipped `add-global-search` and
+  `oola-swatches-dock-accent`; promoted previously folder-moved specs
+  (Dock, snippet chrome, ink, auth, data table, Seemore, liquid gradient,
+  native-select) into canonical `openspec/specs/`.
+- README / SKILL shortened; consumer Node floor (`>=20.19`) vs CI Node 24
+  called out; `CONTRIBUTING.md` added.
+
 ## 1.7.1 — 2026-09-03
 
 ### Fixed

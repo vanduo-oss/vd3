@@ -9,7 +9,7 @@
   --vd-tp-shadow: 0 0.25rem 0.8125rem rgba(0, 0, 0, 0.12);
   --vd-tp-item-hover-bg: var(--vd-bg-secondary, #f8f9fa);
   --vd-tp-item-selected-bg: var(--vd-color-primary, #0d6efd);
-  --vd-tp-item-selected-color: #fff;
+  --vd-tp-item-selected-color: var(--vd-text-on-primary);
   --vd-tp-padding: 0.5rem;
   --vd-tp-item-padding: 0.3125rem 0.8125rem; /* 5px 13px - fib */
   --vd-tp-max-height: 15rem;

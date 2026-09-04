@@ -259,57 +259,57 @@
 .vd-toast-solid.vd-toast-success {
   background-color: var(--vd-color-success);
   border-color: var(--vd-color-success);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-success .vd-toast-message {
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--vd-text-on-status) 85%, transparent);
 }
 
 .vd-toast-solid.vd-toast-success .vd-toast-icon {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-warning {
   background-color: var(--vd-color-warning);
   border-color: var(--vd-color-warning);
-  color: var(--vd-color-gray-900);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-warning .vd-toast-message {
-  color: rgba(0, 0, 0, 0.7);
+  color: color-mix(in srgb, var(--vd-text-on-status) 70%, transparent);
 }
 
 .vd-toast-solid.vd-toast-warning .vd-toast-icon {
-  color: var(--vd-color-gray-900);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-error {
   background-color: var(--vd-color-error);
   border-color: var(--vd-color-error);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-error .vd-toast-message {
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--vd-text-on-status) 85%, transparent);
 }
 
 .vd-toast-solid.vd-toast-error .vd-toast-icon {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-info {
   background-color: var(--vd-color-info);
   border-color: var(--vd-color-info);
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 .vd-toast-solid.vd-toast-info .vd-toast-message {
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--vd-text-on-status) 85%, transparent);
 }
 
 .vd-toast-solid.vd-toast-info .vd-toast-icon {
-  color: var(--vd-color-white);
+  color: var(--vd-text-on-status);
 }
 
 /* Toast Progress Bar (auto-dismiss indicator) */
