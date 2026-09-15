@@ -27,3 +27,15 @@ overrides:
   # is zero). Dev-only (never shipped in dist); keeps
   # `pnpm audit --audit-level=moderate` green.
   "nanoid@<3.3.18": "^3.3.18"
+
+  # Security: force the transitive colord (pulled via stylelint) to a patched
+  # release — GHSA-2wm5-q62r-hmrv (ReDoS in CSS color string matchers).
+  # Prefer stylelint >=17.15.0 which depends on colord ^2.10.0; this override
+  # is a safety net. Dev-only; keeps `pnpm audit --audit-level=moderate` green.
+  "colord@<2.9.4": "^2.9.4"
+
+  # Security: force the transitive js-yaml (pulled via stylelint > cosmiconfig)
+  # to a patched release — GHSA-2883-xcg3-v3hh (maxTotalMergeKeys CPU DoS).
+  # Pin to ^4.3.2 (not open >=) so cosmiconfig stays on the js-yaml 4.x API.
+  # Dev-only; keeps `pnpm audit --audit-level=moderate` green.
+  "js-yaml@>=4.0.0 <4.3.2": "^4.3.2"
