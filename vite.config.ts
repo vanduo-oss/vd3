@@ -24,9 +24,13 @@ export default defineConfig({
     emptyOutDir: false,
     sourcemap: true,
     lib: {
-      entry: fileURLToPath(new URL("./src/index.ts", import.meta.url)),
+      entry: {
+        index: fileURLToPath(new URL("./src/index.ts", import.meta.url)),
+        highlight: fileURLToPath(new URL("./src/highlight.ts", import.meta.url)),
+      },
       formats: ["es", "cjs"],
-      fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
+      fileName: (format, entryName) =>
+        format === "es" ? `${entryName}.js` : `${entryName}.cjs`,
     },
     rollupOptions: {
       external: ["vue"],

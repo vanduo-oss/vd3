@@ -1,6 +1,6 @@
 {
   "name": "@vanduo-oss/vd3",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "description": "Vanduo UI for Vue 3 — design system and component library (the vd3 line)",
   "type": "module",
   "homepage": "https://github.com/vanduo-oss/vd3#readme",
@@ -46,6 +46,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./highlight": {
+      "types": "./dist/highlight.d.ts",
+      "import": "./dist/highlight.js",
+      "require": "./dist/highlight.cjs"
     },
     "./css": "./dist/vd3.min.css",
     "./css/core": "./dist/vd3-core.min.css",

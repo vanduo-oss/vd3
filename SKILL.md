@@ -104,7 +104,9 @@ user flips it; bind `aiEnabled` to take control of that toggle and read
 `update:aiEnabled`. Every other prop is read once on mount. Stack it with
 `--vd-global-search-overlay-z-index` / `--vd-global-search-modal-z-index`.
 `VdCodeSnippet` does not highlight unless the caller passes `highlight`
-(must return escaped HTML; copy stays raw). Simple mode is `code` /
+(must return escaped HTML; copy stays raw). Prefer the tree-shakeable
+`@vanduo-oss/vd3/highlight` helper (`highlightCode`) for `html` / `css` /
+`js`+TS / `shell` / `vue` / `json` → `vd-tk-*` spans. Simple mode is `code` /
 `language` / `copyable`. Chrome mode (any of `html` / `css` / `js` /
 `shell` / `vue` / `json`) is the collapsible tabbed widget.
 

@@ -8,9 +8,10 @@ Standalone [Vanduo](https://vanduo.dev) package: DTCG tokens, CSS, and typed
 `Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
 runtime.
 
-**Status: 1.7.2** — contrast-aware on-fill ink (`--vd-text-on-primary`,
-`--vd-text-on-primary-hover`, `--vd-text-on-status`). Bright fills use dark
-ink in light and dark; override the tokens for custom primaries.
+**Status: 1.7.3** — tree-shakeable `@vanduo-oss/vd3/highlight` for
+`VdCodeSnippet`, plus on-fill contrast on `.vd-bg-*` color utilities
+(`--vd-text-on-primary` / `--vd-text-on-status`). Bright fills use dark ink
+in light and dark; override the tokens for custom primaries.
 
 ## Install
 
