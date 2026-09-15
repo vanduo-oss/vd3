@@ -11,6 +11,21 @@
   --vd-global-search-glass-blur: 20px;
   --vd-global-search-overlay-z-index: 9998;
   --vd-global-search-modal-z-index: 9999;
+  /* Light: stronger primary outline. Dark: no outer ring (see below). */
+  --vd-global-search-modal-border: 2px solid var(--vd-color-primary);
+  --vd-global-search-input-border: 2px solid var(--vd-color-primary);
+}
+
+[data-theme="dark"] {
+  --vd-global-search-modal-border: none;
+  --vd-global-search-input-border: 1px solid var(--vd-color-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --vd-global-search-modal-border: none;
+    --vd-global-search-input-border: 1px solid var(--vd-color-primary);
+  }
 }
 
 .vd-global-search-overlay {
@@ -46,7 +61,7 @@
     saturate(var(--vd-glass-saturate, 1.8));
   -webkit-backdrop-filter: blur(var(--vd-glass-blur))
     saturate(var(--vd-glass-saturate, 1.8));
-  border: 1px solid var(--vd-glass-border-light);
+  border: var(--vd-global-search-modal-border);
   border-radius: calc(var(--vd-card-border-radius) * 1.5);
   box-shadow:
     var(--vd-glass-shadow),
@@ -82,11 +97,17 @@
   flex-shrink: 0;
 }
 
-.vd-global-search-input {
+input.vd-global-search-input[type="search"],
+input.vd-global-search-input[type="search"]:focus {
   flex: 1;
-  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border: var(--vd-global-search-input-border);
+  border-radius: calc(var(--vd-card-border-radius) * 0.65);
+  padding: 0.4rem 0.65rem;
   outline: none;
-  background: transparent;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--vd-bg-primary) 70%, transparent);
   font-size: 1.1rem;
   color: var(--vd-text-primary);
   font-family: inherit;
