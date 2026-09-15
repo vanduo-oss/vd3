@@ -6,12 +6,7 @@
  */
 
 export type HighlightLanguage =
-  | "html"
-  | "css"
-  | "js"
-  | "shell"
-  | "vue"
-  | "json";
+  "html" | "css" | "js" | "shell" | "vue" | "json";
 
 type TokenType =
   | "keyword"
