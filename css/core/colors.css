@@ -483,36 +483,43 @@
 .vd-bg-primary,
 .bg-primary {
   background-color: var(--vd-color-primary);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-bg-secondary,
 .bg-secondary {
   background-color: var(--vd-color-secondary);
+  color: var(--vd-text-on-status);
 }
 
 .vd-bg-accent,
 .bg-accent {
   background-color: var(--vd-color-accent);
+  color: var(--vd-text-on-primary);
 }
 
 .vd-bg-success,
 .bg-success {
   background-color: var(--vd-color-success);
+  color: var(--vd-text-on-status);
 }
 
 .vd-bg-warning,
 .bg-warning {
   background-color: var(--vd-color-warning);
+  color: var(--vd-text-on-status);
 }
 
 .vd-bg-error,
 .bg-error {
   background-color: var(--vd-color-error);
+  color: var(--vd-text-on-status);
 }
 
 .vd-bg-info,
 .bg-info {
   background-color: var(--vd-color-info);
+  color: var(--vd-text-on-status);
 }
 
 .vd-bg-white,
@@ -538,6 +545,14 @@
 /* ═════════════════════════════════════════════════════════════════════════
  * TEXT COLOR UTILITIES
  * ═════════════════════════════════════════════════════════════════════════ */
+
+.vd-text-on-primary {
+  color: var(--vd-text-on-primary);
+}
+
+.vd-text-on-status {
+  color: var(--vd-text-on-status);
+}
 
 .vd-text-primary {
   color: var(--vd-color-primary);

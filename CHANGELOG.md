@@ -3,6 +3,23 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.3 — 2026-09-15
+
+### Added
+
+- **`@vanduo-oss/vd3/highlight`** — tree-shakeable minimal syntax highlighter
+  for `VdCodeSnippet` (`html` / `css` / `js`+TS / `shell` / `vue` / `json` →
+  `vd-tk-*` spans). Opt-in via the existing `highlight` prop; importing
+  `VdCodeSnippet` alone does not pull the tokenizer.
+
+### Fixed
+
+- **On-fill contrast for color utilities** — `.vd-bg-primary` / `.vd-bg-accent`
+  and status fills (`.vd-bg-success|warning|error|info`) set
+  `--vd-text-on-primary` / `--vd-text-on-status` so bright hues no longer need
+  hardcoded white ink. Adds `.vd-text-on-primary` / `.vd-text-on-status`
+  utilities. Completes the `1.7.2` button/badge on-fill work.
+
 ## 1.7.2 — 2026-09-04
 
 ### Fixed
