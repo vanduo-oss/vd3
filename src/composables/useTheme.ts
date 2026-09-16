@@ -11,9 +11,8 @@
  * Applications that need site-specific defaults (e.g. a different default dark
  * primary) override them with `setThemeDefaults()` — typically via
  * `app.use(VanduoVue, { themeDefaults })` — before the theme model first reads
- * them. Multi-app same-origin hosts MAY pass `storagePrefix` (or call
- * `setStoragePrefix`) before the first storage read so preference keys do not
- * collide.
+ * them. `storagePrefix` selects browser keys for this module instance; it
+ * does not isolate multiple Vue apps or SSR requests.
  */
 import { getCurrentInstance, onBeforeUnmount, onMounted, reactive } from "vue";
 import {
@@ -263,7 +262,8 @@ export { isDefaultPrimary };
  *
  * SSR caveat (same as `useToast`): module-scope state is process-global. Theme
  * is a client-only concern — the state is created from `defaultPreference()` at
- * SSR/SSG render time and only ever hydrated/mutated on the client.
+ * SSR/SSG render time. Callers must avoid personalized server-side mutations;
+ * browser guards do not isolate this reactive state between requests.
  */
 let themeState: ThemePreference | null = null;
 

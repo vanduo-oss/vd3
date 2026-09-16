@@ -56,8 +56,8 @@ const nextId = (): string => {
  * SSR caveat: because the state lives at module scope, it is process-global —
  * under SSR every request would share the same queue (the old store was
  * per-app). Toasts are client-only interactions (the container teleports to
- * `body`), so at SSG/SSR render time this state is inert; only the client
- * ever mutates it.
+ * `body`). Callers must avoid enqueueing during SSR: show() is not guarded
+ * and a server-side mutation would be shared between requests.
  *
  * Typed as plain `ToastEntry[]` (not vue 3.5's branded `Reactive<…>`) so the
  * public surface matches the old store, which unwrapped the ref to a plain

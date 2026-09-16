@@ -138,15 +138,16 @@ export function sanitizeHtml(
         } catch {
           el.removeAttribute("href");
         }
-        el.removeAttribute("target");
-        el.removeAttribute("rel");
-      } else if (allowSvg && (name === "SVG" || el.closest?.("svg"))) {
+      }
+
+      if (allowSvg && (name === "SVG" || el.closest?.("svg"))) {
         Array.from(el.attributes).forEach((a) => {
           if (!SAFE_SVG_ATTRS.has(a.name.toLowerCase()))
             el.removeAttribute(a.name);
         });
       } else {
         const safe = new Set(["class"]);
+        if (name === "A") safe.add("href");
         if (allowStyle) safe.add("style");
         Array.from(el.attributes).forEach((a) => {
           if (!safe.has(a.name)) el.removeAttribute(a.name);

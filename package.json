@@ -36,7 +36,9 @@
     "SKILL.md",
     "CHANGELOG.md",
     "LICENSE",
-    "THIRD-PARTY-LICENSES"
+    "THIRD-PARTY-LICENSES",
+    "recipes",
+    "styles.d.ts"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -52,8 +54,14 @@
       "import": "./dist/highlight.js",
       "require": "./dist/highlight.cjs"
     },
-    "./css": "./dist/vd3.min.css",
-    "./css/core": "./dist/vd3-core.min.css",
+    "./css": {
+      "types": "./styles.d.ts",
+      "default": "./dist/vd3.min.css"
+    },
+    "./css/core": {
+      "types": "./styles.d.ts",
+      "default": "./dist/vd3-core.min.css"
+    },
     "./tokens.json": "./dist/tokens.json",
     "./package.json": "./package.json"
   },
@@ -71,7 +79,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,vue}\" \"tests/**/*.ts\" \"scripts/**/*.mjs\"",
     "stylelint": "stylelint \"css/**/*.css\"",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:skills": "node scripts/check-skills.mjs"
   },
   "peerDependencies": {
     "vue": ">=3.3.0"

@@ -47,7 +47,7 @@
   "text": {
     "primary": { "$type": "color", "$value": "{color.gray-900}" },
     "secondary": { "$type": "color", "$value": "{color.gray-600}" },
-    "muted": { "$type": "color", "$value": "{color.gray-500}" },
+    "muted": { "$type": "color", "$value": "{color.gray-600}" },
     "light": { "$type": "color", "$value": "{color.gray-400}" },
     "inverse": { "$type": "color", "$value": "{color.white}" },
     "on-primary": { "$type": "color", "$value": "{color.black}" },

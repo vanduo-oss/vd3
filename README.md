@@ -85,7 +85,7 @@ its setters route through `applyPreference` + `persistPreference`. Override the
 default palette/primary/etc. via `app.use(VanduoVue, { themeDefaults })` or
 `setThemeDefaults()`. Token data (`DEFAULTS`, `PALETTE_OPTIONS`, `tokens`, …) is
 re-exported from the package root, or import raw JSON from
-`@vanduo-oss/vd3/tokens.json`. Ship the token-only stylesheet with
+`@vanduo-oss/vd3/tokens.json`. Ship the stylesheet without bundled icon fonts with
 `@vanduo-oss/vd3/css/core`.
 
 Filled primary surfaces use `--vd-text-on-primary` (hover:
@@ -119,7 +119,7 @@ hydrates from storage lazily on the first client call.
 | ----------------------------- | ------------------------------------------------ |
 | `@vanduo-oss/vd3`             | Components, composables, theme API, token data   |
 | `@vanduo-oss/vd3/css`         | Full stylesheet (`dist/vd3.min.css`)             |
-| `@vanduo-oss/vd3/css/core`    | Tokens-only stylesheet (`dist/vd3-core.min.css`) |
+| `@vanduo-oss/vd3/css/core`    | Full stylesheet without icon fonts (`dist/vd3-core.min.css`) |
 | `@vanduo-oss/vd3/tokens.json` | Resolved DTCG token data (`dist/tokens.json`)    |
 
 ## Build pipeline
