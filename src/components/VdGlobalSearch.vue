@@ -75,6 +75,7 @@ const emit = defineEmits<{
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
+const overlayReady = ref(false);
 const aiNoticeId = useId();
 
 // Snapshot to match the composable, which reads its options once. Deriving
@@ -200,12 +201,19 @@ const onOpenEvent = (): void => {
 };
 
 onMounted(() => {
+  overlayReady.value = true;
   syncAiFromProp(props.aiEnabled);
   if (typeof window === "undefined") return;
   window.addEventListener("keydown", onGlobalKeydown);
   if (props.openEventName) {
     window.addEventListener(props.openEventName, onOpenEvent);
   }
+  void nextTick(() => {
+    const native = inputRef.value;
+    if (native?.value && !query.value) {
+      query.value = native.value;
+    }
+  });
 });
 
 onUnmounted(() => {
@@ -220,7 +228,7 @@ defineExpose({ open: openAndFocus, close, runNow });
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport v-if="overlayReady" to="body">
     <div
       class="vd-global-search-overlay"
       :class="{ 'is-open': isOpen }"
@@ -233,6 +241,7 @@ defineExpose({ open: openAndFocus, close, runNow });
       aria-modal="true"
       :aria-label="dialogLabel"
       :inert="!isOpen || undefined"
+      data-vd-search-ready="true"
     >
       <div class="vd-global-search-header">
         <i
