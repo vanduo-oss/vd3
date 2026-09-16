@@ -122,6 +122,11 @@ hydrates from storage lazily on the first client call.
 | `@vanduo-oss/vd3/css/core`    | Full stylesheet without icon fonts (`dist/vd3-core.min.css`) |
 | `@vanduo-oss/vd3/tokens.json` | Resolved DTCG token data (`dist/tokens.json`)    |
 
+`./css/core` remains the full component stylesheet without icon fonts. A
+true tokens-only CSS file and a core-only JS entry were evaluated and are
+**not** shipped: adding them would overlap `./tokens.json` / named JS imports
+and would redefine what consumers already treat as `/css/core`.
+
 ## Build pipeline
 
 `pnpm build` runs the full chain, in order:

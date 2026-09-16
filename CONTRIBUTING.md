@@ -31,6 +31,15 @@ pnpm build
 
 Do not edit `css/core/generated/` or `src/theme/generated/` by hand.
 
+## CI cost
+
+`.github/workflows/ci.yml` is one `ubuntu-latest` job with
+`timeout-minutes: 15`. GitHub Actions bills minutes used; that timeout is the
+ceiling. The job runs install, audit, tokens, lint, format, stylelint,
+typecheck, unit tests, build, skill checks, and class coverage. Markdown
+changes now trigger it. It has not been run remotely for the current
+`dev-v174` branch. Full DocSite visual and accessibility suites stay local.
+
 ## OpenSpec
 
 Active changes live in `openspec/changes/`. Archive with

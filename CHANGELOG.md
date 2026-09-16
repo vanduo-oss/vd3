@@ -3,6 +3,20 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## Unreleased
+
+### Fixed
+
+- **Anchor sanitizer** — allowed `<a>` attributes now use the same whitelist as
+  other tags. Event handler and `style` attributes are stripped by default.
+- **Tooltip** — the trigger stays in normal flow; the tooltip is a separate
+  surface with one placement contract, hover/focus/Escape behavior, and
+  `aria-describedby`.
+- **Global search overlay** — the palette is client-mounted so SSG hydration
+  cannot wipe a query typed into the server-rendered input.
+- **Shared foreground tokens** — muted text, syntax colors, and swatch ink
+  stay distinguishable in default light/dark themes.
+
 ## 1.7.3 — 2026-09-15
 
 ### Added
