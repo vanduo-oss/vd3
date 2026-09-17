@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import { useTooltips } from "../composables/useTooltips";
 type Position = "top" | "bottom" | "left" | "right";
 
 interface Props {
@@ -9,14 +11,12 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   position: "top",
 });
+const root = ref<HTMLElement | null>(null);
+useTooltips(root);
 </script>
 
 <template>
-  <span
-    class="vd-tooltip"
-    :data-tooltip-position="position"
-    :data-tooltip="text"
-  >
+  <span ref="root" :data-tooltip-placement="position" :data-tooltip="text">
     <slot />
   </span>
 </template>

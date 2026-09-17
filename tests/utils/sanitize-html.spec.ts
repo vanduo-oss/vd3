@@ -79,6 +79,35 @@ describe("sanitizeHtml — href protocol filtering", () => {
 });
 
 describe("sanitizeHtml — event handlers", () => {
+  it.each(["a", "b", "span", "div", "code", "mark"])(
+    "applies the attribute whitelist to <%s>",
+    (tag) => {
+      const el = parse(
+        sanitizeHtml(
+          `<${tag} class="safe" href="/safe" onclick="bad()" onfocus="bad()" style="color:red" id="collision" data-secret="x">Text</${tag}>`,
+        ),
+      ).firstElementChild!;
+      expect(el.getAttributeNames().sort()).toEqual(
+        tag === "a" ? ["class", "href"] : ["class"],
+      );
+    },
+  );
+
+  it("applies the trusted-style policy to anchors too", () => {
+    const safe = parse(
+      sanitizeHtml('<a href="/safe" style="color:red">Text</a>', {
+        allowStyle: true,
+      }),
+    );
+    expect(safe.querySelector("a")?.getAttribute("style")).toBe("color:red");
+    const unsafe = parse(
+      sanitizeHtml('<a href="/safe" style="position:fixed;inset:0">Text</a>', {
+        allowStyle: true,
+      }),
+    );
+    expect(unsafe.querySelector("a")?.hasAttribute("style")).toBe(false);
+  });
+
   it("strips onclick/onload and other on* attributes from kept elements", () => {
     const out = sanitizeHtml('<span onclick="a()" onload="b()">t</span>');
     const span = parse(out).querySelector("span");
@@ -118,6 +147,25 @@ describe("sanitizeHtml — SVG (allowSvg)", () => {
     const div = parse(sanitizeHtml(svg));
     expect(div.querySelector("svg")).toBeNull();
     expect(div.querySelector("circle")).toBeNull();
+  });
+
+  it("keeps a protocol-safe href on SVG <a> when allowSvg is true", () => {
+    const a = parse(
+      sanitizeHtml('<svg><a href="https://ex.com/x">y</a></svg>', {
+        allowSvg: true,
+      }),
+    ).querySelector("a");
+    expect(a?.getAttribute("href")).toBe("https://ex.com/x");
+  });
+
+  it("strips javascript: href on SVG <a> when allowSvg is true", () => {
+    const a = parse(
+      sanitizeHtml('<svg><a href="javascript:alert(1)">y</a></svg>', {
+        allowSvg: true,
+      }),
+    ).querySelector("a");
+    expect(a).not.toBeNull();
+    expect(a?.hasAttribute("href")).toBe(false);
   });
 });
 

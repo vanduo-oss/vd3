@@ -34,7 +34,9 @@ const adapter: GlobalSearchAdapter = {
 
 let active: VueWrapper | null = null;
 
-const factory = (props: Record<string, unknown> = {}): VueWrapper => {
+const factory = async (
+  props: Record<string, unknown> = {},
+): Promise<VueWrapper> => {
   const wrapper = mount(VdGlobalSearch, {
     props: {
       adapter,
@@ -48,6 +50,7 @@ const factory = (props: Record<string, unknown> = {}): VueWrapper => {
     },
   });
   active = wrapper;
+  await nextTick();
   return wrapper;
 };
 
@@ -73,9 +76,9 @@ afterEach(() => {
 });
 
 describe("VdGlobalSearch", () => {
-  it("renders dialog with AI toggle off by default", () => {
+  it("renders dialog with AI toggle off by default", async () => {
     vi.useFakeTimers();
-    factory();
+    await factory();
     expect(document.body.querySelector(".vd-global-search-modal")).toBeTruthy();
     expect(
       document.body.querySelector(".vd-global-search-ai-notice"),
@@ -84,7 +87,7 @@ describe("VdGlobalSearch", () => {
 
   it("shows results after debounced search", async () => {
     vi.useFakeTimers();
-    const wrapper = factory();
+    const wrapper = await factory();
     await (wrapper.vm as unknown as { open: () => void }).open();
     await typeAndSettle("but");
     expect(
@@ -95,7 +98,7 @@ describe("VdGlobalSearch", () => {
 
   it("shows AI notice when toggle enabled", async () => {
     vi.useFakeTimers();
-    factory();
+    await factory();
     const toggle = document.body.querySelector(
       ".vd-form-switch input",
     ) as HTMLInputElement;
@@ -108,7 +111,7 @@ describe("VdGlobalSearch", () => {
 
   it("emits select when a result is clicked", async () => {
     vi.useFakeTimers();
-    const wrapper = factory();
+    const wrapper = await factory();
     await (wrapper.vm as unknown as { open: () => void }).open();
     await typeAndSettle("but");
     document.body
@@ -120,7 +123,7 @@ describe("VdGlobalSearch", () => {
 
   it("advances one result per ArrowDown", async () => {
     vi.useFakeTimers();
-    const wrapper = factory();
+    const wrapper = await factory();
     await (wrapper.vm as unknown as { open: () => void }).open();
     await typeAndSettle("but");
 
@@ -141,7 +144,7 @@ describe("VdGlobalSearch", () => {
 
   it("stays in the searching state for the whole debounce window", async () => {
     vi.useFakeTimers();
-    const wrapper = factory();
+    const wrapper = await factory();
     await (wrapper.vm as unknown as { open: () => void }).open();
 
     const input = document.body.querySelector(
@@ -157,7 +160,7 @@ describe("VdGlobalSearch", () => {
 
   it("takes the dialog out of the tab order while closed", async () => {
     vi.useFakeTimers();
-    const wrapper = factory();
+    const wrapper = await factory();
     const modal = document.body.querySelector(
       ".vd-global-search-modal",
     ) as HTMLElement;
@@ -170,7 +173,7 @@ describe("VdGlobalSearch", () => {
 
   it("applies a pre-enabled aiEnabled prop on mount", async () => {
     vi.useFakeTimers();
-    factory({ aiEnabled: true });
+    await factory({ aiEnabled: true });
     await nextTick();
 
     expect(adapter.warmup).toHaveBeenCalledWith(true);
@@ -199,9 +202,20 @@ describe("VdGlobalSearch", () => {
     expect(warmup).not.toHaveBeenCalled();
   });
 
+  it("does not serialize the overlay input during SSR", async () => {
+    const html = await renderToString(
+      createSSRApp(VdGlobalSearch, {
+        adapter,
+        shortcut: false,
+      }),
+    );
+    expect(html).not.toContain("vd-global-search-input");
+    expect(html).not.toContain("Search entire site");
+  });
+
   it("lets a bound aiEnabled prop own the toggle", async () => {
     vi.useFakeTimers();
-    const wrapper = factory({ aiEnabled: false });
+    const wrapper = await factory({ aiEnabled: false });
     const toggle = document.body.querySelector(
       ".vd-form-switch input",
     ) as HTMLInputElement;

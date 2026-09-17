@@ -5,49 +5,49 @@
 
 :root {
   /* Alert Spacing (Fibonacci: 21px/13px, ratio ~ phi) */
-  --vd-alert-padding-x: 1.3125rem;   /* 21px - fib */
-  --vd-alert-padding-y: 0.8125rem;   /* 13px - fib */
+  --vd-alert-padding-x: 1.3125rem; /* 21px - fib */
+  --vd-alert-padding-y: 0.8125rem; /* 13px - fib */
   --vd-alert-border-radius: var(--vd-btn-border-radius);
   --vd-alert-border-width: 1px;
 
   /* Alert Colors */
   --vd-alert-primary-bg: var(--vd-color-primary-alpha-10);
   --vd-alert-primary-border: var(--vd-color-primary);
-  --vd-alert-primary-text: var(--vd-color-primary-dark);
+  --vd-alert-primary-text: var(--vd-text-accent);
 
   --vd-alert-success-bg: var(--vd-color-success-alpha-10);
   --vd-alert-success-border: var(--vd-color-success);
-  --vd-alert-success-text: var(--vd-color-success-dark);
+  --vd-alert-success-text: var(--vd-text-success);
 
   --vd-alert-warning-bg: var(--vd-color-warning-alpha-10);
   --vd-alert-warning-border: var(--vd-color-warning);
-  --vd-alert-warning-text: var(--vd-color-warning-dark);
+  --vd-alert-warning-text: var(--vd-text-warning);
 
   --vd-alert-error-bg: var(--vd-color-error-alpha-10);
   --vd-alert-error-border: var(--vd-color-error);
-  --vd-alert-error-text: var(--vd-color-error-dark);
+  --vd-alert-error-text: var(--vd-text-error);
 
   --vd-alert-info-bg: var(--vd-color-info-alpha-10);
   --vd-alert-info-border: var(--vd-color-info);
-  --vd-alert-info-text: var(--vd-color-info-dark);
+  --vd-alert-info-text: var(--vd-text-info);
 }
 
 /* Dark Theme Overrides */
 [data-theme="dark"] {
-  --vd-alert-primary-text: var(--vd-color-primary-light);
-  --vd-alert-success-text: var(--vd-color-success-light);
-  --vd-alert-warning-text: var(--vd-color-warning-light);
-  --vd-alert-error-text: var(--vd-color-error-light);
-  --vd-alert-info-text: var(--vd-color-info-light);
+  --vd-alert-primary-text: var(--vd-text-accent);
+  --vd-alert-success-text: var(--vd-text-success);
+  --vd-alert-warning-text: var(--vd-text-warning);
+  --vd-alert-error-text: var(--vd-text-error);
+  --vd-alert-info-text: var(--vd-text-info);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --vd-alert-primary-text: var(--vd-color-primary-light);
-    --vd-alert-success-text: var(--vd-color-success-light);
-    --vd-alert-warning-text: var(--vd-color-warning-light);
-    --vd-alert-error-text: var(--vd-color-error-light);
-    --vd-alert-info-text: var(--vd-color-info-light);
+    --vd-alert-primary-text: var(--vd-text-accent);
+    --vd-alert-success-text: var(--vd-text-success);
+    --vd-alert-warning-text: var(--vd-text-warning);
+    --vd-alert-error-text: var(--vd-text-error);
+    --vd-alert-info-text: var(--vd-text-info);
   }
 }
 
@@ -286,4 +286,9 @@
   .vd-alert-dismiss {
     transition: none;
   }
+}
+
+.vd-alert a:not(.vd-btn) {
+  color: inherit;
+  text-decoration: underline;
 }

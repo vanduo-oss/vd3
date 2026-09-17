@@ -8,10 +8,9 @@ Standalone [Vanduo](https://vanduo.dev) package: DTCG tokens, CSS, and typed
 `Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
 runtime.
 
-**Status: 1.7.3** — tree-shakeable `@vanduo-oss/vd3/highlight` for
-`VdCodeSnippet`, plus on-fill contrast on `.vd-bg-*` color utilities
-(`--vd-text-on-primary` / `--vd-text-on-status`). Bright fills use dark ink
-in light and dark; override the tokens for custom primaries.
+**Status: 1.7.4** — sanitizer, tooltip, global-search hydration, and shared
+foreground-token contrast. 1.7.3 shipped `@vanduo-oss/vd3/highlight` and
+on-fill contrast on `.vd-bg-*` color utilities.
 
 ## Install
 
@@ -85,7 +84,7 @@ its setters route through `applyPreference` + `persistPreference`. Override the
 default palette/primary/etc. via `app.use(VanduoVue, { themeDefaults })` or
 `setThemeDefaults()`. Token data (`DEFAULTS`, `PALETTE_OPTIONS`, `tokens`, …) is
 re-exported from the package root, or import raw JSON from
-`@vanduo-oss/vd3/tokens.json`. Ship the token-only stylesheet with
+`@vanduo-oss/vd3/tokens.json`. Ship the stylesheet without bundled icon fonts with
 `@vanduo-oss/vd3/css/core`.
 
 Filled primary surfaces use `--vd-text-on-primary` (hover:
@@ -119,8 +118,13 @@ hydrates from storage lazily on the first client call.
 | ----------------------------- | ------------------------------------------------ |
 | `@vanduo-oss/vd3`             | Components, composables, theme API, token data   |
 | `@vanduo-oss/vd3/css`         | Full stylesheet (`dist/vd3.min.css`)             |
-| `@vanduo-oss/vd3/css/core`    | Tokens-only stylesheet (`dist/vd3-core.min.css`) |
+| `@vanduo-oss/vd3/css/core`    | Full stylesheet without icon fonts (`dist/vd3-core.min.css`) |
 | `@vanduo-oss/vd3/tokens.json` | Resolved DTCG token data (`dist/tokens.json`)    |
+
+`./css/core` remains the full component stylesheet without icon fonts. A
+true tokens-only CSS file and a core-only JS entry were evaluated and are
+**not** shipped: adding them would overlap `./tokens.json` / named JS imports
+and would redefine what consumers already treat as `/css/core`.
 
 ## Build pipeline
 

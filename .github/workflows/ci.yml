@@ -3,12 +3,8 @@ name: ci
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - "**/*.md"
   pull_request:
     branches: [main]
-    paths-ignore:
-      - "**/*.md"
 
 # Single-package repo: @vanduo-oss/vd3 is fully standalone (only peer: vue),
 # so CI needs nothing beyond the committed lockfile.
@@ -49,4 +45,5 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run test
       - run: pnpm run build
+      - run: pnpm run test:skills
       - run: pnpm run check:classes

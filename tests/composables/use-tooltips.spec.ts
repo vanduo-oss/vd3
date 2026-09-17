@@ -88,12 +88,15 @@ describe("useTooltips show on hover/focus", () => {
     wrapper.unmount();
   });
 
-  it("hides on mouseleave", async () => {
+  it("hides after allowing the pointer to cross onto the tooltip", async () => {
+    vi.useFakeTimers();
     const wrapper = mountTooltips([{ "data-tooltip": "Bye" }]);
     const btn = wrapper.find("button");
     await btn.trigger("mouseenter");
     expect(tips()).toHaveLength(1);
     await btn.trigger("mouseleave");
+    await vi.advanceTimersByTimeAsync(120);
+    vi.useRealTimers();
     expect(tips()).toHaveLength(0);
     wrapper.unmount();
   });
@@ -179,6 +182,17 @@ describe("useTooltips classes and placement", () => {
     expect(tip.getAttribute("data-placement")).toBe("right");
     wrapper.unmount();
   });
+
+  it("falls back to top when data-tooltip-placement is a prototype key", async () => {
+    const wrapper = mountTooltips([
+      { "data-tooltip": "Oops", "data-tooltip-placement": "toString" },
+    ]);
+    await wrapper.find("button").trigger("mouseenter");
+    expect(tips()).toHaveLength(1);
+    expect(tips()[0].classList.contains("vd-tooltip-top")).toBe(true);
+    expect(tips()[0].getAttribute("data-placement")).toBe("top");
+    wrapper.unmount();
+  });
 });
 
 describe("useTooltips html sanitization", () => {
@@ -241,4 +255,47 @@ describe("useTooltips cleanup on unmount", () => {
     btn.dispatchEvent(new MouseEvent("mouseenter"));
     expect(tips()).toHaveLength(0);
   });
+});
+
+it("removes unsafe anchor attributes in the rich tooltip consumer", async () => {
+  const wrapper = mountTooltips([
+    {
+      "data-tooltip-html":
+        '<a href="/safe" onclick="bad()" style="position:fixed">Help</a>',
+    },
+  ]);
+  await wrapper.get("button").trigger("mouseenter");
+  expect(tips()[0].querySelector("a")?.getAttributeNames()).toEqual([]);
+  wrapper.unmount();
+});
+
+it("wires inserted triggers and cleans up removed triggers", async () => {
+  const wrapper = mountTooltips([]);
+  const trigger = document.createElement("button");
+  trigger.dataset.tooltip = "Dynamic";
+  wrapper.element.appendChild(trigger);
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  trigger.focus();
+  expect(tips()).toHaveLength(1);
+  trigger.remove();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  expect(tips()).toHaveLength(0);
+  trigger.dispatchEvent(new MouseEvent("mouseenter"));
+  expect(tips()).toHaveLength(0);
+  wrapper.unmount();
+});
+
+it("lets the pointer hover the tooltip and dismisses it with Escape", async () => {
+  vi.useFakeTimers();
+  const wrapper = mountTooltips([{ "data-tooltip": "Hover me" }]);
+  await wrapper.get("button").trigger("mouseenter");
+  const tip = tips()[0];
+  await wrapper.get("button").trigger("mouseleave");
+  tip.dispatchEvent(new MouseEvent("mouseenter"));
+  await vi.advanceTimersByTimeAsync(150);
+  expect(tips()).toHaveLength(1);
+  document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+  expect(tips()).toHaveLength(0);
+  vi.useRealTimers();
+  wrapper.unmount();
 });
