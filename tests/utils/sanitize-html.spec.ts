@@ -148,6 +148,25 @@ describe("sanitizeHtml — SVG (allowSvg)", () => {
     expect(div.querySelector("svg")).toBeNull();
     expect(div.querySelector("circle")).toBeNull();
   });
+
+  it("keeps a protocol-safe href on SVG <a> when allowSvg is true", () => {
+    const a = parse(
+      sanitizeHtml('<svg><a href="https://ex.com/x">y</a></svg>', {
+        allowSvg: true,
+      }),
+    ).querySelector("a");
+    expect(a?.getAttribute("href")).toBe("https://ex.com/x");
+  });
+
+  it("strips javascript: href on SVG <a> when allowSvg is true", () => {
+    const a = parse(
+      sanitizeHtml('<svg><a href="javascript:alert(1)">y</a></svg>', {
+        allowSvg: true,
+      }),
+    ).querySelector("a");
+    expect(a).not.toBeNull();
+    expect(a?.hasAttribute("href")).toBe(false);
+  });
 });
 
 describe("sanitizeHtml — allowStyle", () => {

@@ -9,9 +9,11 @@ tracks the package only — never docs-site content.
 
 - **Anchor sanitizer** — allowed `<a>` attributes now use the same whitelist as
   other tags. Event handler and `style` attributes are stripped by default.
+  SVG `<a href>` stays when `allowSvg` is on, after the same protocol filter.
 - **Tooltip** — the trigger stays in normal flow; the tooltip is a separate
   surface with one placement contract, hover/focus/Escape behavior, and
-  `aria-describedby`.
+  `aria-describedby`. Unknown `data-tooltip-placement` values, including
+  prototype keys, fall back to `top`.
 - **Global search overlay** — the palette is client-mounted so SSG hydration
   cannot wipe a query typed into the server-rendered input.
 - **Shared foreground tokens** — muted text, syntax colors, and swatch ink

@@ -64,7 +64,7 @@ export function useTooltips(
       left: "right",
       right: "left",
     };
-    let placement = preferred in positions ? preferred : "top";
+    let placement = Object.hasOwn(positions, preferred) ? preferred : "top";
     const fits = ([top, left]: [number, number]): boolean =>
       top >= 4 &&
       left >= 4 &&

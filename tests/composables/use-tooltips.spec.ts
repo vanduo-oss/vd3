@@ -182,6 +182,17 @@ describe("useTooltips classes and placement", () => {
     expect(tip.getAttribute("data-placement")).toBe("right");
     wrapper.unmount();
   });
+
+  it("falls back to top when data-tooltip-placement is a prototype key", async () => {
+    const wrapper = mountTooltips([
+      { "data-tooltip": "Oops", "data-tooltip-placement": "toString" },
+    ]);
+    await wrapper.find("button").trigger("mouseenter");
+    expect(tips()).toHaveLength(1);
+    expect(tips()[0].classList.contains("vd-tooltip-top")).toBe(true);
+    expect(tips()[0].getAttribute("data-placement")).toBe("top");
+    wrapper.unmount();
+  });
 });
 
 describe("useTooltips html sanitization", () => {

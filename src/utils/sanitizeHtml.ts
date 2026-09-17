@@ -142,7 +142,9 @@ export function sanitizeHtml(
 
       if (allowSvg && (name === "SVG" || el.closest?.("svg"))) {
         Array.from(el.attributes).forEach((a) => {
-          if (!SAFE_SVG_ATTRS.has(a.name.toLowerCase()))
+          const attr = a.name.toLowerCase();
+          const keepHref = name === "A" && attr === "href";
+          if (!SAFE_SVG_ATTRS.has(attr) && !keepHref)
             el.removeAttribute(a.name);
         });
       } else {
