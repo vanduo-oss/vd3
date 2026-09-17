@@ -1,7 +1,7 @@
 // @vanduo-oss/vd3 — Vanduo UI for Vue 3. Tree-shakeable named exports.
 // Standalone: no IIFE runtime, no `loadVanduoRuntime`.
 
-export const VD3_VERSION = "1.7.3";
+export const VD3_VERSION = "1.7.4";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
