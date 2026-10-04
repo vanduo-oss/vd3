@@ -3,6 +3,17 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## Unreleased
+
+### Fixed
+
+- Primary/status RGB and dark alpha accents follow built-in palettes, hues and schemes.
+- Fibonacci light-theme hover fills use readable foreground colors.
+- Open popovers follow scrolling/resizing anchors even without a placement flip.
+- TypeScript lint coverage, rendered-color regression checks, missing-import failures,
+  full-source coverage thresholds, and artifact size budgets strengthen local/CI checks.
+- Clarify public exports, theme APIs, skill inventory and shared-state SSR limitations.
+
 ## 1.7.4 — 2026-09-17
 
 ### Fixed

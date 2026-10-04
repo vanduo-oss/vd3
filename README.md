@@ -4,7 +4,7 @@
 
 > Vanduo UI for Vue 3 — design system and component library.
 
-Standalone [Vanduo](https://vanduo.dev) package: DTCG tokens, CSS, and typed
+Standalone [Vanduo](https://vanduo.dev) package: design tokens, CSS, and typed
 `Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
 runtime.
 
@@ -36,7 +36,7 @@ createApp(App).use(VanduoVue).mount("#app");
 `app.use(VanduoVue)` accepts optional `{ themeDefaults, storagePrefix }` —
 `themeDefaults` overrides the generic baseline before the theme model first
 reads it; `storagePrefix` remaps the six preference `localStorage` keys
-(default `"vanduo-"`) so multi-app same-origin hosts do not collide (e.g.
+(default `"vanduo-"`) so independently loaded sites on the same origin can use separate storage keys (e.g.
 `app.use(VanduoVue, { themeDefaults: { PRIMARY_DARK: "blue" }, storagePrefix: "ts-school-" })`).
 
 ```vue
@@ -58,7 +58,7 @@ render; nothing registers globally.
 
 - **63 components** — 56 `Vd*` components plus 7 layout primitives (`VdBox`,
   `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
-- **40 composables** — the theme layer (`useTheme`, `useThemeBridge`, and the
+- **39 composable modules** — the theme API (`setThemeDefaults`, `useThemeBridge`, and the
   `useThemePreference` reactive singleton), plus form, overlay/dismissal,
   motion/scroll, and layout/interaction helpers. The `sanitizeHtml` whitelist
   sanitizer is exported too.
@@ -68,7 +68,7 @@ reference, [SKILL.md](./SKILL.md).
 
 ### Theming
 
-The theme layer (`useTheme`) drives six `data-*` attributes on `<html>` —
+The theme API (`applyPreference` and `useThemePreference`) drives six `data-*` attributes on `<html>` —
 `data-palette`, `data-primary`, `data-neutral`, `data-radius`, `data-theme`,
 `data-font` — which the CSS resolves into `--vd-*` custom properties (e.g.
 `--vd-radius-scale`). Preferences persist to six `localStorage` keys under a
@@ -76,7 +76,8 @@ configurable prefix (default `vanduo-`): `vanduo-palette`,
 `vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`,
 `vanduo-theme-preference`, `vanduo-font-preference`. Pass
 `storagePrefix: "app-"` (or call `setStoragePrefix`) at bootstrap to isolate
-namespaces; no automatic migration between prefixes.
+namespaces; no automatic migration between prefixes. Apps sharing the same module
+instance still share theme state, defaults, and configuration.
 
 `useThemePreference()` is a module-scope reactive singleton (no pinia) that is
 the single source of truth behind `VdThemeSwitcher` and `VdThemeCustomizer`;
@@ -93,13 +94,22 @@ Override those on `<html>` for a custom primary that the built-in hue matrix
 does not cover. `--vd-text-inverse` is the dark-surface token, not on-fill
 ink. Light `.vd-btn-ink:hover` stays white on black.
 
+Primary RGB helpers remain comma-separated for `rgba(var(--vd-color-primary-rgb), .25)`
+and follow built-in hue, palette and theme changes. For custom CSS colors prefer
+`color-mix(in srgb, var(--vd-color-primary) 25%, transparent)`; if overriding only
+`--vd-color-primary`, also supply matching RGB channels for legacy RGB consumers.
+The exported JSON is a flat resolved CSS-variable map, not a current DTCG interchange
+schema. Format migration is outside this release's scope.
+
 ### SSR
 
 The package is SSR / `vite-ssg`-safe: all browser access is client-guarded with
 `typeof window` checks and `onMounted` / `onScopeDispose` lifecycle hooks, so
 nothing touches `window`, `document`, `localStorage`, or `matchMedia` during
 server render. `useThemePreference` seeds from defaults on the server and
-hydrates from storage lazily on the first client call.
+hydrates from storage lazily on the first client call. Theme preferences and toast
+queues are module-wide: static SSR shells are supported, but request-specific
+mutations are not isolated. A storage prefix does not provide per-app/request state.
 
 ### Security
 
@@ -117,9 +127,10 @@ hydrates from storage lazily on the first client call.
 | Export                        | Contents                                         |
 | ----------------------------- | ------------------------------------------------ |
 | `@vanduo-oss/vd3`             | Components, composables, theme API, token data   |
+| `@vanduo-oss/vd3/highlight` | Optional `highlightCode` / `highlight` helpers |
 | `@vanduo-oss/vd3/css`         | Full stylesheet (`dist/vd3.min.css`)             |
 | `@vanduo-oss/vd3/css/core`    | Full stylesheet without icon fonts (`dist/vd3-core.min.css`) |
-| `@vanduo-oss/vd3/tokens.json` | Resolved DTCG token data (`dist/tokens.json`)    |
+| `@vanduo-oss/vd3/tokens.json` | Resolved flat CSS-variable data (`dist/tokens.json`)    |
 
 `./css/core` remains the full component stylesheet without icon fonts. A
 true tokens-only CSS file and a core-only JS entry were evaluated and are
@@ -140,7 +151,7 @@ and would redefine what consumers already treat as `/css/core`.
    `dist/vd3(.min).css` and the no-icons `dist/vd3-core(.min).css` (+ source
    maps), and copies `fonts/` and the Phosphor regular + fill icon weights
    into `dist/`.
-4. `vite build` — the library JS (`dist/index.{js,cjs}`).
+4. `vite build` — the library and optional highlighter (`dist/{index,highlight}.{js,cjs}`).
 5. `vue-tsc -p tsconfig.build.json` — the `.d.ts` declarations.
 6. `scripts/check-class-coverage.mjs` — asserts every `vd-*` class the
    components render has a selector in `dist/vd3.min.css`
@@ -166,8 +177,10 @@ pnpm lint          # eslint
 pnpm format:check  # prettier (src, tests, scripts)
 pnpm stylelint     # authored css tree (generated partials excluded)
 pnpm typecheck     # vue-tsc --noEmit
-pnpm test          # vitest (jsdom) — token/DTCG/palette contracts + smoke
-pnpm build         # full chain (see Build pipeline)
+pnpm test:coverage # Vitest + type tests; full source, ratcheted coverage
+pnpm build         # full chain including class coverage
+pnpm test:skills   # published links, API inventory, typed recipes (after build)
+pnpm test:size     # raw + gzip library artifact budgets
 ```
 
 Consumers: Node >= 20.19. Contributors / CI: Node 24 and pnpm >= 10
@@ -175,6 +188,7 @@ Consumers: Node >= 20.19. Contributors / CI: Node 24 and pnpm >= 10
 
 ## Documentation
 
+- [Component examples and guides](https://vd3.vanduo.dev/)
 - Agent / LLM reference — [SKILL.md](./SKILL.md)
 - Changelog — [CHANGELOG.md](./CHANGELOG.md)
 - Contributing — [CONTRIBUTING.md](./CONTRIBUTING.md)

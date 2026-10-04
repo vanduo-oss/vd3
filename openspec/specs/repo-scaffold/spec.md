@@ -15,7 +15,7 @@ of the compiled library. It MUST set `publishConfig: { "access": "public" }` so
 the scoped package publishes public. It SHALL declare `vue >=3.3.0` as the only
 peer dependency (pinia is deliberately dropped in the vd3 line) and SHALL expose
 the exports map `"."` (types/import/require from `dist/`), `"./css"`,
-`"./css/core"`, `"./tokens.json"`, and `"./package.json"`. It MUST include the
+`"./css/core"`, `"./highlight"` (types/import/require), `"./tokens.json"`, and `"./package.json"`. It MUST include the
 scripts `build`, `typecheck`, `lint`, `format`, `format:check`, `stylelint`,
 `test`, `prepack` (runs `build`), and `release` (builds then publishes). The
 exported `VD3_VERSION` constant in `src/index.ts` MUST equal the `version` field.
@@ -126,10 +126,10 @@ The repo MUST include `.github/workflows/ci.yml` with SHA-pinned actions, a
 least-privilege token (`permissions: contents: read`), markdown
 paths-ignore, pnpm 10.28.2 and node 24 (with `cache: pnpm` on the node setup),
 running in order: install (`--frozen-lockfile`), `pnpm audit
---audit-level=moderate` (kept green by the security `overrides` in
+--audit-level=moderate` (security `overrides` live in
 `pnpm-workspace.yaml`), build:tokens (bootstraps the generated theme-data
-module the gates need), lint, format:check, stylelint, typecheck, test,
-build, check:classes. Dependabot SHALL manage only the pinned GitHub Actions
+module the gates need), lint, format:check, stylelint, typecheck, test:coverage,
+build, test:size, test:skills, check:classes. Dependabot SHALL manage only the pinned GitHub Actions
 (weekly, grouped).
 
 #### Scenario: CI runs every gate
@@ -138,7 +138,8 @@ build, check:classes. Dependabot SHALL manage only the pinned GitHub Actions
 - **WHEN** the ci workflow executes
 - **THEN** it installs with the frozen lockfile, runs `pnpm audit
   --audit-level=moderate`, then build:tokens, then lint, format:check,
-  stylelint, typecheck, test, build, and check:classes, each required to pass
+  stylelint, typecheck, test:coverage, build, test:size, test:skills, and
+  check:classes, each required to pass
 
 #### Scenario: class coverage gates CI after build
 
@@ -151,10 +152,9 @@ build, check:classes. Dependabot SHALL manage only the pinned GitHub Actions
 
 - **GIVEN** the ci workflow after `pnpm install --frozen-lockfile`
 - **WHEN** `pnpm audit --audit-level=moderate` runs
-- **THEN** it exits 0 because the `pnpm-workspace.yaml` `overrides` pin the
-  flagged transitive dev dependencies (`brace-expansion`, `fast-uri`) to
-  patched releases, and a newly-introduced moderate+ advisory would fail the
-  workflow
+- **THEN** any unresolved moderate+ advisory fails the workflow; overrides
+  may select patched versions, but unavailable patches MUST NOT be described
+  as a clean audit
 
 ### Requirement: release-ready-documentation
 
@@ -167,12 +167,12 @@ stylesheet with `import "@vanduo-oss/vd3/css"`, registering the plugin with
 rendering a `Vd*` component — and an overview of the shipped inventory (the 63
 exported components: 56 `Vd*` components plus the 7 layout primitives `VdBox`,
 `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`; and the
-40 composables including the theme layer and the `useThemePreference`
+39 composable modules including the theme layer and the `useThemePreference`
 singleton). It MUST document the theming contract (the `data-palette` /
 `-primary` / `-neutral` / `-radius` / `-theme` / `-font` attributes, `--vd-*`
 custom properties, `vanduo-*` localStorage keys, and the `./css` / `./css/core`
-/ `./tokens.json` subpath exports), an SSR note stating the package is
-`vite-ssg`-safe because all browser access is client-guarded, and a security
+/ `./tokens.json` subpath exports), an SSR note distinguishing client-guarded static rendering from shared module
+state (theme, toast and defaults are not isolated between requests/apps), and a security
 note stating zero runtime dependencies beyond the `vue >=3.3` peer (no pinia),
 the hardened `.npmrc` posture, MIT licensing, and the bundled
 `THIRD-PARTY-LICENSES`. Every documented name, count, import specifier, and
@@ -185,7 +185,7 @@ non-existent API may be documented as available.
 - **WHEN** a developer reads the install/usage sections
 - **THEN** they find `pnpm add @vanduo-oss/vd3`, `import "@vanduo-oss/vd3/css"`,
   and `app.use(VanduoVue)`, and each import specifier resolves against the
-  `package.json` exports map (`.`, `./css`, `./css/core`, `./tokens.json`)
+  `package.json` exports map (`.`, `./css`, `./css/core`, `./highlight`, `./tokens.json`)
 
 #### Scenario: documented inventory matches the exports
 
@@ -200,8 +200,8 @@ non-existent API may be documented as available.
 - **GIVEN** the release-ready `README.md`
 - **WHEN** its theming, SSR, and security sections are read
 - **THEN** the `data-*` / `--vd-*` / `vanduo-*` contract and the CSS/token
-  exports are documented, the SSR note states `vite-ssg` safety via
-  client-guarded browser access, and the security note states the `vue >=3.3`
+  exports are documented, the SSR note explains client-guarded browser access
+  and the absence of request/app isolation for module state, and the security note states the `vue >=3.3`
   sole peer (no pinia), the hardened `.npmrc` posture, MIT license, and the
   bundled third-party licenses — each traceable to `package.json`, `.npmrc`,
   or `THIRD-PARTY-LICENSES`
@@ -224,11 +224,12 @@ shipped, installable package (it MUST NOT frame the package as an unbuilt
 the same real install (`pnpm add @vanduo-oss/vd3`, `import "@vanduo-oss/vd3/css"`,
 `app.use(VanduoVue)`), the component/composable inventory grouped for
 scanability (the 63 components incl. the 7 named layout primitives, and the
-40 composables incl. the `useTheme` surface and the `useThemePreference`
+39 composable modules incl. the theme API and the `useThemePreference`
 singleton), the theming contract (`data-*` attributes, `--vd-*` custom
 properties, `vanduo-*` storage keys, and the `./css` / `./css/core` /
 `./tokens.json` exports), and the SSR posture (client-guarded browser access,
-`vite-ssg`-safe, `useThemePreference` lazy client init). It MUST NOT reference
+static rendering support, shared module state limitations,
+`useThemePreference` lazy client init). It MUST NOT reference
 `window.Vanduo*` globals, IIFE loading, or a `loadVanduoRuntime` runtime — the
 package is pure Vue.
 

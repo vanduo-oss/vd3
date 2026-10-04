@@ -1,3 +1,4 @@
+import type { Ref } from "vue";
 import { describe, expectTypeOf, it } from "vitest";
 import {
   useTableState,
@@ -23,6 +24,12 @@ describe("table state public API (type lock)", () => {
   });
 
   it("locks useTableState member set", () => {
-    expectTypeOf(useTableState).toBeFunction();
+    expectTypeOf(useTableState).returns.toMatchTypeOf<{
+      page: Ref<number>;
+      sort: Ref<TableSort>;
+      selectedIds: Ref<string[]>;
+      toggle: (id: string) => void;
+      toggleAll: () => void;
+    }>();
   });
 });

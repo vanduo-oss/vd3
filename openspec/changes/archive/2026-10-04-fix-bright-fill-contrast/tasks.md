@@ -6,4 +6,4 @@
 - [x] 4. Add Vitest contrast/token contract tests (matrix + selector + negatives)
 - [x] 5. Refresh README, SKILL, CONTRIBUTING, changelog; bump to 1.7.2
 - [x] 6. `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm stylelint`, `pnpm build`
-- [ ] 7. After publish, install registry 1.7.2 in vd3-docs and run final dogfood
+- [x] 7. Reconciled after release: vd3-docs already pins registry 1.7.4. On 2026-10-04, dogfood the current local successor build with 15 passing Chromium theme/contrast checks across both palettes and all 18 hues. The original 1.7.2-only installation step is superseded; newly reproduced RGB and Fibonacci hover gaps are tracked in fix-verified-quality-gaps.

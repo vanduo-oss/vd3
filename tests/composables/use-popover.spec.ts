@@ -322,12 +322,36 @@ describe("usePopover — target-panel popover", () => {
       });
     panel.getBoundingClientRect = () => rect({ width: 200, height: 300 });
 
-    click(trigger); // opens, data-placement="bottom"
-    expect(panel.getAttribute("data-placement")).toBe("bottom");
+    click(trigger); // opening already accounts for viewport overflow
+    expect(panel.getAttribute("data-placement")).toBe("top");
 
     window.dispatchEvent(new Event("resize"));
     expect(panel.getAttribute("data-placement")).toBe("top");
   });
+
+  it.each([true, false])(
+    "repositions an open panel on nested scroll with flip=%s",
+    (flip) => {
+      const { wrapper } = mountHost(
+        `<div id="scroller"><button id="moving" data-vd-popover-target="#moving-panel" data-vd-popover-trigger="click" data-vd-popover-flip="${flip}">Trigger</button></div><div id="moving-panel" hidden>Panel</div>`,
+      );
+      const trigger = wrapper.get("#moving").element;
+      const panel = wrapper.get("#moving-panel").element as HTMLElement;
+      let top = 250;
+      trigger.getBoundingClientRect = () =>
+        rect({ top, bottom: top + 30, left: 100, width: 40, height: 30 });
+      panel.getBoundingClientRect = () => rect({ width: 100, height: 80 });
+      click(trigger);
+      expect(panel.style.top).toBe("288px");
+      top = 200;
+      wrapper.get("#scroller").element.dispatchEvent(new Event("scroll"));
+      expect(panel.style.top).toBe("238px");
+      expect(panel.getAttribute("data-placement")).toBe("bottom");
+      top = 180;
+      window.dispatchEvent(new Event("resize"));
+      expect(panel.style.top).toBe("218px");
+    },
+  );
 
   it("does not flip when data-vd-popover-flip='false'", () => {
     const { wrapper } = mountHost(

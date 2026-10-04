@@ -714,7 +714,7 @@ and MUST NOT change the default or the `sm` / `md` / `lg` behavior.
 
 - **GIVEN** a `VdModal` rendered with `size="xl"`
 - **WHEN** the panel element is inspected
-- **THEN** it carries `vd-modal-panel xl` as `vd-modal-panel vd-modal-panel-xl`, and `.vd-modal-panel-xl` resolves `--vd-modal-dialog-max-width` to `var(--vd-modal-width-xl)` (987px)
+- **THEN** it carries `vd-modal-panel vd-modal-panel-xl`, and `.vd-modal-panel-xl` resolves `--vd-modal-dialog-max-width` to `var(--vd-modal-width-xl)` (987px)
 
 #### Scenario: default size is md
 
@@ -974,6 +974,11 @@ single fat (2px) primary outline at rest, and a scheme-aware hover fill
 (black in light, primary in dark). `VdButton` SHALL accept `variant="ink"`
 and emit that class. The variant MUST NOT alter `.vd-btn-outline*`,
 `.vd-btn-ghost*`, or `.vd-btn-ring` rendering.
+
+Light-scheme hover is an intentional white-on-black surface and MUST use
+`--vd-color-white` (not `--vd-text-on-primary`, which is on-fill ink and is
+black on the default indigo rest fill). Dark-scheme hover MUST use
+`--vd-text-on-primary` on the solid primary fill.
 
 #### Scenario: VdButton exposes the variant
 

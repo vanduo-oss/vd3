@@ -13,8 +13,12 @@ describe("global search API types", () => {
       title: string;
       route: string;
     }>();
-    expectTypeOf<GlobalSearchAdapter>().toHaveProperty("search");
-    expectTypeOf<UseGlobalSearchController>().toHaveProperty("open");
+    expectTypeOf<GlobalSearchAdapter["search"]>().toEqualTypeOf<
+      (query: string, ctx: { ai: boolean }) => Promise<GlobalSearchHit[]>
+    >();
+    expectTypeOf<UseGlobalSearchController["open"]>().toEqualTypeOf<
+      () => void
+    >();
     expectTypeOf<GlobalSearchShortcutOptions>().toEqualTypeOf<
       boolean | { key?: string; slash?: boolean }
     >();

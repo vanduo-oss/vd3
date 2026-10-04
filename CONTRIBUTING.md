@@ -25,8 +25,10 @@ pnpm lint
 pnpm format:check
 pnpm stylelint
 pnpm typecheck
-pnpm test
+pnpm test:coverage
 pnpm build
+pnpm test:skills
+pnpm test:size
 ```
 
 Do not edit `css/core/generated/` or `src/theme/generated/` by hand.
@@ -36,9 +38,9 @@ Do not edit `css/core/generated/` or `src/theme/generated/` by hand.
 `.github/workflows/ci.yml` is one `ubuntu-latest` job with
 `timeout-minutes: 15`. GitHub Actions bills minutes used; that timeout is the
 ceiling. The job runs install, audit, tokens, lint, format, stylelint,
-typecheck, unit tests, build, skill checks, and class coverage. Markdown
-changes now trigger it. It has not been run remotely for the current
-`dev-v174` branch. Full DocSite visual and accessibility suites stay local.
+typecheck, coverage tests, build, skill and size checks, and class coverage.
+Markdown changes trigger it. Full DocSite visual and accessibility suites
+remain part of local cross-repository QA.
 
 ## OpenSpec
 
@@ -50,3 +52,9 @@ Active changes live in `openspec/changes/`. Archive with
 
 Bump `package.json` and `VD3_VERSION` together. `pnpm release` builds then
 publishes; do not publish from a docs-only or incomplete branch.
+
+Coverage includes all source except generated token data. Existing fully covered
+files retain their 100% thresholds; global and composable thresholds are measured
+baselines, not an assertion of complete behavioral coverage. In particular, WebGL
+rendering needs browser validation beyond jsdom. Library size budgets measure raw
+and gzip bytes; docs separately gate application entry assets.

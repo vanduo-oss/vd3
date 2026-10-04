@@ -71,7 +71,6 @@ const openBox = (trigger: HTMLElement): void => {
   if (!imgSrc) {
     // Vanilla warns and aborts; unlike vanilla we abort before flipping any
     // state, so a source-less trigger can't wedge the shared box open.
-    // eslint-disable-next-line no-console
     console.warn(
       "[Vanduo ImageBox] No image source found for trigger:",
       trigger,

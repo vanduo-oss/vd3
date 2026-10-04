@@ -15,7 +15,7 @@
   --vd-color-primary-dark: var(--vd-primary-7);
   --vd-color-primary-hover: var(--vd-primary-6);
   --vd-color-primary-active: var(--vd-primary-7);
-  --vd-color-primary-rgb: 92, 124, 250;
+  --vd-color-primary-rgb: var(--vd-primary-rgb-light);
   --vd-color-primary-alpha-5: color-mix(
     in srgb,
     var(--vd-color-primary) 5%,
@@ -85,7 +85,7 @@
   --vd-color-success-dark: var(--vd-success-7);
   --vd-color-success-hover: var(--vd-success-7);
   --vd-color-success-active: var(--vd-success-8);
-  --vd-color-success-rgb: 64, 192, 87;
+  --vd-color-success-rgb: var(--vd-success-rgb);
   --vd-color-success-alpha-10: color-mix(
     in srgb,
     var(--vd-color-success) 10%,
@@ -102,7 +102,7 @@
   --vd-color-warning-dark: var(--vd-warning-7);
   --vd-color-warning-hover: var(--vd-warning-7);
   --vd-color-warning-active: var(--vd-warning-8);
-  --vd-color-warning-rgb: 250, 176, 5;
+  --vd-color-warning-rgb: var(--vd-warning-rgb);
   --vd-color-warning-alpha-10: color-mix(
     in srgb,
     var(--vd-color-warning) 10%,
@@ -124,7 +124,7 @@
   --vd-color-error-dark: var(--vd-danger-7);
   --vd-color-error-hover: var(--vd-danger-7);
   --vd-color-error-active: var(--vd-danger-8);
-  --vd-color-error-rgb: 250, 82, 82;
+  --vd-color-error-rgb: var(--vd-danger-rgb);
   --vd-color-error-alpha-10: color-mix(
     in srgb,
     var(--vd-color-error) 10%,
@@ -149,7 +149,7 @@
   --vd-color-info-dark: var(--vd-info-7);
   --vd-color-info-hover: var(--vd-info-7);
   --vd-color-info-active: var(--vd-info-8);
-  --vd-color-info-rgb: 34, 139, 230;
+  --vd-color-info-rgb: var(--vd-info-rgb);
   --vd-color-info-alpha-10: color-mix(
     in srgb,
     var(--vd-color-info) 10%,
@@ -341,10 +341,23 @@ html[data-primary="blue"] {
   --vd-text-on-primary-hover: var(--vd-color-black);
 }
 
+/* Fibonacci step-7 fills are darker than Open Color; their hover ink is white. */
+html[data-palette="fibonacci"][data-primary="red"],
+html[data-palette="fibonacci"][data-primary="orange"],
+html[data-palette="fibonacci"][data-primary="yellow"],
+html[data-palette="fibonacci"][data-primary="lime"],
+html[data-palette="fibonacci"][data-primary="green"],
+html[data-palette="fibonacci"][data-primary="teal"],
+html[data-palette="fibonacci"][data-primary="cyan"],
+html[data-palette="fibonacci"][data-primary="blue"] {
+  --vd-text-on-primary-hover: var(--vd-color-white);
+}
+
 /* ============================================
  * DARK MODE TOKENS
  * ============================================ */
-[data-theme="dark"] {
+[data-theme="dark"],
+html[data-theme="dark"][data-palette="fibonacci"] {
   --vd-bg-primary: var(--vd-color-gray-900);
   --vd-bg-secondary: var(--vd-color-gray-800);
   --vd-bg-tertiary: var(--vd-color-gray-700);
@@ -365,12 +378,13 @@ html[data-primary="blue"] {
   --vd-border-color-dark: var(--vd-color-gray-600);
 
   --vd-color-primary: var(--vd-primary-4);
+  --vd-color-primary-rgb: var(--vd-primary-rgb-dark);
   --vd-color-primary-light: var(--vd-primary-3);
   --vd-color-primary-dark: var(--vd-primary-5);
   --vd-color-primary-hover: var(--vd-primary-5);
   --vd-color-primary-active: var(--vd-primary-6);
-  --vd-color-primary-alpha-10: rgba(116, 143, 252, 0.15);
-  --vd-color-primary-alpha-20: rgba(116, 143, 252, 0.25);
+  --vd-color-primary-alpha-10: color-mix(in srgb, var(--vd-color-primary) 15%, transparent);
+  --vd-color-primary-alpha-20: color-mix(in srgb, var(--vd-color-primary) 25%, transparent);
 
   --vd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --vd-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
@@ -390,7 +404,8 @@ html[data-theme="dark"][data-primary="black"] {
 
 /* Dark mode via prefers-color-scheme */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
+  :root:not([data-theme]),
+  :root:not([data-theme])[data-palette="fibonacci"] {
     --vd-bg-primary: var(--vd-color-gray-900);
     --vd-bg-secondary: var(--vd-color-gray-800);
     --vd-bg-tertiary: var(--vd-color-gray-700);
@@ -411,12 +426,13 @@ html[data-theme="dark"][data-primary="black"] {
     --vd-border-color-dark: var(--vd-color-gray-600);
 
     --vd-color-primary: var(--vd-primary-4);
+    --vd-color-primary-rgb: var(--vd-primary-rgb-dark);
     --vd-color-primary-light: var(--vd-primary-3);
     --vd-color-primary-dark: var(--vd-primary-5);
     --vd-color-primary-hover: var(--vd-primary-5);
     --vd-color-primary-active: var(--vd-primary-6);
-    --vd-color-primary-alpha-10: rgba(116, 143, 252, 0.15);
-    --vd-color-primary-alpha-20: rgba(116, 143, 252, 0.25);
+    --vd-color-primary-alpha-10: color-mix(in srgb, var(--vd-color-primary) 15%, transparent);
+    --vd-color-primary-alpha-20: color-mix(in srgb, var(--vd-color-primary) 25%, transparent);
 
     --vd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --vd-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);

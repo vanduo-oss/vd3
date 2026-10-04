@@ -302,7 +302,7 @@ export function usePopover(
     // the un-hidden panel has layout before it is measured.
     requestAnimationFrame(() => {
       inst.panel.style.position = "absolute";
-      place(trigger, inst.panel, inst.placement, PANEL_GAP);
+      repositionPanel(trigger);
       trigger.setAttribute("aria-expanded", "true");
       inst.panel.setAttribute("data-placement", inst.placement);
       trigger.dispatchEvent(
@@ -331,9 +331,9 @@ export function usePopover(
     });
   };
 
-  const flipPlacement = (trigger: HTMLElement): void => {
+  const repositionPanel = (trigger: HTMLElement): void => {
     const inst = panels.get(trigger);
-    if (!inst || !inst.allowFlip || inst.panel.hidden) return;
+    if (!inst || inst.panel.hidden) return;
     const win = inst.panel.ownerDocument.defaultView ?? window;
     const rect = trigger.getBoundingClientRect();
     const popRect = inst.panel.getBoundingClientRect();
@@ -359,12 +359,10 @@ export function usePopover(
       flipped = "left";
     }
 
-    if (flipped) {
-      inst.placement = flipped;
-      inst.panel.style.position = "absolute";
-      place(trigger, inst.panel, flipped, PANEL_GAP);
-      inst.panel.setAttribute("data-placement", flipped);
-    }
+    if (flipped && inst.allowFlip) inst.placement = flipped;
+    inst.panel.style.position = "absolute";
+    place(trigger, inst.panel, inst.placement, PANEL_GAP);
+    inst.panel.setAttribute("data-placement", inst.placement);
   };
 
   const findPanel = (trigger: HTMLElement): HTMLElement | null => {
@@ -457,7 +455,7 @@ export function usePopover(
 
     const win = panel.ownerDocument.defaultView ?? window;
     const reflowHandler = (): void => {
-      flipPlacement(trigger);
+      repositionPanel(trigger);
     };
     win.addEventListener("resize", reflowHandler);
     win.addEventListener("scroll", reflowHandler, true);
