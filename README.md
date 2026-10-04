@@ -8,9 +8,9 @@ Standalone [Vanduo](https://vanduo.dev) package: design tokens, CSS, and typed
 `Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
 runtime.
 
-**Status: 1.7.4** — sanitizer, tooltip, global-search hydration, and shared
-foreground-token contrast. 1.7.3 shipped `@vanduo-oss/vd3/highlight` and
-on-fill contrast on `.vd-bg-*` color utilities.
+**Status: 1.7.5** — palette-derived accents, popover positioning/dismissal,
+responsive Navbar/footer fixes, dock tint, optional gradient separators, and
+bootstrap control over automatic theme persistence.
 
 ## Install
 
