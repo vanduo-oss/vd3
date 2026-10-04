@@ -2,7 +2,8 @@
 
 Library branch: `dev-v175`, based on `c4722f67e2da17f518390b8c53589a538b915284`.
 Docs branch: `dev-v179`, based on `45ef97b5b53188a67050134b884bfc508bd16940`.
-No main-branch edits, version bump, commit, push, PR, or publication.
+No main-branch edits, version bump, push, PR, or publication. Accepted work was
+checkpointed locally as `19ca291`; the manual-review follow-up is committed separately.
 
 ## Implemented scope
 
@@ -44,3 +45,26 @@ Node 24.21.0 and pinned pnpm 10.28.2 were used (the cached Corepack executable).
 3. Firefox QA remains unverified because of the local launch failure.
 
 A14 token-format migration and B1–B6 architecture work remain deferred. No headless conversion, cascade-layer migration, Floating UI dependency, app-scoped state redesign, RTL implementation or component CSS splitting was attempted.
+
+## Accepted demo follow-up — 2026-10-04
+
+- Added bootstrap-only `themePersistence: false` and `setThemePersistence()`; explicit load/persist helpers remain available and ordinary library behavior remains enabled by default. This remains module-global, not app/request isolation.
+- Added `select:primary` for committed fan choices, leaving hover/cancel previews on the existing update event.
+- Fixed accent tint on brand/active glyph, inner footer columns and spanning copyright, consistently light text for explicit dark footers, and hidden/inert bounded mobile Navbar menus. Desktop Navbar links now remain exposed to assistive technology.
+- Added the optional 80px × 3px semantic primary/info gradient separator, including vertical/labeled forms.
+- Guarded queued popover positioning against a prior dismissal so Escape cannot restore stale expanded ARIA.
+
+Final library coverage: **123 files / 1,426 tests pass**. Statements 89.36%, branches
+79.68%, functions 95.06%, lines 91.85%; original 100% file floors remain intact.
+Lint, typecheck, format, stylelint, full build/class coverage, published-skill checks,
+size budgets and strict OpenSpec validation pass. Full CSS is 96,756 bytes gzip;
+core CSS 72,402; index.js 77,136. No dependency changes.
+
+Docs QA covers real computed fonts and schemes, storage separation/reload, dock
+tint, all ten static miniature previews, desktop/mobile footer geometry, Navbar
+overflow/focus, separator semantics and keyboard popovers in Chromium desktop/mobile
+and WebKit. Affected pages pass all 18 light/dark accessibility checks. See the
+sibling docs validation file for the manual checklist and staging workflow.
+
+Both the package Markdown Unreleased entry and docs' visible Unreleased package
+card describe these changes. The audit and release prerequisites above still apply.

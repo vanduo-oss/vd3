@@ -96,8 +96,10 @@ describe("VdNavbar", () => {
     expect(wrapper.find(".vd-navbar-actions").exists()).toBe(false);
   });
 
-  it("wires the toggle aria contract to the menu id, closed by default", () => {
+  it("wires the toggle aria contract to the menu id, closed on mobile", async () => {
+    setViewportWidth(390);
     const wrapper = factory();
+    await nextTick();
     const toggle = wrapper.find(".vd-navbar-toggle");
     const menu = wrapper.find(".vd-navbar-menu");
 
@@ -110,6 +112,15 @@ describe("VdNavbar", () => {
     expect(toggle.attributes("aria-controls")).toBe(menuId);
     expect(menu.attributes("aria-hidden")).toBe("true");
     expect(menu.classes()).not.toContain("is-open");
+  });
+
+  it("does not hide desktop navigation from assistive technology", () => {
+    setViewportWidth(1200);
+    const wrapper = factory();
+    expect(
+      wrapper.find(".vd-navbar-menu").attributes("aria-hidden"),
+    ).toBeUndefined();
+    expect(wrapper.find(".vd-navbar-menu").attributes("inert")).toBeUndefined();
   });
 
   it("maps variant/dark/position props to their vd-* classes", () => {
@@ -151,7 +162,7 @@ describe("VdNavbar", () => {
     expect(menu.classes()).toContain("is-open");
     expect(toggle.classes()).toContain("is-active");
     expect(toggle.attributes("aria-expanded")).toBe("true");
-    expect(menu.attributes("aria-hidden")).toBe("false");
+    expect(menu.attributes("aria-hidden")).not.toBe("true");
     expect(document.body.classList.contains("body-navbar-open")).toBe(true);
     expect(overlay()?.classList.contains("is-active")).toBe(true);
     expect(wrapper.emitted("open")).toHaveLength(1);

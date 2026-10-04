@@ -5,7 +5,21 @@ tracks the package only — never docs-site content.
 
 ## Unreleased
 
+### Added
+
+- `themePersistence: false` bootstrap option disables automatic theme storage reads/writes;
+  explicit preference helpers and normal library defaults remain available.
+- Customizer fan `select:primary` event separates committed selections from hover previews.
+- Optional `VdSeparator` gradient variant follows semantic primary/info colors.
+
 ### Fixed
+
+- Dock accent tint reaches the brand and active icon while labels stay neutral.
+- Footer columns apply inside the Vue wrapper; copyright spans all columns.
+  Explicit dark footers retain light text under either page theme.
+- Dismissed target popovers keep closed ARIA when a positioning frame is pending.
+- Desktop Navbar links remain exposed to assistive technology; closed mobile menus are inert.
+- Closed mobile Navbar menus stay hidden, noninteractive and within their containing bounds.
 
 - Primary/status RGB and dark alpha accents follow built-in palettes, hues and schemes.
 - Fibonacci light-theme hover fills use readable foreground colors.

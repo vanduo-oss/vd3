@@ -561,3 +561,9 @@
     --vd-dock-brand-size: 1.1rem;
   }
 }
+
+/* Accent mode colors the mark and active glyph, keeping labels neutral. */
+.vd-dock.vd-dock-tint-accent[class*="vd-dock-tint-"] .vd-dock-brand,
+.vd-dock.vd-dock-tint-accent[class*="vd-dock-tint-"] .vd-dock-item.is-active > i {
+  color: var(--vd-dock-tint);
+}

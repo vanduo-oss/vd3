@@ -196,3 +196,17 @@ Consumers: Node >= 20.19. Contributors / CI: Node 24 and pnpm >= 10
 ## License
 
 [MIT](./LICENSE) © Vanduo
+
+### Temporary theme controls
+
+At bootstrap, `app.use(VanduoVue, { themePersistence: false })` disables the
+shared theme singleton's automatic localStorage reads and writes. Controls still
+share reactive state and apply preferences to the page. An app can explicitly
+call `loadPreference()` and `persistPreference()` to own its saved choices.
+The option defaults to `true`; call before creating theme consumers. Like
+`storagePrefix`, it is module-global and does not isolate Vue apps or SSR requests.
+Without the plugin, use `setThemePersistence(false)` at bootstrap.
+
+Controlled customizer fans emit `update:primary` for previews/restores and
+`select:primary` when a swatch is selected. Save only the latter when hover
+previews must remain temporary.

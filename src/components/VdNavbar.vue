@@ -45,6 +45,7 @@ const navbarRef = ref<HTMLElement | null>(null);
 const menuRef = ref<HTMLElement | null>(null);
 const toggleRef = ref<HTMLButtonElement | null>(null);
 const isOpen = ref(false);
+const isMobile = ref(false);
 
 const menuId = `vd-navbar-menu-${useId()}`;
 
@@ -119,6 +120,7 @@ const onDocumentClick = (event: MouseEvent): void => {
 
 let resizeTimer: ReturnType<typeof setTimeout> | undefined;
 const onResize = (): void => {
+  isMobile.value = window.innerWidth < getBreakpoint();
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     if (window.innerWidth >= getBreakpoint() && isOpen.value) closeMenu();
@@ -155,6 +157,7 @@ const onMenuClick = (event: MouseEvent): void => {
 const onOverlayClick = (): void => closeMenu();
 
 onMounted(() => {
+  isMobile.value = window.innerWidth < getBreakpoint();
   document.addEventListener("keydown", onDocumentKeydown);
   document.addEventListener("click", onDocumentClick);
   window.addEventListener("resize", onResize);
@@ -207,7 +210,8 @@ defineExpose({
         ref="menuRef"
         class="vd-navbar-menu"
         :class="{ 'is-open': isOpen }"
-        :aria-hidden="isOpen ? 'false' : 'true'"
+        :aria-hidden="isMobile ? (isOpen ? 'false' : 'true') : undefined"
+        :inert="isMobile && !isOpen ? true : undefined"
         @click="onMenuClick"
       >
         <slot />

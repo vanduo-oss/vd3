@@ -94,6 +94,15 @@ const STORAGE_SUFFIXES = {
 } as const;
 
 let storagePrefix = DEFAULT_STORAGE_PREFIX;
+let themePersistence = true;
+
+/** Bootstrap-only: disable the singleton's automatic storage reads/writes.
+ * Explicit loadPreference/persistPreference helpers remain available to app owners.
+ * This setting is module-global, like storagePrefix; it does not isolate apps/SSR requests.
+ */
+export const setThemePersistence = (enabled: boolean): void => {
+  themePersistence = enabled;
+};
 
 /**
  * Current theme-preference localStorage prefix. Defaults to `vanduo-`.
@@ -275,7 +284,7 @@ let themeState: ThemePreference | null = null;
 const ensureThemeState = (): ThemePreference => {
   if (!themeState) {
     themeState = reactive<ThemePreference>(
-      isClient() ? loadPreference() : defaultPreference(),
+      isClient() && themePersistence ? loadPreference() : defaultPreference(),
     );
     if (isClient()) applyPreference(themeState);
   }
@@ -286,7 +295,7 @@ const ensureThemeState = (): ThemePreference => {
 const commitThemeState = (): void => {
   const state = ensureThemeState();
   applyPreference(state);
-  persistPreference(state);
+  if (themePersistence) persistPreference(state);
 };
 
 // Refcounted `prefers-color-scheme` listener: while the preference tracks the
@@ -329,19 +338,19 @@ export interface ThemePreferenceApi {
   setNeutral: (neutral: string) => void;
   setRadius: (radius: RadiusOption) => void;
   setFont: (font: string) => void;
-  /** Restore every field to `defaultPreference()` and re-apply/persist. */
+  /** Restore every field to `defaultPreference()` and apply the persistence policy. */
   reset: () => void;
 }
 
 /**
  * Access the shared theme-preference singleton. Every setter routes through
- * `applyPreference()` + `persistPreference()` so the `data-*` attribute contract
- * and `vanduo-*` storage keys remain the single source of truth; `setTheme`
+ * `applyPreference()` and, by default, `persistPreference()` so the `data-*`
+ * attribute contract and `vanduo-*` storage keys stay aligned; `setTheme`
  * re-derives the default primary for the new scheme via `applyPreference`.
  *
  * When called inside a component `setup()`, it refcounts the shared
  * `prefers-color-scheme` listener across that component's lifecycle and
- * re-hydrates the state from storage on mount (idempotent — storage is the
+ * re-hydrates the state from storage when automatic persistence is enabled (idempotent — storage is the
  * source of truth, so a later-mounting consumer never clobbers an in-session
  * change made through the setters).
  */
@@ -354,7 +363,7 @@ export const useThemePreference = (): ThemePreferenceApi => {
   // SSR hydration — paints the current preference rather than a stale snapshot.
   // Storage is the source of truth and every setter persists, so this never
   // drops an in-session change. SSR: skipped; the state stays at defaults.
-  if (isClient()) {
+  if (isClient() && themePersistence) {
     Object.assign(state, loadPreference());
     applyPreference(state);
   }

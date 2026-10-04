@@ -174,3 +174,30 @@ describe("useThemePreference media-listener refcount", () => {
     expect(remove).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("temporary theme preferences", () => {
+  it("ignores saved preferences, applies changes without writing, and retains previews across consumers", async () => {
+    vi.resetModules();
+    const theme = await import("../../src/composables/useTheme");
+    localStorage.setItem("vanduo-font-preference", "lato");
+    const before = { ...localStorage };
+    theme.setThemePersistence(false);
+    const a = theme.useThemePreference();
+    expect(a.state.font).toBe(theme.defaultPreference().font);
+    a.setFont("jetbrains-mono");
+    a.setTheme("dark");
+    a.setRadius("0.125");
+    expect(document.documentElement.getAttribute("data-font")).toBe(
+      "jetbrains-mono",
+    );
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    const b = theme.useThemePreference();
+    expect(b.state.font).toBe("jetbrains-mono");
+    expect({ ...localStorage }).toEqual(before);
+    a.reset();
+    expect({ ...localStorage }).toEqual(before);
+    // App-owned persistence remains explicitly available.
+    theme.persistPreference({ ...theme.defaultPreference(), primary: "teal" });
+    expect(localStorage.getItem("vanduo-primary-color")).toBe("teal");
+  });
+});

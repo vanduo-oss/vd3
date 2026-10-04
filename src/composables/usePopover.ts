@@ -301,6 +301,9 @@ export function usePopover(
     // Vanilla parity: position + ARIA + event settle on the next frame so
     // the un-hidden panel has layout before it is measured.
     requestAnimationFrame(() => {
+      // Escape/outside dismissal may happen before this frame. Never restore
+      // expanded ARIA after close, or the next keyboard click would close again.
+      if (inst.panel.hidden || panels.get(trigger) !== inst) return;
       inst.panel.style.position = "absolute";
       repositionPanel(trigger);
       trigger.setAttribute("aria-expanded", "true");

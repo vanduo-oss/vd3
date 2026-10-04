@@ -524,3 +524,28 @@ describe("usePopover — cleanup", () => {
     expect(bPanel.classList.contains("is-visible")).toBe(false);
   });
 });
+
+describe("dismissal before deferred positioning", () => {
+  it("does not restore expanded ARIA after Escape and allows reopening", () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      frames.push(cb);
+      return frames.length;
+    });
+    const { wrapper } = mountHost(
+      '<button data-vd-popover-target="#pending-panel" data-vd-popover-trigger="click">Open</button><div id="pending-panel" hidden>Panel</div>',
+    );
+    const trigger = wrapper.get("button").element as HTMLElement;
+    click(trigger);
+    escape();
+    frames.forEach((frame) => frame(0));
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    expect((wrapper.get("#pending-panel").element as HTMLElement).hidden).toBe(
+      true,
+    );
+    click(trigger);
+    expect((wrapper.get("#pending-panel").element as HTMLElement).hidden).toBe(
+      false,
+    );
+  });
+});

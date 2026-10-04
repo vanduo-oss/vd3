@@ -8,3 +8,6 @@ Docs: Button and Accordion examples, token consumers, integration/architecture/a
 
 ## Non-goals
 DTCG format migration, headless components, cascade-layer conversion, per-component CSS distribution, Floating UI adoption, app-scoped state redesign, light-dark conversion, or RTL implementation. No new dependencies.
+
+## Accepted manual-review follow-up
+Separate temporary docs previews from saved site-dock mode and per-scheme primary colors. Add an opt-in bootstrap persistence policy while preserving ordinary library behavior. Repair dock accent tint, footer columns/contrast and closed mobile Navbar exposure; add the optional compact semantic gradient separator. Correct affected demos and snippets, retain click/tap popovers with keyboard dismissal, and validate the real rendered behavior.
