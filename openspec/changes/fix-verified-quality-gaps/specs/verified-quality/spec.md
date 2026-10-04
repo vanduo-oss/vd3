@@ -44,3 +44,9 @@ The library and documentation SHALL preserve existing public imports while corre
 - **GIVEN** a button trigger and a target-panel popover with positioning still pending
 - **WHEN** Enter or Space activates it and Escape dismisses it
 - **THEN** closed ARIA MUST remain closed and a later activation MUST open normally
+
+#### Scenario: Scoped release audit exception
+- **GIVEN** maintainer approval for the unpatched development-only CVE-2026-93687
+- **WHEN** CI runs the dependency audit
+- **THEN** it MAY exclude only that CVE while retaining the moderate+ threshold and development dependency scan
+- **AND** the repository MUST document its scope, residual risk and removal criteria

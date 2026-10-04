@@ -31,9 +31,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Fail on unresolved moderate+ advisories, including ones without a patch.
-      # Available transitive patch floors live in pnpm-workspace.yaml.
-      - run: pnpm audit --audit-level=moderate
+      # Fail on moderate+ advisories except the approved dev-tool exception.
+      # CVE-2026-93687 scope, rationale and removal: SECURITY-AUDIT.md.
+      - run: pnpm audit --audit-level=moderate --ignore CVE-2026-93687
 
       # Bootstrap the generated theme-data module (src/theme/generated/
       # tokens.data.ts) that lint/typecheck/test need on a fresh clone.

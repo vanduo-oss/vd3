@@ -11,3 +11,6 @@ DTCG format migration, headless components, cascade-layer conversion, per-compon
 
 ## Accepted manual-review follow-up
 Separate temporary docs previews from saved site-dock mode and per-scheme primary colors. Add an opt-in bootstrap persistence policy while preserving ordinary library behavior. Repair dock accent tint, footer columns/contrast and closed mobile Navbar exposure; add the optional compact semantic gradient separator. Correct affected demos and snippets, retain click/tap popovers with keyboard dismissal, and validate the real rendered behavior.
+
+## Authorized release preparation
+Prepare package metadata and VD3_VERSION for 1.7.5. The maintainer explicitly approved a documented CI exception only for CVE-2026-93687 on 2026-10-04 after the initial PR audit failure. Keep all other moderate+ audit checks and install safeguards; record the rationale and removal criteria in SECURITY-AUDIT.md. Publication remains a separate manual step after CI and merge.

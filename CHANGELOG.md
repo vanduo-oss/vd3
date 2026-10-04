@@ -27,6 +27,8 @@ tracks the package only — never docs-site content.
 - TypeScript lint coverage, rendered-color regression checks, missing-import failures,
   full-source coverage thresholds, and artifact size budgets strengthen local/CI checks.
 - Clarify public exports, theme APIs, skill inventory and shared-state SSR limitations.
+- Document a CI audit exception for the unpatched development-only
+  `CVE-2026-93687`; all other moderate+ advisory checks remain enabled.
 
 ## 1.7.4 — 2026-09-17
 
