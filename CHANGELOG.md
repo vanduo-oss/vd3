@@ -3,6 +3,33 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.5 — 2026-10-04
+
+### Added
+
+- `themePersistence: false` bootstrap option disables automatic theme storage reads/writes;
+  explicit preference helpers and normal library defaults remain available.
+- Customizer fan `select:primary` event separates committed selections from hover previews.
+- Optional `VdSeparator` gradient variant follows semantic primary/info colors.
+
+### Fixed
+
+- Dock accent tint reaches the brand and active icon while labels stay neutral.
+- Footer columns apply inside the Vue wrapper; copyright spans all columns.
+  Explicit dark footers retain light text under either page theme.
+- Dismissed target popovers keep closed ARIA when a positioning frame is pending.
+- Desktop Navbar links remain exposed to assistive technology; closed mobile menus are inert.
+- Closed mobile Navbar menus stay hidden, noninteractive and within their containing bounds.
+
+- Primary/status RGB and dark alpha accents follow built-in palettes, hues and schemes.
+- Fibonacci light-theme hover fills use readable foreground colors.
+- Open popovers follow scrolling/resizing anchors even without a placement flip.
+- TypeScript lint coverage, rendered-color regression checks, missing-import failures,
+  full-source coverage thresholds, and artifact size budgets strengthen local/CI checks.
+- Clarify public exports, theme APIs, skill inventory and shared-state SSR limitations.
+- Document a CI audit exception for the unpatched development-only
+  `CVE-2026-93687`; all other moderate+ advisory checks remain enabled.
+
 ## 1.7.4 — 2026-09-17
 
 ### Fixed

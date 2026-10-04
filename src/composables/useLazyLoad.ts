@@ -232,6 +232,8 @@ export function useLazyLoad(root?: Ref<HTMLElement | null>): LazyLoadApi {
     }
 
     // Placeholder + loading fire immediately; the fetch waits for intersection.
+    // resolvePlaceholder sanitizes caller HTML and otherwise returns a static spinner.
+    // eslint-disable-next-line no-restricted-syntax
     container.innerHTML = resolvePlaceholder(options.placeholder);
     dispatch("lazysection:loading", { url });
 

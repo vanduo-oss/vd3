@@ -1,41 +1,21 @@
-# pnpm settings live here (pnpm 10+ no longer reads the package.json "pnpm" field).
+# Canonical pnpm configuration. pnpm 10 also reads package.json#pnpm;
+# keeping overrides here avoids two conflicting sources of dependency policy.
 onlyBuiltDependencies:
   - esbuild
 
 overrides:
-  # Security: force the transitive brace-expansion (pulled via
-  # @vue/test-utils > js-beautify > editorconfig > minimatch) to a patched
-  # release — GHSA-3jxr-9vmj-r5cp (DoS via exponential brace expansion). This is
-  # a dev-only dependency (never shipped in dist); the override keeps
-  # `pnpm audit --audit-level=moderate` green. Bounded to ^5.0.7 (the version
-  # eslint already resolves, so the tree dedupes to one) rather than an
-  # open-ended `>=` range.
-  "brace-expansion@>=2.0.0 <2.1.2": "^5.0.7"
-
-  # Security: force the transitive fast-uri (pulled via
-  # stylelint > table > ajv > fast-uri) to a patched release —
-  # GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc, GHSA-fph4-wmhf-6fwf,
-  # GHSA-jqff-g426-hqxp (host confusion / SSRF in URI normalization).
-  # Dev-only (never shipped in dist); keeps
-  # `pnpm audit --audit-level=moderate` green. 3.1.4/3.1.5 remain in
-  # the vulnerable range, so the pin is ^3.1.6.
-  "fast-uri@>=3.0.0 <3.1.6": "^3.1.6"
-
-  # Security: force the transitive nanoid (pulled via
-  # stylelint > postcss > nanoid) to a patched release —
-  # GHSA-2v37-7h3g-55p8 (custom generators can loop indefinitely when size
-  # is zero). Dev-only (never shipped in dist); keeps
-  # `pnpm audit --audit-level=moderate` green.
+  # Consolidate the previously effective package-level constraints, then apply
+  # the October 2026 patch floors identified by pnpm audit.
+  postcss: ">=8.5.18"
+  # GHSA-3jxr-9vmj-r5cp (brace expansion DoS)
+  brace-expansion: "^5.0.12"
+  # URI normalization advisories; retain the existing 3.x constraint.
+  fast-uri: "^3.1.8"
+  # GHSA-2wm5-q62r-hmrv (color parser ReDoS)
+  colord: ">=2.9.4"
+  # GHSA-2883-xcg3-v3hh (YAML merge-key CPU DoS)
+  js-yaml: "^4.3.2"
+  # Preserve the previously documented safety net; current lock already uses 3.3.18.
   "nanoid@<3.3.18": "^3.3.18"
-
-  # Security: force the transitive colord (pulled via stylelint) to a patched
-  # release — GHSA-2wm5-q62r-hmrv (ReDoS in CSS color string matchers).
-  # Prefer stylelint >=17.15.0 which depends on colord ^2.10.0; this override
-  # is a safety net. Dev-only; keeps `pnpm audit --audit-level=moderate` green.
-  "colord@<2.9.4": "^2.9.4"
-
-  # Security: force the transitive js-yaml (pulled via stylelint > cosmiconfig)
-  # to a patched release — GHSA-2883-xcg3-v3hh (maxTotalMergeKeys CPU DoS).
-  # Pin to ^4.3.2 (not open >=) so cosmiconfig stays on the js-yaml 4.x API.
-  # Dev-only; keeps `pnpm audit --audit-level=moderate` green.
-  "js-yaml@>=4.0.0 <4.3.2": "^4.3.2"
+  # GHSA-rfgv-xxqx-mfg5 and related HTTP/WebSocket advisories (jsdom only).
+  "undici@>=7.0.0 <7.29.1": "^7.29.1"

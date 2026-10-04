@@ -685,7 +685,10 @@
   .vd-navbar-menu {
     position: fixed;
     top: 0;
-    right: -100%;
+    right: 0;
+    visibility: hidden;
+    pointer-events: none;
+    clip-path: inset(0 0 0 100%);
     width: var(--vd-navbar-mobile-menu-width);
     height: 100vh;
     background-color: var(--vd-navbar-mobile-menu-bg);
@@ -693,7 +696,7 @@
     align-items: flex-start;
     padding: 4rem 1.5rem 1.5rem;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-    transition: right 0.3s ease;
+    transition: clip-path 0.3s ease, visibility 0.3s;
     z-index: 1000;
     overflow-y: auto;
   }
@@ -706,7 +709,9 @@
   }
   
   .vd-navbar-menu.is-open {
-    right: 0;
+    visibility: visible;
+    pointer-events: auto;
+    clip-path: inset(0);
   }
   
   .vd-navbar-dark .vd-navbar-menu {

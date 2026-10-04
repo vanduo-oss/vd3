@@ -101,7 +101,8 @@ then `vue-tsc -p tsconfig.build.json`. `vite.config.ts` SHALL set
 `build.emptyOutDir: false` so the vite step cannot clobber the token and CSS
 artifacts emitted before it. After a full build, `dist/` MUST contain every
 artifact declared in the exports map: `index.js`, `index.cjs`, `index.d.ts`,
-`vd3.min.css`, `vd3-core.min.css`, and `tokens.json` (plus `tokens.js`,
+`highlight.js`, `highlight.cjs`, `highlight.d.ts`, `vd3.min.css`,
+`vd3-core.min.css`, and `tokens.json` (plus `tokens.js`,
 `tokens.d.ts`, dev CSS variants, maps, fonts, and icons).
 
 #### Scenario: full build produces every declared export target
@@ -109,7 +110,7 @@ artifact declared in the exports map: `index.js`, `index.cjs`, `index.d.ts`,
 - **GIVEN** a clean checkout with dependencies installed
 - **WHEN** `pnpm build` runs
 - **THEN** it exits 0 and `dist/` contains `index.js`, `index.cjs`,
-  `index.d.ts`, `vd3.css`, `vd3.min.css`, `vd3-core.css`,
+  `index.d.ts`, `highlight.js`, `highlight.cjs`, `highlight.d.ts`, `vd3.css`, `vd3.min.css`, `vd3-core.css`,
   `vd3-core.min.css`, `tokens.js`, `tokens.d.ts`, and `tokens.json`
 
 #### Scenario: vite step preserves earlier artifacts
@@ -390,3 +391,40 @@ the image.
 - **THEN** those overrides MUST also carry `background-repeat:no-repeat`
   (minified form) alongside position and size so the tiling regression
   cannot ship
+
+### Requirement: filled-surfaces-use-on-fill-ink
+
+Authored CSS for filled primary and status surfaces MUST set `color` (and
+spinner `border-color` where a spinner is painted) to
+`--vd-text-on-primary`, `--vd-text-on-primary-hover`, or
+`--vd-text-on-status` — not a hardcoded `--vd-color-white` / `#fff` —
+including buttons (filled, outline hover, loading), chips, badges, solid
+alerts, solid toasts, active pill tabs, pagination, FAB, avatars, stepper
+circles, labeled progress, selected date/time items, active suggest items,
+waypoint pills, Spotlight primary actions, table status rows, checked
+checkbox glyphs, large timeline markers, and footer-social hover.
+
+Hover fills MUST remain the existing solid primary / `*-dark` language.
+Light `.vd-btn-ink:hover` MUST stay white on `--vd-color-black`. Intentional
+white-on-dark treatments (`.vd-badge-dark`, `.vd-table-dark`, tooltips,
+`.vd-spinner-light`, image-box close/caption) MUST keep light ink.
+
+#### Scenario: filled primary button consumes the token
+
+- **GIVEN** `css/components/buttons.css`
+- **WHEN** `.vd-btn-primary` is inspected
+- **THEN** its `color` is `var(--vd-text-on-primary)` and its hover `color`
+  is `var(--vd-text-on-primary-hover)`
+
+#### Scenario: warning and success share status ink
+
+- **GIVEN** filled warning and success button, chip, and badge rules
+- **WHEN** their `color` declarations are inspected
+- **THEN** each uses `var(--vd-text-on-status)`
+
+#### Scenario: dark-surface negatives stay white
+
+- **GIVEN** `.vd-badge-dark`, `.vd-table-dark`, and tooltip text tokens
+- **WHEN** their foregrounds are inspected
+- **THEN** they still use `--vd-color-white` or the tooltip light-on-dark
+  token

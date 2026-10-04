@@ -31,9 +31,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Fail on known moderate+ advisories. The brace-expansion override in
-      # pnpm-workspace.yaml keeps this green (GHSA-3jxr-9vmj-r5cp).
-      - run: pnpm audit --audit-level=moderate
+      # Fail on moderate+ advisories except the approved dev-tool exception.
+      # CVE-2026-93687 scope, rationale and removal: SECURITY-AUDIT.md.
+      - run: pnpm audit --audit-level=moderate --ignore CVE-2026-93687
 
       # Bootstrap the generated theme-data module (src/theme/generated/
       # tokens.data.ts) that lint/typecheck/test need on a fresh clone.
@@ -43,7 +43,8 @@ jobs:
       - run: pnpm run format:check
       - run: pnpm run stylelint
       - run: pnpm run typecheck
-      - run: pnpm run test
+      - run: pnpm run test:coverage
       - run: pnpm run build
+      - run: pnpm run test:size
       - run: pnpm run test:skills
       - run: pnpm run check:classes

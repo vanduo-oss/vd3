@@ -66,9 +66,9 @@ export default [
       'no-unused-vars': 'off',
       'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-restricted-syntax': [
-        'warn',
+        'error',
         {
-          selector: "AssignmentExpression[left.type='MemberExpression'][left.property.name='innerHTML']",
+          selector: "AssignmentExpression[left.type='MemberExpression'][left.property.name='innerHTML']:not([right.type='Literal']):not([right.callee.name='sanitizeHtml'])",
           message:
             'Avoid assigning to innerHTML directly; route HTML through a sanitizer or build nodes with the DOM API.',
         },
@@ -77,12 +77,17 @@ export default [
     },
   },
   {
-    files: ['**/*.vue'],
+    files: ['**/*.vue', '**/*.ts'],
     languageOptions: {
       parserOptions: {
         parser: '@typescript-eslint/parser',
       },
     },
+  },
+  {
+    // Test fixtures intentionally construct trusted HTML. Production writes remain gated.
+    files: ['tests/**/*.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
   },
   {
     files: ['**/*.mjs', '**/*.cjs'],

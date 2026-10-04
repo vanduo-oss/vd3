@@ -48,3 +48,41 @@
 .vd-separator-label {
   flex-shrink: 0;
 }
+
+/* Compact brand divider; semantic colors follow the active palette and scheme. */
+.vd-separator-gradient {
+  --vd-separator-gradient-start: var(--vd-color-primary);
+  --vd-separator-gradient-end: var(--vd-color-info);
+  --vd-separator-gradient-length: 80px;
+  --vd-separator-gradient-thickness: 3px;
+
+  width: var(--vd-separator-gradient-length);
+  max-width: 100%;
+  height: var(--vd-separator-gradient-thickness);
+  margin-inline: auto;
+  border: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--vd-separator-gradient-start), var(--vd-separator-gradient-end));
+}
+
+.vd-separator-gradient.vd-separator-vertical {
+  width: var(--vd-separator-gradient-thickness);
+  height: auto;
+  min-height: 1em;
+  margin: 0 var(--vd-separator-spacing);
+  background: linear-gradient(180deg, var(--vd-separator-gradient-start), var(--vd-separator-gradient-end));
+}
+
+.vd-separator-gradient.vd-separator-labeled {
+  width: 100%;
+  height: auto;
+  background: none;
+}
+
+.vd-separator-gradient.vd-separator-labeled::before,
+.vd-separator-gradient.vd-separator-labeled::after {
+  height: var(--vd-separator-gradient-thickness);
+  border: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--vd-separator-gradient-start), var(--vd-separator-gradient-end));
+}

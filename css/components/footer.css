@@ -8,7 +8,7 @@
   --vd-footer-bg: var(--vd-bg-secondary);
   --vd-footer-bg-dark: var(--vd-bg-dark);
   --vd-footer-text-color: var(--vd-text-primary);
-  --vd-footer-text-color-dark: var(--vd-text-inverse);
+  --vd-footer-text-color-dark: var(--vd-color-white);
   --vd-footer-link-color: var(--vd-text-secondary);
   --vd-footer-link-hover-color: var(--vd-color-primary);
   --vd-footer-border-color: var(--vd-border-color);
@@ -159,6 +159,27 @@
   .vd-footer-4col {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* The Vue wrapper is one root grid child; its sections own the columns.
+   Root grid rules above also keep direct-section CSS-only markup working. */
+:is(.vd-footer-2col, .vd-footer-3col, .vd-footer-4col) > .vd-footer-container {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: inherit;
+  gap: inherit;
+  width: 100%;
+  min-width: 0;
+}
+
+:is(.vd-footer-2col, .vd-footer-3col, .vd-footer-4col) .vd-footer-section {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+:is(.vd-footer-2col, .vd-footer-3col, .vd-footer-4col) .vd-footer-copyright {
+  grid-column: 1 / -1;
+  margin-top: 0;
 }
 
 /* Footer Variants - Dark */

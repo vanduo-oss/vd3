@@ -79,7 +79,10 @@ const CSS_ONLY_ALLOW: ReadonlyArray<{ re: RegExp; why: string }> = [
   { re: /^--vd-border-width$/, why: "border width literal" },
   // Color helpers composed at author time from a base color (rgba/color-mix);
   // the DTCG layer carries the base colors, not these derivations.
-  { re: /^--vd-color-[a-z]+-rgb$/, why: "rgb triplet for rgba() composition" },
+  {
+    re: /^--vd-color-(primary|success|warning|error|info)-rgb$/,
+    why: "palette-derived RGB helpers, verified by rendered theme checks",
+  },
   {
     re: /^--vd-color-[a-z]+-alpha-\d+$/,
     why: "translucent color-mix/rgba variant",

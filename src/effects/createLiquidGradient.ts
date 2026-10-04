@@ -286,7 +286,7 @@ class TouchTexture {
       x: point.x * this.width,
       y: (1 - point.y) * this.height,
     };
-    let intensity = 1;
+    let intensity: number;
     if (point.age < this.maxAge * 0.3) {
       intensity = Math.sin((point.age / (this.maxAge * 0.3)) * (Math.PI / 2));
     } else {
@@ -477,8 +477,8 @@ export function createLiquidGradient(
     const themeStyles = el === themeEl ? styles : getComputedStyle(themeEl);
 
     const primary =
-      parseRgbTriplet(themeStyles.getPropertyValue("--vd-color-primary-rgb")) ||
       parseCssColor(themeStyles.getPropertyValue("--vd-color-primary")) ||
+      parseRgbTriplet(themeStyles.getPropertyValue("--vd-color-primary-rgb")) ||
       parseRgbTriplet(styles.getPropertyValue("--vd-color-primary-rgb")) ||
       parseCssColor(styles.getPropertyValue("--vd-color-primary")) ||
       colors.primary;

@@ -193,7 +193,7 @@ function resolveCSSImports(filePath, basePath, entryDir, sourceOverride) {
       );
       css = css.replace(match[0], importedCSS);
     } else {
-      console.warn(`Import not found: ${importPath}`);
+      throw new Error(`CSS import not found: ${importPath} (from ${filePath})`);
     }
   }
 

@@ -32,7 +32,7 @@ export const useKeyboardNav = (
     const list = items();
     if (list.length === 0) return;
     const max = list.length - 1;
-    let next = activeIndex.value;
+    let next: number;
     switch (event.key) {
       case "ArrowDown":
       case "ArrowRight":

@@ -7,6 +7,8 @@ import {
   getStoragePrefix,
   getThemeDefaults,
   setStoragePrefix,
+  setThemePersistence,
+  useThemePreference,
   setThemeDefaults,
 } from "../src/composables/useTheme";
 
@@ -18,9 +20,18 @@ import {
 afterEach(() => {
   setThemeDefaults({ ...DEFAULTS });
   setStoragePrefix(DEFAULT_STORAGE_PREFIX);
+  setThemePersistence(true);
+  localStorage.clear();
 });
 
 describe("VanduoVue plugin", () => {
+  it("can opt out of automatic theme persistence at bootstrap", () => {
+    const app = createApp({ render: () => null });
+    app.use(VanduoVue, { themePersistence: false });
+    useThemePreference().setFont("lato");
+    expect(document.documentElement.getAttribute("data-font")).toBe("lato");
+    expect(localStorage.getItem("vanduo-font-preference")).toBeNull();
+  });
   it("installs via app.use and applies themeDefaults overrides synchronously", () => {
     const app = createApp({ render: () => null });
     app.use(VanduoVue, {

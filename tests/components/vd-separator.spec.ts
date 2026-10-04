@@ -3,6 +3,18 @@ import { mount } from "@vue/test-utils";
 import VdSeparator from "../../src/components/VdSeparator.vue";
 
 describe("VdSeparator", () => {
+  it.each([
+    { vertical: false, label: "" },
+    { vertical: true, label: "" },
+    { vertical: false, label: "OR" },
+  ])("adds the gradient without changing separator semantics: %j", (props) => {
+    const w = mount(VdSeparator, { props: { ...props, variant: "gradient" } });
+    expect(w.classes()).toContain("vd-separator-gradient");
+    expect(w.attributes("aria-orientation")).toBe(
+      props.vertical ? "vertical" : "horizontal",
+    );
+    expect(w.find(".vd-separator-label").exists()).toBe(Boolean(props.label));
+  });
   it("renders a horizontal hr by default", () => {
     const wrapper = mount(VdSeparator);
     const hr = wrapper.find("hr");

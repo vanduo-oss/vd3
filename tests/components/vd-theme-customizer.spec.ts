@@ -544,3 +544,20 @@ describe("VdThemeCustomizer swatches variant", () => {
     expect(fan()!.classList.contains("is-open")).toBe(true);
   });
 });
+
+describe("fan selection persistence boundary", () => {
+  it("reports commits separately from controlled hover/cancel previews", async () => {
+    const w = mountCustomizer({ variant: "swatches", primary: "blue" });
+    await openViaTrigger(w);
+    const red = document.querySelector(
+      '.tc-fan-item[data-color="red"]',
+    ) as HTMLElement;
+    red.dispatchEvent(new MouseEvent("mouseenter"));
+    await nextTick();
+    expect(w.emitted("update:primary")?.at(-1)).toEqual(["red"]);
+    expect(w.emitted("select:primary")).toBeUndefined();
+    red.click();
+    await nextTick();
+    expect(w.emitted("select:primary")).toEqual([["red"]]);
+  });
+});

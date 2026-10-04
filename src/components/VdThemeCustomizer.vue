@@ -72,6 +72,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   "update:primary": [value: string];
+  /** A swatch was selected, as distinct from hover/cancel previews. */
+  "select:primary": [value: string];
 }>();
 
 // Shared theme singleton — the de-pinia'd replacement for vd2's theme store.
@@ -308,6 +310,7 @@ const onFanPointerLeave = (event: MouseEvent): void => {
 
 const selectSwatch = (key: string): void => {
   applyPrimary(key);
+  emit("select:primary", key);
   finalized.value = true;
   hoverKey.value = null;
   isOpen.value = false;

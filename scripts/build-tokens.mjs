@@ -116,8 +116,58 @@ const fibBaseCss =
   "\n}\n";
 
 // ── CSS partial 2: active layer + runtime switch. Imported AFTER colors.css so
-// the active scales override the legacy literals. Rule body must stay
-// byte-identical to the old framework/css/core/colors-palette.css. ──
+// the active scales override the legacy literals and RGB helpers follow them. ──
+// Preserve the public comma-separated RGB helpers, derived from the same
+// palette as the semantic colors (including the dark primary shade).
+const rgb = (hex) => {
+  if (!/^#[0-9a-f]{6}$/i.test(hex))
+    throw new Error(`Expected palette hex: ${hex}`);
+  return [1, 3, 5]
+    .map((offset) => parseInt(hex.slice(offset, offset + 2), 16))
+    .join(", ");
+};
+const paletteLiterals = {
+  oc: new Map(ocColors.map((t) => [suffix(t.name), resolveLiteral(t.raw)])),
+  fib: new Map(fibColors.map((t) => [suffix(t.name), t.raw])),
+};
+const authoredColors = readFileSync(
+  resolve(root, "css/core/colors.css"),
+  "utf8",
+);
+const primaryValue = (prefix, hue, step) => {
+  if (hue === "primary") return paletteLiterals[prefix].get(`primary-${step}`);
+  const block = authoredColors
+    .split(`html[data-primary="${hue}"] {`)[1]
+    ?.split("}")[0];
+  const value = block
+    ?.match(new RegExp(`--vd-primary-${step}:\\s*([^;]+);`))?.[1]
+    .trim();
+  const reference = value?.match(/^var\(--vd-(.+)\)$/)?.[1];
+  return reference ? paletteLiterals[prefix].get(reference) : value;
+};
+const primaryRgb = (prefix, hue = "primary") =>
+  [5, 4].map(
+    (step, i) =>
+      `  --vd-primary-rgb-${i ? "dark" : "light"}: ${rgb(primaryValue(prefix, hue, step))};`,
+  );
+const rgbDefaults = (prefix) => [
+  ...primaryRgb(prefix),
+  ...["success", "warning", "danger", "info"].map(
+    (hue) =>
+      `  --vd-${hue}-rgb: ${rgb(paletteLiterals[prefix].get(`${hue}-6`))};`,
+  ),
+];
+const primaryHues = readJson("customizer/options.json").primary.map(
+  (item) => item.key,
+);
+const primaryRgbCss = primaryHues
+  .map(
+    (hue) =>
+      `html[data-primary="${hue}"] {\n${primaryRgb("oc", hue).join("\n")}\n}\n` +
+      `html[data-palette="fibonacci"][data-primary="${hue}"] {\n${primaryRgb("fib", hue).join("\n")}\n}\n`,
+  )
+  .join("\n");
+
 const activeLines = fibSuffixes.map((s) =>
   ocSuffixSet.has(s)
     ? `  --vd-${s}: var(--vd-oc-${s});`
@@ -125,7 +175,10 @@ const activeLines = fibSuffixes.map((s) =>
 );
 const switchBlock = (palette, prefix, suffixes) =>
   `[data-palette="${palette}"] {\n` +
-  suffixes.map((s) => `  --vd-${s}: var(--vd-${prefix}-${s});`).join("\n") +
+  [
+    ...suffixes.map((s) => `  --vd-${s}: var(--vd-${prefix}-${s});`),
+    ...rgbDefaults(prefix),
+  ].join("\n") +
   "\n}\n";
 const paletteCss =
   "/**\n * Vanduo vd3 - Active Palette Layer (generated)\n" +
@@ -139,11 +192,13 @@ const paletteCss =
   " */\n\n" +
   ":root {\n" +
   "  /* Active scales default to the Open Color palette */\n" +
-  activeLines.join("\n") +
+  [...activeLines, ...rgbDefaults("oc")].join("\n") +
   "\n}\n\n" +
   switchBlock("fibonacci", "fib", fibSuffixes) +
   "\n" +
-  switchBlock("open-color", "oc", ocSuffixes);
+  switchBlock("open-color", "oc", ocSuffixes) +
+  "\n" +
+  primaryRgbCss;
 
 // ── Resolved literal map (for tokens.json / tokens.js). ──
 // Active scales reflect the DEFAULT palette (Open Color) for shared families;

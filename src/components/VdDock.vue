@@ -189,7 +189,7 @@ defineExpose({
       v-if="$slots.brand"
       type="button"
       class="vd-dock-brand"
-      :aria-label="brandLabel"
+      :aria-label="brandToggles ? brandLabel : 'Brand'"
       :aria-pressed="brandPressed"
       :aria-disabled="!canToggle || !brandToggles ? 'true' : undefined"
       @click="onBrandClick"
