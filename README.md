@@ -1,6 +1,6 @@
 # @vanduo-oss/vd3
 
-<a href="https://snyk.io/?utm_source=open-source&utm_medium=pg-ptr&utm_campaign=ref-2501-osp&utm_content=pg-cta"><img src="./assets/scanned-by-snyk.png" alt="Scanned by Snyk" width="180" /></a>
+<a href="https://snyk.io/?utm_source=open-source&utm_medium=pg-ptr&utm_campaign=ref-2501-osp&utm_content=pg-cta"><img src="./assets/scanned-by-snyk.png" alt="Scanned by Snyk" width="206" height="141"></a>
 
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
