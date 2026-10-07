@@ -1,5 +1,7 @@
 # @vanduo-oss/vd3
 
+[![Scanned by Snyk](./assets/scanned-by-snyk.png)](https://snyk.io/?utm_source=open-source&utm_medium=pg-ptr&utm_campaign=ref-2501-osp&utm_content=pg-cta)
+
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 > Vanduo UI for Vue 3 — design system and component library.
@@ -113,6 +115,9 @@ mutations are not isolated. A storage prefix does not provide per-app/request st
 
 ### Security
 
+- **Open-source scanning** — this repo is monitored with
+  [Snyk](https://snyk.io/?utm_source=open-source&utm_medium=pg-ptr&utm_campaign=ref-2501-osp&utm_content=pg-cta)
+  (thanks for their support of open source).
 - **Zero runtime dependencies** beyond the `vue >=3.3` peer — no pinia, no
   transitive runtime deps.
 - **Hardened `.npmrc`:** `ignore-scripts`, `minimum-release-age`, `save-exact`,
