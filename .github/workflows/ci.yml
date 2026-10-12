@@ -33,7 +33,7 @@ jobs:
 
       # Fail on moderate+ advisories except the approved dev-tool exception.
       # CVE-2026-93687 scope, rationale and removal: SECURITY-AUDIT.md.
-      - run: pnpm audit --audit-level=moderate --ignore CVE-2026-93687
+      - run: pnpm audit --audit-level=moderate --ignore GHSA-vfj7-8cjw-p6xm
 
       # Bootstrap the generated theme-data module (src/theme/generated/
       # tokens.data.ts) that lint/typecheck/test need on a fresh clone.

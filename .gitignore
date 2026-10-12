@@ -9,3 +9,25 @@ src/theme/generated/
 coverage/
 playwright-report/
 test-results/
+.kilo/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Package archives and local caches
+.pnpm-store/
+.npm/
+.cache/
+vanduo-oss-vd3-*.tgz
+
+# Browser and local tool output
+blob-report/
+.playwright-mcp/
+
+# Editor temporary files
+.idea/
+*.swp
+*.swo

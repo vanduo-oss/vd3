@@ -16,6 +16,10 @@
  * contains `url(`, `expression(`, or `position: fixed|sticky`) to blunt the
  * most common CSS-injection / clickjacking sinks. It is still not safe for
  * fully-untrusted HTML — internal callers all pass `allowStyle: false`.
+ *
+ * Prefer {@link installSanitizedHtml} when injecting into the live DOM: it
+ * installs already-sanitized nodes via `replaceChildren` and never assigns
+ * untrusted markup to `Element.innerHTML`.
  */
 export interface SanitizeOptions {
   allowSvg?: boolean;
@@ -95,24 +99,10 @@ function escapeText(input: string): string {
     .replace(/'/g, "&#39;");
 }
 
-export function sanitizeHtml(
-  input: string,
-  options: SanitizeOptions = {},
-): string {
-  if (!input) return "";
-  // SSR / non-DOM environments: fail closed to escaped text.
-  if (typeof DOMParser === "undefined") return escapeText(input);
-
+function sanitizeParsedBody(body: HTMLElement, options: SanitizeOptions): void {
   const allowSvg = options.allowSvg === true;
   const allowStyle = options.allowStyle === true;
   const allowed = allowSvg ? BASE_ALLOWED.concat(SVG_ALLOWED) : BASE_ALLOWED;
-
-  let doc: Document;
-  try {
-    doc = new DOMParser().parseFromString(input, "text/html");
-  } catch {
-    return escapeText(input);
-  }
 
   const sanitizeNode = (node: Node): void => {
     Array.from(node.childNodes).forEach((child) => {
@@ -165,6 +155,90 @@ export function sanitizeHtml(
     });
   };
 
-  sanitizeNode(doc.body);
-  return doc.body.innerHTML;
+  sanitizeNode(body);
+}
+
+/**
+ * Parse and whitelist-sanitize `input`, returning the sanitized `<body>`
+ * element, or `null` when the environment cannot parse HTML safely.
+ */
+function sanitizeToBody(
+  input: string,
+  options: SanitizeOptions = {},
+): HTMLElement | null {
+  if (!input) return null;
+  if (typeof DOMParser === "undefined") return null;
+
+  let doc: Document;
+  try {
+    doc = new DOMParser().parseFromString(input, "text/html");
+  } catch {
+    return null;
+  }
+
+  sanitizeParsedBody(doc.body, options);
+  return doc.body;
+}
+
+/**
+ * Public string API — returns sanitized HTML markup. Prefer
+ * {@link installSanitizedHtml} for live-DOM injection.
+ */
+export function sanitizeHtml(
+  input: string,
+  options: SanitizeOptions = {},
+): string {
+  if (!input) return "";
+  // SSR / non-DOM environments: fail closed to escaped text.
+  if (typeof DOMParser === "undefined") return escapeText(input);
+
+  const body = sanitizeToBody(input, options);
+  if (!body) return escapeText(input);
+  return body.innerHTML;
+}
+
+/**
+ * Install whitelist-sanitized markup into `container` via `replaceChildren`.
+ * Never assigns caller/network HTML to `Element.innerHTML`.
+ */
+export function installSanitizedHtml(
+  container: Element,
+  input: string,
+  options: SanitizeOptions = {},
+): void {
+  if (!input) {
+    container.replaceChildren();
+    return;
+  }
+
+  if (typeof DOMParser === "undefined") {
+    container.replaceChildren(container.ownerDocument.createTextNode(input));
+    return;
+  }
+
+  const body = sanitizeToBody(input, options);
+  if (!body) {
+    container.replaceChildren(container.ownerDocument.createTextNode(input));
+    return;
+  }
+
+  container.replaceChildren(...Array.from(body.childNodes));
+}
+
+/**
+ * Install repository-owned static markup (skeleton/spinner placeholders).
+ * Parsed into a detached document then moved with `replaceChildren` so the
+ * live container never receives an `innerHTML` assignment.
+ */
+export function installTrustedHtml(container: Element, html: string): void {
+  if (!html) {
+    container.replaceChildren();
+    return;
+  }
+  if (typeof DOMParser === "undefined") {
+    container.replaceChildren(container.ownerDocument.createTextNode(html));
+    return;
+  }
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  container.replaceChildren(...Array.from(doc.body.childNodes));
 }
