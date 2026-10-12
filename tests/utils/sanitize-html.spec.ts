@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sanitizeHtml } from "../../src/utils/sanitizeHtml";
+import {
+  installSanitizedHtml,
+  installTrustedHtml,
+  sanitizeHtml,
+} from "../../src/utils/sanitizeHtml";
 
 /**
  * `sanitizeHtml` is the library's only XSS guard and a public export, yet had
@@ -224,5 +228,53 @@ describe("sanitizeHtml — SSR / no DOMParser", () => {
 
   it("returns an empty string for empty input", () => {
     expect(sanitizeHtml("")).toBe("");
+  });
+});
+
+describe("installSanitizedHtml — live DOM install", () => {
+  it("replaces children without assigning container.innerHTML", () => {
+    const host = document.createElement("div");
+    host.textContent = "old";
+    const spy = vi.spyOn(host, "innerHTML", "set");
+    installSanitizedHtml(
+      host,
+      '<p>safe</p><script>window.__pwned=1;<\/script><span onclick="steal()">x</span>',
+    );
+    expect(spy).not.toHaveBeenCalled();
+    expect(host.querySelector("script")).toBeNull();
+    expect(host.querySelector("span")?.hasAttribute("onclick")).toBe(false);
+    expect(host.querySelector("p")?.textContent).toBe("safe");
+    spy.mockRestore();
+  });
+
+  it("strips javascript: hrefs and foreignObject when allowSvg is true", () => {
+    const host = document.createElement("div");
+    installSanitizedHtml(
+      host,
+      '<svg><a href="javascript:alert(1)">y</a><foreignObject><div>z</div></foreignObject></svg>',
+      { allowSvg: true },
+    );
+    expect(host.querySelector("a")?.hasAttribute("href")).toBe(false);
+    expect(host.innerHTML.toLowerCase()).not.toContain("foreignobject");
+  });
+
+  it("clears the container for empty input", () => {
+    const host = document.createElement("div");
+    host.textContent = "old";
+    installSanitizedHtml(host, "");
+    expect(host.childNodes).toHaveLength(0);
+  });
+
+  it("installs inert text through the container document without DOMParser", () => {
+    const host = document.createElement("div");
+    vi.stubGlobal("DOMParser", undefined);
+
+    installSanitizedHtml(host, "<b>caller HTML</b>");
+    expect(host.textContent).toBe("<b>caller HTML</b>");
+    expect(host.querySelector("b")).toBeNull();
+
+    installTrustedHtml(host, "<b>static HTML</b>");
+    expect(host.textContent).toBe("<b>static HTML</b>");
+    expect(host.querySelector("b")).toBeNull();
   });
 });

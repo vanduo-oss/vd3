@@ -344,6 +344,35 @@ describe("useLazyLoad — loadSection (high-level)", () => {
     expect(container.innerHTML).not.toContain("onclick");
     expect(container.querySelector("p")?.textContent).toBe("safe");
   });
+
+  it("installs fetched markup via replaceChildren, not container.innerHTML", async () => {
+    const container = makeContainer();
+    const spy = vi.spyOn(container, "innerHTML", "set");
+    vi.stubGlobal("fetch", okFetch("<p>Section body</p>"));
+
+    mountHost();
+    api.loadSection("/section.html", container);
+    expect(spy).not.toHaveBeenCalled();
+    observerFor(container)!.enter();
+    await flushPromises();
+
+    expect(spy).not.toHaveBeenCalled();
+    expect(container.querySelector("p")?.textContent).toBe("Section body");
+    spy.mockRestore();
+  });
+
+  it("blocks data: URLs the same way as javascript:", () => {
+    const container = makeContainer();
+    const onError = vi.fn();
+    vi.stubGlobal("fetch", vi.fn());
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    mountHost();
+    api.loadSection("data:text/html,<script>1</script>", container, {
+      onError,
+    });
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(MockIntersectionObserver.instances).toHaveLength(0);
+  });
 });
 
 describe("useLazyLoad — [data-vd-lazy] root wiring", () => {

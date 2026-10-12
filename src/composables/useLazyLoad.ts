@@ -1,5 +1,8 @@
 import { onMounted, onUnmounted, type Ref } from "vue";
-import { sanitizeHtml } from "../utils/sanitizeHtml";
+import {
+  installSanitizedHtml,
+  installTrustedHtml,
+} from "../utils/sanitizeHtml";
 
 /**
  * Ports framework/js/components/lazy-load.js (v1.2.1) — an
@@ -108,11 +111,20 @@ function spinnerHtml(): string {
   );
 }
 
-function resolvePlaceholder(placeholder: string | undefined): string {
-  if (!placeholder || placeholder === "skeleton") return skeletonHtml();
-  if (placeholder === "spinner") return spinnerHtml();
+function installPlaceholder(
+  container: Element,
+  placeholder: string | undefined,
+): void {
+  if (!placeholder || placeholder === "skeleton") {
+    installTrustedHtml(container, skeletonHtml());
+    return;
+  }
+  if (placeholder === "spinner") {
+    installTrustedHtml(container, spinnerHtml());
+    return;
+  }
   // Caller-supplied HTML — sanitize before injection.
-  return sanitizeHtml(placeholder);
+  installSanitizedHtml(container, placeholder);
 }
 
 /**
@@ -232,9 +244,9 @@ export function useLazyLoad(root?: Ref<HTMLElement | null>): LazyLoadApi {
     }
 
     // Placeholder + loading fire immediately; the fetch waits for intersection.
-    // resolvePlaceholder sanitizes caller HTML and otherwise returns a static spinner.
-    // eslint-disable-next-line no-restricted-syntax
-    container.innerHTML = resolvePlaceholder(options.placeholder);
+    // Trusted skeleton/spinner markup and sanitized custom HTML are installed
+    // via replaceChildren — never assigned to container.innerHTML.
+    installPlaceholder(container, options.placeholder);
     dispatch("lazysection:loading", { url });
 
     observe(
@@ -258,7 +270,7 @@ export function useLazyLoad(root?: Ref<HTMLElement | null>): LazyLoadApi {
           })
           .then((html) => {
             settle();
-            container.innerHTML = sanitizeHtml(html);
+            installSanitizedHtml(container, html);
             dispatch("lazysection:loaded", { url });
             options.onLoaded?.(container);
           })

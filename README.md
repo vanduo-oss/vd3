@@ -188,8 +188,12 @@ pnpm test:skills   # published links, API inventory, typed recipes (after build)
 pnpm test:size     # raw + gzip library artifact budgets
 ```
 
-Consumers: Node >= 20.19. Contributors / CI: Node 24 and pnpm >= 10
-(`packageManager: pnpm@10.28.2`). See [CONTRIBUTING.md](./CONTRIBUTING.md).
+Node 24 LTS is the supported development and CI runtime; run `nvm use` to select
+it for this repository from `.nvmrc`. The existing `engines.node >=20.19.0`
+range remains a temporary consumer compatibility floor, tested on a best-effort
+basis until the next major release; it is not the recommended development
+runtime. Development also requires pnpm >= 10; `packageManager` pins pnpm
+10.28.2. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Documentation
 
