@@ -3,6 +3,24 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.7.6 — 2026-10-12
+
+### Fixed
+
+- **Sanitized HTML installation** — lazy-loaded responses and caller-supplied
+  placeholders are parsed and sanitized in a detached document, then installed
+  with `replaceChildren` instead of assigning untrusted markup to `innerHTML`.
+  Non-DOM environments fail closed to escaped text.
+- **Lazy-load lifecycle** — each `useLazyLoad` instance owns its observers,
+  fetch abort controllers and timeouts; unmount now disconnects pending
+  observations, aborts in-flight requests and clears timers. Trusted built-in
+  skeleton/spinner markup uses a separate detached-DOM installation path.
+- **Dependency and audit hardening** — refresh the Vue development dependency
+  and lockfile, retain patched transitive dependency floors, and make the
+  moderate+ pnpm audit gate use the advisory identifier it actually enforces.
+  The remaining reviewed `braces` and `uri-js` findings are development-tool
+  only, documented with narrow exceptions and removal criteria.
+
 ## 1.7.5 — 2026-10-04
 
 ### Added
