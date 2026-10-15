@@ -9,6 +9,15 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
+/** Check whether an element is visible (not hidden via CSS or attributes). */
+const isVisible = (el: HTMLElement): boolean => {
+  if (el.hasAttribute("hidden")) return false;
+  if (el.getAttribute("aria-hidden") === "true") return false;
+  const style = getComputedStyle(el);
+  if (style.visibility === "hidden" || style.display === "none") return false;
+  return true;
+};
+
 export const useFocusTrap = (
   container: Ref<HTMLElement | null>,
 ): {
@@ -18,11 +27,19 @@ export const useFocusTrap = (
 } => {
   const active = ref(false);
 
+  const getFocusables = (): HTMLElement[] => {
+    if (!container.value) return [];
+    return Array.from(
+      container.value.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+    ).filter(
+      (el) =>
+        !el.hasAttribute("disabled") && el.tabIndex !== -1 && isVisible(el),
+    );
+  };
+
   const onKeydown = (event: KeyboardEvent): void => {
     if (!active.value || event.key !== "Tab" || !container.value) return;
-    const focusables = Array.from(
-      container.value.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-    ).filter((el) => !el.hasAttribute("disabled") && el.tabIndex !== -1);
+    const focusables = getFocusables();
     if (focusables.length === 0) {
       event.preventDefault();
       return;
@@ -30,22 +47,32 @@ export const useFocusTrap = (
     const first = focusables[0]!;
     const last = focusables[focusables.length - 1]!;
     const current = document.activeElement as HTMLElement | null;
-    if (event.shiftKey && current === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && current === last) {
-      event.preventDefault();
-      first.focus();
+    const containerEl = container.value;
+
+    // Handle Shift+Tab when focus is on the container itself (tabindex="-1")
+    // or outside the focusable list — wrap to the last element.
+    if (event.shiftKey) {
+      if (
+        current === first ||
+        current === containerEl ||
+        !focusables.includes(current!)
+      ) {
+        event.preventDefault();
+        last.focus();
+      }
+    } else {
+      // Handle Tab when focus is on the last element or outside the list.
+      if (current === last || !focusables.includes(current!)) {
+        event.preventDefault();
+        first.focus();
+      }
     }
   };
 
   const activate = (): void => {
     active.value = true;
-    if (container.value) {
-      const first =
-        container.value.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-      first?.focus();
-    }
+    const focusables = getFocusables();
+    focusables[0]?.focus();
   };
 
   const deactivate = (): void => {

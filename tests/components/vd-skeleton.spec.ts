@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import VdSkeleton from "../../src/components/VdSkeleton.vue";
 
 describe("VdSkeleton", () => {
-  it("renders a single md text bar by default", () => {
+  it("renders a single md text bar by default with aria-hidden", () => {
     const w = mount(VdSkeleton);
     expect(w.classes()).toEqual(
       expect.arrayContaining([
@@ -15,9 +15,9 @@ describe("VdSkeleton", () => {
         "vd-skeleton-text-md",
       ]),
     );
-    // The text shape always binds :style; with no width prop it resolves to
-    // the empty string, so the element renders a present-but-empty style attr.
-    expect(w.attributes("style")).toBe("");
+    expect(w.attributes("aria-hidden")).toBe("true");
+    // No width prop -> no style attribute emitted.
+    expect(w.attributes("style")).toBeUndefined();
   });
 
   it.each(["sm", "md", "lg", "xl"] as const)(
@@ -36,6 +36,7 @@ describe("VdSkeleton", () => {
   it("renders a lines stack with a short last line", () => {
     const w = mount(VdSkeleton, { props: { lines: 3 } });
     expect(w.classes()).toContain("vd-skeleton-lines");
+    expect(w.attributes("aria-hidden")).toBe("true");
 
     const lines = w.findAll(".vd-skeleton.vd-skeleton-text");
     expect(lines).toHaveLength(3);
@@ -53,6 +54,7 @@ describe("VdSkeleton", () => {
         "vd-skeleton-circle-lg",
       ]),
     );
+    expect(w.attributes("aria-hidden")).toBe("true");
   });
 
   it("renders the button shape with its size class", () => {
@@ -64,6 +66,32 @@ describe("VdSkeleton", () => {
         "vd-skeleton-button-sm",
       ]),
     );
+    expect(w.attributes("aria-hidden")).toBe("true");
+  });
+
+  it("renders the rect shape with its size class", () => {
+    const w = mount(VdSkeleton, { props: { shape: "rect", size: "lg" } });
+    expect(w.classes()).toEqual(
+      expect.arrayContaining([
+        "vd-skeleton",
+        "vd-skeleton-rect",
+        "vd-skeleton-rect-lg",
+      ]),
+    );
+    expect(w.attributes("aria-hidden")).toBe("true");
+  });
+
+  it("omits the rect size class for md (the default)", () => {
+    const w = mount(VdSkeleton, { props: { shape: "rect", size: "md" } });
+    expect(w.classes()).toContain("vd-skeleton-rect");
+    expect(w.classes()).not.toContain("vd-skeleton-rect-md");
+  });
+
+  it("applies the width prop as an inline style on the rect shape", () => {
+    const w = mount(VdSkeleton, {
+      props: { shape: "rect", width: "200px" },
+    });
+    expect(w.attributes("style")).toBe("width: 200px;");
   });
 
   it("renders the card shape with header and three body text bars", () => {
@@ -72,6 +100,7 @@ describe("VdSkeleton", () => {
       expect.arrayContaining(["vd-skeleton-card", "vd-skeleton-card-xl"]),
     );
     expect(w.classes()).not.toContain("vd-skeleton");
+    expect(w.attributes("aria-hidden")).toBe("true");
 
     expect(w.find(".vd-skeleton.vd-skeleton-card-header").exists()).toBe(true);
 

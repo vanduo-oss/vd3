@@ -1,7 +1,7 @@
 // @vanduo-oss/vd3 — Vanduo UI for Vue 3. Tree-shakeable named exports.
 // Standalone: no IIFE runtime, no `loadVanduoRuntime`.
 
-export const VD3_VERSION = "1.7.6";
+export const VD3_VERSION = "1.8.0";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
@@ -141,6 +141,12 @@ export type {
   LoginSubmit,
   SignUpSubmit,
 } from "./components/auth-types";
+export type {
+  VdRadioOption,
+  VdRadioGroupProps,
+  VdSelectOption,
+  VdSelectProps,
+} from "./components/form-types";
 export type {
   DataTableAlign,
   DataTableColumn,

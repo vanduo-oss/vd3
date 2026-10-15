@@ -16,8 +16,8 @@
   --vd-shadow-inner: inset 0 2px 3px 0 rgba(0, 0, 0, 0.05);
 
   /* Colored Shadows (Fibonacci: 3/5 offset/blur)
-   * Colors match Open Color palette defined in colors.css */
-  --vd-shadow-primary: 0 3px 5px -1px rgba(34, 184, 207, 0.2), 0 2px 3px -2px rgba(34, 184, 207, 0.1);
+   * Colors follow the active primary via color-mix */
+  --vd-shadow-primary: 0 3px 5px -1px color-mix(in srgb, var(--vd-color-primary) 20%, transparent), 0 2px 3px -2px color-mix(in srgb, var(--vd-color-primary) 10%, transparent);
   --vd-shadow-success: 0 3px 5px -1px rgba(64, 192, 87, 0.2), 0 2px 3px -2px rgba(64, 192, 87, 0.1);
   --vd-shadow-warning: 0 3px 5px -1px rgba(250, 176, 5, 0.2), 0 2px 3px -2px rgba(250, 176, 5, 0.1);
   --vd-shadow-error: 0 3px 5px -1px rgba(250, 82, 82, 0.2), 0 2px 3px -2px rgba(250, 82, 82, 0.1);
@@ -197,9 +197,8 @@
 
 /* Dark Mode Shadow Overrides
  * Dark backgrounds need stronger shadows for visible depth
- * Matches both explicit dark theme and system preference */
-[data-theme="dark"],
-:root:not([data-theme]) {
+ * Matches explicit dark theme only; system preference handled below */
+[data-theme="dark"] {
   --vd-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   --vd-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
   --vd-shadow-md: 0 3px 5px -1px rgba(0, 0, 0, 0.35), 0 2px 3px -2px rgba(0, 0, 0, 0.3);
@@ -207,7 +206,7 @@
   --vd-shadow-xl: 0 13px 21px -5px rgba(0, 0, 0, 0.35), 0 5px 8px -5px rgba(0, 0, 0, 0.3);
   --vd-shadow-2xl: 0 21px 34px -8px rgba(0, 0, 0, 0.5);
   --vd-shadow-inner: inset 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  --vd-shadow-primary: 0 3px 5px -1px rgba(34, 184, 207, 0.3), 0 2px 3px -2px rgba(34, 184, 207, 0.2);
+  --vd-shadow-primary: 0 3px 5px -1px color-mix(in srgb, var(--vd-color-primary) 30%, transparent), 0 2px 3px -2px color-mix(in srgb, var(--vd-color-primary) 20%, transparent);
   --vd-shadow-success: 0 3px 5px -1px rgba(64, 192, 87, 0.3), 0 2px 3px -2px rgba(64, 192, 87, 0.2);
   --vd-shadow-warning: 0 3px 5px -1px rgba(250, 176, 5, 0.3), 0 2px 3px -2px rgba(250, 176, 5, 0.2);
   --vd-shadow-error: 0 3px 5px -1px rgba(250, 82, 82, 0.3), 0 2px 3px -2px rgba(250, 82, 82, 0.2);
@@ -229,7 +228,7 @@
     --vd-shadow-xl: 0 13px 21px -5px rgba(0, 0, 0, 0.35), 0 5px 8px -5px rgba(0, 0, 0, 0.3);
     --vd-shadow-2xl: 0 21px 34px -8px rgba(0, 0, 0, 0.5);
     --vd-shadow-inner: inset 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    --vd-shadow-primary: 0 3px 5px -1px rgba(34, 184, 207, 0.3), 0 2px 3px -2px rgba(34, 184, 207, 0.2);
+    --vd-shadow-primary: 0 3px 5px -1px color-mix(in srgb, var(--vd-color-primary) 30%, transparent), 0 2px 3px -2px color-mix(in srgb, var(--vd-color-primary) 20%, transparent);
     --vd-shadow-success: 0 3px 5px -1px rgba(64, 192, 87, 0.3), 0 2px 3px -2px rgba(64, 192, 87, 0.2);
     --vd-shadow-warning: 0 3px 5px -1px rgba(250, 176, 5, 0.3), 0 2px 3px -2px rgba(250, 176, 5, 0.2);
     --vd-shadow-error: 0 3px 5px -1px rgba(250, 82, 82, 0.3), 0 2px 3px -2px rgba(250, 82, 82, 0.2);

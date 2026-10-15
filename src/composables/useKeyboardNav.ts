@@ -6,6 +6,10 @@ export interface UseKeyboardNavOptions {
   onEscape?: () => void;
 }
 
+/** Check whether an item is disabled (native or ARIA). */
+const isDisabled = (el: HTMLElement): boolean =>
+  el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true";
+
 export const useKeyboardNav = (
   container: Ref<HTMLElement | null>,
   options: UseKeyboardNavOptions,
@@ -16,7 +20,17 @@ export const useKeyboardNav = (
     if (!container.value) return [];
     return Array.from(
       container.value.querySelectorAll<HTMLElement>(options.itemSelector),
-    );
+    ).filter((el) => !isDisabled(el));
+  };
+
+  /** Sync activeIndex from the currently focused element. */
+  const syncFromActiveElement = (): void => {
+    const list = items();
+    const current = document.activeElement as HTMLElement | null;
+    if (current) {
+      const idx = list.indexOf(current);
+      if (idx !== -1) activeIndex.value = idx;
+    }
   };
 
   const focusItem = (index: number): void => {
@@ -31,6 +45,9 @@ export const useKeyboardNav = (
   const onKeydown = (event: KeyboardEvent): void => {
     const list = items();
     if (list.length === 0) return;
+    // Sync from the actual focused element before stepping — handles the case
+    // where the user clicked an item first, then presses Arrow keys.
+    syncFromActiveElement();
     const max = list.length - 1;
     let next: number;
     switch (event.key) {

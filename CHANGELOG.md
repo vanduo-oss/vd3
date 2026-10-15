@@ -3,6 +3,75 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.8.0 — 2026-10-15
+
+### Added
+
+- **Layout primitive prop parity** — `VdBox` gains `bg`, `round`, `border`;
+  `VdStack` gains `align` and any tag via `as`; `VdInline` gains `as`, `align`,
+  `justify`, `wrap`; `VdCover`/`VdSwitcher` widen `Gap` to `fib-13|21|34` and
+  `VdSwitcher` gains `as`; `VdFrame` gains `21-9` ratio and `as`.
+- **UI atom prop parity** — `VdButton` gains `outline`, `block`, `icon` and
+  `aria-busy`; `VdBadge` gains `size` and `outlined`; `VdSpinner` gains `xs`/`xl`
+  sizes and `variant`; `VdProgress` gains `variant` and `size`.
+- **Form types export** — `VdRadioOption`, `VdRadioGroupProps`, `VdSelectOption`,
+  `VdSelectProps` re-exported from the package root.
+- **Ripple attributes** — `data-vd-ripple-color` (custom wave color),
+  `data-vd-ripple-centered` (center on element), touch/mouse deduplication,
+  `aria-hidden` on waves, and `prefers-reduced-motion` support.
+- **Nunito font** — `@font-face` declarations added (font files bundled separately).
+
+### Fixed
+
+- **Theme runtime** — explicit primary selection via `setPrimary()` now persists
+  `"amber"` in light mode and `"black"` in dark mode; `setTheme()` only auto-swaps
+  the default primary when the active primary matches the outgoing scheme's default.
+  `loadPreference()` validates `primary`, `neutral`, and `font` against the option
+  lists. `useThemeBridge` syncs through the shared `useThemePreference()` singleton.
+- **System font** — `data-font="system"` now applies the OS system font stack
+  instead of falling back to Ubuntu.
+- **Shadow utilities** — dark-mode shadows no longer bleed into light mode on
+  system theme (`:root:not([data-theme])` removed from the unconditional block);
+  `--vd-shadow-primary` follows `--vd-color-primary` via `color-mix`.
+- **Neutral gray** — `html[data-neutral="gray"]` uses palette-aware variables
+  (`--vd-oc-gray-*` / `--vd-fib-gray-*`) instead of hardcoded Open Color hexes.
+- **Theme customizer** — neutral swatch grid uses 6 columns (was 5, wrapping the
+  6th swatch onto an orphan row).
+- **CSS source maps** — `.map` files are now emitted to `dist/` even when the
+  `backdrop-filter` restore transform runs.
+- **VdSpinner** — removed the duplicate inner `<VdIcon>` (double spinner);
+  renders a single CSS border spinner with a visually-hidden label.
+- **VdChip** — removed double `×` in dismiss button (CSS `::before` + `&times;`);
+  fixed avatar image sizing (`img.vd-chip-avatar`); added `.vd-chip-outline.vd-chip-danger`
+  and `-secondary`; removed static `role="status"`; clickable chips get `role="button"`,
+  `tabindex="0"`, and Enter/Space keyboard activation.
+- **VdSelect** — removed the duplicate sibling `<span class="vd-visually-hidden">`;
+  now a clean single-root `<select>` with working attribute fallthrough.
+- **VdSkeleton** — added missing `shape="rect"` branch; added `aria-hidden="true"`;
+  no longer emits empty `style=""` when `width` is unset.
+- **VdAvatar** — status dot colors now apply on the child `.vd-avatar-status` span
+  (was gray/clipped); `:has(.vd-avatar-status)` allows overflow; added `danger`
+  variant; `imgError` fallback to initials; `role="img"` when no image rendered.
+- **useValidate** — resolves wrapper elements (e.g. `VdInput`'s `.vd-form-group`)
+  to the inner `input`/`select`/`textarea` so `data-vd-rules` on a component
+  validates seamlessly.
+- **forms.css** — `.vd-form-check-sm`/`-lg` now set `--vd-checkbox-size` so the
+  `::after` checkmark positions correctly; range input rules scoped to
+  `input[type="range"]:not(.vd-slider)` to avoid bleeding onto `VdSlider`.
+- **badges.css** — added `.vd-badge-outlined.vd-badge-danger`.
+- **buttons.css** — added `.vd-btn-spinner` color rules for `.vd-btn-ghost-warning`,
+  `.vd-btn-ghost-info`, and `.vd-btn-ghost-danger`.
+- **spinner.css** — added `.vd-spinner-primary`, `.vd-spinner-secondary`,
+  `.vd-spinner-danger` variant classes.
+- **progress.css** — added `.vd-progress-fill.vd-progress-{variant}` color rules.
+- **avatar.css** — added `.vd-avatar-danger` variant alias.
+- **useFocusTrap** — filters hidden elements (`[hidden]`, `aria-hidden`,
+  `display:none`, `visibility:hidden`); handles Shift+Tab when focus is on the
+  container itself or outside the focusable list.
+- **useKeyboardNav** — syncs `activeIndex` from `document.activeElement` before
+  stepping; skips `:disabled` and `[aria-disabled="true"]` items.
+- **Icons comments** — removed references to non-existent `icons-all.css`.
+
 ## 1.7.6 — 2026-10-12
 
 ### Fixed

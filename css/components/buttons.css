@@ -780,19 +780,22 @@ a.vd-btn:hover {
   border-right-color: transparent;
 }
 
-.vd-btn-outline-warning .vd-btn-spinner {
+.vd-btn-outline-warning .vd-btn-spinner,
+.vd-btn-ghost-warning .vd-btn-spinner {
   border-color: var(--vd-color-warning);
   border-right-color: transparent;
 }
 
 .vd-btn-outline-error .vd-btn-spinner,
 .vd-btn-outline-danger .vd-btn-spinner,
-.vd-btn-ghost-error .vd-btn-spinner {
+.vd-btn-ghost-error .vd-btn-spinner,
+.vd-btn-ghost-danger .vd-btn-spinner {
   border-color: var(--vd-color-error);
   border-right-color: transparent;
 }
 
-.vd-btn-outline-info .vd-btn-spinner {
+.vd-btn-outline-info .vd-btn-spinner,
+.vd-btn-ghost-info .vd-btn-spinner {
   border-color: var(--vd-color-info);
   border-right-color: transparent;
 }

@@ -215,7 +215,7 @@ describe("VdThemeCustomizer controls write through the theme layer", () => {
     expect(btn.classList.contains("is-active")).toBe(true);
   });
 
-  it("the font select absorbs font-switcher: sets then removes data-font", async () => {
+  it("the font select absorbs font-switcher: sets data-font including system", async () => {
     mountCustomizer();
     const select = q(".tc-font-select") as HTMLSelectElement;
 
@@ -228,7 +228,7 @@ describe("VdThemeCustomizer controls write through the theme layer", () => {
     select.value = "system";
     select.dispatchEvent(new Event("change"));
     await nextTick();
-    expect(document.documentElement.hasAttribute("data-font")).toBe(false);
+    expect(document.documentElement.getAttribute("data-font")).toBe("system");
     expect(window.localStorage.getItem("vanduo-font-preference")).toBe(
       "system",
     );

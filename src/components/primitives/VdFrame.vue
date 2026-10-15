@@ -1,16 +1,18 @@
 <script setup lang="ts">
-type Ratio = "golden" | "golden-portrait" | "square" | "16-9" | "4-3" | "3-2";
+type Ratio =
+  "golden" | "golden-portrait" | "square" | "16-9" | "4-3" | "3-2" | "21-9";
 
 interface Props {
   /** Aspect ratio (maps to `data-ratio`). */
   ratio?: Ratio;
+  as?: keyof HTMLElementTagNameMap;
 }
 
-withDefaults(defineProps<Props>(), { ratio: "golden" });
+withDefaults(defineProps<Props>(), { ratio: "golden", as: "div" });
 </script>
 
 <template>
-  <div class="vd-frame" :data-ratio="ratio">
+  <component :is="as" class="vd-frame" :data-ratio="ratio">
     <slot />
-  </div>
+  </component>
 </template>

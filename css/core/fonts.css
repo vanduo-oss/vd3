@@ -229,6 +229,43 @@
 }
 
 /* ==========================================================================
+   Nunito - Rounded sans-serif by Vernon Adams
+   https://fonts.google.com/specimen/Nunito
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('../../fonts/nunito/nunito-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('../../fonts/nunito/nunito-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('../../fonts/nunito/nunito-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('../../fonts/nunito/nunito-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
    Rubik - Geometric sans-serif by Hubert and Fischer
    https://fonts.google.com/specimen/Rubik
    ========================================================================== */

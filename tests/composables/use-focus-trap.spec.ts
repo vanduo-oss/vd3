@@ -141,4 +141,77 @@ describe("useFocusTrap", () => {
     // After unmount the trap no longer reacts to Tab.
     expect(tab()).toBe(true);
   });
+
+  it("filters out hidden elements from the focusable list", () => {
+    let captured!: Trap;
+    const Comp = defineComponent({
+      setup() {
+        const container = ref<HTMLElement | null>(null);
+        captured = useFocusTrap(container);
+        return () =>
+          h("div", { ref: container }, [
+            h("button", { class: "b1" }, "one"),
+            h("button", { class: "b2", hidden: true }, "hidden"),
+            h("button", { class: "b3" }, "three"),
+          ]);
+      },
+    });
+    const wrapper = mount(Comp, { attachTo: document.body });
+    active = wrapper;
+    captured.activate();
+    // First visible element is focused.
+    expect(document.activeElement).toBe(el(wrapper, ".b1"));
+
+    // Tab from last visible (.b3) wraps to first visible (.b1), skipping hidden .b2.
+    el(wrapper, ".b3").focus();
+    expect(tab()).toBe(false);
+    expect(document.activeElement).toBe(el(wrapper, ".b1"));
+  });
+
+  it("wraps to last on Shift+Tab when focus is on the container itself", () => {
+    let captured!: Trap;
+    const Comp = defineComponent({
+      setup() {
+        const container = ref<HTMLElement | null>(null);
+        captured = useFocusTrap(container);
+        return () =>
+          h("div", { ref: container, tabindex: "-1", class: "modal" }, [
+            h("button", { class: "b1" }, "one"),
+            h("button", { class: "b3" }, "three"),
+          ]);
+      },
+    });
+    const wrapper = mount(Comp, { attachTo: document.body });
+    active = wrapper;
+    captured.activate();
+
+    // Focus the container itself (tabindex="-1").
+    (wrapper.element as HTMLElement).focus();
+    expect(tab(true)).toBe(false); // preventDefault
+    expect(document.activeElement).toBe(el(wrapper, ".b3"));
+  });
+
+  it("wraps to first on Tab when focus is outside the focusable list", () => {
+    let captured!: Trap;
+    const Comp = defineComponent({
+      setup() {
+        const container = ref<HTMLElement | null>(null);
+        captured = useFocusTrap(container);
+        return () =>
+          h("div", { ref: container }, [
+            h("button", { class: "b1" }, "one"),
+            h("button", { class: "b3" }, "three"),
+            h("button", { class: "outside", tabindex: "-1" }, "outside"),
+          ]);
+      },
+    });
+    const wrapper = mount(Comp, { attachTo: document.body });
+    active = wrapper;
+    captured.activate();
+
+    // Focus an element with tabindex="-1" (not in the focusable list).
+    el(wrapper, ".outside").focus();
+    expect(tab()).toBe(false); // preventDefault
+    expect(document.activeElement).toBe(el(wrapper, ".b1"));
+  });
 });

@@ -22,6 +22,7 @@ withDefaults(defineProps<Props>(), {
     v-if="shape === 'card'"
     class="vd-skeleton-card"
     :class="`vd-skeleton-card-${size}`"
+    aria-hidden="true"
   >
     <div class="vd-skeleton vd-skeleton-card-header" />
     <div class="vd-skeleton-card-body">
@@ -34,13 +35,22 @@ withDefaults(defineProps<Props>(), {
     v-else-if="shape === 'button'"
     class="vd-skeleton vd-skeleton-button"
     :class="`vd-skeleton-button-${size}`"
+    aria-hidden="true"
   />
   <div
     v-else-if="shape === 'circle'"
     class="vd-skeleton vd-skeleton-circle"
     :class="`vd-skeleton-circle-${size}`"
+    aria-hidden="true"
   />
-  <div v-else-if="lines > 1" class="vd-skeleton-lines">
+  <div
+    v-else-if="shape === 'rect'"
+    class="vd-skeleton vd-skeleton-rect"
+    :class="size !== 'md' ? `vd-skeleton-rect-${size}` : null"
+    :style="width ? `width: ${width}` : undefined"
+    aria-hidden="true"
+  />
+  <div v-else-if="lines > 1" class="vd-skeleton-lines" aria-hidden="true">
     <div
       v-for="n in lines"
       :key="n"
@@ -52,6 +62,7 @@ withDefaults(defineProps<Props>(), {
     v-else
     class="vd-skeleton vd-skeleton-text"
     :class="`vd-skeleton-text-${size}`"
-    :style="width ? `width: ${width}` : ''"
+    :style="width ? `width: ${width}` : undefined"
+    aria-hidden="true"
   />
 </template>

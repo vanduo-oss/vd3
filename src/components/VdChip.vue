@@ -15,7 +15,7 @@ interface Props {
 
 const emit = defineEmits<{
   dismiss: [];
-  click: [event: MouseEvent];
+  click: [event: MouseEvent | KeyboardEvent];
 }>();
 
 withDefaults(defineProps<Props>(), {
@@ -31,6 +31,17 @@ const onDismiss = (event: MouseEvent): void => {
   event.stopPropagation();
   emit("dismiss");
 };
+
+const onClick = (event: MouseEvent): void => {
+  emit("click", event);
+};
+
+const onKeydown = (event: KeyboardEvent): void => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    emit("click", event);
+  }
+};
 </script>
 
 <template>
@@ -45,8 +56,10 @@ const onDismiss = (event: MouseEvent): void => {
         'vd-chip-clickable': clickable,
       },
     ]"
-    role="status"
-    @click="clickable && emit('click', $event)"
+    :role="clickable ? 'button' : undefined"
+    :tabindex="clickable ? '0' : undefined"
+    @click="clickable && onClick($event)"
+    @keydown="clickable && onKeydown($event)"
   >
     <img v-if="avatar" :src="avatar" class="vd-chip-avatar" alt="" />
     <slot />

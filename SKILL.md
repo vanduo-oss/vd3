@@ -77,3 +77,6 @@ Filled surfaces use `--vd-text-on-primary`, `--vd-text-on-primary-hover`, and
 
 **Optional export:** `@vanduo-oss/vd3/highlight` provides `highlightCode` and `highlight`.
 Both emit escaped token markup for `VdCodeSnippet`; without a highlighter it renders text.
+
+**Form types:** `VdRadioOption`, `VdRadioGroupProps`, `VdSelectOption`, `VdSelectProps`
+are re-exported from the package root for typing `VdRadioGroup` and `VdSelect` props.

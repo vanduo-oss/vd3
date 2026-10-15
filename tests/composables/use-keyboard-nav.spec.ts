@@ -193,4 +193,73 @@ describe("useKeyboardNav", () => {
     press(el, "ArrowDown");
     expect(api.activeIndex.value).toBe(1);
   });
+
+  it("syncs activeIndex from document.activeElement before stepping", () => {
+    const { wrapper, api } = mountNav(3);
+    const el = wrapper.element as HTMLElement;
+    const items = itemsOf(wrapper);
+
+    // Click (focus) the third item directly, then press ArrowDown.
+    items[2].focus();
+    expect(api.activeIndex.value).toBe(0); // not synced yet
+
+    press(el, "ArrowDown");
+    // After sync, activeIndex should be 2, then ArrowDown clamps to 2 (last).
+    expect(api.activeIndex.value).toBe(2);
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it("skips disabled items during navigation", () => {
+    let api!: Api;
+    const Host = defineComponent({
+      setup() {
+        const container = ref<HTMLElement | null>(null);
+        api = useKeyboardNav(container, { itemSelector: ".item" });
+        return () =>
+          h("div", { ref: container }, [
+            h("button", { class: "item" }, "0"),
+            h("button", { class: "item", disabled: true }, "1"),
+            h("button", { class: "item" }, "2"),
+          ]);
+      },
+    });
+    const wrapper = mount(Host, { attachTo: document.body });
+    mounted.push(wrapper);
+    const el = wrapper.element as HTMLElement;
+
+    // ArrowDown from index 0 should skip the disabled item and land on index 1
+    // (which is the third button, the second enabled one).
+    press(el, "ArrowDown");
+    expect(api.activeIndex.value).toBe(1);
+    const enabledItems = Array.from(
+      el.querySelectorAll<HTMLButtonElement>(".item:not([disabled])"),
+    );
+    expect(document.activeElement).toBe(enabledItems[1]);
+  });
+
+  it("skips aria-disabled items during navigation", () => {
+    let api!: Api;
+    const Host = defineComponent({
+      setup() {
+        const container = ref<HTMLElement | null>(null);
+        api = useKeyboardNav(container, { itemSelector: ".item" });
+        return () =>
+          h("div", { ref: container }, [
+            h("button", { class: "item" }, "0"),
+            h("button", { class: "item", "aria-disabled": "true" }, "1"),
+            h("button", { class: "item" }, "2"),
+          ]);
+      },
+    });
+    const wrapper = mount(Host, { attachTo: document.body });
+    mounted.push(wrapper);
+    const el = wrapper.element as HTMLElement;
+
+    press(el, "ArrowDown");
+    expect(api.activeIndex.value).toBe(1);
+    const enabledItems = Array.from(
+      el.querySelectorAll<HTMLButtonElement>(".item:not([aria-disabled])"),
+    );
+    expect(document.activeElement).toBe(enabledItems[1]);
+  });
 });

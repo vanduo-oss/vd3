@@ -11,6 +11,8 @@ describe("VdAvatar", () => {
     expect(wrapper.classes()).toContain("vd-avatar-primary");
     expect(wrapper.classes()).toContain("vd-avatar-circle");
     expect(wrapper.attributes("aria-label")).toBe("Avatar");
+    // No img rendered -> role="img" on the container.
+    expect(wrapper.attributes("role")).toBe("img");
 
     // No src/initials: the "?" placeholder renders aria-hidden.
     const fallback = wrapper.get("span.vd-avatar-initials");
@@ -28,6 +30,8 @@ describe("VdAvatar", () => {
     expect(img.attributes("src")).toBe("/img/user.png");
     expect(img.attributes("alt")).toBe("Jane Doe");
     expect(wrapper.attributes("aria-label")).toBe("Jane Doe");
+    // Image rendered -> no role="img" on the container.
+    expect(wrapper.attributes("role")).toBeUndefined();
     expect(wrapper.find(".vd-avatar-initials").exists()).toBe(false);
   });
 
@@ -38,6 +42,7 @@ describe("VdAvatar", () => {
     expect(initials.text()).toBe("JD");
     expect(initials.attributes("aria-hidden")).toBeUndefined();
     expect(wrapper.attributes("aria-label")).toBe("JD");
+    expect(wrapper.attributes("role")).toBe("img");
     expect(wrapper.find("img").exists()).toBe(false);
   });
 
@@ -49,6 +54,31 @@ describe("VdAvatar", () => {
     expect(wrapper.find(".vd-avatar-initials").exists()).toBe(false);
   });
 
+  it("falls back to initials when the image fails to load", async () => {
+    const wrapper = mount(VdAvatar, {
+      props: { src: "/img/broken.png", initials: "JD" },
+    });
+    expect(wrapper.find("img.vd-avatar-img").exists()).toBe(true);
+
+    await wrapper.find("img.vd-avatar-img").trigger("error");
+    expect(wrapper.find("img.vd-avatar-img").exists()).toBe(false);
+    expect(wrapper.get("span.vd-avatar-initials").text()).toBe("JD");
+  });
+
+  it("resets the error state when src changes", async () => {
+    const wrapper = mount(VdAvatar, {
+      props: { src: "/img/broken.png", initials: "JD" },
+    });
+    await wrapper.find("img.vd-avatar-img").trigger("error");
+    expect(wrapper.find("img.vd-avatar-img").exists()).toBe(false);
+
+    await wrapper.setProps({ src: "/img/valid.png" });
+    expect(wrapper.find("img.vd-avatar-img").exists()).toBe(true);
+    expect(wrapper.find("img.vd-avatar-img").attributes("src")).toBe(
+      "/img/valid.png",
+    );
+  });
+
   it.each(["xs", "sm", "md", "lg", "xl", "2xl"] as const)(
     "size=%s maps to vd-avatar-%s",
     (size) => {
@@ -57,14 +87,13 @@ describe("VdAvatar", () => {
     },
   );
 
-  // NOTE: VdAvatar still uses the legacy `error` spelling instead of the
-  // shared StatusVariant `danger` (known status-alias follow-up).
   it.each([
     "primary",
     "secondary",
     "success",
     "warning",
     "error",
+    "danger",
     "info",
   ] as const)("variant=%s maps to vd-avatar-%s", (variant) => {
     const wrapper = mount(VdAvatar, { props: { variant } });

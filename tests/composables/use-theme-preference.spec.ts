@@ -100,6 +100,54 @@ describe("useThemePreference shared singleton", () => {
     expect(api.state.primary).toBe("amber");
   });
 
+  it("setPrimary allows amber in light mode without auto-swapping to black", () => {
+    const api = useThemePreference();
+    api.setTheme("light");
+    api.setPrimary("amber");
+    expect(api.state.primary).toBe("amber");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBe("amber");
+  });
+
+  it("setPrimary allows black in dark mode without auto-swapping to amber", () => {
+    const api = useThemePreference();
+    api.setTheme("dark");
+    api.setPrimary("black");
+    expect(api.state.primary).toBe("black");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("black");
+    expect(window.localStorage.getItem("vanduo-primary-color")).toBe("black");
+  });
+
+  it("setTheme preserves an explicitly chosen primary across scheme changes", () => {
+    const api = useThemePreference();
+    api.setTheme("light");
+    api.setPrimary("amber"); // explicit choice in light mode
+    api.setTheme("dark");
+    // Explicitly chosen primary is preserved, not swapped to the dark default.
+    expect(api.state.primary).toBe("amber");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+  });
+
+  it("setTheme preserves an explicitly chosen non-default primary across scheme changes", () => {
+    const api = useThemePreference();
+    api.setTheme("light");
+    api.setPrimary("blue"); // explicit non-default choice
+    api.setTheme("dark");
+    expect(api.state.primary).toBe("blue");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("blue");
+  });
+
+  it("reset clears the explicit primary flag and restores defaults", () => {
+    const api = useThemePreference();
+    api.setTheme("light");
+    api.setPrimary("amber"); // explicit choice
+    api.reset();
+    // After reset, setTheme should auto-swap again (flag cleared).
+    api.setTheme("dark");
+    expect(api.state.primary).toBe("amber"); // dark default
+    expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+  });
+
   it("reset restores every field to defaultPreference() and re-applies", () => {
     const api = useThemePreference();
     api.setPrimary("teal");

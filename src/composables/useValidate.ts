@@ -55,8 +55,8 @@ export interface UseValidateReturn {
   refresh(): void;
 }
 
-/** Field elements carrying `data-vd-rules` (inputs, textareas, selects). */
-type FieldEl = HTMLInputElement;
+/** Field elements carrying `data-vd-rules` (inputs, selects, textareas). */
+type FieldEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /** Rule validators — ported verbatim from `framework/js/components/validate.js`. */
 const builtinRules: Record<string, ValidateRule> = {
@@ -202,7 +202,12 @@ export function useValidate(
   };
 
   const validateField = (field: FieldEl): boolean => {
-    const rulesStr = field.getAttribute("data-vd-rules") ?? "";
+    // Rules may live on a wrapper (e.g. VdInput's .vd-form-group) when the
+    // field was resolved from a `[data-vd-rules]` container.
+    const rulesHost =
+      field.closest("[data-vd-rules]") ??
+      (field.hasAttribute("data-vd-rules") ? field : null);
+    const rulesStr = rulesHost?.getAttribute("data-vd-rules") ?? "";
     const fieldRules = rulesStr
       .split("|")
       .map((r) => r.trim())
@@ -217,7 +222,8 @@ export function useValidate(
 
       if (validator && !validator(value, param)) {
         const customMsg = name
-          ? field.getAttribute(`data-vd-msg-${name}`)
+          ? (rulesHost?.getAttribute(`data-vd-msg-${name}`) ??
+            field.getAttribute(`data-vd-msg-${name}`))
           : null;
         let msg = customMsg ?? (name ? messages[name] : undefined) ?? "Invalid";
         if (param) msg = msg.replace("{0}", param);
@@ -231,7 +237,29 @@ export function useValidate(
   };
 
   const fieldsOf = (form: HTMLFormElement): FieldEl[] =>
-    Array.from(form.querySelectorAll<FieldEl>("[data-vd-rules]"));
+    Array.from(form.querySelectorAll<FieldEl>("[data-vd-rules]")).flatMap(
+      (el) => resolveField(el),
+    );
+
+  /**
+   * Resolve a `[data-vd-rules]` element to the actual form control. When the
+   * attribute lands on a wrapper (e.g. `<VdInput>` renders a `.vd-form-group`
+   * div), drill into the inner input/select/textarea so validation reads the
+   * real value instead of crashing on `undefined`.
+   */
+  const resolveField = (el: HTMLElement): FieldEl[] => {
+    if (
+      el instanceof HTMLInputElement ||
+      el instanceof HTMLSelectElement ||
+      el instanceof HTMLTextAreaElement
+    ) {
+      return [el];
+    }
+    const inner = el.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >("input, select, textarea");
+    return Array.from(inner);
+  };
 
   const validateForm = (form: HTMLFormElement): boolean => {
     let valid = true;
@@ -241,10 +269,13 @@ export function useValidate(
     return valid;
   };
 
-  const fieldFrom = (target: EventTarget | null): FieldEl | null =>
-    target instanceof HTMLElement && target.hasAttribute("data-vd-rules")
-      ? (target as FieldEl)
-      : null;
+  const fieldFrom = (target: EventTarget | null): FieldEl | null => {
+    if (!(target instanceof HTMLElement)) return null;
+    if (!target.hasAttribute("data-vd-rules")) return null;
+    // Resolve wrapper elements (e.g. VdInput's .vd-form-group) to the inner control.
+    const resolved = resolveField(target);
+    return resolved[0] ?? null;
+  };
 
   const wireForm = (form: HTMLFormElement): void => {
     if (wired.has(form)) return;

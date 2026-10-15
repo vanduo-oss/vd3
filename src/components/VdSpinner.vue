@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import VdIcon from "./VdIcon.vue";
+import type { StatusVariant } from "../types";
 
-type Size = "sm" | "md" | "lg";
+type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
 interface Props {
   size?: Size;
+  variant?: StatusVariant;
   label?: string;
 }
 
 withDefaults(defineProps<Props>(), {
   size: "md",
+  variant: undefined,
   label: "",
 });
 </script>
 
 <template>
   <span
-    :class="['vd-spinner', `vd-spinner-${size}`]"
+    :class="[
+      'vd-spinner',
+      size !== 'md' ? `vd-spinner-${size}` : null,
+      variant ? `vd-spinner-${variant}` : null,
+    ]"
     role="status"
     :aria-label="label || 'Loading'"
   >
-    <VdIcon name="circle-notch" />
+    <span class="vd-visually-hidden">{{ label || "Loading" }}</span>
   </span>
 </template>

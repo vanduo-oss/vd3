@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
+
 type Size = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 type Variant =
-  "primary" | "secondary" | "success" | "warning" | "error" | "info";
+  "primary" | "secondary" | "success" | "warning" | "error" | "danger" | "info";
 type Shape = "circle" | "rounded" | "square";
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
   status?: "online" | "offline" | "away" | "busy";
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   src: "",
   alt: "",
   initials: "",
@@ -23,6 +25,17 @@ withDefaults(defineProps<Props>(), {
   shape: "circle",
   status: undefined,
 });
+
+const imgError = ref(false);
+
+watch(
+  () => props.src,
+  () => {
+    imgError.value = false;
+  },
+);
+
+const showImg = (): boolean => !!props.src && !imgError.value;
 </script>
 
 <template>
@@ -30,8 +43,15 @@ withDefaults(defineProps<Props>(), {
     class="vd-avatar"
     :class="[`vd-avatar-${size}`, `vd-avatar-${variant}`, `vd-avatar-${shape}`]"
     :aria-label="alt || initials || 'Avatar'"
+    :role="showImg() ? undefined : 'img'"
   >
-    <img v-if="src" :src="src" :alt="alt" class="vd-avatar-img" />
+    <img
+      v-if="showImg()"
+      :src="src"
+      :alt="alt"
+      class="vd-avatar-img"
+      @error="imgError = true"
+    />
     <span v-else-if="initials" class="vd-avatar-initials">
       {{ initials }}
     </span>

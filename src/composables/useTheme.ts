@@ -139,6 +139,18 @@ const PALETTE_KEYS = PALETTE_OPTIONS.map((p) => p.key);
 const isPalette = (value: string): value is Palette =>
   (PALETTE_KEYS as readonly string[]).includes(value);
 
+const PRIMARY_KEYS = PRIMARY_COLORS.map((c) => c.key);
+const isPrimaryColor = (value: string): boolean =>
+  (PRIMARY_KEYS as readonly string[]).includes(value);
+
+const NEUTRAL_KEYS = NEUTRAL_COLORS.map((c) => c.key);
+const isNeutralColor = (value: string): boolean =>
+  (NEUTRAL_KEYS as readonly string[]).includes(value);
+
+const FONT_KEYS = FONT_OPTIONS.map((f) => f.key);
+const isFontOption = (value: string): boolean =>
+  (FONT_KEYS as readonly string[]).includes(value);
+
 export interface ThemePreference {
   palette: Palette;
   theme: ThemeMode;
@@ -200,13 +212,16 @@ export const loadPreference = (): ThemePreference => {
   const theme = read(keys.THEME, activeDefaults.THEME) as ThemeMode;
   const radius = read(keys.RADIUS, activeDefaults.RADIUS) as RadiusOption;
   const palette = read(keys.PALETTE, activeDefaults.PALETTE);
+  const primary = read(keys.PRIMARY, defaultPrimary(theme));
+  const neutral = read(keys.NEUTRAL, activeDefaults.NEUTRAL);
+  const font = read(keys.FONT, activeDefaults.FONT);
   return {
     palette: isPalette(palette) ? palette : activeDefaults.PALETTE,
     theme: THEME_MODES.includes(theme) ? theme : activeDefaults.THEME,
-    primary: read(keys.PRIMARY, defaultPrimary(theme)),
-    neutral: read(keys.NEUTRAL, activeDefaults.NEUTRAL),
+    primary: isPrimaryColor(primary) ? primary : defaultPrimary(theme),
+    neutral: isNeutralColor(neutral) ? neutral : activeDefaults.NEUTRAL,
     radius: RADIUS_OPTIONS.includes(radius) ? radius : activeDefaults.RADIUS,
-    font: read(keys.FONT, activeDefaults.FONT),
+    font: isFontOption(font) ? font : activeDefaults.FONT,
   };
 };
 
@@ -214,14 +229,33 @@ const isDefaultPrimary = (primary: string): boolean =>
   primary === activeDefaults.PRIMARY_LIGHT ||
   primary === activeDefaults.PRIMARY_DARK;
 
+/**
+ * Tracks whether the primary color was explicitly chosen by the user via
+ * `setPrimary()`. When true, `applyPreference` skips the automatic
+ * PRIMARY_LIGHT ↔ PRIMARY_DARK swap so an explicit "amber" in light mode
+ * (or "black" in dark mode) is preserved. Reset to false when the primary
+ * is re-derived from the scheme default (setTheme / scheme change / reset).
+ */
+let primaryExplicitlySet = false;
+
+export interface ApplyPreferenceOptions {
+  /** Skip the automatic default-primary swap (used by setPrimary). */
+  skipPrimaryAutoSwap?: boolean;
+}
+
 /** Apply a full preference set to <html>, mirroring framework attribute logic. */
-export const applyPreference = (prefs: ThemePreference): void => {
+export const applyPreference = (
+  prefs: ThemePreference,
+  options?: ApplyPreferenceOptions,
+): void => {
   if (!isClient()) return;
   const root = document.documentElement;
 
-  // Keep auto-default primary aligned with the active scheme (black <-> blue).
-  if (isDefaultPrimary(prefs.primary)) {
+  // Keep auto-default primary aligned with the active scheme (black <-> amber).
+  // Skip when the caller explicitly chose a primary via setPrimary().
+  if (!options?.skipPrimaryAutoSwap && isDefaultPrimary(prefs.primary)) {
     prefs.primary = defaultPrimary(prefs.theme);
+    primaryExplicitlySet = false;
   }
 
   root.setAttribute("data-palette", prefs.palette);
@@ -231,7 +265,7 @@ export const applyPreference = (prefs: ThemePreference): void => {
   root.style.setProperty("--vd-radius-scale", prefs.radius);
 
   if (prefs.font === "system") {
-    root.removeAttribute("data-font");
+    root.setAttribute("data-font", "system");
   } else {
     root.setAttribute("data-font", prefs.font);
   }
@@ -306,7 +340,15 @@ let consumerCount = 0;
 let mediaQuery: MediaQueryList | null = null;
 
 const onSchemeChange = (): void => {
-  if (themeState && themeState.theme === "system") applyPreference(themeState);
+  if (themeState && themeState.theme === "system") {
+    // Only auto-swap the primary if it matches the outgoing scheme's default
+    // (i.e. the user hasn't explicitly chosen a primary color).
+    if (!primaryExplicitlySet && isDefaultPrimary(themeState.primary)) {
+      applyPreference(themeState);
+    } else {
+      applyPreference(themeState, { skipPrimaryAutoSwap: true });
+    }
+  }
 };
 
 const attachSchemeListener = (): void => {
@@ -384,13 +426,31 @@ export const useThemePreference = (): ThemePreferenceApi => {
 
   return {
     state,
-    setTheme: (theme) => setField("theme", theme),
+    setTheme: (theme) => {
+      // When switching schemes, only auto-swap the primary if it matches the
+      // outgoing scheme's default (i.e. the user hasn't explicitly chosen one).
+      const outgoingDefault = defaultPrimary(state.theme);
+      if (!primaryExplicitlySet && state.primary === outgoingDefault) {
+        state.primary = defaultPrimary(theme);
+      }
+      state.theme = theme;
+      commitThemeState();
+    },
     setPalette: (palette) => setField("palette", palette),
-    setPrimary: (primary) => setField("primary", primary),
+    setPrimary: (primary) => {
+      // Explicit primary selection: mark as explicitly set and bypass the
+      // automatic default-primary swap so "amber" in light mode (or "black"
+      // in dark mode) is preserved.
+      primaryExplicitlySet = true;
+      state.primary = primary;
+      applyPreference(state, { skipPrimaryAutoSwap: true });
+      if (themePersistence) persistPreference(state);
+    },
     setNeutral: (neutral) => setField("neutral", neutral),
     setRadius: (radius) => setField("radius", radius),
     setFont: (font) => setField("font", font),
     reset: () => {
+      primaryExplicitlySet = false;
       Object.assign(state, defaultPreference());
       commitThemeState();
     },
