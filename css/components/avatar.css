@@ -132,33 +132,16 @@
   background-color: var(--vd-avatar-status-offline);
 }
 
-.vd-avatar.vd-avatar-status-online,
-.vd-avatar.vd-avatar-status-offline,
-.vd-avatar.vd-avatar-status-busy,
-.vd-avatar.vd-avatar-status-away {
+/* Status dot colors on the child span (VdAvatar renders the dot as a child) */
+.vd-avatar-status.vd-avatar-status-online { background-color: var(--vd-avatar-status-online); }
+.vd-avatar-status.vd-avatar-status-offline { background-color: var(--vd-avatar-status-offline); }
+.vd-avatar-status.vd-avatar-status-busy { background-color: var(--vd-avatar-status-busy); }
+.vd-avatar-status.vd-avatar-status-away { background-color: var(--vd-avatar-status-away); }
+
+/* Allow the status dot to overflow the avatar boundary */
+.vd-avatar:has(.vd-avatar-status) {
   overflow: visible;
 }
-
-.vd-avatar.vd-avatar-status-online::after,
-.vd-avatar.vd-avatar-status-offline::after,
-.vd-avatar.vd-avatar-status-busy::after,
-.vd-avatar.vd-avatar-status-away::after {
-  content: '';
-  position: absolute;
-  bottom: 2%;
-  right: 2%;
-  width: 25%;
-  height: 25%;
-  min-width: 0.5rem;
-  min-height: 0.5rem;
-  border-radius: 50%;
-  border: 2px solid var(--vd-avatar-border);
-}
-
-.vd-avatar.vd-avatar-status-online::after  { background-color: var(--vd-avatar-status-online); }
-.vd-avatar.vd-avatar-status-offline::after { background-color: var(--vd-avatar-status-offline); }
-.vd-avatar.vd-avatar-status-busy::after    { background-color: var(--vd-avatar-status-busy); }
-.vd-avatar.vd-avatar-status-away::after    { background-color: var(--vd-avatar-status-away); }
 
 /* Avatar with Ring/Border */
 .vd-avatar-ring {
@@ -246,7 +229,8 @@
   color: var(--vd-text-on-status);
 }
 
-.vd-avatar-error {
+.vd-avatar-error,
+.vd-avatar-danger {
   background-color: var(--vd-color-error);
   color: var(--vd-text-on-status);
 }

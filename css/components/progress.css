@@ -151,6 +151,32 @@
   transition: width 0.4s ease;
 }
 
+/* Variant colors for the VdProgress fill */
+.vd-progress-fill.vd-progress-primary {
+  background-color: var(--vd-color-primary);
+}
+
+.vd-progress-fill.vd-progress-secondary {
+  background-color: var(--vd-color-secondary);
+}
+
+.vd-progress-fill.vd-progress-success {
+  background-color: var(--vd-color-success);
+}
+
+.vd-progress-fill.vd-progress-warning {
+  background-color: var(--vd-color-warning);
+}
+
+.vd-progress-fill.vd-progress-danger,
+.vd-progress-fill.vd-progress-error {
+  background-color: var(--vd-color-error);
+}
+
+.vd-progress-fill.vd-progress-info {
+  background-color: var(--vd-color-info);
+}
+
 .vd-progress.is-indeterminate .vd-progress-fill {
   width: 30%;
   animation: progress-indeterminate 1.5s ease-in-out infinite;

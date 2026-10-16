@@ -1,6 +1,6 @@
 <script setup lang="ts">
 type Min = "screen" | "half" | "fib-610" | "fib-987";
-type Gap = "fib-3" | "fib-5" | "fib-8";
+type Gap = "fib-3" | "fib-5" | "fib-8" | "fib-13" | "fib-21" | "fib-34";
 
 interface Props {
   as?: keyof HTMLElementTagNameMap;

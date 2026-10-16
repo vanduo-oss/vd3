@@ -12,10 +12,10 @@ const VARIANTS = [
 ] as const;
 
 describe("VdChip", () => {
-  it("renders a span.vd-chip with role=status and slot content", () => {
+  it("renders a span.vd-chip with slot content and no role by default", () => {
     const wrapper = mount(VdChip, { slots: { default: "Tag" } });
     const chip = wrapper.get("span.vd-chip");
-    expect(chip.attributes("role")).toBe("status");
+    expect(chip.attributes("role")).toBeUndefined();
     expect(chip.text()).toBe("Tag");
   });
 
@@ -85,12 +85,53 @@ describe("VdChip", () => {
     expect(clickable.emitted("click")![0]![0]).toBeInstanceOf(MouseEvent);
   });
 
+  it("sets role=button and tabindex=0 when clickable", () => {
+    const wrapper = mount(VdChip, { props: { clickable: true } });
+    const chip = wrapper.get(".vd-chip");
+    expect(chip.attributes("role")).toBe("button");
+    expect(chip.attributes("tabindex")).toBe("0");
+  });
+
+  it("does not set role or tabindex when not clickable", () => {
+    const wrapper = mount(VdChip);
+    const chip = wrapper.get(".vd-chip");
+    expect(chip.attributes("role")).toBeUndefined();
+    expect(chip.attributes("tabindex")).toBeUndefined();
+  });
+
+  it("emits click on Enter and Space keydown when clickable", async () => {
+    const wrapper = mount(VdChip, { props: { clickable: true } });
+    const chip = wrapper.get(".vd-chip");
+
+    await chip.trigger("keydown", { key: "Enter" });
+    expect(wrapper.emitted("click")).toHaveLength(1);
+
+    await chip.trigger("keydown", { key: " " });
+    expect(wrapper.emitted("click")).toHaveLength(2);
+  });
+
+  it("does not emit click on keydown when not clickable", async () => {
+    const wrapper = mount(VdChip);
+    await wrapper.get(".vd-chip").trigger("keydown", { key: "Enter" });
+    expect(wrapper.emitted("click")).toBeUndefined();
+  });
+
   it("stops dismiss clicks from also emitting the chip click", async () => {
     const wrapper = mount(VdChip, {
       props: { clickable: true, dismissible: true },
     });
     await wrapper.get("button.vd-chip-close").trigger("click");
     expect(wrapper.emitted("dismiss")).toHaveLength(1);
+    expect(wrapper.emitted("click")).toBeUndefined();
+  });
+
+  it("stops Enter and Space on the dismiss button from emitting the chip click", async () => {
+    const wrapper = mount(VdChip, {
+      props: { clickable: true, dismissible: true },
+    });
+    const closeBtn = wrapper.get("button.vd-chip-close");
+    await closeBtn.trigger("keydown", { key: "Enter" });
+    await closeBtn.trigger("keydown", { key: " " });
     expect(wrapper.emitted("click")).toBeUndefined();
   });
 });

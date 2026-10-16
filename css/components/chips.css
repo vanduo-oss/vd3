@@ -117,6 +117,13 @@
   background-color: transparent;
 }
 
+.vd-chip-outline.vd-chip-secondary,
+.tag-outline.tag-secondary {
+  border-color: var(--vd-color-secondary);
+  color: var(--vd-color-secondary);
+  background-color: transparent;
+}
+
 .vd-chip-outline.vd-chip-success,
 .tag-outline.tag-success {
   border-color: var(--vd-color-success);
@@ -132,7 +139,9 @@
 }
 
 .vd-chip-outline.vd-chip-error,
-.tag-outline.tag-error {
+.vd-chip-outline.vd-chip-danger,
+.tag-outline.tag-error,
+.tag-outline.tag-danger {
   border-color: var(--vd-color-error);
   color: var(--vd-color-error);
   background-color: transparent;
@@ -207,35 +216,38 @@ button.tag:focus-visible {
   opacity: 1;
 }
 
-.vd-chip-close::before,
-.tag-close::before {
-  content: '\00D7';
-  font-size: 1rem;
-  font-weight: bold;
-}
-
 /* Chip with Avatar/Image */
-.vd-chip-avatar,
-.tag-avatar {
-  padding-left: 0.25rem;
-}
-
-.vd-chip-avatar img,
-.tag-avatar img {
+img.vd-chip-avatar,
+img.tag-avatar {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.vd-chip-sm.vd-chip-avatar img,
-.tag-sm.tag-avatar img {
+.vd-chip:has(> img.vd-chip-avatar),
+.tag:has(> img.tag-avatar) {
+  padding-left: 0.25rem;
+}
+
+.vd-chip-sm:has(> img.vd-chip-avatar),
+.tag-sm:has(> img.tag-avatar) {
+  padding-left: 0.125rem;
+}
+
+.vd-chip-sm img.vd-chip-avatar,
+.tag-sm img.tag-avatar {
   width: 1.25rem;
   height: 1.25rem;
 }
 
-.vd-chip-lg.vd-chip-avatar img,
-.tag-lg.tag-avatar img {
+.vd-chip-lg:has(> img.vd-chip-avatar),
+.tag-lg:has(> img.tag-avatar) {
+  padding-left: 0.375rem;
+}
+
+.vd-chip-lg img.vd-chip-avatar,
+.tag-lg img.tag-avatar {
   width: 1.75rem;
   height: 1.75rem;
 }

@@ -134,7 +134,7 @@ body > .vd-theme-customizer-panel.is-open {
 /* Neutral Color Grid */
 .tc-neutral-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 0.375rem;
 }
 
@@ -535,9 +535,9 @@ body > .vd-theme-customizer-panel.is-open {
   text-overflow: ellipsis;
 }
 
-/* Neutral swatches - 5 columns */
+/* Neutral swatches - 6 columns */
 .customizer-neutral-colors {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
 }
 
 .customizer-neutral-colors .customizer-swatch {

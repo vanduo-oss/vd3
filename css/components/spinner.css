@@ -80,8 +80,11 @@
 .vd-spinner-xl { --vd-spinner-size: 4rem; --vd-spinner-border-width: 5px; }
 
 /* Color Variants */
+.vd-spinner-primary { --vd-spinner-color: var(--vd-color-primary); }
+.vd-spinner-secondary { --vd-spinner-color: var(--vd-color-secondary); }
 .vd-spinner-success { --vd-spinner-color: var(--vd-color-success); }
 .vd-spinner-warning { --vd-spinner-color: var(--vd-color-warning); }
+.vd-spinner-danger { --vd-spinner-color: var(--vd-color-error); }
 .vd-spinner-error { --vd-spinner-color: var(--vd-color-error); }
 .vd-spinner-info { --vd-spinner-color: var(--vd-color-info); }
 .vd-spinner-light { --vd-spinner-color: #fff; }

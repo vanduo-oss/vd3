@@ -259,13 +259,13 @@ function buildCSS(isMinify, banner, { variant = "full" } = {}) {
     // paints a flat wash (grey fog on dark) instead of frosted blur.
     const rawCSS = code.toString();
     const transformedCSS = restoreUnprefixedBackdropFilter(rawCSS);
-    const restored = transformedCSS !== rawCSS;
 
     // Prepend banner to CSS
     const finalCSS = banner + "\n" + transformedCSS;
     writeFileSync(outputPath, finalCSS);
-    // Skip stale maps when the post-transform restore rewrites byte offsets.
-    if (map && !restored) {
+    // Always write the source map; the post-transform restore may shift byte
+    // offsets slightly, but a slightly-off map is better than none.
+    if (map) {
       writeFileSync(outputPath + ".map", map);
     }
 

@@ -27,7 +27,7 @@
 
 @import url('core/helpers.css');
 
-/* Layer 2: Icons (regular + fill; import css/icons/icons-all.css for all 6 weights) */
+/* Layer 2: Icons (regular + fill; import individual weight styles for others) */
 @import url('icons/icons.css');
 
 /* Layer 3: Utilities */

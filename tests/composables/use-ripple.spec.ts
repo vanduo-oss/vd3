@@ -224,4 +224,91 @@ describe("useRipple", () => {
     mousedown(two, 20, 20);
     expect(waves(two)).toHaveLength(2);
   });
+
+  it("sets aria-hidden on spawned waves", () => {
+    const wrapper = mountRipple(() => [
+      h("button", { class: "vd-ripple" }, "Click"),
+    ]);
+    const btn = wrapper.get("button").element as HTMLElement;
+    stubRect(btn, { left: 0, top: 0, width: 100, height: 40 });
+
+    mousedown(btn, 10, 10);
+    const wave = waves(btn)[0];
+    expect(wave.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("applies data-vd-ripple-color as a custom --vd-ripple-color on the wave", () => {
+    const wrapper = mountRipple(() => [
+      h(
+        "button",
+        {
+          class: "vd-ripple",
+          "data-vd-ripple-color": "#22c55e",
+        },
+        "Click",
+      ),
+    ]);
+    const btn = wrapper.get("button").element as HTMLElement;
+    stubRect(btn, { left: 0, top: 0, width: 100, height: 40 });
+
+    mousedown(btn, 10, 10);
+    const wave = waves(btn)[0];
+    expect(wave.style.getPropertyValue("--vd-ripple-color")).toBe("#22c55e");
+  });
+
+  it("centers the wave on the element when data-vd-ripple-centered is set", () => {
+    const wrapper = mountRipple(() => [
+      h(
+        "button",
+        {
+          class: "vd-ripple",
+          "data-vd-ripple-centered": "",
+        },
+        "Click",
+      ),
+    ]);
+    const btn = wrapper.get("button").element as HTMLElement;
+    stubRect(btn, { left: 10, top: 20, width: 100, height: 40 });
+
+    // Pointer at (90, 50) — but centered should ignore it.
+    mousedown(btn, 90, 50);
+    const wave = waves(btn)[0];
+    // size = max(100, 40) = 100; centered: x = (100-100)/2 = 0, y = (40-100)/2 = -30
+    expect(wave.style.left).toBe("0px");
+    expect(wave.style.top).toBe("-30px");
+  });
+
+  it("deduplicates touch + mouse events (no double ripple on tap)", () => {
+    const wrapper = mountRipple(() => [
+      h("button", { class: "vd-ripple" }, "Tap"),
+    ]);
+    const btn = wrapper.get("button").element as HTMLElement;
+    stubRect(btn, { left: 0, top: 0, width: 100, height: 40 });
+
+    // Simulate a tap: touchstart immediately followed by mousedown.
+    touchstart(btn, 10, 10);
+    mousedown(btn, 10, 10);
+    expect(waves(btn)).toHaveLength(1);
+  });
+
+  it("spawns no wave when prefers-reduced-motion is reduce", () => {
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn().mockReturnValue({
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }),
+    );
+    const wrapper = mountRipple(() => [
+      h("button", { class: "vd-ripple" }, "Click"),
+    ]);
+    const btn = wrapper.get("button").element as HTMLElement;
+    stubRect(btn, { left: 0, top: 0, width: 100, height: 40 });
+
+    mousedown(btn, 10, 10);
+    expect(waves(btn)).toHaveLength(0);
+    vi.unstubAllGlobals();
+  });
 });

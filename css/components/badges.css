@@ -158,7 +158,8 @@
   border-color: var(--vd-color-warning);
 }
 
-.vd-badge-outlined.vd-badge-error {
+.vd-badge-outlined.vd-badge-error,
+.vd-badge-outlined.vd-badge-danger {
   color: var(--vd-color-error);
   border-color: var(--vd-color-error);
 }

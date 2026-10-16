@@ -12,6 +12,10 @@
 }
 
 /* Font Switching - Applied via data-font attribute on html element */
+[data-font="system"] {
+  --vd-font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 [data-font="inter"] {
   --vd-font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }

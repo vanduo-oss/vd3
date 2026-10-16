@@ -10,18 +10,25 @@ type Space =
   | "fib-21"
   | "fib-34"
   | "fib-55";
+type Align = "start" | "center" | "end" | "stretch";
 
 interface Props {
   /** Fibonacci gap between stacked children (maps to `data-gap`). */
   gap?: Space;
-  as?: "div" | "section" | "ul" | "ol";
+  as?: keyof HTMLElementTagNameMap;
+  /** Cross-axis alignment (maps to `data-align`). */
+  align?: Align;
 }
 
-withDefaults(defineProps<Props>(), { gap: "fib-8", as: "div" });
+withDefaults(defineProps<Props>(), {
+  gap: "fib-8",
+  as: "div",
+  align: undefined,
+});
 </script>
 
 <template>
-  <component :is="as" class="vd-stack" :data-gap="gap">
+  <component :is="as" class="vd-stack" :data-gap="gap" :data-align="align">
     <slot />
   </component>
 </template>

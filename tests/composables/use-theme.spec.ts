@@ -155,10 +155,10 @@ describe("useTheme applyPreference DOM side effects", () => {
     expect(root.style.getPropertyValue("--vd-radius-scale")).toBe("0.25");
   });
 
-  it("font 'system' removes data-font instead of setting it", () => {
+  it("font 'system' sets data-font='system' (not removed)", () => {
     document.documentElement.setAttribute("data-font", "stale");
     applyPreference(basePrefs({ font: "system" }));
-    expect(document.documentElement.hasAttribute("data-font")).toBe(false);
+    expect(document.documentElement.getAttribute("data-font")).toBe("system");
   });
 
   it("theme 'system' removes data-theme instead of setting it", () => {
@@ -227,6 +227,27 @@ describe("useTheme loadPreference", () => {
     expect(pref.palette).toBe(DEFAULTS.PALETTE);
     expect(pref.theme).toBe(DEFAULTS.THEME);
     expect(pref.radius).toBe(DEFAULTS.RADIUS);
+  });
+
+  it("falls back to defaults for invalid primary / neutral / font", () => {
+    window.localStorage.setItem("vanduo-primary-color", "not-a-color");
+    window.localStorage.setItem("vanduo-neutral-color", "not-a-neutral");
+    window.localStorage.setItem("vanduo-font-preference", "not-a-font");
+    const pref = loadPreference();
+    // Invalid primary falls back to the scheme default.
+    expect(pref.primary).toBe(DEFAULTS.PRIMARY_LIGHT);
+    expect(pref.neutral).toBe(DEFAULTS.NEUTRAL);
+    expect(pref.font).toBe(DEFAULTS.FONT);
+  });
+
+  it("accepts valid primary / neutral / font values from storage", () => {
+    window.localStorage.setItem("vanduo-primary-color", "emerald");
+    window.localStorage.setItem("vanduo-neutral-color", "stone");
+    window.localStorage.setItem("vanduo-font-preference", "nunito");
+    const pref = loadPreference();
+    expect(pref.primary).toBe("emerald");
+    expect(pref.neutral).toBe("stone");
+    expect(pref.font).toBe("nunito");
   });
 
   it("derives the primary fallback from the stored theme when no primary is saved", () => {

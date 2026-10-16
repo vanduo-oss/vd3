@@ -74,16 +74,18 @@ describe("VdSelect", () => {
     expect(opts[0].attributes("disabled")).toBeUndefined();
   });
 
-  it("mirrors the selected label into the visually-hidden span", async () => {
-    const wrapper = factory({ modelValue: "b" });
-    expect(wrapper.find(".vd-visually-hidden").text()).toBe("Beta");
-
-    await wrapper.setProps({ modelValue: "a" });
-    expect(wrapper.find(".vd-visually-hidden").text()).toBe("Alpha");
+  it("renders a single-root select element (no sibling span)", () => {
+    const wrapper = factory();
+    // The root element is the select itself.
+    expect(wrapper.element.tagName).toBe("SELECT");
+    // No visually-hidden sibling span.
+    expect(wrapper.find(".vd-visually-hidden").exists()).toBe(false);
   });
 
-  it("renders an empty hidden label for an unknown value", () => {
-    const wrapper = factory({ modelValue: "" });
-    expect(wrapper.find(".vd-visually-hidden").text()).toBe("");
+  it("passes fallthrough attributes to the root select", () => {
+    const wrapper = factory({ class: "custom-class", "data-test": "value" });
+    const select = wrapper.find("select");
+    expect(select.classes()).toContain("custom-class");
+    expect(select.attributes("data-test")).toBe("value");
   });
 });
