@@ -47,10 +47,10 @@ const onClick = (event: MouseEvent): void => {
     :aria-busy="loading || undefined"
     :class="[
       'vd-btn',
-      `vd-btn-${variant}`,
+      outline ? 'vd-btn-outline' : `vd-btn-${variant}`,
+      outline ? `vd-btn-outline-${variant}` : null,
       size !== 'md' ? `vd-btn-${size}` : null,
       ring ? 'vd-btn-ring' : null,
-      outline ? 'vd-btn-outline' : null,
       block ? 'vd-btn-block' : null,
       icon ? 'vd-btn-icon' : null,
       loading ? 'is-loading' : null,

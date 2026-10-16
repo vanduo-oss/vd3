@@ -10,9 +10,8 @@ Standalone [Vanduo](https://vanduo.dev) package: design tokens, CSS, and typed
 `Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
 runtime.
 
-**Status: 1.7.6** — hardened sanitized DOM installation, safer lazy-loaded
-content and lifecycle cleanup, and refreshed development dependencies with
-documented security audit gates.
+**Status: 1.8.0** — complete layout primitive & UI atom prop parity, theme runtime
+preference hardening, Nunito font integration, and enhanced composables.
 
 ## Install
 

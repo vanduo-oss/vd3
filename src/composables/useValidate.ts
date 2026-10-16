@@ -271,9 +271,25 @@ export function useValidate(
 
   const fieldFrom = (target: EventTarget | null): FieldEl | null => {
     if (!(target instanceof HTMLElement)) return null;
-    if (!target.hasAttribute("data-vd-rules")) return null;
+    if (
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLSelectElement ||
+      target instanceof HTMLTextAreaElement
+    ) {
+      if (
+        target.hasAttribute("data-vd-rules") ||
+        target.closest("[data-vd-rules]")
+      ) {
+        return target;
+      }
+      return null;
+    }
+    const host =
+      target.closest("[data-vd-rules]") ??
+      (target.hasAttribute("data-vd-rules") ? target : null);
+    if (!host) return null;
     // Resolve wrapper elements (e.g. VdInput's .vd-form-group) to the inner control.
-    const resolved = resolveField(target);
+    const resolved = resolveField(host as HTMLElement);
     return resolved[0] ?? null;
   };
 
@@ -283,8 +299,14 @@ export function useValidate(
 
     const formMode =
       form.getAttribute("data-vd-validate-mode") ?? options?.mode ?? "blur";
-    const modeFor = (field: FieldEl): string =>
-      field.getAttribute("data-vd-validate-mode") ?? formMode;
+    const modeFor = (field: FieldEl): string => {
+      const host = field.closest("[data-vd-rules]") ?? field;
+      return (
+        field.getAttribute("data-vd-validate-mode") ??
+        host.getAttribute("data-vd-validate-mode") ??
+        formMode
+      );
+    };
 
     // blur mode: validate the field when focus leaves it (focusout bubbles,
     // unlike blur, so a single delegated listener covers dynamic fields).

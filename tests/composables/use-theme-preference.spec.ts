@@ -126,6 +126,47 @@ describe("useThemePreference shared singleton", () => {
     // Explicitly chosen primary is preserved, not swapped to the dark default.
     expect(api.state.primary).toBe("amber");
     expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+
+    // And preserved when switching back to light mode:
+    api.setTheme("light");
+    expect(api.state.primary).toBe("amber");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+  });
+
+  it("explicit primary survives unrelated setter mutations (setFont, setRadius, setNeutral, setPalette)", () => {
+    const api = useThemePreference();
+    api.setTheme("light");
+    api.setPrimary("amber"); // explicit choice
+
+    api.setFont("inter");
+    expect(api.state.primary).toBe("amber");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+
+    api.setRadius("0.25");
+    expect(api.state.primary).toBe("amber");
+
+    api.setNeutral("slate");
+    expect(api.state.primary).toBe("amber");
+
+    api.setPalette("fibonacci");
+    expect(api.state.primary).toBe("amber");
+  });
+
+  it("explicit primary persists to storage and survives rehydration", () => {
+    const api = useThemePreference();
+    api.setTheme("light");
+    api.setPrimary("amber");
+    expect(window.localStorage.getItem("vanduo-primary-explicit")).toBe("true");
+
+    // Clean DOM attributes simulating a fresh page load
+    cleanRoot();
+    const rehydrated = useThemePreference();
+    expect(rehydrated.state.primary).toBe("amber");
+    expect(document.documentElement.getAttribute("data-primary")).toBe("amber");
+
+    // Changing font after rehydration keeps amber
+    rehydrated.setFont("rubik");
+    expect(rehydrated.state.primary).toBe("amber");
   });
 
   it("setTheme preserves an explicitly chosen non-default primary across scheme changes", () => {

@@ -37,6 +37,7 @@ const onClick = (event: MouseEvent): void => {
 };
 
 const onKeydown = (event: KeyboardEvent): void => {
+  if (event.target !== event.currentTarget) return;
   if (event.key === "Enter" || event.key === " ") {
     event.preventDefault();
     emit("click", event);

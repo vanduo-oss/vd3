@@ -111,4 +111,38 @@ describe("VdButton", () => {
     const wrapper = mount(VdButton);
     expect(wrapper.find(".vd-btn-spinner").exists()).toBe(false);
   });
+
+  it("outline applies vd-btn-outline and variant-specific outline class", () => {
+    const defaultOutline = mount(VdButton, { props: { outline: true } });
+    expect(defaultOutline.classes()).toContain("vd-btn-outline");
+    expect(defaultOutline.classes()).toContain("vd-btn-outline-primary");
+
+    const dangerOutline = mount(VdButton, {
+      props: { variant: "danger", outline: true },
+    });
+    expect(dangerOutline.classes()).toContain("vd-btn-outline");
+    expect(dangerOutline.classes()).toContain("vd-btn-outline-danger");
+    expect(dangerOutline.classes()).not.toContain("vd-btn-danger");
+
+    const secondaryOutline = mount(VdButton, {
+      props: { variant: "secondary", outline: true },
+    });
+    expect(secondaryOutline.classes()).toContain("vd-btn-outline-secondary");
+  });
+
+  it("block and icon props apply vd-btn-block and vd-btn-icon classes", () => {
+    const blockBtn = mount(VdButton, { props: { block: true } });
+    expect(blockBtn.classes()).toContain("vd-btn-block");
+
+    const iconBtn = mount(VdButton, { props: { icon: true } });
+    expect(iconBtn.classes()).toContain("vd-btn-icon");
+  });
+
+  it("loading sets aria-busy attribute", () => {
+    const notBusy = mount(VdButton, { props: { loading: false } });
+    expect(notBusy.attributes("aria-busy")).toBeUndefined();
+
+    const busy = mount(VdButton, { props: { loading: true } });
+    expect(busy.attributes("aria-busy")).toBe("true");
+  });
 });

@@ -513,4 +513,24 @@ describe("useValidate", () => {
     blur(fieldB);
     expect(fieldB.classList.contains("is-invalid")).toBe(true);
   });
+
+  it("resolves wrapper elements: validates inner control on blur and input when data-vd-rules is on container", () => {
+    const { wrapper, api } = mountHost(`
+      <form class="vd-validate">
+        <div class="vd-form-group" data-vd-rules="required|email">
+          <input name="email" />
+        </div>
+      </form>`);
+    const field = wrapper.get<HTMLInputElement>("input").element;
+
+    blur(field);
+    expect(field.classList.contains("is-invalid")).toBe(true);
+    expect(field.getAttribute("aria-invalid")).toBe("true");
+    expect(api.errors["email"]).toBe("This field is required");
+
+    type(field, "valid@email.com");
+    expect(field.classList.contains("is-valid")).toBe(true);
+    expect(field.classList.contains("is-invalid")).toBe(false);
+    expect(api.errors["email"]).toBeUndefined();
+  });
 });

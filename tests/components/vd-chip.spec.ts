@@ -124,4 +124,14 @@ describe("VdChip", () => {
     expect(wrapper.emitted("dismiss")).toHaveLength(1);
     expect(wrapper.emitted("click")).toBeUndefined();
   });
+
+  it("stops Enter and Space on the dismiss button from emitting the chip click", async () => {
+    const wrapper = mount(VdChip, {
+      props: { clickable: true, dismissible: true },
+    });
+    const closeBtn = wrapper.get("button.vd-chip-close");
+    await closeBtn.trigger("keydown", { key: "Enter" });
+    await closeBtn.trigger("keydown", { key: " " });
+    expect(wrapper.emitted("click")).toBeUndefined();
+  });
 });
