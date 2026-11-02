@@ -21,7 +21,7 @@ describe("dock public API (type lock)", () => {
     expectTypeOf<DockVisualPhase>().toEqualTypeOf<
       "horizontal" | "square" | "vertical"
     >();
-    expectTypeOf<DockItemLayout>().toEqualTypeOf<"stack" | "inline">();
+    expectTypeOf<DockItemLayout>().toEqualTypeOf<"stack" | "inline" | "auto">();
     expectTypeOf<DockPlacement>().toEqualTypeOf<
       "bottom" | "top" | "left" | "right"
     >();

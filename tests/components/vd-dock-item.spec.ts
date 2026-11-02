@@ -1,6 +1,39 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { computed, ref } from "vue";
 import VdDockItem from "../../src/components/VdDockItem.vue";
+import { VD_DOCK_KEY } from "../../src/components/dock-context";
+import type {
+  DockItemLayout,
+  DockPlacement,
+} from "../../src/composables/useDockOrientation";
+
+function mountItem(
+  props: {
+    icon?: string;
+    label: string;
+    active?: boolean;
+    activeIconFill?: boolean;
+    tooltip?: string | boolean;
+    badge?: string | number;
+    href?: string;
+    as?: string;
+  },
+  placement: DockPlacement = "bottom",
+  itemLayout: DockItemLayout = "stack",
+) {
+  return mount(VdDockItem, {
+    props,
+    global: {
+      provide: {
+        [VD_DOCK_KEY as symbol]: {
+          placement: ref(placement),
+          itemLayout: computed(() => itemLayout),
+        },
+      },
+    },
+  });
+}
 
 enableAutoUnmount(afterEach);
 
@@ -15,7 +48,75 @@ describe("VdDockItem", () => {
     expect(button.attributes("aria-current")).toBe("page");
     expect(button.attributes("aria-label")).toBe("Home");
     expect(button.get(".vd-dock-label").text()).toBe("Home");
-    expect(button.get("i.ph-house").classes()).toContain("ph-house");
+    expect(button.get("i.ph-house").classes()).toContain("ph-fill");
+  });
+
+  it("exposes a badge, link, and dock tooltip", () => {
+    const wrapper = mount(VdDockItem, {
+      props: {
+        icon: "house",
+        label: "Home",
+        href: "/home",
+        badge: 3,
+        tooltip: "Go home",
+      },
+    });
+    const link = wrapper.get("a.vd-dock-item");
+    expect(link.attributes("href")).toBe("/home");
+    expect(link.attributes("data-tooltip")).toBe("Go home");
+    expect(link.attributes("data-tooltip-variant")).toBe("dock");
+    expect(link.get(".vd-dock-badge").text()).toBe("3");
+    expect(link.get("i").classes()).toContain("ph");
+    expect(link.get("i").classes()).not.toContain("ph-fill");
+  });
+
+  it("uses the label as a vertical auto tooltip and can opt out", () => {
+    const shown = mountItem(
+      { icon: "compass", label: "Map", tooltip: true },
+      "right",
+      "auto",
+    );
+    expect(shown.get("button").attributes("data-tooltip")).toBe("Map");
+    expect(shown.get("button").attributes("data-tooltip-placement")).toBe(
+      "left",
+    );
+
+    const implied = mountItem({ label: "Docs" }, "left", "auto");
+    expect(implied.get("button").attributes("data-tooltip")).toBe("Docs");
+    expect(implied.get("button").attributes("data-tooltip-placement")).toBe(
+      "right",
+    );
+
+    const hidden = mountItem(
+      {
+        label: "Quiet",
+        tooltip: false,
+        active: true,
+        activeIconFill: false,
+        icon: "bell",
+      },
+      "left",
+      "auto",
+    );
+    expect(hidden.get("button").attributes("data-tooltip")).toBeUndefined();
+    expect(hidden.get("i").classes()).not.toContain("ph-fill");
+
+    const custom = mountItem({ label: "Mark", as: "span", badge: "" });
+    expect(custom.get("span.vd-dock-item").attributes("type")).toBeUndefined();
+    expect(custom.find(".vd-dock-badge").exists()).toBe(false);
+  });
+
+  it("places tooltips away from top and bottom edges", () => {
+    expect(
+      mountItem({ label: "Up", tooltip: true }, "top")
+        .get("button")
+        .attributes("data-tooltip-placement"),
+    ).toBe("bottom");
+    expect(
+      mountItem({ label: "Down", tooltip: true }, "bottom")
+        .get("button")
+        .attributes("data-tooltip-placement"),
+    ).toBe("top");
   });
 
   it("omits the icon and current page when idle", () => {

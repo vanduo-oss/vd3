@@ -374,4 +374,36 @@ describe("VdDock", () => {
     );
     expect(wrapper.get("nav.vd-dock").classes()).toContain("is-horizontal");
   });
+
+  it("switches auto item layout with the edge and can pin the brand corner", () => {
+    const horizontal = mount(VdDock, {
+      props: { itemLayout: "auto" },
+      slots,
+    });
+    expect(horizontal.get("nav.vd-dock").classes()).toEqual(
+      expect.arrayContaining(["vd-dock-items-inline", "vd-dock-items-auto"]),
+    );
+
+    const vertical = mount(VdDock, {
+      props: {
+        itemLayout: "auto",
+        placement: "left",
+        brandCorner: "consistent",
+        brandSpin: true,
+      },
+      slots,
+    });
+    const nav = vertical.get("nav.vd-dock");
+    expect(nav.classes()).toEqual(
+      expect.arrayContaining([
+        "vd-dock-items-stack",
+        "vd-dock-items-auto",
+        "vd-dock-brand-consistent",
+        "vd-dock-edge-left",
+      ]),
+    );
+    expect(nav.get(".vd-dock-brand-spin").text()).toContain("u");
+    nav.get(".vd-dock-brand").element.dispatchEvent(new Event("pointerenter"));
+    nav.get(".vd-dock-brand").element.dispatchEvent(new Event("pointerleave"));
+  });
 });

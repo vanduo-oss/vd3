@@ -164,10 +164,10 @@ and `src/index.ts`. It SHALL contain an install step (`pnpm add @vanduo-oss/vd3`
 a usage step showing the three real integration points — importing the
 stylesheet with `import "@vanduo-oss/vd3/css"`, registering the plugin with
 `app.use(VanduoVue)` (optionally `app.use(VanduoVue, { themeDefaults })`), and
-rendering a `Vd*` component — and an overview of the shipped inventory (the 63
-exported components: 56 `Vd*` components plus the 7 layout primitives `VdBox`,
+rendering a `Vd*` component — and an overview of the shipped inventory (the 64
+exported components: 57 `Vd*` components plus the 7 layout primitives `VdBox`,
 `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`; and the
-39 composable modules including the theme layer and the `useThemePreference`
+40 composable modules including the theme layer and the `useThemePreference`
 singleton). It MUST document the theming contract (the `data-palette` /
 `-primary` / `-neutral` / `-radius` / `-theme` / `-font` attributes, `--vd-*`
 custom properties, `vanduo-*` localStorage keys, and the `./css` / `./css/core`
@@ -191,7 +191,7 @@ non-existent API may be documented as available.
 
 - **GIVEN** the README component/composable overview and `src/index.ts`
 - **WHEN** the documented names and counts are compared against the exports
-- **THEN** the 63 components (56 `Vd*` + 7 layout primitives) and the theme
+- **THEN** the 64 components (57 `Vd*` + 7 layout primitives) and the theme
   layer / `useThemePreference` are all real exports, and no documented symbol
   is absent from `src/index.ts`
 
@@ -223,8 +223,8 @@ shipped, installable package (it MUST NOT frame the package as an unbuilt
 "pre-release scaffold" whose API is still "upcoming"). The body SHALL document
 the same real install (`pnpm add @vanduo-oss/vd3`, `import "@vanduo-oss/vd3/css"`,
 `app.use(VanduoVue)`), the component/composable inventory grouped for
-scanability (the 63 components incl. the 7 named layout primitives, and the
-39 composable modules incl. the theme API and the `useThemePreference`
+scanability (the 64 components incl. the 7 named layout primitives, and the
+40 composable modules incl. the theme API and the `useThemePreference`
 singleton), the theming contract (`data-*` attributes, `--vd-*` custom
 properties, `vanduo-*` storage keys, and the `./css` / `./css/core` /
 `./tokens.json` exports), and the SSR posture (client-guarded browser access,

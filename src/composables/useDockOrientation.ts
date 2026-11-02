@@ -51,7 +51,7 @@ export const DOCK_RADIUS_OPTIONS = [
 ] as const;
 export type DockRadius = (typeof DOCK_RADIUS_OPTIONS)[number];
 
-export type DockItemLayout = "stack" | "inline";
+export type DockItemLayout = "stack" | "inline" | "auto";
 
 export interface UseDockOrientationOptions {
   narrowQuery?: string;

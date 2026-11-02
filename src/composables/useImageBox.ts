@@ -1,58 +1,73 @@
-import { onMounted, onUnmounted, type Ref } from "vue";
+import { onMounted, onUnmounted, ref, type Ref } from "vue";
+import { useFocusTrap } from "./useFocusTrap";
 
 /**
- * Ports `framework/js/components/image-box.js` — scans `root` for
- * `[data-image-box]` triggers and wires lightbox-style image enlargement:
- * click (or Enter/Space on non-interactive triggers) opens a single shared
- * `.vd-image-box-backdrop` in `body`, showing the resolved full-size image
- * with an optional caption; the box dismisses on backdrop/image/close-button
- * click, Escape, or scrolling more than a threshold from the opening position,
- * restoring focus to the trigger.
+ * Scans `root` for `[data-image-box]` triggers and wires a shared lightbox.
+ * Click (or Enter/Space on non-interactive triggers) opens one
+ * `.vd-image-box-backdrop` in `body`. Triggers that share a root and the same
+ * `data-image-box-group` (empty group included) can be stepped with the
+ * controller, on-screen buttons, or arrow keys.
  *
- * The vanilla layer is dropped: no DOM auto-scan/`Vanduo.register`, no
- * `window.VanduoImageBox` global. The shared backdrop is refcounted at module
- * scope (vanilla parity — one backdrop per document), created lazily on the
+ * The shared backdrop is refcounted at module scope, created lazily on the
  * first mount and removed when the last consumer unmounts.
  *
- * SSR-safe: all browser access lives inside `onMounted` / event handlers, and
- * the module-scope refcount/backdrop are only ever touched client-side (the
- * same caveat documented on `useToast`).
- *
- * @param root    element scope scanned for `[data-image-box]` triggers.
- * @param options vd3 extension — see {@link UseImageBoxOptions}.
+ * SSR-safe: browser access lives inside `onMounted` / event handlers.
  */
 export interface UseImageBoxOptions {
   /**
-   * vd3 extension: how many pixels the window may scroll from the opening
-   * position before the box auto-dismisses. Defaults to 50 (vanilla parity).
-   * Because the backdrop is shared, this is applied when the backdrop is first
-   * created (the first mounting consumer wins).
+   * How many pixels the window may scroll from the opening position before
+   * the box auto-dismisses. Defaults to 50. The first mounting consumer wins
+   * because the backdrop is shared.
    */
   scrollThreshold?: number;
 }
 
+export interface ImageBoxChangeDetail {
+  index: number;
+  total: number;
+  src: string;
+  trigger: HTMLElement;
+}
+
+export interface ImageBoxController {
+  open: (target?: HTMLElement | number) => void;
+  close: () => void;
+  next: () => void;
+  prev: () => void;
+  refresh: () => void;
+}
+
 const SCROLL_THRESHOLD_DEFAULT = 50;
 const CLEAR_DELAY = 300;
+
+interface TrapBinding {
+  backdrop: Ref<HTMLElement | null>;
+  activate: (options?: { focus?: boolean }) => void;
+  deactivate: () => void;
+}
 
 interface BackdropState {
   backdrop: HTMLElement;
   container: HTMLElement;
   img: HTMLImageElement;
   closeBtn: HTMLButtonElement;
+  prevBtn: HTMLButtonElement;
+  nextBtn: HTMLButtonElement;
+  counter: HTMLElement;
   caption: HTMLElement;
   currentTrigger: HTMLElement | null;
+  gallery: HTMLElement[];
+  galleryIndex: number;
   initialScrollY: number;
   isOpen: boolean;
   imgLoadHandler: (() => void) | null;
   cleanups: Array<() => void>;
 }
 
-// Module-scope shared backdrop (refcounted). Declared without touching the DOM
-// so importing this module stays SSR-safe.
 let shared: BackdropState | null = null;
 let refCount = 0;
+const trapBindings: TrapBinding[] = [];
 
-/** Resolve the lightbox source: full-src → src attr → element src → href. */
 const resolveSource = (trigger: HTMLElement): string => {
   return (
     trigger.dataset.imageBoxFullSrc ||
@@ -63,39 +78,106 @@ const resolveSource = (trigger: HTMLElement): string => {
   );
 };
 
-const openBox = (trigger: HTMLElement): void => {
-  const b = shared;
-  if (!b || b.isOpen) return;
+const collectGallery = (trigger: HTMLElement): HTMLElement[] => {
+  const root = trigger.closest<HTMLElement>("[data-vd-image-box-root]");
+  const scope = root ?? trigger.parentElement ?? document.body;
+  const group = trigger.dataset.imageBoxGroup ?? "";
+  return Array.from(
+    scope.querySelectorAll<HTMLElement>("[data-image-box]"),
+  ).filter((el) => (el.dataset.imageBoxGroup ?? "") === group);
+};
 
+const updateChrome = (b: BackdropState): void => {
+  const total = b.gallery.length;
+  const multiple = total > 1;
+  b.prevBtn.hidden = !multiple;
+  b.nextBtn.hidden = !multiple;
+  b.counter.hidden = !multiple;
+  b.counter.textContent = multiple ? `${b.galleryIndex + 1} / ${total}` : "";
+  b.gallery.forEach((el, index) => {
+    const selected = index === b.galleryIndex;
+    el.classList.toggle("is-active", selected);
+    if (selected) el.setAttribute("aria-selected", "true");
+    else el.removeAttribute("aria-selected");
+  });
+};
+
+const clearGalleryChrome = (b: BackdropState): void => {
+  b.gallery.forEach((el) => {
+    el.classList.remove("is-active");
+    el.removeAttribute("aria-selected");
+  });
+};
+
+const paintTrigger = (trigger: HTMLElement): boolean => {
+  const b = shared;
+  if (!b) return false;
   const imgSrc = resolveSource(trigger);
   if (!imgSrc) {
-    // Vanilla warns and aborts; unlike vanilla we abort before flipping any
-    // state, so a source-less trigger can't wedge the shared box open.
     console.warn(
       "[Vanduo ImageBox] No image source found for trigger:",
       trigger,
     );
-    return;
+    return false;
   }
 
+  const gallery = collectGallery(trigger);
+  b.gallery = gallery.length > 0 ? gallery : [trigger];
+  b.galleryIndex = Math.max(0, b.gallery.indexOf(trigger));
   b.currentTrigger = trigger;
-  b.isOpen = true;
-  b.initialScrollY = window.scrollY;
-
-  const captionText =
-    trigger.dataset.imageBoxCaption || (trigger as HTMLImageElement).alt || "";
-
   b.img.src = imgSrc;
   b.img.alt = (trigger as HTMLImageElement).alt || "";
 
+  const captionText =
+    trigger.dataset.imageBoxCaption || (trigger as HTMLImageElement).alt || "";
   if (captionText) {
     b.caption.textContent = captionText;
     b.caption.style.display = "block";
   } else {
     b.caption.style.display = "none";
   }
+  updateChrome(b);
 
-  // Lock body scroll, compensating for the removed scrollbar.
+  if (!b.img.complete) {
+    b.img.style.opacity = "0";
+    if (b.imgLoadHandler) {
+      b.img.removeEventListener("load", b.imgLoadHandler);
+    }
+    const handler = (): void => {
+      b.img.style.opacity = "";
+    };
+    b.imgLoadHandler = handler;
+    b.img.addEventListener("load", handler, { once: true });
+  }
+  return true;
+};
+
+const changeDetail = (b: BackdropState): ImageBoxChangeDetail => ({
+  index: b.galleryIndex,
+  total: b.gallery.length,
+  src: b.img.src,
+  trigger: b.currentTrigger ?? b.gallery[b.galleryIndex]!,
+});
+
+const activateSharedTrap = (): void => {
+  const binding = trapBindings[trapBindings.length - 1];
+  if (!binding || !shared) return;
+  binding.backdrop.value = shared.backdrop;
+  binding.activate({ focus: false });
+};
+
+const deactivateSharedTrap = (): void => {
+  for (const binding of trapBindings) binding.deactivate();
+};
+
+const openBox = (trigger: HTMLElement): void => {
+  const b = shared;
+  if (!b || b.isOpen) return;
+  if (!paintTrigger(trigger)) return;
+
+  b.isOpen = true;
+  b.initialScrollY = window.scrollY;
+
   const scrollbarWidth =
     window.innerWidth - document.documentElement.clientWidth;
   document.body.style.setProperty(
@@ -103,26 +185,20 @@ const openBox = (trigger: HTMLElement): void => {
     `${scrollbarWidth}px`,
   );
   document.body.classList.add("body-image-box-open");
-
   b.backdrop.classList.add("is-visible");
   b.backdrop.focus();
+  activateSharedTrap();
 
+  const src = resolveSource(trigger);
   trigger.dispatchEvent(
-    new CustomEvent("imageBox:open", {
+    new CustomEvent("imageBox:open", { bubbles: true, detail: { src } }),
+  );
+  trigger.dispatchEvent(
+    new CustomEvent<ImageBoxChangeDetail>("imageBox:change", {
       bubbles: true,
-      detail: { src: imgSrc },
+      detail: changeDetail(b),
     }),
   );
-
-  // Fade the image in once it finishes loading.
-  if (!b.img.complete) {
-    b.img.style.opacity = "0";
-    const handler = (): void => {
-      b.img.style.opacity = "";
-    };
-    b.imgLoadHandler = handler;
-    b.img.addEventListener("load", handler, { once: true });
-  }
 };
 
 const closeBox = (): void => {
@@ -131,9 +207,10 @@ const closeBox = (): void => {
 
   b.isOpen = false;
   b.backdrop.classList.remove("is-visible");
-
+  deactivateSharedTrap();
   document.body.classList.remove("body-image-box-open");
   document.body.style.removeProperty("--vd-scrollbar-width");
+  clearGalleryChrome(b);
 
   if (b.currentTrigger) {
     b.currentTrigger.focus();
@@ -143,7 +220,6 @@ const closeBox = (): void => {
     b.currentTrigger = null;
   }
 
-  // Clear the source once the fade-out transition has finished.
   window.setTimeout(() => {
     if (!b.isOpen) {
       if (b.imgLoadHandler) {
@@ -154,6 +230,29 @@ const closeBox = (): void => {
       b.img.alt = "";
     }
   }, CLEAR_DELAY);
+};
+
+const stepGallery = (delta: number): void => {
+  const b = shared;
+  if (!b?.isOpen || b.gallery.length < 2) return;
+  const index = (b.galleryIndex + delta + b.gallery.length) % b.gallery.length;
+  const trigger = b.gallery[index];
+  if (!trigger || !paintTrigger(trigger)) return;
+  trigger.dispatchEvent(
+    new CustomEvent<ImageBoxChangeDetail>("imageBox:change", {
+      bubbles: true,
+      detail: changeDetail(b),
+    }),
+  );
+};
+
+const createButton = (className: string, label: string): HTMLButtonElement => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = className;
+  button.setAttribute("aria-label", label);
+  button.hidden = true;
+  return button;
 };
 
 const createBackdrop = (scrollThreshold: number): void => {
@@ -172,15 +271,29 @@ const createBackdrop = (scrollThreshold: number): void => {
   img.alt = "";
 
   const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
   closeBtn.className = "vd-image-box-close";
   closeBtn.setAttribute("aria-label", "Close image viewer");
   closeBtn.innerHTML = "&times;";
+
+  const prevBtn = createButton("vd-image-box-prev", "Previous image");
+  prevBtn.textContent = "‹";
+  const nextBtn = createButton("vd-image-box-next", "Next image");
+  nextBtn.textContent = "›";
+
+  const counter = document.createElement("div");
+  counter.className = "vd-image-box-counter";
+  counter.setAttribute("aria-live", "polite");
+  counter.hidden = true;
 
   const caption = document.createElement("div");
   caption.className = "vd-image-box-caption";
 
   container.appendChild(img);
   backdrop.appendChild(closeBtn);
+  backdrop.appendChild(prevBtn);
+  backdrop.appendChild(nextBtn);
+  backdrop.appendChild(counter);
   backdrop.appendChild(container);
   backdrop.appendChild(caption);
   document.body.appendChild(backdrop);
@@ -190,8 +303,13 @@ const createBackdrop = (scrollThreshold: number): void => {
     container,
     img,
     closeBtn,
+    prevBtn,
+    nextBtn,
+    counter,
     caption,
     currentTrigger: null,
+    gallery: [],
+    galleryIndex: 0,
     initialScrollY: 0,
     isOpen: false,
     imgLoadHandler: null,
@@ -199,7 +317,6 @@ const createBackdrop = (scrollThreshold: number): void => {
   };
   shared = state;
 
-  // Close on backdrop click, but not when clicking the image itself.
   const onBackdropClick = (e: MouseEvent): void => {
     if (e.target === backdrop || e.target === container) closeBox();
   };
@@ -218,11 +335,33 @@ const createBackdrop = (scrollThreshold: number): void => {
     closeBtn.removeEventListener("click", onCloseClick),
   );
 
-  const onEsc = (e: KeyboardEvent): void => {
-    if (e.key === "Escape" && state.isOpen) closeBox();
+  const onPrev = (event: Event): void => {
+    event.stopPropagation();
+    stepGallery(-1);
   };
-  document.addEventListener("keydown", onEsc);
-  state.cleanups.push(() => document.removeEventListener("keydown", onEsc));
+  const onNext = (event: Event): void => {
+    event.stopPropagation();
+    stepGallery(1);
+  };
+  prevBtn.addEventListener("click", onPrev);
+  nextBtn.addEventListener("click", onNext);
+  state.cleanups.push(() => prevBtn.removeEventListener("click", onPrev));
+  state.cleanups.push(() => nextBtn.removeEventListener("click", onNext));
+
+  const onKey = (e: KeyboardEvent): void => {
+    if (!state.isOpen) return;
+    if (e.key === "Escape") closeBox();
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      stepGallery(1);
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      stepGallery(-1);
+    }
+  };
+  document.addEventListener("keydown", onKey);
+  state.cleanups.push(() => document.removeEventListener("keydown", onKey));
 
   const onScroll = (): void => {
     if (!state.isOpen) return;
@@ -253,19 +392,16 @@ const releaseBackdrop = (): void => {
   shared = null;
 };
 
-/** Wire a single `[data-image-box]` trigger, registering teardown in `cleanups`. */
 const bindTrigger = (
   trigger: HTMLElement,
   cleanups: Array<() => void>,
 ): void => {
-  // Idempotent guard: a node scanned twice is only wired once.
   if (trigger.dataset.imageBoxInitialized) return;
   trigger.dataset.imageBoxInitialized = "true";
   trigger.classList.add("vd-image-box-trigger");
 
   const local: Array<() => void> = [];
 
-  // Broken-image marking for <img> triggers.
   if (trigger.tagName === "IMG") {
     const img = trigger as HTMLImageElement;
     if (img.complete && img.naturalWidth === 0) {
@@ -286,11 +422,12 @@ const bindTrigger = (
   trigger.addEventListener("click", onClick);
   local.push(() => trigger.removeEventListener("click", onClick));
 
-  // Keyboard access for non-interactive triggers.
   if (trigger.tagName !== "BUTTON" && trigger.tagName !== "A") {
     trigger.setAttribute("role", "button");
     trigger.setAttribute("tabindex", "0");
-    trigger.setAttribute("aria-label", "View enlarged image");
+    if (!trigger.hasAttribute("aria-label")) {
+      trigger.setAttribute("aria-label", "View enlarged image");
+    }
 
     const onKey = (e: KeyboardEvent): void => {
       if (e.key === "Enter" || e.key === " ") {
@@ -304,7 +441,8 @@ const bindTrigger = (
 
   cleanups.push(() => {
     local.forEach((fn) => fn());
-    trigger.classList.remove("vd-image-box-trigger");
+    trigger.classList.remove("vd-image-box-trigger", "is-active");
+    trigger.removeAttribute("aria-selected");
     delete trigger.dataset.imageBoxInitialized;
   });
 };
@@ -312,30 +450,70 @@ const bindTrigger = (
 export function useImageBox(
   root: Ref<HTMLElement | null>,
   options: UseImageBoxOptions = {},
-): void {
+): ImageBoxController {
   const cleanups: Array<() => void> = [];
+  const backdropRef = ref<HTMLElement | null>(null);
+  const trap = useFocusTrap(backdropRef);
+  const binding: TrapBinding = {
+    backdrop: backdropRef,
+    activate: trap.activate,
+    deactivate: trap.deactivate,
+  };
   let retained = false;
+  let scope: HTMLElement | null = null;
+
+  const refresh = (): void => {
+    if (!scope) return;
+    scope
+      .querySelectorAll<HTMLElement>("[data-image-box]")
+      .forEach((trigger) => bindTrigger(trigger, cleanups));
+  };
+
+  const open = (target?: HTMLElement | number): void => {
+    refresh();
+    if (!scope) return;
+    const trigger =
+      target instanceof HTMLElement
+        ? target
+        : scope
+            .querySelectorAll<HTMLElement>("[data-image-box]")
+            .item(typeof target === "number" ? target : 0);
+    if (trigger) openBox(trigger);
+  };
 
   onMounted(() => {
     if (typeof window === "undefined" || typeof document === "undefined")
       return;
-    const scope = root.value;
+    scope = root.value;
     if (!scope) return;
 
+    scope.setAttribute("data-vd-image-box-root", "");
     retainBackdrop(options.scrollThreshold ?? SCROLL_THRESHOLD_DEFAULT);
     retained = true;
-
-    scope
-      .querySelectorAll<HTMLElement>("[data-image-box]")
-      .forEach((trigger) => bindTrigger(trigger, cleanups));
+    trapBindings.push(binding);
+    if (shared) backdropRef.value = shared.backdrop;
+    refresh();
   });
 
   onUnmounted(() => {
+    const index = trapBindings.indexOf(binding);
+    if (index >= 0) trapBindings.splice(index, 1);
+    binding.deactivate();
     cleanups.forEach((fn) => fn());
     cleanups.length = 0;
+    scope?.removeAttribute("data-vd-image-box-root");
+    scope = null;
     if (retained) {
       releaseBackdrop();
       retained = false;
     }
   });
+
+  return {
+    open,
+    close: closeBox,
+    next: () => stepGallery(1),
+    prev: () => stepGallery(-1),
+    refresh,
+  };
 }

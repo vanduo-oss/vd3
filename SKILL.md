@@ -56,13 +56,13 @@ Components are named imports; the plugin does not register them. See the
 
 **Components A–F:** `VdAccordion`, `VdAlert`, `VdAuthCard`, `VdAvatar`, `VdBadge`, `VdBreadcrumb`, `VdButton`, `VdButtonGroup`, `VdCard`, `VdCheckbox`, `VdCheckboxGroup`, `VdChip`, `VdCodeSnippet`, `VdCollection`, `VdCustomSelect`, `VdDataTable`, `VdDocSearch`, `VdDock`, `VdDockItem`, `VdEmptyState`, `VdFab`, `VdFlow`, `VdFooter`, `VdForgotPassword`.
 
-**Components G–P:** `VdGlobalSearch`, `VdIcon`, `VdInput`, `VdLogin`, `VdMenu`, `VdModal`, `VdNavbar`, `VdOffcanvas`, `VdOtpInput`, `VdPagination`, `VdPreloader`, `VdProgress`.
+**Components G–P:** `VdGlobalSearch`, `VdIcon`, `VdImageBox`, `VdImageItem`, `VdInput`, `VdLogin`, `VdMenu`, `VdModal`, `VdNavbar`, `VdOffcanvas`, `VdOtpInput`, `VdPagination`, `VdPreloader`, `VdProgress`.
 
 **Components R–T:** `VdRadioGroup`, `VdRating`, `VdSelect`, `VdSeparator`, `VdSidenav`, `VdSignUp`, `VdSkeleton`, `VdSlider`, `VdSpinner`, `VdSwitch`, `VdTable`, `VdTabs`, `VdThemeCustomizer`, `VdThemeSwitcher`, `VdToast`, `VdToastContainer`, `VdTooltip`, `VdTransfer`, `VdTree`, `VdTreeNode`.
 
-**39 composable modules** (module names, not a claim that each exports a same-named function):
+**40 composable modules** (module names, not a claim that each exports a same-named function):
 
-`useAffix.ts`, `useClickOutside.ts`, `useDatepicker.ts`, `useDocSearch.ts`, `useGlobalSearch.ts`, `useDockOrientation.ts`, `useDraggable.ts`, `useDropdown.ts`, `useExpandingCards.ts`, `useFlow.ts`, `useFocusTrap.ts`, `useGlass.ts`, `useGrid.ts`, `useImageBox.ts`, `useKeyboardNav.ts`, `useLazyLoad.ts`, `useLiquidGradient.ts`, `useMorph.ts`, `useMorphBadges.ts`, `useNavbarGlassScroll.ts`, `useParallax.ts`, `usePopover.ts`, `useRipple.ts`, `useScrollspy.ts`, `useSearch.ts`, `useSidenav.ts`, `useSpotlight.ts`, `useStepper.ts`, `useSuggest.ts`, `useTableState.ts`, `useTabs.ts`, `useTheme.ts`, `useThemeBridge.ts`, `useTimeline.ts`, `useTimepicker.ts`, `useToast.ts`, `useTooltips.ts`, `useValidate.ts`, `useWaypoint.ts`.
+`useAffix.ts`, `useClickOutside.ts`, `useDatepicker.ts`, `useDocSearch.ts`, `useGlobalSearch.ts`, `useDockBrandSpin.ts`, `useDockOrientation.ts`, `useDraggable.ts`, `useDropdown.ts`, `useExpandingCards.ts`, `useFlow.ts`, `useFocusTrap.ts`, `useGlass.ts`, `useGrid.ts`, `useImageBox.ts`, `useKeyboardNav.ts`, `useLazyLoad.ts`, `useLiquidGradient.ts`, `useMorph.ts`, `useMorphBadges.ts`, `useNavbarGlassScroll.ts`, `useParallax.ts`, `usePopover.ts`, `useRipple.ts`, `useScrollspy.ts`, `useSearch.ts`, `useSidenav.ts`, `useSpotlight.ts`, `useStepper.ts`, `useSuggest.ts`, `useTableState.ts`, `useTabs.ts`, `useTheme.ts`, `useThemeBridge.ts`, `useTimeline.ts`, `useTimepicker.ts`, `useToast.ts`, `useTooltips.ts`, `useValidate.ts`, `useWaypoint.ts`.
 
 **Theme functions:** `useThemePreference()`, `useThemeBridge()`, `setThemeDefaults`,
 `getThemeDefaults`, `setStoragePrefix`, `getStoragePrefix`, `loadPreference`,

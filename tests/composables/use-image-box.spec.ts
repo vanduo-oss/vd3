@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import { defineComponent, h, ref, type Ref } from "vue";
-import { useImageBox } from "../../src/composables/useImageBox";
+import {
+  useImageBox,
+  type ImageBoxController,
+} from "../../src/composables/useImageBox";
 
 // Each composable runs in a component scope: mount a host whose root ref is
 // handed to the composable, with the fixture markup injected as innerHTML so
@@ -343,5 +346,64 @@ describe("useImageBox", () => {
 
     // last consumer gone -> backdrop removed
     expect(document.querySelectorAll(".vd-image-box-backdrop")).toHaveLength(0);
+  });
+
+  it("keeps an author-supplied aria-label", () => {
+    const wrapper = mountHost(
+      `<img id="t" data-image-box data-image-box-src="a.png" alt="A" aria-label="View the lake" />`,
+    );
+    expect(wrapper.get("#t").attributes("aria-label")).toBe("View the lake");
+  });
+
+  it("steps a grouped gallery with arrows, buttons, and the controller", () => {
+    let api: ImageBoxController | undefined;
+    const wrapper = mountHost(
+      `<img id="a" data-image-box data-image-box-group="g" data-image-box-src="a.png" alt="A" />
+       <img id="b" data-image-box data-image-box-group="g" data-image-box-src="b.png" alt="B" />
+       <img id="c" data-image-box data-image-box-group="other" data-image-box-src="c.png" alt="C" />`,
+      (root) => {
+        api = useImageBox(root);
+      },
+    );
+
+    click(wrapper.get("#a").element);
+    expect(boxImg().src).toContain("a.png");
+    expect(document.querySelector(".vd-image-box-counter")?.textContent).toBe(
+      "1 / 2",
+    );
+    expect(
+      document.querySelector(".vd-image-box-prev")?.hasAttribute("hidden"),
+    ).toBe(false);
+
+    keydown(document, "ArrowRight");
+    expect(boxImg().src).toContain("b.png");
+    expect(document.querySelector(".vd-image-box-counter")?.textContent).toBe(
+      "2 / 2",
+    );
+
+    api?.next();
+    expect(boxImg().src).toContain("a.png");
+
+    click(document.querySelector(".vd-image-box-next")!);
+    expect(boxImg().src).toContain("b.png");
+
+    keydown(document, "Escape");
+  });
+
+  it("wires images added after mount when refresh() is called", () => {
+    let api: ImageBoxController | undefined;
+    const wrapper = mountHost(`<div id="slot"></div>`, (root) => {
+      api = useImageBox(root);
+    });
+    const slot = wrapper.get("#slot").element;
+    slot.insertAdjacentHTML(
+      "beforeend",
+      `<img id="late" data-image-box data-image-box-src="late.png" alt="Late" />`,
+    );
+    api?.refresh();
+    const late = wrapper.get("#late").element;
+    expect(late.classList.contains("vd-image-box-trigger")).toBe(true);
+    click(late);
+    expect(boxImg().src).toContain("late.png");
   });
 });
