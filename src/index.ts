@@ -1,7 +1,7 @@
 // @vanduo-oss/vd3 — Vanduo UI for Vue 3. Tree-shakeable named exports.
 // Standalone: no IIFE runtime, no `loadVanduoRuntime`.
 
-export const VD3_VERSION = "1.8.0";
+export const VD3_VERSION = "1.8.1";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
@@ -33,6 +33,8 @@ export { default as VdFlow } from "./components/VdFlow.vue";
 export { default as VdFooter } from "./components/VdFooter.vue";
 export { default as VdForgotPassword } from "./components/VdForgotPassword.vue";
 export { default as VdIcon } from "./components/VdIcon.vue";
+export { default as VdImageBox } from "./components/VdImageBox.vue";
+export type { VdImageItem } from "./components/VdImageBox.vue";
 export { default as VdInput } from "./components/VdInput.vue";
 export { default as VdLogin } from "./components/VdLogin.vue";
 export { default as VdMenu } from "./components/VdMenu.vue";
@@ -80,6 +82,7 @@ export * from "./composables/useDatepicker";
 export * from "./composables/useDocSearch";
 export * from "./composables/useGlobalSearch";
 export * from "./composables/useDockOrientation";
+export * from "./composables/useDockBrandSpin";
 export * from "./composables/useDraggable";
 export * from "./composables/useDropdown";
 export * from "./composables/useExpandingCards";

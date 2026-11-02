@@ -1,8 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { mount } from "@vue/test-utils";
-import { useThemeBridge } from "../../src/composables/useThemeBridge";
-import type { ThemeMode } from "../../src/composables/useTheme";
+import {
+  applyDarkClass,
+  resolvedSchemeIsDark,
+  useThemeBridge,
+} from "../../src/composables/useThemeBridge";
+import {
+  useThemePreference,
+  type ThemeMode,
+} from "../../src/composables/useTheme";
 
 /**
  * useThemeBridge drives Vanduo's <html data-theme> from an app-owned mode ref.
@@ -22,6 +29,7 @@ const ROOT_ATTRS = [
 function cleanRoot(): void {
   const root = document.documentElement;
   ROOT_ATTRS.forEach((a) => root.removeAttribute(a));
+  root.classList.remove("dark");
   root.style.removeProperty("--vd-radius-scale");
 }
 
@@ -83,6 +91,102 @@ describe("useThemeBridge", () => {
     await nextTick();
     expect(document.documentElement.getAttribute("data-primary")).toBe("black");
     wrapper.unmount();
+  });
+
+  it("mirrors the resolved scheme onto html.dark when syncDarkClass is set", async () => {
+    const mode = ref<ThemeMode>("dark");
+    const Host = defineComponent({
+      setup() {
+        useThemeBridge(mode, { syncDarkClass: true });
+        return () => h("div");
+      },
+    });
+    const wrapper = mount(Host, { attachTo: document.body });
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+
+    mode.value = "light";
+    await nextTick();
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+    wrapper.unmount();
+
+    // Pre-existing html.dark is restored on unmount
+    document.documentElement.classList.add("dark");
+    const restored = mount(Host, { attachTo: document.body });
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    restored.unmount();
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+  });
+
+  it("follows the system scheme when syncing the dark class", async () => {
+    let onChange: (() => void) | undefined;
+    let dark = true;
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      get matches() {
+        return query.includes("prefers-color-scheme: dark") ? dark : false;
+      },
+      media: query,
+      addEventListener: (_type: string, listener: () => void) => {
+        onChange = listener;
+      },
+      removeEventListener: () => undefined,
+      dispatchEvent: () => false,
+      onchange: null,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+    })) as unknown as typeof window.matchMedia;
+
+    const mode = ref<ThemeMode>("system");
+    const Host = defineComponent({
+      setup() {
+        useThemeBridge(mode, { syncDarkClass: true });
+        return () => h("div");
+      },
+    });
+    const wrapper = mount(Host, { attachTo: document.body });
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+
+    dark = false;
+    onChange?.();
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+
+    mode.value = "dark";
+    await nextTick();
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    wrapper.unmount();
+    window.matchMedia = original;
+  });
+
+  it("does not add html.dark unless syncDarkClass is requested", async () => {
+    const { wrapper } = mountBridge("dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    wrapper.unmount();
+
+    const original = window.matchMedia;
+    // @ts-expect-error -- testing missing matchMedia fallback
+    window.matchMedia = undefined;
+    expect(resolvedSchemeIsDark("system")).toBe(false);
+    applyDarkClass("dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    applyDarkClass("light");
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    window.matchMedia = original;
+
+    const mode = ref<ThemeMode>("light");
+    const Host = defineComponent({
+      setup() {
+        useThemeBridge(mode, { syncDarkClass: true });
+        return () => h("div");
+      },
+    });
+    const synced = mount(Host, { attachTo: document.body });
+    await nextTick();
+    useThemePreference().setTheme("dark");
+    await nextTick();
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    synced.unmount();
   });
 
   it("stops reacting after unmount (watcher disposed)", async () => {

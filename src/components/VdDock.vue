@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, provide, ref, watch } from "vue";
 import {
   DOCK_GLASS_STEPS,
   DOCK_RADIUS_OPTIONS,
@@ -15,6 +15,9 @@ import {
   type DockTint,
   type DockTintMode,
 } from "../composables/useDockOrientation";
+import { useDockBrandSpin } from "../composables/useDockBrandSpin";
+import { useTooltips } from "../composables/useTooltips";
+import { VD_DOCK_KEY } from "./dock-context";
 
 interface Props {
   orientation?: DockOrientation;
@@ -27,6 +30,10 @@ interface Props {
   glass?: DockGlass;
   radius?: DockRadius | string;
   itemLayout?: DockItemLayout;
+  /** `mirror` flips the brand to the far corner. `consistent` keeps it left / bottom. */
+  brandCorner?: "mirror" | "consistent";
+  /** Spin `.vd-dock-brand-spin` on hover, focus, and while the dock morphs. */
+  brandSpin?: boolean;
   brandToggles?: boolean;
   /** Default `pair` keeps bottom↔left / top↔right. `edges` walks all four. */
   cycle?: "pair" | "edges";
@@ -45,6 +52,8 @@ const props = withDefaults(defineProps<Props>(), {
   glass: 34,
   radius: "1.25",
   itemLayout: "stack",
+  brandCorner: "mirror",
+  brandSpin: false,
   brandToggles: true,
   cycle: "pair",
   persist: false,
@@ -133,6 +142,22 @@ const resolvedTintMode = computed<DockTintMode>(() =>
     : "surface",
 );
 
+const rootEl = ref<HTMLElement | null>(null);
+const brandSpinEnabled = computed(() => props.brandSpin);
+useDockBrandSpin(rootEl, brandSpinEnabled);
+useTooltips(rootEl, { showDelay: 520 });
+
+const itemLayout = computed(() => props.itemLayout);
+provide(VD_DOCK_KEY, { placement, itemLayout });
+
+const resolvedItemLayout = computed<"stack" | "inline">(() => {
+  if (props.itemLayout === "inline") return "inline";
+  if (props.itemLayout === "auto") {
+    return orientation.value === "horizontal" ? "inline" : "stack";
+  }
+  return "stack";
+});
+
 const edgeClass = computed(() => `vd-dock-edge-${placement.value}`);
 
 const rootClasses = computed(() => [
@@ -142,9 +167,11 @@ const rootClasses = computed(() => [
   "vd-glass-contrast",
   props.position === "contained" ? "vd-dock-contained" : "vd-dock-fixed",
   props.dark ? "vd-dock-dark" : null,
-  props.itemLayout === "inline"
+  resolvedItemLayout.value === "inline"
     ? "vd-dock-items-inline"
     : "vd-dock-items-stack",
+  props.itemLayout === "auto" ? "vd-dock-items-auto" : null,
+  props.brandCorner === "consistent" ? "vd-dock-brand-consistent" : null,
   resolvedTint.value ? `vd-dock-tint-${resolvedTint.value}` : null,
   resolvedTint.value && resolvedTintMode.value === "accent"
     ? "vd-dock-tint-accent"
@@ -184,7 +211,7 @@ defineExpose({
 </script>
 
 <template>
-  <nav :class="rootClasses" :style="rootStyle" :aria-label="label">
+  <nav ref="rootEl" :class="rootClasses" :style="rootStyle" :aria-label="label">
     <button
       v-if="$slots.brand"
       type="button"
@@ -194,7 +221,10 @@ defineExpose({
       :aria-disabled="!canToggle || !brandToggles ? 'true' : undefined"
       @click="onBrandClick"
     >
-      <slot name="brand" />
+      <span v-if="brandSpin" class="vd-dock-brand-spin">
+        <slot name="brand" />
+      </span>
+      <slot v-else name="brand" />
     </button>
 
     <div class="vd-dock-nav">

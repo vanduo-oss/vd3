@@ -392,6 +392,21 @@ the image.
   (minified form) alongside position and size so the tiling regression
   cannot ship
 
+### Requirement: tailwind-coexistence-layer
+
+The built stylesheets (`dist/vd3.css`, `dist/vd3.min.css`, `dist/vd3-core.css`,
+and `dist/vd3-core.min.css`) MUST wrap the bundled rule set in `@layer vd3`.
+Authored `css/vd3.css` import order MUST stay unchanged. Column gutters MUST
+match `[class*="vd-col-"]` so Tailwind classes such as `col-span-*` are not
+treated as Vanduo columns.
+
+#### Scenario: bundles are layered and columns are prefixed
+
+- **GIVEN** a completed CSS build
+- **WHEN** `dist/vd3.min.css` is searched
+- **THEN** it contains `@layer vd3` and `[class*=vd-col-]`
+- **AND** it does not contain an unprefixed `[class*=col-]` column rule
+
 ### Requirement: filled-surfaces-use-on-fill-ink
 
 Authored CSS for filled primary and status surfaces MUST set `color` (and

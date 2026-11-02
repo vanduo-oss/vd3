@@ -245,6 +245,11 @@ function buildCSS(isMinify, banner, { variant = "full" } = {}) {
     // Rewrite asset paths for dist folder structure
     bundledCSS = rewriteAssetPaths(bundledCSS);
 
+    // One cascade layer keeps Vanduo's unprefixed helpers and element resets
+    // from beating Tailwind / Nuxt UI utilities. Order inside the layer is
+    // unchanged, so vd3's own cascade stays the same.
+    bundledCSS = `@layer vd3 {\n${bundledCSS}\n}\n`;
+
     // Transform/minify with LightningCSS
     const { code, map } = transform({
       filename: `${baseName}.css`,

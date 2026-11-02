@@ -10,8 +10,7 @@ Standalone [Vanduo](https://vanduo.dev) package: design tokens, CSS, and typed
 `Vd*` components/composables. Sole peer: `vue >=3.3`. No pinia, no IIFE
 runtime.
 
-**Status: 1.8.0** — complete layout primitive & UI atom prop parity, theme runtime
-preference hardening, Nunito font integration, and enhanced composables.
+**Status: 1.8.1** — `VdImageBox` gallery component & `useImageBox` lightbox navigation, OolaDock parity (`VdDock` / `VdDockItem` / `useDockBrandSpin`), `@layer vd3` CSS cascade isolation + `useThemeBridge` `syncDarkClass` for Tailwind CSS / Nuxt UI coexistence.
 
 ## Install
 
@@ -57,9 +56,9 @@ import { VdButton, VdCard } from "@vanduo-oss/vd3";
 Everything is a named export from the package root — import only what you
 render; nothing registers globally.
 
-- **63 components** — 56 `Vd*` components plus 7 layout primitives (`VdBox`,
+- **64 components** — 57 `Vd*` components plus 7 layout primitives (`VdBox`,
   `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
-- **39 composable modules** — the theme API (`setThemeDefaults`, `useThemeBridge`, and the
+- **40 composable modules** — the theme API (`setThemeDefaults`, `useThemeBridge`, and the
   `useThemePreference` reactive singleton), plus form, overlay/dismissal,
   motion/scroll, and layout/interaction helpers. The `sanitizeHtml` whitelist
   sanitizer is exported too.

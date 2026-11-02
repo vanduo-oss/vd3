@@ -1134,6 +1134,44 @@ MUST be guarded so SSR and jsdom-free environments do not throw.
 - **WHEN** the pointer enters the new child and the delay elapses
 - **THEN** a `.vd-tooltip` exists with that child's text
 
+### Requirement: image-box-gallery-and-theme-bridge
+
+`useImageBox` MUST return `{ open, close, next, prev, refresh }`. It MUST keep
+an author-supplied `aria-label`, trap Tab inside the open dialog via
+`useFocusTrap` without stealing the initial backdrop focus, and step triggers
+that share a root and `data-image-box-group` with previous/next controls,
+arrow keys, and `imageBox:change` detail `{ index, total, src, trigger }`.
+`refresh()` MUST wire `[data-image-box]` nodes added after mount.
+
+`useThemeBridge(mode, { syncDarkClass: true })` MUST mirror the resolved scheme
+onto `document.documentElement` class `dark`, including `system` following
+`prefers-color-scheme`.
+
+#### Scenario: grouped gallery steps without leaving the group
+
+- **GIVEN** two triggers with `data-image-box-group="g"` and one with another group
+- **WHEN** the first grouped trigger opens and ArrowRight is pressed
+- **THEN** the lightbox shows the second grouped image and the counter reads `2 / 2`
+
+#### Scenario: dark class follows the bridged mode
+
+- **GIVEN** `useThemeBridge` with `syncDarkClass: true` and mode `dark`
+- **WHEN** the host mounts and the mode changes to `light`
+- **THEN** `html` gains then loses class `dark`, and `data-theme` matches
+
+### Requirement: use-dock-brand-spin
+
+The package MUST export `useDockBrandSpin(dockEl, enabled)`. When enabled, a
+`.vd-dock-brand-spin` mark inside the dock spins on hover, focus, and while
+`.is-morphing` is present, then settles toward an upright angle. Reduced motion
+MUST snap the angle to `0deg` instead of animating.
+
+#### Scenario: reduced motion snaps upright
+
+- **GIVEN** a brand spin element
+- **WHEN** `settleDockBrandSpin(spin, true)` runs
+- **THEN** `--vd-dock-brand-angle` is `0deg`
+
 ### Requirement: use-dock-orientation
 
 The package root MUST export `useDockOrientation`: an instance-scoped morph

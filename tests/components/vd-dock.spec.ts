@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { nextTick } from "vue";
+import { h, nextTick } from "vue";
 import VdDock from "../../src/components/VdDock.vue";
+import VdDockItem from "../../src/components/VdDockItem.vue";
 import { DOCK_MORPH_MS } from "../../src/composables/useDockOrientation";
 
 enableAutoUnmount(afterEach);
@@ -373,5 +374,47 @@ describe("VdDock", () => {
       "vd-dock-edge-bottom",
     );
     expect(wrapper.get("nav.vd-dock").classes()).toContain("is-horizontal");
+  });
+
+  it("switches auto item layout with the edge and can pin the brand corner", () => {
+    const horizontal = mount(VdDock, {
+      props: { itemLayout: "auto" },
+      slots,
+    });
+    expect(horizontal.get("nav.vd-dock").classes()).toEqual(
+      expect.arrayContaining(["vd-dock-items-inline", "vd-dock-items-auto"]),
+    );
+
+    const vertical = mount(VdDock, {
+      props: {
+        itemLayout: "auto",
+        placement: "left",
+        brandCorner: "consistent",
+        brandSpin: true,
+      },
+      slots,
+    });
+    const nav = vertical.get("nav.vd-dock");
+    expect(nav.classes()).toEqual(
+      expect.arrayContaining([
+        "vd-dock-items-stack",
+        "vd-dock-items-auto",
+        "vd-dock-brand-consistent",
+        "vd-dock-edge-left",
+      ]),
+    );
+    expect(nav.get(".vd-dock-brand-spin").text()).toContain("u");
+    nav.get(".vd-dock-brand").element.dispatchEvent(new Event("pointerenter"));
+    nav.get(".vd-dock-brand").element.dispatchEvent(new Event("pointerleave"));
+
+    const withChild = mount(VdDock, {
+      props: { itemLayout: "auto", placement: "left" },
+      slots: {
+        default: () => h(VdDockItem, { icon: "house", label: "Home" }),
+      },
+    });
+    expect(
+      withChild.get("button.vd-dock-item").attributes("data-tooltip"),
+    ).toBe("Home");
   });
 });

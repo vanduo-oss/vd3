@@ -13,6 +13,14 @@
   --vd-dock-morph-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --vd-dock-z-index: 1000;
   --vd-dock-brand-size: 2.025rem;
+  --vd-dock-brand-angle: 0deg;
+  --vd-dock-ink: var(--vd-text-primary);
+}
+
+@property --vd-dock-brand-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
 .vd-dock {
@@ -220,6 +228,14 @@
   max-height: var(--vd-dock-height);
 }
 
+.vd-dock.vd-dock-brand-consistent.vd-dock-edge-top:not(.is-square) {
+  flex-direction: row;
+}
+
+.vd-dock.vd-dock-brand-consistent.vd-dock-edge-right:not(.is-square) {
+  flex-direction: column-reverse;
+}
+
 .vd-dock.vd-dock-edge-top:not(.is-square) {
   left: 50%;
   right: auto;
@@ -397,6 +413,11 @@
   text-decoration: none;
   color: inherit;
   opacity: 0.72;
+  transform: scale(0.94);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    color 0.18s ease;
 }
 
 .vd-dock-items-inline .vd-dock-item {
@@ -408,6 +429,7 @@
 .vd-dock-item:hover,
 .vd-dock-item:focus-visible {
   opacity: 1;
+  transform: scale(1);
   background: transparent;
   outline: none;
 }
@@ -419,6 +441,40 @@
 
 .vd-dock-item.is-active {
   opacity: 1;
+  transform: scale(1);
+}
+
+.vd-dock.is-vertical.vd-dock-items-auto .vd-dock-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.vd-dock-badge {
+  position: absolute;
+  top: 0.1rem;
+  right: 0.2rem;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--vd-color-primary);
+  color: var(--vd-text-on-primary);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+}
+
+.vd-dock-brand-spin {
+  display: inline-flex;
+  transform: rotate(var(--vd-dock-brand-angle));
 }
 
 .vd-dock-label {
@@ -537,6 +593,12 @@
   background: color-mix(in srgb, var(--vd-dock-tint) 38%, #0a0a0a);
 }
 
+.vd-dock.vd-dock-dark[class*="vd-dock-tint-"]:not(.vd-dock-tint-accent) {
+  --vd-dock-ink: color-mix(in srgb, var(--vd-dock-tint) 35%, white);
+
+  color: var(--vd-dock-ink);
+}
+
 /* Accent tint mode: constant ink pill, hue left to items and the brand slot.
    One class more than the surface rule above, so weight alone picks the winner
    and neither `!important` nor source order is load-bearing. */
@@ -552,6 +614,24 @@
 @media (prefers-reduced-motion: reduce) {
   .vd-dock {
     transition: none;
+  }
+
+  .vd-dock-item {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .vd-dock.is-horizontal .vd-dock-nav {
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .vd-dock.is-horizontal .vd-dock-links {
+    width: max-content;
   }
 }
 

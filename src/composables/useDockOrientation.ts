@@ -51,7 +51,7 @@ export const DOCK_RADIUS_OPTIONS = [
 ] as const;
 export type DockRadius = (typeof DOCK_RADIUS_OPTIONS)[number];
 
-export type DockItemLayout = "stack" | "inline";
+export type DockItemLayout = "stack" | "inline" | "auto";
 
 export interface UseDockOrientationOptions {
   narrowQuery?: string;
@@ -109,9 +109,8 @@ function readStored(key: string | null): DockPlacement | null {
   try {
     return parseStoredPlacement(localStorage.getItem(key));
   } catch {
-    /* private mode */
+    return null;
   }
-  return null;
 }
 
 function writeStored(key: string | null, edge: DockPlacement): void {

@@ -1,7 +1,7 @@
 # components Specification
 
 ## Purpose
-The 63 exported Vue components: carryover SFCs, layout primitives, and later additions (dock, auth, snippet chrome, global search).
+The 64 exported Vue components: carryover SFCs, layout primitives, and later additions (dock, auth, snippet chrome, global search, image galleries).
 
 ## Requirements
 
@@ -1140,3 +1140,33 @@ and `message` matching the other screens.
 - **GIVEN** email `"ada@example.com"`
 - **WHEN** the form is submitted
 - **THEN** `submit` SHALL emit `{ email: "ada@example.com" }`
+
+### Requirement: vd-image-box-component
+
+`VdImageBox` MUST render one image from `src` or many from `items`, using
+`layout` `grid`, `masonry`, `bento`, `filmstrip`, or `single` (default `single`
+for one image and `grid` for several). Thumbnails MUST set `loading="lazy"`,
+`decoding="async"`, and `data-image-box` so `useImageBox` opens the shared
+lightbox. `captionDisplay` `below` and `overlay` MUST render a figcaption;
+`lightbox` MUST keep the caption on the trigger only.
+
+#### Scenario: masonry gallery
+
+- **GIVEN** `VdImageBox` with two items, `layout="masonry"`, and `captionDisplay="below"`
+- **WHEN** it is mounted
+- **THEN** the root has class `vd-image-gallery-masonry` and two lazy images
+
+### Requirement: dock-item-affordance
+
+`VdDock` MUST accept `itemLayout` `stack`, `inline`, or `auto` (`auto` is inline
+on horizontal edges and stacked on vertical edges), `brandCorner="consistent"`,
+and `brandSpin`. `VdDockItem` MUST support `href` (rendered as an anchor),
+`badge`, `activeIconFill`, and `tooltip`, including an automatic dock tooltip
+when `itemLayout` is `auto` on a vertical edge.
+
+#### Scenario: auto layout follows the edge
+
+- **GIVEN** a dock with `itemLayout="auto"`
+- **WHEN** it rests on the bottom edge and another rests on the left edge
+- **THEN** the bottom dock includes `vd-dock-items-inline` and the left dock
+  includes `vd-dock-items-stack`, and both include `vd-dock-items-auto`

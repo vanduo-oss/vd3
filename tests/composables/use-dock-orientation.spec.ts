@@ -367,16 +367,28 @@ describe("useDockOrientation", () => {
   });
 
   it("swallows private-mode storage errors", () => {
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
-      throw new Error("denied");
-    });
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new Error("denied");
+    const descriptor = Object.getOwnPropertyDescriptor(
+      globalThis,
+      "localStorage",
+    );
+    Object.defineProperty(globalThis, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: () => {
+          throw new Error("denied");
+        },
+        setItem: () => {
+          throw new Error("denied");
+        },
+      },
     });
     const { api } = mountDock({ persist: true });
     expect(api.orientation.value).toBe("horizontal");
     api.snapTo("vertical");
     expect(api.orientation.value).toBe("vertical");
+    if (descriptor) {
+      Object.defineProperty(globalThis, "localStorage", descriptor);
+    }
   });
 
   it("no-ops storage helpers when localStorage is missing", () => {

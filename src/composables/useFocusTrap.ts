@@ -69,8 +69,9 @@ export const useFocusTrap = (
     }
   };
 
-  const activate = (): void => {
+  const activate = (options?: { focus?: boolean }): void => {
     active.value = true;
+    if (options?.focus === false) return;
     const focusables = getFocusables();
     focusables[0]?.focus();
   };
