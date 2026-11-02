@@ -90,5 +90,11 @@ describe("VdImageBox", () => {
     );
     expect(wrapper.get("figcaption").text()).toBe("Alpha caption");
     wrapper.unmount();
+
+    const bento = mount(VdImageBox, {
+      props: { items, layout: "bento" },
+    });
+    expect(bento.classes()).toContain("vd-image-gallery-bento");
+    expect(bento.attributes("style")).toContain("--vd-image-box-columns: 4");
   });
 });

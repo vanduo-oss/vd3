@@ -238,7 +238,7 @@
 
 /* Active/selected state for gallery thumbnails */
 .vd-image-box-gallery .vd-image-box-trigger.is-active,
-.vd-image-box-gallery .vd-image-box-trigger[aria-selected="true"] {
+.vd-image-box-gallery .vd-image-box-trigger[aria-current="true"] {
   outline: 3px solid var(--vd-color-primary);
   outline-offset: 2px;
   transform: scale(1.05);
@@ -338,7 +338,7 @@
 
 .vd-image-gallery-bento {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--vd-image-box-columns, 4), minmax(0, 1fr));
   gap: var(--vd-image-box-gap);
 }
 

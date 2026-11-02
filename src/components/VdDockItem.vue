@@ -32,9 +32,22 @@ const props = withDefaults(defineProps<Props>(), {
 
 const dock = inject(VD_DOCK_KEY, null);
 
+const SAFE_HREF_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
+
+const safeHref = computed(() => {
+  const raw = props.href.trim();
+  if (!raw) return undefined;
+  try {
+    const parsed = new URL(raw, "https://vanduo.local");
+    return SAFE_HREF_PROTOCOLS.has(parsed.protocol) ? raw : undefined;
+  } catch {
+    return undefined;
+  }
+});
+
 const tag = computed(() => {
   if (props.as) return props.as;
-  return props.href ? "a" : "button";
+  return safeHref.value ? "a" : "button";
 });
 
 const tooltipText = computed(() => {
@@ -62,7 +75,7 @@ const filled = computed(() => props.active && props.activeIconFill);
 <template>
   <component
     :is="tag"
-    :href="tag === 'a' ? href || undefined : undefined"
+    :href="tag === 'a' ? safeHref : undefined"
     :type="tag === 'button' ? 'button' : undefined"
     class="vd-dock-item"
     :class="{ 'is-active': active }"

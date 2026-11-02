@@ -97,15 +97,15 @@ const updateChrome = (b: BackdropState): void => {
   b.gallery.forEach((el, index) => {
     const selected = index === b.galleryIndex;
     el.classList.toggle("is-active", selected);
-    if (selected) el.setAttribute("aria-selected", "true");
-    else el.removeAttribute("aria-selected");
+    if (selected) el.setAttribute("aria-current", "true");
+    else el.removeAttribute("aria-current");
   });
 };
 
 const clearGalleryChrome = (b: BackdropState): void => {
   b.gallery.forEach((el) => {
     el.classList.remove("is-active");
-    el.removeAttribute("aria-selected");
+    el.removeAttribute("aria-current");
   });
 };
 
@@ -442,7 +442,7 @@ const bindTrigger = (
   cleanups.push(() => {
     local.forEach((fn) => fn());
     trigger.classList.remove("vd-image-box-trigger", "is-active");
-    trigger.removeAttribute("aria-selected");
+    trigger.removeAttribute("aria-current");
     delete trigger.dataset.imageBoxInitialized;
   });
 };

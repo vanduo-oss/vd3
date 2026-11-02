@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   caption: "",
   items: () => [],
   layout: undefined,
-  columns: 3,
+  columns: undefined,
   gap: "fib-13",
   ratio: "auto",
   captionDisplay: "lightbox",
@@ -63,8 +63,12 @@ const layout = computed(() => {
   return images.value.length > 1 ? "grid" : "single";
 });
 
+const resolvedColumns = computed(
+  () => props.columns ?? (layout.value === "bento" ? 4 : 3),
+);
+
 const rootStyle = computed(() => ({
-  "--vd-image-box-columns": String(props.columns),
+  "--vd-image-box-columns": String(resolvedColumns.value),
 }));
 </script>
 

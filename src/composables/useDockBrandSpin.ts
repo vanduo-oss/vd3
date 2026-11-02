@@ -103,11 +103,15 @@ export function useDockBrandSpin(
     const spin = spinTarget(dock);
     if (!(brand instanceof HTMLElement) || !spin) return () => undefined;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reducedMotion =
+      typeof window !== "undefined" && typeof window.matchMedia === "function"
+        ? window.matchMedia("(prefers-reduced-motion: reduce)")
+        : null;
+    const isReduced = (): boolean => Boolean(reducedMotion?.matches);
     let engaged = false;
 
     const spinAt = (durationMs: number): void => {
-      if (reducedMotion.matches) {
+      if (isReduced()) {
         settleDockBrandSpin(spin, true);
         return;
       }
@@ -126,7 +130,7 @@ export function useDockBrandSpin(
     const onDeactivate = (): void => {
       engaged = false;
       if (dock.classList.contains("is-morphing")) return;
-      settleDockBrandSpin(spin, reducedMotion.matches);
+      settleDockBrandSpin(spin, isReduced());
     };
 
     const onPointerRelease = (event: Event): void => {
@@ -145,7 +149,7 @@ export function useDockBrandSpin(
         spinAt(DOCK_SPIN_HOVER_MS);
         return;
       }
-      settleDockBrandSpin(spin, reducedMotion.matches);
+      settleDockBrandSpin(spin, isReduced());
     };
 
     brand.addEventListener("pointerenter", onActivate);

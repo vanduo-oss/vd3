@@ -368,6 +368,8 @@ describe("useImageBox", () => {
 
     click(wrapper.get("#a").element);
     expect(boxImg().src).toContain("a.png");
+    expect(wrapper.get("#a").element.getAttribute("aria-current")).toBe("true");
+    expect(wrapper.get("#b").element.getAttribute("aria-current")).toBeNull();
     expect(document.querySelector(".vd-image-box-counter")?.textContent).toBe(
       "1 / 2",
     );
@@ -377,6 +379,8 @@ describe("useImageBox", () => {
 
     keydown(document, "ArrowRight");
     expect(boxImg().src).toContain("b.png");
+    expect(wrapper.get("#a").element.getAttribute("aria-current")).toBeNull();
+    expect(wrapper.get("#b").element.getAttribute("aria-current")).toBe("true");
     expect(document.querySelector(".vd-image-box-counter")?.textContent).toBe(
       "2 / 2",
     );

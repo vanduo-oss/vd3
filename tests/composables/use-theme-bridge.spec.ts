@@ -110,6 +110,13 @@ describe("useThemeBridge", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(false);
     expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     wrapper.unmount();
+
+    // Pre-existing html.dark is restored on unmount
+    document.documentElement.classList.add("dark");
+    const restored = mount(Host, { attachTo: document.body });
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    restored.unmount();
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
   });
 
   it("follows the system scheme when syncing the dark class", async () => {

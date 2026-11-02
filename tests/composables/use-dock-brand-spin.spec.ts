@@ -89,6 +89,28 @@ describe("dock brand spin", () => {
       ).style.getPropertyValue("--vd-dock-brand-angle"),
     ).toBe("0deg");
     reducedWrapper.unmount();
+
+    vi.stubGlobal("matchMedia", undefined);
+    const NoMatchMediaHost = defineComponent({
+      setup() {
+        const dock = ref<HTMLElement | null>(null);
+        const enabled = ref(true);
+        useDockBrandSpin(dock, enabled);
+        return () =>
+          h("div", { ref: dock, class: "vd-dock" }, [
+            h("button", { class: "vd-dock-brand" }, [
+              h("span", { class: "vd-dock-brand-spin" }),
+            ]),
+          ]);
+      },
+    });
+    const noMatchMediaWrapper = mount(NoMatchMediaHost, {
+      attachTo: document.body,
+    });
+    noMatchMediaWrapper
+      .get(".vd-dock-brand")
+      .element.dispatchEvent(new Event("pointerenter"));
+    noMatchMediaWrapper.unmount();
   });
 
   it("spins on pointer and morph, then settles on leave", async () => {

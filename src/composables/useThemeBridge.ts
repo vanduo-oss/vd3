@@ -59,6 +59,7 @@ export function useThemeBridge(
   };
 
   let media: MediaQueryList | null = null;
+  let hadDarkClass: boolean | null = null;
   const onScheme = (): void => {
     if (options.syncDarkClass && mode.value === "system") {
       applyDarkClass("system");
@@ -66,6 +67,9 @@ export function useThemeBridge(
   };
 
   onMounted(() => {
+    if (options.syncDarkClass && typeof document !== "undefined") {
+      hadDarkClass = document.documentElement.classList.contains(DARK_CLASS);
+    }
     sync(mode.value);
     if (
       !options.syncDarkClass ||
@@ -81,6 +85,14 @@ export function useThemeBridge(
   onUnmounted(() => {
     media?.removeEventListener("change", onScheme);
     media = null;
+    if (
+      options.syncDarkClass &&
+      hadDarkClass !== null &&
+      typeof document !== "undefined"
+    ) {
+      document.documentElement.classList.toggle(DARK_CLASS, hadDarkClass);
+      hadDarkClass = null;
+    }
   });
 
   watch(() => mode.value, sync);

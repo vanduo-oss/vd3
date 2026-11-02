@@ -122,6 +122,30 @@ describe("VdDockItem", () => {
     expect(
       anchorWithoutHref.get("a.vd-dock-item").attributes("href"),
     ).toBeUndefined();
+
+    const unsafeHref = mountItem({
+      label: "Unsafe",
+      href: "javascript:alert(1)",
+    });
+    expect(
+      unsafeHref.get("button.vd-dock-item").attributes("href"),
+    ).toBeUndefined();
+
+    const malformedHref = mountItem({
+      label: "Malformed",
+      href: "http://[::1",
+    });
+    expect(
+      malformedHref.get("button.vd-dock-item").attributes("href"),
+    ).toBeUndefined();
+
+    const mailtoHref = mountItem({
+      label: "Contact",
+      href: "mailto:hi@vanduo.dev",
+    });
+    expect(mailtoHref.get("a.vd-dock-item").attributes("href")).toBe(
+      "mailto:hi@vanduo.dev",
+    );
   });
 
   it("places tooltips away from top and bottom edges", () => {
