@@ -115,6 +115,12 @@ describe("built CSS bundle — glass noise filter", () => {
     expect(accentRule).not.toContain("!important");
   });
 
+  it("ships inside the vd3 cascade layer so Tailwind utilities can win", () => {
+    expect(has("@layer vd3{")).toBe(true);
+    expect(has("[class*=vd-col-]")).toBe(true);
+    expect(has("[class*=col-]")).toBe(false);
+  });
+
   it("bundles the dock tooltip variant with all four arrows", () => {
     expect(has(".vd-tooltip-dock")).toBe(true);
     for (const placement of ["top", "bottom", "left", "right"]) {

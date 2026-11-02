@@ -117,7 +117,7 @@
 }
 
 /* Columns */
-[class*="col-"] {
+[class*="vd-col-"] {
   flex: 1 0 0%;
   padding-left: calc(var(--vd-grid-gutter) * 0.5);
   padding-right: calc(var(--vd-grid-gutter) * 0.5);
@@ -1616,8 +1616,8 @@
   margin-right: 0;
 }
 
-.vd-grid-fibonacci>.vd-row>[class*="col-"],
-.grid-fibonacci>.vd-row>[class*="col-"] {
+.vd-grid-fibonacci>.vd-row>[class*="vd-col-"],
+.grid-fibonacci>.vd-row>[class*="vd-col-"] {
   width: auto;
   padding-left: 0;
   padding-right: 0;
@@ -1625,32 +1625,32 @@
 }
 
 /* Two-child fibonacci rows use golden ratio */
-.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(2):last-child),
-.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(2):last-child) {
+.vd-grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(2):last-child),
+.grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(2):last-child) {
   grid-template-columns: 1fr 1.618fr;
 }
 
 /* Three-child fibonacci rows use 2:3:5 */
-.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(3):last-child),
-.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(3):last-child) {
+.vd-grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(3):last-child),
+.grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(3):last-child) {
   grid-template-columns: 2fr 3fr 5fr;
 }
 
 /* Four-child fibonacci rows use 1:2:3:5 */
-.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(4):last-child),
-.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(4):last-child) {
+.vd-grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(4):last-child),
+.grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(4):last-child) {
   grid-template-columns: 1fr 2fr 3fr 5fr;
 }
 
 /* Single-child rows stay full width */
-.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:only-child),
-.grid-fibonacci>.vd-row:has(> [class*="col-"]:only-child) {
+.vd-grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:only-child),
+.grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:only-child) {
   grid-template-columns: 1fr;
 }
 
 /* Five+ children use equal columns */
-.vd-grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(5)),
-.grid-fibonacci>.vd-row:has(> [class*="col-"]:nth-child(5)) {
+.vd-grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(5)),
+.grid-fibonacci>.vd-row:has(> [class*="vd-col-"]:nth-child(5)) {
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 }
 
@@ -1668,7 +1668,7 @@
   margin-right: 0;
 }
 
-[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row)>[class*="col-"] {
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row)>[class*="vd-col-"] {
   width: auto;
   padding-left: 0;
   padding-right: 0;
@@ -1676,27 +1676,27 @@
 }
 
 /* Two-child rows use golden ratio */
-[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(2):last-child) {
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="vd-col-"]:nth-child(2):last-child) {
   grid-template-columns: 1fr 1.618fr;
 }
 
 /* Three-child rows use 2:3:5 */
-[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(3):last-child) {
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="vd-col-"]:nth-child(3):last-child) {
   grid-template-columns: 2fr 3fr 5fr;
 }
 
 /* Four-child rows use 1:2:3:5 */
-[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(4):last-child) {
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="vd-col-"]:nth-child(4):last-child) {
   grid-template-columns: 1fr 2fr 3fr 5fr;
 }
 
 /* Single-child rows stay full width */
-[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:only-child) {
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="vd-col-"]:only-child) {
   grid-template-columns: 1fr;
 }
 
 /* Five+ children use equal columns */
-[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="col-"]:nth-child(5)) {
+[data-grid="fibonacci"] .vd-row:not(.vd-grid-standard .vd-row):has(> [class*="vd-col-"]:nth-child(5)) {
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 }
 
