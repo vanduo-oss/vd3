@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
-import { nextTick } from "vue";
+import { h, nextTick } from "vue";
 import VdDock from "../../src/components/VdDock.vue";
+import VdDockItem from "../../src/components/VdDockItem.vue";
 import { DOCK_MORPH_MS } from "../../src/composables/useDockOrientation";
 
 enableAutoUnmount(afterEach);
@@ -405,5 +406,15 @@ describe("VdDock", () => {
     expect(nav.get(".vd-dock-brand-spin").text()).toContain("u");
     nav.get(".vd-dock-brand").element.dispatchEvent(new Event("pointerenter"));
     nav.get(".vd-dock-brand").element.dispatchEvent(new Event("pointerleave"));
+
+    const withChild = mount(VdDock, {
+      props: { itemLayout: "auto", placement: "left" },
+      slots: {
+        default: () => h(VdDockItem, { icon: "house", label: "Home" }),
+      },
+    });
+    expect(
+      withChild.get("button.vd-dock-item").attributes("data-tooltip"),
+    ).toBe("Home");
   });
 });

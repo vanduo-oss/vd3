@@ -1,8 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 import { mount } from "@vue/test-utils";
-import { useThemeBridge } from "../../src/composables/useThemeBridge";
-import type { ThemeMode } from "../../src/composables/useTheme";
+import {
+  applyDarkClass,
+  resolvedSchemeIsDark,
+  useThemeBridge,
+} from "../../src/composables/useThemeBridge";
+import {
+  useThemePreference,
+  type ThemeMode,
+} from "../../src/composables/useTheme";
 
 /**
  * useThemeBridge drives Vanduo's <html data-theme> from an app-owned mode ref.
@@ -145,10 +152,34 @@ describe("useThemeBridge", () => {
     window.matchMedia = original;
   });
 
-  it("does not add html.dark unless syncDarkClass is requested", () => {
+  it("does not add html.dark unless syncDarkClass is requested", async () => {
     const { wrapper } = mountBridge("dark");
     expect(document.documentElement.classList.contains("dark")).toBe(false);
     wrapper.unmount();
+
+    const original = window.matchMedia;
+    // @ts-expect-error -- testing missing matchMedia fallback
+    window.matchMedia = undefined;
+    expect(resolvedSchemeIsDark("system")).toBe(false);
+    applyDarkClass("dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    applyDarkClass("light");
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    window.matchMedia = original;
+
+    const mode = ref<ThemeMode>("light");
+    const Host = defineComponent({
+      setup() {
+        useThemeBridge(mode, { syncDarkClass: true });
+        return () => h("div");
+      },
+    });
+    const synced = mount(Host, { attachTo: document.body });
+    await nextTick();
+    useThemePreference().setTheme("dark");
+    await nextTick();
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    synced.unmount();
   });
 
   it("stops reacting after unmount (watcher disposed)", async () => {

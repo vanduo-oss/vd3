@@ -3,6 +3,42 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.8.1 — 2026-11-02
+
+### Added
+
+- **`VdImageBox` component** — exports `VdImageBox` and `VdImageItem`, supporting
+  `grid`, `masonry`, `bento`, `filmstrip`, and `single` gallery layouts,
+  Fibonacci gaps (`fib-5`, `fib-8`, `fib-13`, `fib-21`), aspect ratios (`auto`,
+  `1-1`, `4-3`, `16-9`, `3-4`, `golden`), and `captionDisplay` (`lightbox`,
+  `overlay`, `below`).
+- **`useImageBox` gallery navigation** — grouped triggers via
+  `data-image-box-group`, previous/next lightbox controls,
+  `ArrowLeft`/`ArrowRight` keyboard stepping, `"1 / N"` live counter badge,
+  `imageBox:change` event (`ImageBoxChangeDetail`), and returned
+  `{ open, close, next, prev, refresh }` controller (`ImageBoxController`).
+- **`VdDock` & `VdDockItem` OolaDock parity** — `itemLayout="auto"`
+  (inline on horizontal edges, icon-only stack with automatic `.vd-tooltip-dock`
+  tooltips on vertical edges), `brandCorner="consistent"`, `brandSpin` with
+  `useDockBrandSpin` composable (`ensureDockBrandSpin`, `settleDockBrandSpin`),
+  `activeIconFill`, `tooltip`, `badge`, `href` / `as`, and a `<= 767px`
+  horizontal scrollport for overflowing docks.
+- **`useThemeBridge` `syncDarkClass` option** — mirrors the resolved scheme
+  onto `document.documentElement` class `dark` (including `system` media changes)
+  so Tailwind CSS and Nuxt UI stay synchronized with Vanduo's `[data-theme]`.
+
+### Fixed
+
+- **CSS cascade isolation (`@layer vd3`)** — wrapped emitted CSS bundles
+  (`vd3.css`, `vd3.min.css`, `vd3-core.css`, `vd3-core.min.css`) in `@layer vd3`
+  and scoped column selectors in `css/core/grid.css` to `[class*="vd-col-"]`
+  (removing `[class*="col-"]`) so Tailwind CSS (`col-span-*`) and Nuxt UI
+  utilities win cleanly without cascade collisions.
+- **`useImageBox` accessibility & sizing** — preserves author-supplied
+  `aria-label` on triggers instead of overwriting, traps `Tab` / `Shift+Tab`
+  inside the open lightbox via `useFocusTrap`, and expands desktop viewer bounds
+  to `85vw` × `85vh`.
+
 ## 1.8.0 — 2026-10-15
 
 ### Added

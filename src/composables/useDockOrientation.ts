@@ -109,9 +109,8 @@ function readStored(key: string | null): DockPlacement | null {
   try {
     return parseStoredPlacement(localStorage.getItem(key));
   } catch {
-    /* private mode */
+    return null;
   }
-  return null;
 }
 
 function writeStored(key: string | null, edge: DockPlacement): void {

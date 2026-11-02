@@ -16,7 +16,13 @@ describe("dock brand spin", () => {
   it("starts and settles a spin from the current angle", () => {
     const spin = document.createElement("div");
     const running = { id: "vd-dock-brand-spin", cancel: vi.fn() };
-    spin.getAnimations = () => [running as unknown as Animation];
+    const settleAnim = { id: "vd-dock-brand-settle", cancel: vi.fn() };
+    const otherAnim = { id: "other", cancel: vi.fn() };
+    spin.getAnimations = () => [
+      running as unknown as Animation,
+      settleAnim as unknown as Animation,
+      otherAnim as unknown as Animation,
+    ];
     const animate = vi.fn(() => ({ id: "next" }) as Animation);
     spin.animate = animate;
     vi.spyOn(window, "getComputedStyle").mockReturnValue({
@@ -25,6 +31,8 @@ describe("dock brand spin", () => {
 
     ensureDockBrandSpin(spin, 5000);
     expect(running.cancel).toHaveBeenCalled();
+    expect(settleAnim.cancel).toHaveBeenCalled();
+    expect(otherAnim.cancel).not.toHaveBeenCalled();
     expect(animate).toHaveBeenCalled();
     expect(spin.style.getPropertyValue("--vd-dock-brand-angle")).toBe("40deg");
 
@@ -39,6 +47,48 @@ describe("dock brand spin", () => {
 
     const plain = document.createElement("div");
     expect(ensureDockBrandSpin(plain, 900)).toBeNull();
+  });
+
+  it("handles reduced motion and missing brand mark in useDockBrandSpin", async () => {
+    vi.stubGlobal("matchMedia", () => ({
+      matches: true,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    }));
+
+    const EmptyHost = defineComponent({
+      setup() {
+        const dock = ref<HTMLElement | null>(null);
+        const enabled = ref(true);
+        useDockBrandSpin(dock, enabled);
+        return () => h("div", { ref: dock, class: "vd-dock" });
+      },
+    });
+    const emptyWrapper = mount(EmptyHost);
+    emptyWrapper.unmount();
+
+    const ReducedHost = defineComponent({
+      setup() {
+        const dock = ref<HTMLElement | null>(null);
+        const enabled = ref(true);
+        useDockBrandSpin(dock, enabled);
+        return () =>
+          h("div", { ref: dock, class: "vd-dock" }, [
+            h("button", { class: "vd-dock-brand" }, [
+              h("span", { class: "vd-dock-brand-spin" }),
+            ]),
+          ]);
+      },
+    });
+    const reducedWrapper = mount(ReducedHost, { attachTo: document.body });
+    const brand = reducedWrapper.get(".vd-dock-brand").element;
+    brand.dispatchEvent(new Event("pointerenter"));
+    expect(
+      (
+        reducedWrapper.get(".vd-dock-brand-spin").element as HTMLElement
+      ).style.getPropertyValue("--vd-dock-brand-angle"),
+    ).toBe("0deg");
+    reducedWrapper.unmount();
   });
 
   it("spins on pointer and morph, then settles on leave", async () => {
@@ -101,9 +151,16 @@ describe("dock brand spin", () => {
 
     dock.classList.add("is-morphing");
     await nextTick();
+    // Leave while morphing -> stays spinning until morph finishes, then settles
     fire("pointerleave", new Event("pointerleave"));
     dock.classList.remove("is-morphing");
+    await nextTick();
+    // Morph while engaged, then finish morph while still engaged -> resumes hover spin
     fire("focusin", new Event("focusin"));
+    dock.classList.add("is-morphing");
+    await nextTick();
+    dock.classList.remove("is-morphing");
+    await nextTick();
     fire("pointerup", new PointerEvent("pointerup", { pointerType: "touch" }));
     fire("pointerdown", new Event("pointerdown"));
     fire(

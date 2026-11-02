@@ -384,10 +384,38 @@ describe("useImageBox", () => {
     api?.next();
     expect(boxImg().src).toContain("a.png");
 
+    api?.prev();
+    expect(boxImg().src).toContain("b.png");
+
+    keydown(document, "ArrowLeft");
+    expect(boxImg().src).toContain("a.png");
+
     click(document.querySelector(".vd-image-box-next")!);
     expect(boxImg().src).toContain("b.png");
 
-    keydown(document, "Escape");
+    click(document.querySelector(".vd-image-box-prev")!);
+    expect(boxImg().src).toContain("a.png");
+
+    // Simulate image load event while open
+    boxImg().dispatchEvent(new Event("load"));
+    expect(boxImg().style.opacity).toBe("");
+
+    api?.close();
+    expect(backdrop().classList.contains("is-visible")).toBe(false);
+
+    // Controller open() by index, element, and default
+    api?.open(1);
+    expect(boxImg().src).toContain("b.png");
+    api?.close();
+
+    api?.open(wrapper.get("#c").element as HTMLElement);
+    expect(boxImg().src).toContain("c.png");
+    api?.close();
+
+    api?.open();
+    expect(boxImg().src).toContain("a.png");
+    // Unmount while open to cover releaseBackdrop closing an open lightbox
+    wrapper.unmount();
   });
 
   it("wires images added after mount when refresh() is called", () => {

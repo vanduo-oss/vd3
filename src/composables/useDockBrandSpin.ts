@@ -137,9 +137,6 @@ export function useDockBrandSpin(
     };
 
     const onClass = (): void => {
-      if (!engaged && !brand.matches(":focus-visible")) {
-        if (!dock.classList.contains("is-morphing")) return;
-      }
       if (dock.classList.contains("is-morphing")) {
         spinAt(DOCK_SPIN_MORPH_MS);
         return;

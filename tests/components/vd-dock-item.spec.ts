@@ -87,6 +87,19 @@ describe("VdDockItem", () => {
       "right",
     );
 
+    const impliedRight = mountItem({ label: "RightDocs" }, "right", "auto");
+    expect(impliedRight.get("button").attributes("data-tooltip")).toBe(
+      "RightDocs",
+    );
+    expect(
+      impliedRight.get("button").attributes("data-tooltip-placement"),
+    ).toBe("left");
+
+    const horizontalAuto = mountItem({ label: "BottomDocs" }, "bottom", "auto");
+    expect(
+      horizontalAuto.get("button").attributes("data-tooltip"),
+    ).toBeUndefined();
+
     const hidden = mountItem(
       {
         label: "Quiet",
@@ -104,6 +117,11 @@ describe("VdDockItem", () => {
     const custom = mountItem({ label: "Mark", as: "span", badge: "" });
     expect(custom.get("span.vd-dock-item").attributes("type")).toBeUndefined();
     expect(custom.find(".vd-dock-badge").exists()).toBe(false);
+
+    const anchorWithoutHref = mountItem({ label: "EmptyAnchor", as: "a" });
+    expect(
+      anchorWithoutHref.get("a.vd-dock-item").attributes("href"),
+    ).toBeUndefined();
   });
 
   it("places tooltips away from top and bottom edges", () => {
