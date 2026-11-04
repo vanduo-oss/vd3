@@ -38,14 +38,27 @@ const onKeydown = (event: KeyboardEvent): void => {
   }
 };
 
+// Track whether THIS instance locked body scroll so unmounting a closed
+// drawer never releases a lock held by another open drawer/offcanvas.
+let bodyLocked = false;
+
 onMounted(() => {
   if (typeof window === "undefined") return;
   window.addEventListener("keydown", onKeydown);
+  if (props.modelValue && typeof document !== "undefined") {
+    document.body.style.overflow = "hidden";
+    bodyLocked = true;
+  }
 });
 
 onBeforeUnmount(() => {
-  if (typeof window === "undefined") return;
-  window.removeEventListener("keydown", onKeydown);
+  if (typeof window !== "undefined") {
+    window.removeEventListener("keydown", onKeydown);
+  }
+  if (bodyLocked && typeof document !== "undefined") {
+    document.body.style.overflow = "";
+    bodyLocked = false;
+  }
 });
 
 watch(
@@ -53,6 +66,7 @@ watch(
   (open) => {
     if (typeof document === "undefined") return;
     document.body.style.overflow = open ? "hidden" : "";
+    bodyLocked = open;
   },
 );
 </script>

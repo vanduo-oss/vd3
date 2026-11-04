@@ -79,6 +79,30 @@ configurable prefix (default `vanduo-`): `vanduo-palette`,
 namespaces; no automatic migration between prefixes. Apps sharing the same module
 instance still share theme state, defaults, and configuration.
 
+vd3 does not bundle text fonts. `data-font` still selects a stack: the
+customizer catalog is `ubuntu`, `lato`, `open-sans`, `nunito`,
+`jetbrains-mono`, and `system`, and `css/core/typography.css` defines stacks
+for other keys too. Self-host the `@font-face` rules, or leave the choice on
+`system`. To offer a different catalog, pass `fontOptions` before the theme
+model first reads storage. Include the default font key in that list.
+`system` and the configured default font stay valid even when omitted.
+
+```ts
+app.use(VanduoVue, {
+  fontOptions: [
+    { key: "system", name: "System" },
+    { key: "brand", name: "Brand", family: '"Brand Sans", sans-serif' },
+  ],
+});
+```
+
+`family` and `mono` are optional CSS stacks. When set, the theme layer writes
+`--vd-font-family-sans` and `--vd-font-family-base`, or `--vd-font-family-mono`,
+on `<html>`. Omit them to keep the stylesheet `[data-font]` rules.
+`VdThemeCustomizer` takes the same list via `fonts` and can hide the control
+with `:show-font="false"`. `setFontOptions(FONT_OPTIONS)` restores the
+generated catalog.
+
 `useThemePreference()` is a module-scope reactive singleton (no pinia) that is
 the single source of truth behind `VdThemeSwitcher` and `VdThemeCustomizer`;
 its setters route through `applyPreference` + `persistPreference`. Override the
@@ -152,8 +176,8 @@ and would redefine what consumers already treat as `/css/core`.
    bundle) + `dist/tokens.json`. Zero-dependency and deterministic.
 3. `scripts/build-css.mjs` — bundles `css/vd3.css` with lightningcss into
    `dist/vd3(.min).css` and the no-icons `dist/vd3-core(.min).css` (+ source
-   maps), and copies `fonts/` and the Phosphor regular + fill icon weights
-   into `dist/`.
+   maps), and copies the Phosphor regular + fill icon weights into `dist/`.
+   Text fonts are not copied.
 4. `vite build` — the library and optional highlighter (`dist/{index,highlight}.{js,cjs}`).
 5. `vue-tsc -p tsconfig.build.json` — the `.d.ts` declarations.
 6. `scripts/check-class-coverage.mjs` — asserts every `vd-*` class the

@@ -1,6 +1,11 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import VdOffcanvas from "../../src/components/VdOffcanvas.vue";
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 enableAutoUnmount(afterEach);
 
@@ -140,5 +145,24 @@ describe("VdOffcanvas", () => {
     // Unmounting while open must not leave the page permanently locked.
     wrapper.unmount();
     expect(document.body.style.overflow).toBe("");
+  });
+
+  it("pads .vd-sidenav-body horizontally while keeping nav/section/divider aligned", () => {
+    const css = readFileSync(
+      resolve(repoRoot, "css/components/sidenav.css"),
+      "utf8",
+    );
+    expect(css).toMatch(
+      /\.vd-sidenav-body\s*\{[^}]*padding:\s*var\(--vd-sidenav-padding-y\)\s+var\(--vd-sidenav-padding-x\)/,
+    );
+    expect(css).toMatch(
+      /\.vd-sidenav-body\s*>\s*\.vd-sidenav-nav\s*\{[^}]*margin-inline:\s*calc\(-1\s*\*\s*var\(--vd-sidenav-item-padding-x\)\)/,
+    );
+    expect(css).toMatch(
+      /\.vd-sidenav-body\s*>\s*\.vd-sidenav-section\s*\{[^}]*margin-inline:\s*calc\(-1\s*\*\s*var\(--vd-sidenav-padding-x\)\)/,
+    );
+    expect(css).toMatch(
+      /\.vd-sidenav-body\s*>\s*\.vd-sidenav-divider\s*\{[^}]*margin-inline:\s*0/,
+    );
   });
 });

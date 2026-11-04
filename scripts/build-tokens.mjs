@@ -269,6 +269,8 @@ const tokensDataTs =
   "export interface FontDef {\n" +
   "  readonly key: string;\n" +
   "  readonly name: string;\n" +
+  "  readonly family?: string;\n" +
+  "  readonly mono?: string;\n" +
   "}\n\n" +
   "export interface PaletteDef {\n" +
   "  readonly key: string;\n" +

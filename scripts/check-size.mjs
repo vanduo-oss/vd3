@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
 // Library artifacts, not a prediction of a consumer's tree-shaken application.
-// Baseline after the vd3 cascade layer, dock affordances, and image galleries.
-// Measured: 632217/97784, 499952/73445, 332508/81470 bytes (raw/gzip).
+// Baseline after dropping bundled text fonts.
+// Measured: 627211/97470, 494946/73064, 333670/81928 bytes (raw/gzip).
 const budgets = [
   ["vd3.min.css", 650000, 102000],
   ["vd3-core.min.css", 515000, 77000],

@@ -6,7 +6,8 @@ import { onMounted, onUnmounted, type Ref } from "vue";
  * drawers: `[data-sidenav-toggle="#id"]` triggers, a body-level overlay,
  * close button, overlay-click (unless `data-backdrop="static"`), Escape
  * (unless `data-keyboard="false"`), body scroll-lock, `data-vd-position`
- * direction class, and `sidenav:open` / `sidenav:close` events.
+ * direction class, and `sidenav:open` / `sidenav:close` events. Each trigger
+ * gets `aria-controls` plus an `aria-expanded` that tracks every open/close path.
  *
  * The Vanilla portal-to-body + push/fixed/resize handling is omitted: the demo
  * drawers are `position: fixed`, so they overlay the viewport without moving in
@@ -15,6 +16,13 @@ import { onMounted, onUnmounted, type Ref } from "vue";
 export function useSidenav(root: Ref<HTMLElement | null>): void {
   const cleanups: Array<() => void> = [];
   const overlays: HTMLElement[] = [];
+  const triggersFor = new Map<HTMLElement, HTMLElement[]>();
+
+  const syncTriggers = (el: HTMLElement, expanded: boolean): void => {
+    triggersFor
+      .get(el)
+      ?.forEach((btn) => btn.setAttribute("aria-expanded", String(expanded)));
+  };
 
   const open = (el: HTMLElement, overlay: HTMLElement): void => {
     if (
@@ -25,6 +33,7 @@ export function useSidenav(root: Ref<HTMLElement | null>): void {
     }
     el.classList.add("is-open");
     el.setAttribute("aria-hidden", "false");
+    syncTriggers(el, true);
     document.body.classList.add("body-sidenav-open");
     el.dispatchEvent(new CustomEvent("sidenav:open", { bubbles: true }));
   };
@@ -33,6 +42,7 @@ export function useSidenav(root: Ref<HTMLElement | null>): void {
     overlay.classList.remove("is-visible");
     el.classList.remove("is-open");
     el.setAttribute("aria-hidden", "true");
+    syncTriggers(el, false);
     document.body.classList.remove("body-sidenav-open");
     el.dispatchEvent(new CustomEvent("sidenav:close", { bubbles: true }));
   };
@@ -99,11 +109,28 @@ export function useSidenav(root: Ref<HTMLElement | null>): void {
     scope
       .querySelectorAll<HTMLElement>("[data-sidenav-toggle]")
       .forEach((btn) => {
+        const resolveTarget = (sel: string | undefined): HTMLElement | null => {
+          if (!sel) return null;
+          try {
+            return document.querySelector<HTMLElement>(sel);
+          } catch {
+            return null;
+          }
+        };
+
+        const target = resolveTarget(btn.dataset.sidenavToggle);
+        if (target && overlayFor.has(target)) {
+          if (target.id) btn.setAttribute("aria-controls", target.id);
+          btn.setAttribute(
+            "aria-expanded",
+            String(target.classList.contains("is-open")),
+          );
+          triggersFor.set(target, [...(triggersFor.get(target) ?? []), btn]);
+        }
+
         const onClick = (e: Event): void => {
           e.preventDefault();
-          const targetId = btn.dataset.sidenavToggle;
-          if (!targetId) return;
-          const el = document.querySelector<HTMLElement>(targetId);
+          const el = resolveTarget(btn.dataset.sidenavToggle);
           const overlay = el ? overlayFor.get(el) : undefined;
           if (el && overlay) toggle(el, overlay);
         };
@@ -117,6 +144,7 @@ export function useSidenav(root: Ref<HTMLElement | null>): void {
     cleanups.length = 0;
     overlays.forEach((o) => o.remove());
     overlays.length = 0;
+    triggersFor.clear();
     document.body.classList.remove("body-sidenav-open");
   });
 }

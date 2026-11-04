@@ -113,6 +113,44 @@ describe("useSidenav", () => {
     expect(closes).toHaveLength(1);
   });
 
+  it("wires aria-controls and keeps aria-expanded in sync on every open/close path", () => {
+    const { wrapper } = mountHost(html, useSidenav);
+    const toggle = wrapper.get("[data-sidenav-toggle]").element;
+
+    expect(toggle.getAttribute("aria-controls")).toBe("drawer");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+
+    click(toggle);
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+
+    click(wrapper.get(".vd-sidenav-close").element);
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+
+    click(toggle);
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+
+    click(toggle);
+    click(overlay());
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("skips a trigger with an invalid CSS selector without aborting remaining triggers", () => {
+    const { wrapper } = mountHost(
+      `<button id="bad" data-sidenav-toggle="##invalid">Bad</button>
+       <button id="good" data-sidenav-toggle="#drawer">Good</button>
+       <nav id="drawer" class="vd-sidenav"></nav>`,
+      useSidenav,
+    );
+    const bad = wrapper.get("#bad").element;
+    const good = wrapper.get("#good").element;
+
+    expect(() => click(bad)).not.toThrow();
+    expect(good.getAttribute("aria-expanded")).toBe("false");
+    click(good);
+    expect(good.getAttribute("aria-expanded")).toBe("true");
+  });
+
   it("closes when the close button is clicked", () => {
     const { wrapper } = mountHost(html, useSidenav);
     const nav = wrapper.get("#drawer").element;

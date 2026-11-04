@@ -21,6 +21,9 @@
   --vd-dp-padding: 0.5rem;        /* 8px - fib */
   --vd-dp-cell-size: 2.25rem;     /* 36px */
   --vd-dp-gap: 2px;
+  --vd-dp-popup-min-width: calc(
+    7 * var(--vd-dp-cell-size) + 6 * var(--vd-dp-gap) + 2 * var(--vd-dp-padding) + 2px
+  );
   --vd-dp-border-radius: var(--vd-border-radius, 0.5rem);
 
   /* Datepicker Z-index */
@@ -56,7 +59,7 @@
   box-shadow: var(--vd-dp-shadow);
   padding: var(--vd-dp-padding);
   display: none;
-  min-width: 17rem;
+  min-width: max(17rem, var(--vd-dp-popup-min-width));
 }
 
 .vd-datepicker-popup.is-open {
@@ -117,7 +120,8 @@
 
 .vd-datepicker-weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, var(--vd-dp-cell-size));
+  justify-content: center;
   gap: var(--vd-dp-gap);
   text-align: center;
   font-size: 0.75rem;
@@ -126,12 +130,17 @@
   padding-bottom: 0.25rem;
 }
 
+.vd-datepicker-weekdays span {
+  justify-self: center;
+}
+
 /* ========== Days Grid ========== */
 
 .vd-datepicker-days,
 .vd-datepicker-row {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, var(--vd-dp-cell-size));
+  justify-content: center;
   gap: var(--vd-dp-gap);
 }
 
@@ -190,7 +199,7 @@
 }
 
 .vd-datepicker-day.is-in-range {
-  background: rgba(13, 110, 253, 0.1);
+  background: var(--vd-color-primary-alpha-10);
   border-radius: 0;
 }
 

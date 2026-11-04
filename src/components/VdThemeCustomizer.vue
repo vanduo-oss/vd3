@@ -3,11 +3,14 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useClickOutside } from "../composables/useClickOutside";
 import {
   useThemePreference,
-  FONT_OPTIONS,
+  getFontOptions,
+  getThemeDefaults,
+  setFontOptions,
   NEUTRAL_COLORS,
   PALETTE_OPTIONS,
   PRIMARY_COLORS,
   RADIUS_OPTIONS,
+  type FontDef,
   type Palette,
   type RadiusOption,
 } from "../composables/useTheme";
@@ -27,9 +30,10 @@ import type {
  * dark-mode selection in the switcher is never clobbered by a color change here
  * (and vice versa).
  *
- * The font select absorbs the framework `font-switcher.js` capability: a
- * non-`system` choice stamps `data-font` (removed for `system`) and persists to
- * `vanduo-font-preference`, all via the theme layer.
+ * The font select writes `data-font` through the theme layer (including
+ * `system`) and persists `vanduo-font-preference`. Pass `fonts` to offer any
+ * catalog; a `family` or `mono` stack is applied inline, and keys without
+ * those fields keep the stylesheet `[data-font]` rules.
  */
 interface Props {
   /**
@@ -37,6 +41,18 @@ interface Props {
    * the library default the vd2 docs site hid site-side. `panel` only.
    */
   showPalette?: boolean;
+  /**
+   * Render the font-family select. `panel` only. Set false when the product
+   * uses one fixed face.
+   */
+  showFont?: boolean;
+  /**
+   * Fonts offered in the select. Unset uses the active catalog
+   * (`fontOptions` / generated `FONT_OPTIONS`). When set, this also becomes
+   * the catalog `loadPreference` accepts, including optional `family` / `mono`
+   * stacks.
+   */
+  fonts?: readonly FontDef[];
   /**
    * `panel` is the full editor. `swatches` swaps it for a hinged primary-only
    * fan hinged at the trigger — dock / toolbar chrome that has no room for a
@@ -63,11 +79,13 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   showPalette: true,
+  showFont: true,
   variant: "panel",
   swatches: undefined,
   direction: "auto",
   preview: true,
   primary: undefined,
+  fonts: undefined,
 });
 
 const emit = defineEmits<{
@@ -81,6 +99,40 @@ const emit = defineEmits<{
 // by the singleton), shared live with VdThemeSwitcher.
 const theme = useThemePreference();
 const prefs = theme.state;
+const fontList = computed(() => props.fonts ?? getFontOptions());
+
+const sameFontCatalog = (fonts: readonly FontDef[]): boolean => {
+  const current = getFontOptions();
+  return (
+    current.length === fonts.length &&
+    fonts.every((font, index) => {
+      const existing = current[index];
+      return (
+        existing?.key === font.key &&
+        existing.name === font.name &&
+        existing.family === font.family &&
+        existing.mono === font.mono
+      );
+    })
+  );
+};
+
+watch(
+  () => props.fonts,
+  (fonts) => {
+    // Inline :fonts="[...]" is a new array every render. Skip unchanged
+    // catalogs so setFont does not retrigger that render.
+    if (!fonts || sameFontCatalog(fonts)) return;
+    setFontOptions(fonts);
+    const defaultFont = getThemeDefaults().FONT;
+    const isValid =
+      prefs.font === "system" ||
+      prefs.font === defaultFont ||
+      fonts.some((font) => font.key === prefs.font);
+    theme.setFont(isValid ? prefs.font : (fonts[0]?.key ?? defaultFont));
+  },
+  { immediate: true },
+);
 
 const isOpen = ref(false);
 const panelRef = ref<HTMLElement | null>(null);
@@ -554,7 +606,7 @@ defineExpose({ open, close, toggle });
               </div>
             </div>
 
-            <div class="tc-section">
+            <div v-if="showFont && fontList.length > 0" class="tc-section">
               <label class="tc-label">Font Family</label>
               <select
                 class="tc-font-select"
@@ -562,7 +614,7 @@ defineExpose({ open, close, toggle });
                 :value="prefs.font"
                 @change="onFont"
               >
-                <option v-for="f in FONT_OPTIONS" :key="f.key" :value="f.key">
+                <option v-for="f in fontList" :key="f.key" :value="f.key">
                   {{ f.name }}
                 </option>
               </select>

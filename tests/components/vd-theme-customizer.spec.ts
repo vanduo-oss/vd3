@@ -2,7 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import VdThemeCustomizer from "../../src/components/VdThemeCustomizer.vue";
-import { PRIMARY_COLORS } from "../../src/composables/useTheme";
+import {
+  FONT_OPTIONS,
+  PRIMARY_COLORS,
+  setFontOptions,
+} from "../../src/composables/useTheme";
 
 /**
  * VdThemeCustomizer is the de-pinia'd promotion of the vd2 donor. It teleports
@@ -25,6 +29,9 @@ function cleanRoot(): void {
   const root = document.documentElement;
   ROOT_ATTRS.forEach((a) => root.removeAttribute(a));
   root.style.removeProperty("--vd-radius-scale");
+  root.style.removeProperty("--vd-font-family-sans");
+  root.style.removeProperty("--vd-font-family-base");
+  root.style.removeProperty("--vd-font-family-mono");
 }
 
 const q = (sel: string): HTMLElement | null =>
@@ -57,6 +64,7 @@ async function openViaTrigger(w: VueWrapper): Promise<void> {
 
 beforeEach(() => {
   window.localStorage.clear();
+  setFontOptions(FONT_OPTIONS);
   cleanRoot();
 });
 
@@ -65,6 +73,7 @@ afterEach(() => {
   wrapper = null;
   document.body.innerHTML = "";
   window.localStorage.clear();
+  setFontOptions(FONT_OPTIONS);
   cleanRoot();
   vi.restoreAllMocks();
 });
@@ -542,6 +551,48 @@ describe("VdThemeCustomizer swatches variant", () => {
     await nextTick();
 
     expect(fan()!.classList.contains("is-open")).toBe(true);
+  });
+});
+
+describe("VdThemeCustomizer custom fonts", () => {
+  const customFonts = [
+    { key: "system", name: "System Default" },
+    { key: "brand", name: "Brand", family: "Brand Sans, sans-serif" },
+  ];
+
+  it("renders the provided font list and applies its family stack", async () => {
+    mountCustomizer({ fonts: customFonts });
+    expect(document.querySelectorAll(".tc-font-select option")).toHaveLength(2);
+    const select = q(".tc-font-select") as HTMLSelectElement;
+    select.value = "brand";
+    select.dispatchEvent(new Event("change"));
+    await nextTick();
+    const root = document.documentElement;
+    expect(root.getAttribute("data-font")).toBe("brand");
+    expect(root.style.getPropertyValue("--vd-font-family-sans")).toBe(
+      "Brand Sans, sans-serif",
+    );
+  });
+
+  it("omits the font section when show-font is false", () => {
+    mountCustomizer({ showFont: false });
+    expect(q(".tc-font-select")).toBeNull();
+    expect(q(".tc-color-grid")).not.toBeNull();
+  });
+
+  it("clamps an active font key that is absent from a swapped fonts catalog", async () => {
+    const w = mountCustomizer({ fonts: customFonts });
+    const select = q(".tc-font-select") as HTMLSelectElement;
+    select.value = "brand";
+    select.dispatchEvent(new Event("change"));
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-font")).toBe("brand");
+
+    await w.setProps({
+      fonts: [{ key: "alt", name: "Alt Sans", family: "Alt Sans, sans-serif" }],
+    });
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-font")).toBe("alt");
   });
 });
 

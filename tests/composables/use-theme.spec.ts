@@ -2,14 +2,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULTS,
   DEFAULT_STORAGE_PREFIX,
+  FONT_OPTIONS,
   applyPreference,
   defaultPreference,
   defaultPrimary,
+  getFontOptions,
   getStoragePrefix,
   getThemeDefaults,
   isDefaultPrimary,
   loadPreference,
   persistPreference,
+  setFontOptions,
   setStoragePrefix,
   setThemeDefaults,
   type ThemePreference,
@@ -36,6 +39,9 @@ function cleanRoot(): void {
   const root = document.documentElement;
   ROOT_ATTRS.forEach((a) => root.removeAttribute(a));
   root.style.removeProperty("--vd-radius-scale");
+  root.style.removeProperty("--vd-font-family-sans");
+  root.style.removeProperty("--vd-font-family-base");
+  root.style.removeProperty("--vd-font-family-mono");
 }
 
 /** A full, valid preference using non-default values so nothing auto-re-derives. */
@@ -65,6 +71,7 @@ function stubMatchMedia(matches: boolean): void {
 beforeEach(() => {
   window.localStorage.clear();
   cleanRoot();
+  setFontOptions(FONT_OPTIONS);
 });
 
 afterEach(() => {
@@ -316,5 +323,97 @@ describe("useTheme storagePrefix", () => {
     expect(loadPreference()).toEqual(
       basePrefs({ theme: "dark", primary: "teal" }),
     );
+  });
+});
+
+describe("useTheme font catalog", () => {
+  const brand = {
+    key: "brand",
+    name: "Brand",
+    family: "Brand Sans, sans-serif",
+    mono: "Brand Mono, monospace",
+  };
+
+  it("applies a custom family and mono stack and round-trips the key", () => {
+    setFontOptions([brand]);
+    window.localStorage.setItem("vanduo-font-preference", "brand");
+    const pref = loadPreference();
+    expect(pref.font).toBe("brand");
+    applyPreference(pref);
+    persistPreference(pref);
+    expect(loadPreference().font).toBe("brand");
+    const root = document.documentElement;
+    expect(root.getAttribute("data-font")).toBe("brand");
+    expect(root.style.getPropertyValue("--vd-font-family-sans")).toBe(
+      "Brand Sans, sans-serif",
+    );
+    expect(root.style.getPropertyValue("--vd-font-family-base")).toBe(
+      "Brand Sans, sans-serif",
+    );
+    expect(root.style.getPropertyValue("--vd-font-family-mono")).toBe(
+      "Brand Mono, monospace",
+    );
+  });
+
+  it("clears inline stacks for catalog fonts so data-font rules apply", () => {
+    const root = document.documentElement;
+    root.style.setProperty("--vd-font-family-sans", "Brand Sans, sans-serif");
+    root.style.setProperty("--vd-font-family-base", "Brand Sans, sans-serif");
+    root.style.setProperty("--vd-font-family-mono", "Brand Mono, monospace");
+    applyPreference(basePrefs({ font: "lato" }));
+    expect(root.getAttribute("data-font")).toBe("lato");
+    expect(root.style.getPropertyValue("--vd-font-family-sans")).toBe("");
+    expect(root.style.getPropertyValue("--vd-font-family-base")).toBe("");
+    expect(root.style.getPropertyValue("--vd-font-family-mono")).toBe("");
+  });
+
+  it("restores the generated catalog when reset with FONT_OPTIONS", () => {
+    setFontOptions([brand]);
+    expect(setFontOptions(FONT_OPTIONS)).toBe(FONT_OPTIONS);
+    expect(getFontOptions()).toBe(FONT_OPTIONS);
+    window.localStorage.setItem("vanduo-font-preference", "brand");
+    expect(loadPreference().font).toBe(DEFAULTS.FONT);
+  });
+
+  it("keeps system and the configured default when they are not in the list", () => {
+    setThemeDefaults({ FONT: "nunito" });
+    setFontOptions([{ key: "brand", name: "Brand" }]);
+    window.localStorage.setItem("vanduo-font-preference", "nunito");
+    expect(loadPreference().font).toBe("nunito");
+    window.localStorage.setItem("vanduo-font-preference", "system");
+    expect(loadPreference().font).toBe("system");
+    window.localStorage.setItem("vanduo-font-preference", "lato");
+    expect(loadPreference().font).toBe("nunito");
+  });
+
+  it("rejects font entries without a key and name", () => {
+    expect(() => setFontOptions([{ key: "", name: "Nope" }])).toThrow(
+      /key and name/,
+    );
+    expect(() =>
+      setFontOptions([null as unknown as (typeof FONT_OPTIONS)[number]]),
+    ).toThrow(/key and name/);
+    expect(() =>
+      setFontOptions(null as unknown as typeof FONT_OPTIONS),
+    ).toThrow(/array of font/);
+    expect(() =>
+      setFontOptions([
+        {
+          key: "brand",
+          name: "Brand",
+          family: 1 as unknown as string,
+        },
+      ]),
+    ).toThrow(/family must be a string/);
+    expect(() =>
+      setFontOptions([
+        {
+          key: "brand",
+          name: "Brand",
+          mono: 1 as unknown as string,
+        },
+      ]),
+    ).toThrow(/mono must be a string/);
+    expect(getFontOptions()).toBe(FONT_OPTIONS);
   });
 });

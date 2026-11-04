@@ -5,7 +5,7 @@
  * switch blocks the theming contract depends on.
  */
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -71,6 +71,7 @@ describe("built CSS bundle — glass noise filter", () => {
       cwd: root,
       stdio: "pipe",
     });
+    rmSync(resolve(root, "dist", "fonts"), { recursive: true, force: true });
     execSync(`"${process.execPath}" scripts/build-css.mjs`, {
       cwd: root,
       stdio: "pipe",
@@ -119,6 +120,19 @@ describe("built CSS bundle — glass noise filter", () => {
     expect(has("@layer vd3{")).toBe(true);
     expect(has("[class*=vd-col-]")).toBe(true);
     expect(has("[class*=col-]")).toBe(false);
+  });
+
+  it("does not bundle self-hosted text fonts", () => {
+    expect(existsSync(resolve(root, "dist", "fonts"))).toBe(false);
+    for (const name of [
+      "vd3.css",
+      "vd3.min.css",
+      "vd3-core.css",
+      "vd3-core.min.css",
+    ]) {
+      const css = readFileSync(resolve(root, "dist", name), "utf8");
+      expect(css.includes("./fonts/"), `${name} references fonts/`).toBe(false);
+    }
   });
 
   it("bundles the dock tooltip variant with all four arrows", () => {

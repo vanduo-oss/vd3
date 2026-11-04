@@ -18,6 +18,26 @@ Use `@vanduo-oss/vd3/css/core` instead when bundled icon fonts are unnecessary.
 It includes component styles; it is not tokens-only. Import resolved token data
 from `@vanduo-oss/vd3/tokens.json` when tooling needs JSON.
 
+Text fonts are not bundled. Built-in `data-font` keys only switch a stack in
+the stylesheet; the host supplies `@font-face` rules, or uses `system`.
+Pass any faces the product offers before the theme model reads storage, and
+include the default font key in that list:
+
+```ts
+app.use(VanduoVue, {
+  fontOptions: [
+    { key: "system", name: "System Default" },
+    { key: "brand", name: "Brand Sans", family: '"Brand Sans", sans-serif' },
+  ],
+});
+```
+
+`family` and `mono` set `--vd-font-family-sans` / `--vd-font-family-base` and
+`--vd-font-family-mono` inline. Omit them to keep the `[data-font]` rules.
+`setFontOptions()` / `getFontOptions()` change the same catalog.
+`VdThemeCustomizer` accepts it with `:fonts` and can hide the control with
+`:show-font="false"`.
+
 ## Tasks
 
 - [Modal and toast](recipes/modal-toast.vue): complete component with local
@@ -65,8 +85,9 @@ Components are named imports; the plugin does not register them. See the
 `useAffix.ts`, `useClickOutside.ts`, `useDatepicker.ts`, `useDocSearch.ts`, `useGlobalSearch.ts`, `useDockBrandSpin.ts`, `useDockOrientation.ts`, `useDraggable.ts`, `useDropdown.ts`, `useExpandingCards.ts`, `useFlow.ts`, `useFocusTrap.ts`, `useGlass.ts`, `useGrid.ts`, `useImageBox.ts`, `useKeyboardNav.ts`, `useLazyLoad.ts`, `useLiquidGradient.ts`, `useMorph.ts`, `useMorphBadges.ts`, `useNavbarGlassScroll.ts`, `useParallax.ts`, `usePopover.ts`, `useRipple.ts`, `useScrollspy.ts`, `useSearch.ts`, `useSidenav.ts`, `useSpotlight.ts`, `useStepper.ts`, `useSuggest.ts`, `useTableState.ts`, `useTabs.ts`, `useTheme.ts`, `useThemeBridge.ts`, `useTimeline.ts`, `useTimepicker.ts`, `useToast.ts`, `useTooltips.ts`, `useValidate.ts`, `useWaypoint.ts`.
 
 **Theme functions:** `useThemePreference()`, `useThemeBridge()`, `setThemeDefaults`,
-`getThemeDefaults`, `setStoragePrefix`, `getStoragePrefix`, `loadPreference`,
-`applyPreference`, `persistPreference`. The module named useTheme does not export a same-named callable.
+`getThemeDefaults`, `setFontOptions`, `getFontOptions`, `setStoragePrefix`,
+`getStoragePrefix`, `loadPreference`, `applyPreference`, `persistPreference`.
+The module named useTheme does not export a same-named callable.
 
 Theme attributes on `<html>` are `data-palette`, `data-primary`, `data-neutral`,
 `data-radius`, `data-theme`, and `data-font`. They resolve to `--vd-*` properties.

@@ -110,7 +110,21 @@ export function useWaypoint(root: Ref<HTMLElement | null>): void {
           const id = (link.getAttribute("href") || "").slice(1);
           const section = id ? document.getElementById(id) : null;
           if (section) {
-            section.scrollIntoView({ behavior: "smooth" });
+            const behavior: ScrollBehavior =
+              typeof window.matchMedia === "function" &&
+              window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth";
+            if (scrollRoot) {
+              const delta =
+                section.getBoundingClientRect().top -
+                scrollRoot.getBoundingClientRect().top +
+                scrollRoot.scrollTop -
+                offset;
+              scrollRoot.scrollTo({ top: Math.max(0, delta), behavior });
+            } else {
+              section.scrollIntoView({ behavior });
+            }
             setActive(id);
           }
         };
