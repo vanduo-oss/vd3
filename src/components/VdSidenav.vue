@@ -44,8 +44,14 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (typeof window === "undefined") return;
-  window.removeEventListener("keydown", onKeydown);
+  if (typeof window !== "undefined") {
+    window.removeEventListener("keydown", onKeydown);
+  }
+  // Release the body scroll lock — a drawer unmounted while open must not
+  // leave the page permanently unscrollable.
+  if (typeof document !== "undefined") {
+    document.body.style.overflow = "";
+  }
 });
 
 watch(

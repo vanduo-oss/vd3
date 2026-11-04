@@ -33,6 +33,10 @@
 }
 
 /* Sidebar variant: left border indicator */
+.vd-waypoint-nav.vd-waypoint-border a {
+  border-radius: var(--vd-btn-border-radius);
+}
+
 .vd-sidenav [data-vd-waypoint-nav] a.is-active,
 .vd-waypoint-nav.vd-waypoint-border a.is-active {
   border-left: var(--vd-waypoint-active-border-width) solid var(--vd-waypoint-active-color);

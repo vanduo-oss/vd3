@@ -153,7 +153,6 @@ function positionAnchoredPopup(
 ): void {
   const padding = 8;
   const rect = anchor.getBoundingClientRect();
-  popup.style.minWidth = Math.max(rect.width, 0) + "px";
 
   let top = rect.bottom + gap;
   let left = rect.left;

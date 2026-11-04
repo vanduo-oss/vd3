@@ -16,6 +16,40 @@ tracks the package only — never docs-site content.
   `family` and `mono` to apply those stacks inline; omit them to keep the
   stylesheet `[data-font]` rules. `system` and the configured default font
   stay valid when they are absent from the catalog.
+- **Sidenav links restyled.** `.vd-sidenav-link` gains an icon/text `gap`, a
+  fixed 1.25rem icon box for `> i` / `> .vd-icon`, weight 500 (600 when the
+  item is `.active`), and a rounded `--vd-btn-border-radius` highlight;
+  `.vd-sidenav-nav` items are spaced with a `gap`.
+- **Bordered waypoint links are rounded.** `.vd-waypoint-nav.vd-waypoint-border a`
+  uses `--vd-btn-border-radius`, so the active highlight follows the global
+  radius.
+
+### Fixed
+
+- **Datepicker popup sizing and weekday alignment** — `useDatepicker` no longer
+  stretches `.vd-datepicker-popup` to the input width, and `datepicker.css`
+  sizes `.vd-datepicker-weekdays` and `.vd-datepicker-row` on 7 equal
+  `--vd-dp-cell-size` tracks so weekday headers align directly over day columns.
+- **Offcanvas & Sidenav body horizontal padding** — `.vd-sidenav-body` now
+  applies `--vd-sidenav-padding-x` horizontally, so prose and custom content no
+  longer touch the panel edges. A direct `.vd-sidenav-nav` is inset to the
+  item padding so its rounded highlights align with the header, and a direct
+  `.vd-sidenav-section` stays full-bleed.
+- **Waypoint container scrolling** — clicking a link in `useWaypoint` now
+  scrolls the configured `data-vd-waypoint-nav` overflow container instead of
+  calling `scrollIntoView()` on the document, and honours
+  `prefers-reduced-motion`.
+- **`VdSidenav` scroll lock on unmount** — unmounting the drawer while it is
+  open now releases the body scroll lock, matching `VdOffcanvas`.
+- **`useSidenav` trigger state** — `[data-sidenav-toggle]` triggers get
+  `aria-controls` and an `aria-expanded` that stays in sync on every open and
+  close path (toggle, close button, backdrop, Escape).
+- **Datepicker range tint** — `.vd-datepicker-day.is-in-range` uses
+  `--vd-color-primary-alpha-10` instead of a hardcoded blue.
+- **Outlined badge contrast in dark mode** — `.vd-badge-outlined` (and the
+  `.vd-badge-outline` alias) now sets `color: var(--vd-text-secondary)` and
+  `border-color: var(--vd-border-color)` so un-tinted outlined badges remain
+  legible on dark surfaces instead of inheriting `--vd-text-on-status` (black).
 
 ## 1.8.1 — 2026-11-02
 

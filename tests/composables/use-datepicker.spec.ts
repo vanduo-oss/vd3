@@ -1,7 +1,12 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { mount, type VueWrapper } from "@vue/test-utils";
 import { useDatepicker } from "../../src/composables/useDatepicker";
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 // useDatepicker builds a fixed-position popup appended to document.body and
 // uses requestAnimationFrame for positioning/focus. rAF is stubbed to run
@@ -433,6 +438,44 @@ describe("useDatepicker", () => {
     fireFocus(input);
     expect(document.body.querySelectorAll(".vd-datepicker-popup")).toHaveLength(
       0,
+    );
+  });
+
+  it("keeps the popup calendar-sized instead of stretching to a wide input", () => {
+    const wrapper = mountDp({ value: "2026-07-15" });
+    const input = getInput(wrapper);
+    vi.spyOn(input, "getBoundingClientRect").mockReturnValue({
+      top: 100,
+      bottom: 140,
+      left: 200,
+      right: 800,
+      width: 600,
+      height: 40,
+      x: 200,
+      y: 100,
+      toJSON: () => ({}),
+    });
+
+    fireFocus(input);
+    const popup = getPopup();
+    expect(popup.style.minWidth).toBe("");
+    expect(popup.style.left).toBe("200px");
+  });
+
+  it("aligns weekday headers and day rows on 7 equal --vd-dp-cell-size tracks", () => {
+    const css = readFileSync(
+      resolve(repoRoot, "css/components/datepicker.css"),
+      "utf8",
+    );
+    expect(css).toContain("--vd-dp-popup-min-width:");
+    expect(css).toContain(
+      "min-width: max(17rem, var(--vd-dp-popup-min-width))",
+    );
+    expect(css).toMatch(
+      /\.vd-datepicker-weekdays\s*\{[^}]*grid-template-columns:\s*repeat\(7,\s*var\(--vd-dp-cell-size\)\)/,
+    );
+    expect(css).toMatch(
+      /\.vd-datepicker-days,\s*\.vd-datepicker-row\s*\{[^}]*grid-template-columns:\s*repeat\(7,\s*var\(--vd-dp-cell-size\)\)/,
     );
   });
 });

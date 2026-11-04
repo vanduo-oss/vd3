@@ -60,11 +60,13 @@ function mountHost(html: string): { wrapper: VueWrapper } {
 }
 
 const originalScrollIntoView = Element.prototype.scrollIntoView;
+const originalScrollTo = Element.prototype.scrollTo;
 
 beforeEach(() => {
   MockIntersectionObserver.instances = [];
   vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
   Element.prototype.scrollIntoView = vi.fn();
+  Element.prototype.scrollTo = vi.fn();
 });
 
 afterEach(() => {
@@ -78,6 +80,7 @@ afterEach(() => {
   mounted.length = 0;
   vi.unstubAllGlobals();
   Element.prototype.scrollIntoView = originalScrollIntoView;
+  Element.prototype.scrollTo = originalScrollTo;
 });
 
 // A nav plus three real sections the links point at.
@@ -178,6 +181,69 @@ describe("useWaypoint", () => {
     expect(ev.defaultPrevented).toBe(true);
     expect(scrollSpy).toHaveBeenCalledWith({ behavior: "smooth" });
     expect(linkFor(wrapper, "c").classList.contains("is-active")).toBe(true);
+  });
+
+  it("scrolls the resolved container root on link click instead of calling scrollIntoView", () => {
+    const { wrapper } = mountHost(
+      `<div id="box">
+        <section id="a">A</section>
+        <section id="b">B</section>
+        <section id="c">C</section>
+      </div>
+      <nav data-vd-waypoint-nav="#box">
+        <a href="#a">A</a>
+        <a href="#b">B</a>
+        <a href="#c">C</a>
+      </nav>`,
+    );
+    const box = wrapper.get("#box").element;
+    const section = wrapper.get("#c").element;
+    vi.spyOn(box, "getBoundingClientRect").mockReturnValue({
+      top: 100,
+      bottom: 380,
+      left: 0,
+      right: 400,
+      width: 400,
+      height: 280,
+      x: 0,
+      y: 100,
+      toJSON: () => ({}),
+    });
+    vi.spyOn(section, "getBoundingClientRect").mockReturnValue({
+      top: 320,
+      bottom: 480,
+      left: 0,
+      right: 400,
+      width: 400,
+      height: 160,
+      x: 0,
+      y: 320,
+      toJSON: () => ({}),
+    });
+
+    const ev = new MouseEvent("click", { bubbles: true, cancelable: true });
+    linkFor(wrapper, "c").dispatchEvent(ev);
+
+    expect(ev.defaultPrevented).toBe(true);
+    expect(box.scrollTo).toHaveBeenCalledWith({
+      top: 212,
+      behavior: "smooth",
+    });
+    expect(section.scrollIntoView).not.toHaveBeenCalled();
+    expect(linkFor(wrapper, "c").classList.contains("is-active")).toBe(true);
+  });
+
+  it("uses instant scrolling when prefers-reduced-motion is enabled", () => {
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
+    const { wrapper } = mountHost(fixture(`data-vd-waypoint-nav=""`));
+    const section = wrapper.get("#c").element;
+    const scrollSpy = section.scrollIntoView as ReturnType<typeof vi.fn>;
+
+    linkFor(wrapper, "c").dispatchEvent(
+      new MouseEvent("click", { bubbles: true, cancelable: true }),
+    );
+
+    expect(scrollSpy).toHaveBeenCalledWith({ behavior: "auto" });
   });
 
   it("skips a nav with no in-page anchor links (no observer created)", () => {

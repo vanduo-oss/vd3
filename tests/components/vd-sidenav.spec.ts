@@ -160,4 +160,14 @@ describe("VdSidenav", () => {
     await w.setProps({ modelValue: false });
     expect(document.body.style.overflow).toBe("");
   });
+
+  it("resets the body scroll lock when unmounted while open", async () => {
+    const w = mountSidenav({ modelValue: false });
+    await w.setProps({ modelValue: true });
+    expect(document.body.style.overflow).toBe("hidden");
+
+    w.unmount();
+    wrapper = undefined;
+    expect(document.body.style.overflow).toBe("");
+  });
 });
