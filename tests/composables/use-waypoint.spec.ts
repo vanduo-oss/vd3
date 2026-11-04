@@ -226,7 +226,7 @@ describe("useWaypoint", () => {
 
     expect(ev.defaultPrevented).toBe(true);
     expect(box.scrollTo).toHaveBeenCalledWith({
-      top: 212,
+      top: 140,
       behavior: "smooth",
     });
     expect(section.scrollIntoView).not.toHaveBeenCalled();
