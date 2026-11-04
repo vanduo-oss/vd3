@@ -579,6 +579,21 @@ describe("VdThemeCustomizer custom fonts", () => {
     expect(q(".tc-font-select")).toBeNull();
     expect(q(".tc-color-grid")).not.toBeNull();
   });
+
+  it("clamps an active font key that is absent from a swapped fonts catalog", async () => {
+    const w = mountCustomizer({ fonts: customFonts });
+    const select = q(".tc-font-select") as HTMLSelectElement;
+    select.value = "brand";
+    select.dispatchEvent(new Event("change"));
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-font")).toBe("brand");
+
+    await w.setProps({
+      fonts: [{ key: "alt", name: "Alt Sans", family: "Alt Sans, sans-serif" }],
+    });
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-font")).toBe("alt");
+  });
 });
 
 describe("fan selection persistence boundary", () => {

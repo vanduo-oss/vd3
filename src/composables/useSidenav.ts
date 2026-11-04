@@ -109,10 +109,16 @@ export function useSidenav(root: Ref<HTMLElement | null>): void {
     scope
       .querySelectorAll<HTMLElement>("[data-sidenav-toggle]")
       .forEach((btn) => {
-        const targetSelector = btn.dataset.sidenavToggle;
-        const target = targetSelector
-          ? document.querySelector<HTMLElement>(targetSelector)
-          : null;
+        const resolveTarget = (sel: string | undefined): HTMLElement | null => {
+          if (!sel) return null;
+          try {
+            return document.querySelector<HTMLElement>(sel);
+          } catch {
+            return null;
+          }
+        };
+
+        const target = resolveTarget(btn.dataset.sidenavToggle);
         if (target && overlayFor.has(target)) {
           if (target.id) btn.setAttribute("aria-controls", target.id);
           btn.setAttribute(
@@ -124,9 +130,7 @@ export function useSidenav(root: Ref<HTMLElement | null>): void {
 
         const onClick = (e: Event): void => {
           e.preventDefault();
-          const targetId = btn.dataset.sidenavToggle;
-          if (!targetId) return;
-          const el = document.querySelector<HTMLElement>(targetId);
+          const el = resolveTarget(btn.dataset.sidenavToggle);
           const overlay = el ? overlayFor.get(el) : undefined;
           if (el && overlay) toggle(el, overlay);
         };

@@ -116,6 +116,11 @@ export function useWaypoint(root: Ref<HTMLElement | null>): void {
                 ? "auto"
                 : "smooth";
             if (scrollRoot) {
+              // Land the target near the top of the scroll container (8px gap)
+              // rather than subtracting the full observer `offset`: with
+              // `threshold: 0` and `rootMargin: "-${offset}px ..."`, landing at
+              // `-offset` leaves the previous section's bottom edge touching
+              // the observer band boundary so the previous section stays active.
               const landing = Math.min(offset, 8);
               const delta =
                 section.getBoundingClientRect().top -

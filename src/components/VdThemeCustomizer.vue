@@ -4,6 +4,7 @@ import { useClickOutside } from "../composables/useClickOutside";
 import {
   useThemePreference,
   getFontOptions,
+  getThemeDefaults,
   setFontOptions,
   NEUTRAL_COLORS,
   PALETTE_OPTIONS,
@@ -123,7 +124,12 @@ watch(
     // catalogs so setFont does not retrigger that render.
     if (!fonts || sameFontCatalog(fonts)) return;
     setFontOptions(fonts);
-    theme.setFont(prefs.font);
+    const defaultFont = getThemeDefaults().FONT;
+    const isValid =
+      prefs.font === "system" ||
+      prefs.font === defaultFont ||
+      fonts.some((font) => font.key === prefs.font);
+    theme.setFont(isValid ? prefs.font : (fonts[0]?.key ?? defaultFont));
   },
   { immediate: true },
 );

@@ -170,4 +170,13 @@ describe("VdSidenav", () => {
     wrapper = undefined;
     expect(document.body.style.overflow).toBe("");
   });
+
+  it("does not clear a body scroll lock held by another drawer when unmounted while closed", () => {
+    const w = mountSidenav({ modelValue: false });
+    document.body.style.overflow = "hidden";
+
+    w.unmount();
+    wrapper = undefined;
+    expect(document.body.style.overflow).toBe("hidden");
+  });
 });

@@ -135,6 +135,22 @@ describe("useSidenav", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 
+  it("skips a trigger with an invalid CSS selector without aborting remaining triggers", () => {
+    const { wrapper } = mountHost(
+      `<button id="bad" data-sidenav-toggle="##invalid">Bad</button>
+       <button id="good" data-sidenav-toggle="#drawer">Good</button>
+       <nav id="drawer" class="vd-sidenav"></nav>`,
+      useSidenav,
+    );
+    const bad = wrapper.get("#bad").element;
+    const good = wrapper.get("#good").element;
+
+    expect(() => click(bad)).not.toThrow();
+    expect(good.getAttribute("aria-expanded")).toBe("false");
+    click(good);
+    expect(good.getAttribute("aria-expanded")).toBe("true");
+  });
+
   it("closes when the close button is clicked", () => {
     const { wrapper } = mountHost(html, useSidenav);
     const nav = wrapper.get("#drawer").element;

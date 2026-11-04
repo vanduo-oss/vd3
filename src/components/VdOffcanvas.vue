@@ -27,6 +27,7 @@ const { activate, deactivate } = useFocusTrap(panel);
 
 // The element focused before the panel opened, restored on close.
 let previouslyFocused: HTMLElement | null = null;
+let bodyLocked = false;
 
 const close = (): void => {
   emit("update:modelValue", false);
@@ -48,16 +49,21 @@ const onKeydown = (event: KeyboardEvent): void => {
 onMounted(() => {
   if (typeof window === "undefined") return;
   window.addEventListener("keydown", onKeydown);
+  if (props.modelValue && typeof document !== "undefined") {
+    document.body.style.overflow = "hidden";
+    bodyLocked = true;
+  }
 });
 
 onBeforeUnmount(() => {
   if (typeof window !== "undefined") {
     window.removeEventListener("keydown", onKeydown);
   }
-  // Release the body scroll lock — a panel unmounted while open must not
-  // leave the page permanently unscrollable.
-  if (typeof document !== "undefined") {
+  // Release the body scroll lock only when this panel acquired it — unmounting
+  // a closed panel must not release a lock held by another open drawer.
+  if (bodyLocked && typeof document !== "undefined") {
     document.body.style.overflow = "";
+    bodyLocked = false;
   }
 });
 
@@ -66,6 +72,7 @@ watch(
   async (open) => {
     if (typeof document !== "undefined") {
       document.body.style.overflow = open ? "hidden" : "";
+      bodyLocked = open;
     }
     if (typeof window === "undefined") return;
     if (open) {
