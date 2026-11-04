@@ -62,6 +62,62 @@ export { DEFAULTS, tokens } from "../theme/generated/tokens.data";
 let activeDefaults: ThemeDefaults = { ...CORE_DEFAULTS };
 
 /**
+ * Font catalog the theme layer accepts. Starts as the generated
+ * `FONT_OPTIONS` and can be replaced at bootstrap (`fontOptions`) or by
+ * `VdThemeCustomizer`'s `fonts` prop. `family` / `mono` are optional CSS
+ * stacks applied inline; keys without them keep the `[data-font]` rules.
+ */
+let activeFontOptions: readonly FontDef[] = FONT_OPTIONS;
+
+/** Font catalog currently accepted by `loadPreference`. */
+export const getFontOptions = (): readonly FontDef[] => activeFontOptions;
+
+/**
+ * Replace the font catalog. Pass `FONT_OPTIONS` to restore the generated list.
+ * Call before the theme model first reads storage. Entries need a non-empty
+ * `key` and `name`; `family` and `mono` are optional CSS font stacks.
+ */
+export const setFontOptions = (
+  options: readonly FontDef[],
+): readonly FontDef[] => {
+  if (options === FONT_OPTIONS) {
+    activeFontOptions = FONT_OPTIONS;
+    return activeFontOptions;
+  }
+  if (!Array.isArray(options)) {
+    throw new Error("setFontOptions requires an array of font definitions");
+  }
+  const normalized: FontDef[] = [];
+  for (const font of options) {
+    if (
+      !font ||
+      typeof font.key !== "string" ||
+      font.key.trim() === "" ||
+      typeof font.name !== "string" ||
+      font.name.trim() === ""
+    ) {
+      throw new Error(
+        "setFontOptions entries require non-empty string key and name",
+      );
+    }
+    if (font.family !== undefined && typeof font.family !== "string") {
+      throw new Error("setFontOptions family must be a string");
+    }
+    if (font.mono !== undefined && typeof font.mono !== "string") {
+      throw new Error("setFontOptions mono must be a string");
+    }
+    normalized.push({
+      key: font.key,
+      name: font.name,
+      ...(font.family !== undefined ? { family: font.family } : {}),
+      ...(font.mono !== undefined ? { mono: font.mono } : {}),
+    });
+  }
+  activeFontOptions = normalized;
+  return activeFontOptions;
+};
+
+/**
  * The defaults currently in effect (core baseline merged with overrides).
  * Returns a shallow copy so `setThemeDefaults()` stays the only mutation path —
  * callers can't accidentally corrupt the shared state via the returned object.
@@ -149,9 +205,30 @@ const NEUTRAL_KEYS = NEUTRAL_COLORS.map((c) => c.key);
 const isNeutralColor = (value: string): boolean =>
   (NEUTRAL_KEYS as readonly string[]).includes(value);
 
-const FONT_KEYS = FONT_OPTIONS.map((f) => f.key);
 const isFontOption = (value: string): boolean =>
-  (FONT_KEYS as readonly string[]).includes(value);
+  value === "system" ||
+  value === activeDefaults.FONT ||
+  activeFontOptions.some((font) => font.key === value);
+
+/** Apply `data-font` and any inline stacks from the active catalog. */
+const applyFontPreference = (root: HTMLElement, font: string): void => {
+  root.setAttribute("data-font", font);
+  const match = activeFontOptions.find((fontOption) => fontOption.key === font);
+  const family = match?.family?.trim();
+  const mono = match?.mono?.trim();
+  if (family) {
+    root.style.setProperty("--vd-font-family-sans", family);
+    root.style.setProperty("--vd-font-family-base", family);
+  } else {
+    root.style.removeProperty("--vd-font-family-sans");
+    root.style.removeProperty("--vd-font-family-base");
+  }
+  if (mono) {
+    root.style.setProperty("--vd-font-family-mono", mono);
+  } else {
+    root.style.removeProperty("--vd-font-family-mono");
+  }
+};
 
 export interface ThemePreference {
   palette: Palette;
@@ -271,12 +348,7 @@ export const applyPreference = (
   root.setAttribute("data-neutral", prefs.neutral);
   root.setAttribute("data-radius", prefs.radius);
   root.style.setProperty("--vd-radius-scale", prefs.radius);
-
-  if (prefs.font === "system") {
-    root.setAttribute("data-font", "system");
-  } else {
-    root.setAttribute("data-font", prefs.font);
-  }
+  applyFontPreference(root, prefs.font);
 
   if (prefs.theme === "system") {
     root.removeAttribute("data-theme");

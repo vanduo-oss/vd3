@@ -6,8 +6,9 @@
  * for the dist layout) and emits via lightningcss:
  *   dist/vd3.css / dist/vd3.min.css            full bundle        (+ .map)
  *   dist/vd3-core.css / dist/vd3-core.min.css  no-icons variant   (+ .map)
- * and copies fonts/ plus the Phosphor icon weights the bundle references
+ * and copies the Phosphor icon weights the bundle references
  * (regular + fill, per css/icons/icons.css) into dist/.
+ * Text fonts are not bundled; host apps supply @font-face rules.
  *
  * Runs after build-tokens.mjs (the entry imports css/core/generated/*) and
  * before `vite build` — see openspec/changes/vd3-token-css-foundation/design.md.
@@ -80,15 +81,9 @@ function getReferencedIconWeights() {
   return weights.size ? weights : null;
 }
 
-/** Copy fonts and the referenced icon weights (plus LICENSE) to dist. */
+/** Copy the referenced icon weights (plus LICENSE) to dist. */
 function copyAssets() {
   console.log("Copying assets...");
-
-  const fontsDir = resolve(rootDir, "fonts");
-  if (existsSync(fontsDir)) {
-    copyDir(fontsDir, resolve(distDir, "fonts"));
-    console.log("  fonts/");
-  }
 
   const phosphorSrc = resolve(rootDir, "icons/phosphor");
   if (existsSync(phosphorSrc)) {
@@ -149,7 +144,7 @@ function resolveCSSImports(filePath, basePath, entryDir, sourceOverride) {
     sourceOverride != null ? sourceOverride : readFileSync(filePath, "utf8");
 
   // Rewrite non-import url() references to be relative to the entry CSS
-  // directory. This ensures font/icon asset paths stay valid after CSS
+  // directory. This ensures icon asset paths stay valid after CSS
   // files from different directory depths are inlined together.
   if (basePath !== entryDir) {
     // Temporarily replace @import lines with placeholders so they are
@@ -160,7 +155,7 @@ function resolveCSSImports(filePath, basePath, entryDir, sourceOverride) {
       return `__IMPORT_PLACEHOLDER_${imports.length - 1}__`;
     });
 
-    // Rewrite remaining url() references (fonts, icons, images, etc.)
+    // Rewrite remaining url() references (icons, images, etc.)
     css = css.replace(
       /url\(\s*['"]?(?!data:|https?:|#)([^'")\s]+)['"]?\s*\)/g,
       (match, urlPath) => {
@@ -202,9 +197,6 @@ function resolveCSSImports(filePath, basePath, entryDir, sourceOverride) {
 
 /** Rewrite asset paths in CSS for the dist folder structure. */
 function rewriteAssetPaths(css) {
-  // Rewrite font paths: any number of ../ followed by fonts/ -> ./fonts/
-  css = css.replace(/url\(\s*['"]?(?:\.\.\/)+fonts\//g, "url('./fonts/");
-
   // Rewrite icon paths: any number of ../ followed by icons/ -> ./icons/
   css = css.replace(/url\(\s*['"]?(?:\.\.\/)+icons\//g, "url('./icons/");
 

@@ -4,8 +4,11 @@ import VanduoVue, * as pluginModule from "../src/plugin";
 import {
   DEFAULTS,
   DEFAULT_STORAGE_PREFIX,
+  FONT_OPTIONS,
+  getFontOptions,
   getStoragePrefix,
   getThemeDefaults,
+  setFontOptions,
   setStoragePrefix,
   setThemePersistence,
   useThemePreference,
@@ -18,10 +21,16 @@ import {
  * those singletons to the generated baseline afterwards.
  */
 afterEach(() => {
+  setFontOptions(FONT_OPTIONS);
   setThemeDefaults({ ...DEFAULTS });
   setStoragePrefix(DEFAULT_STORAGE_PREFIX);
   setThemePersistence(true);
   localStorage.clear();
+  const root = document.documentElement;
+  root.removeAttribute("data-font");
+  root.style.removeProperty("--vd-font-family-sans");
+  root.style.removeProperty("--vd-font-family-base");
+  root.style.removeProperty("--vd-font-family-mono");
 });
 
 describe("VanduoVue plugin", () => {
@@ -70,6 +79,40 @@ describe("VanduoVue plugin", () => {
     expect(
       (VanduoVue as unknown as Record<string, unknown>).loadVanduoRuntime,
     ).toBeUndefined();
+  });
+
+  it("installs fontOptions and applies a custom family stack", () => {
+    const app = createApp({ render: () => null });
+    app.use(VanduoVue, {
+      fontOptions: [
+        {
+          key: "brand",
+          name: "Brand",
+          family: "Brand Sans, sans-serif",
+          mono: "Brand Mono, monospace",
+        },
+      ],
+    });
+    expect(getFontOptions()).toEqual([
+      {
+        key: "brand",
+        name: "Brand",
+        family: "Brand Sans, sans-serif",
+        mono: "Brand Mono, monospace",
+      },
+    ]);
+    useThemePreference().setFont("brand");
+    const root = document.documentElement;
+    expect(root.getAttribute("data-font")).toBe("brand");
+    expect(root.style.getPropertyValue("--vd-font-family-sans")).toBe(
+      "Brand Sans, sans-serif",
+    );
+    expect(root.style.getPropertyValue("--vd-font-family-base")).toBe(
+      "Brand Sans, sans-serif",
+    );
+    expect(root.style.getPropertyValue("--vd-font-family-mono")).toBe(
+      "Brand Mono, monospace",
+    );
   });
 
   it("exposes VanduoVue as both the named and default export", () => {

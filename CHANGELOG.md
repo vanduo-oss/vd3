@@ -3,6 +3,20 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.8.2 — 2026-11-04
+
+### Changed
+
+- **Text fonts are no longer bundled.** Removed `fonts/` and `css/core/fonts.css`
+  from the package and from `dist/`. Built-in `data-font` keys still switch
+  `--vd-font-family-*` stacks; host apps self-host the faces, or use `system`.
+- **Custom font catalogs.** `app.use(VanduoVue, { fontOptions })`,
+  `setFontOptions()` / `getFontOptions()`, and `VdThemeCustomizer` props
+  `fonts` and `showFont` let an app offer any faces. A font entry may set
+  `family` and `mono` to apply those stacks inline; omit them to keep the
+  stylesheet `[data-font]` rules. `system` and the configured default font
+  stay valid when they are absent from the catalog.
+
 ## 1.8.1 — 2026-11-02
 
 ### Added

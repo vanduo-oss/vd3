@@ -9,9 +9,11 @@ Authored CSS tree, lightningcss bundles, and class-level distribution contract f
 
 The repo MUST carry the authored CSS tree from the old framework repo under
 `css/`, preserving every partial's path — and its content except where
-explicitly noted — with four deliberate exceptions: `core/colors-fib-base.css`
+explicitly noted — with five deliberate exceptions: `core/colors-fib-base.css`
 and `core/colors-palette.css` are not carried (they are generated into
-`css/core/generated/`); `icons/icons-all.css` is not carried (vd3 ships only
+`css/core/generated/`); `core/fonts.css` is not carried (text fonts are
+host-supplied; `core/typography.css` keeps the `data-font` stacks);
+`icons/icons-all.css` is not carried (vd3 ships only
 the default icon weights); and `effects/glass.css` is carried at its original
 path but with its `.vd-glass::after` noise `data:image/svg+xml` URI
 restructured — per the `glass-noise-fragment-integrity` requirement — so
@@ -19,8 +21,9 @@ lightningcss's `url()` rebasing cannot corrupt the SVG's internal filter
 reference in the built bundle (the rendered texture is unchanged; only the
 authored encoding differs from the donor). The entry SHALL be `css/vd3.css`
 (renamed from `vanduo.css`), identical to the old entry except that the two
-generated-color `@import`s point at `core/generated/`; every other `@import`
-MUST keep its original path and order so the cascade is unchanged.
+generated-color `@import`s point at `core/generated/` and `core/fonts.css` is
+not imported; every other `@import` MUST keep its original path and order so
+the cascade is unchanged.
 
 #### Scenario: entry import order preserved
 
@@ -28,7 +31,7 @@ MUST keep its original path and order so the cascade is unchanged.
 - **WHEN** their `@import` lists are compared
 - **THEN** they are identical except that `core/colors-fib-base.css` and
   `core/colors-palette.css` read `core/generated/colors-fib-base.css` and
-  `core/generated/colors-palette.css`
+  `core/generated/colors-palette.css`, and `core/fonts.css` is not imported
 
 #### Scenario: authored partials lint clean
 
@@ -64,8 +67,9 @@ bundle. These files back the package's `./css` and `./css/core` exports.
 
 ### Requirement: bundled-assets
 
-The CSS build MUST copy `fonts/` (all font families carried from the old
-framework repo) and the Phosphor icon weights referenced by the bundled
+The CSS build MUST NOT copy a `fonts/` directory into `dist/` and MUST NOT
+emit `url()` references to `./fonts/`. Text faces are host-supplied.
+The build MUST copy the Phosphor icon weights referenced by the bundled
 icon entry — regular and fill, plus the Phosphor `LICENSE` file — into
 `dist/` at paths matching the rewritten `url()` references, so
 `dist/vd3.min.css` resolves every non-data `url()` relative to `dist/`.
@@ -74,10 +78,16 @@ package.
 
 #### Scenario: asset urls resolve from dist
 
-- **GIVEN** the emitted `dist/vd3.min.css`
+- **GIVEN** the emitted `dist/vd3.min.css` and `dist/vd3-core.min.css`
 - **WHEN** every non-data `url()` reference is resolved relative to `dist/`
-- **THEN** each referenced file exists (fonts under `dist/fonts/…`, icons
-  under `dist/icons/phosphor/{regular,fill}/…`)
+- **THEN** none reference `fonts/`, and each referenced icon file exists
+  under `dist/icons/phosphor/{regular,fill}/…`
+
+#### Scenario: text fonts are not packaged
+
+- **GIVEN** a completed CSS build
+- **WHEN** `dist/` is listed
+- **THEN** `dist/fonts/` does not exist
 
 ### Requirement: icon-weight-policy
 
@@ -103,7 +113,7 @@ artifacts emitted before it. After a full build, `dist/` MUST contain every
 artifact declared in the exports map: `index.js`, `index.cjs`, `index.d.ts`,
 `highlight.js`, `highlight.cjs`, `highlight.d.ts`, `vd3.min.css`,
 `vd3-core.min.css`, and `tokens.json` (plus `tokens.js`,
-`tokens.d.ts`, dev CSS variants, maps, fonts, and icons).
+`tokens.d.ts`, dev CSS variants, maps, and icons).
 
 #### Scenario: full build produces every declared export target
 
