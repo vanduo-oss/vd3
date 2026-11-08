@@ -39,7 +39,7 @@ exported `VD3_VERSION` constant in `src/index.ts` MUST equal the `version` field
 - **GIVEN** the release-ready `package.json`
 - **WHEN** its publish-relevant fields are inspected
 - **THEN** `publishConfig.access` is `"public"`, and
-  `engines.node` (`>=20.19.0`) does not exclude Node 20.19+/22/24 consumers
+  `engines.node` (`>=20.19.0`) does not exclude Node 20.19+/22/24/26 consumers
 
 #### Scenario: version constant is synced
 
@@ -124,7 +124,7 @@ imports.
 
 The repo MUST include `.github/workflows/ci.yml` with SHA-pinned actions, a
 least-privilege token (`permissions: contents: read`), markdown
-paths-ignore, pnpm 10.28.2 and node 24 (with `cache: pnpm` on the node setup),
+paths-ignore, pnpm 10.28.2 and node 26 (with `cache: pnpm` on the node setup),
 running in order: install (`--frozen-lockfile`), `pnpm audit
 --audit-level=moderate` (security `overrides` live in
 `pnpm-workspace.yaml`), build:tokens (bootstraps the generated theme-data

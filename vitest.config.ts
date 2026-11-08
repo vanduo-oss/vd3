@@ -18,10 +18,22 @@ const fullyCovered = [
   "src/composables/useDockOrientation.ts",
 ];
 
+function vitestExecArgv(): string[] {
+  const [major = 0, minor = 0] = process.versions.node.split(".").map(Number);
+  // The flag arrived in Node 22.4. Node 20 rejects it and would fail every worker.
+  if (major > 22 || (major === 22 && minor >= 4)) {
+    return ["--no-experimental-webstorage"];
+  }
+  return [];
+}
+
 export default defineConfig({
   plugins: [vue()],
   test: {
     environment: "jsdom",
+    // Node 26 exposes an experimental localStorage that stays undefined unless
+    // --localstorage-file is set, and that getter blocks jsdom's storage.
+    execArgv: vitestExecArgv(),
     include: ["tests/**/*.spec.ts"],
     // The build-contract specs shell out to scripts/build-tokens.mjs and
     // assert determinism on shared paths (dist/tokens.json, generated
