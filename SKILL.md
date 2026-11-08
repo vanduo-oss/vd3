@@ -60,6 +60,14 @@ browser keys, not state ownership. Do not enqueue personalized toasts or change
 per-user theme state during server rendering. Static SSR shells are supported;
 personalized multi-app/request isolation requires an app-owned state boundary.
 
+`themePersistence: false` on `app.use(VanduoVue, …)` (or `setThemePersistence(false)`
+before theme consumers exist) stops automatic localStorage reads and writes.
+Controls still share reactive state. Call `loadPreference()` and
+`persistPreference()` when the app owns saved choices. The flag is module-global.
+Controlled customizer fans emit `update:primary` for hover previews and
+`select:primary` when a swatch is chosen; persist only `select:primary` when
+previews must stay temporary.
+
 Keep browser behavior in mounted components. Use sanitized text for untrusted
 content; enabling `allowStyle` in `sanitizeHtml` is for trusted input only.
 

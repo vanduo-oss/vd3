@@ -22,6 +22,9 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     environment: "jsdom",
+    // Node 26 exposes an experimental localStorage that stays undefined unless
+    // --localstorage-file is set, and that getter blocks jsdom's storage.
+    execArgv: ["--no-experimental-webstorage"],
     include: ["tests/**/*.spec.ts"],
     // The build-contract specs shell out to scripts/build-tokens.mjs and
     // assert determinism on shared paths (dist/tokens.json, generated

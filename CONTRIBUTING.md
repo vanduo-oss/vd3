@@ -8,7 +8,7 @@ merge, publish, and deploy require explicit authorization. Do not edit `main`.
 
 ## Setup
 
-Requires **Node 24** (CI) and **pnpm 10**. Consumers of the compiled package
+Requires **Node 26** (CI) and **pnpm 10**. Consumers of the compiled package
 only need **Node >= 20.19**.
 
 ```sh
