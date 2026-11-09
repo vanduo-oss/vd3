@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import VdExpandTransition from "./VdExpandTransition.vue";
+
 interface Item {
   id: string;
   title: string;
@@ -9,9 +11,16 @@ interface Props {
   items: Item[];
   modelValue: string | string[];
   exclusive?: boolean;
+  /** Whether unfold/collapse animations are enabled (default true). */
+  animated?: boolean;
+  /** Explicit duration in ms. If omitted, uses adaptive Fibonacci duration. */
+  duration?: number;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  exclusive: false,
+  animated: true,
+});
 
 const emit = defineEmits<{ "update:modelValue": [value: string | string[]] }>();
 
@@ -54,16 +63,18 @@ const toggle = (id: string): void => {
           isOpen(item.id) ? "−" : "+"
         }}</span>
       </button>
-      <div
-        v-show="isOpen(item.id)"
-        :id="`vd-accordion-panel-${item.id}`"
-        class="vd-accordion-panel"
-        role="region"
-      >
-        <slot :name="item.id" :item="item">
-          {{ item.content }}
-        </slot>
-      </div>
+      <VdExpandTransition :animated="animated" :duration="duration">
+        <div
+          v-show="isOpen(item.id)"
+          :id="`vd-accordion-panel-${item.id}`"
+          class="vd-accordion-panel"
+          role="region"
+        >
+          <slot :name="item.id" :item="item">
+            {{ item.content }}
+          </slot>
+        </div>
+      </VdExpandTransition>
     </li>
   </ul>
 </template>

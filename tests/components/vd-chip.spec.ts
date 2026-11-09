@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import VdChip from "../../src/components/VdChip.vue";
 
@@ -133,5 +133,46 @@ describe("VdChip", () => {
     await closeBtn.trigger("keydown", { key: "Enter" });
     await closeBtn.trigger("keydown", { key: " " });
     expect(wrapper.emitted("click")).toBeUndefined();
+  });
+
+  it("plays WAAPI dismiss animation when animate is available", async () => {
+    let onFinishCallback: (() => void) | undefined;
+    const animateMock = vi.fn().mockImplementation(() => {
+      const anim = {
+        set onfinish(cb: () => void) {
+          onFinishCallback = cb;
+        },
+        set oncancel(_cb: () => void) {
+          // noop
+        },
+      };
+      return anim;
+    });
+
+    const wrapper = mount(VdChip, {
+      props: { dismissible: true, animated: true },
+    });
+
+    wrapper.element.animate =
+      animateMock as unknown as typeof Element.prototype.animate;
+
+    const close = wrapper.get("button.vd-chip-close");
+    await close.trigger("click");
+
+    expect(wrapper.classes()).toContain("is-dismissing");
+    expect(animateMock).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted("dismiss")).toBeUndefined();
+
+    onFinishCallback?.();
+    expect(wrapper.emitted("dismiss")).toHaveLength(1);
+  });
+
+  it("emits dismiss immediately when animated is false", async () => {
+    const wrapper = mount(VdChip, {
+      props: { dismissible: true, animated: false },
+    });
+
+    await wrapper.get("button.vd-chip-close").trigger("click");
+    expect(wrapper.emitted("dismiss")).toHaveLength(1);
   });
 });

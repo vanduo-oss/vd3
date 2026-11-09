@@ -28,8 +28,10 @@ const props = withDefaults(
     nodes: TreeNode[];
     checkbox?: boolean;
     cascade?: boolean;
+    animated?: boolean;
+    duration?: number;
   }>(),
-  { cascade: true },
+  { cascade: true, animated: true },
 );
 
 const root = ref<HTMLElement | null>(null);
@@ -128,12 +130,20 @@ defineExpose({ getChecked: () => collectChecked(tree) });
 </script>
 
 <template>
-  <div ref="root" class="vd-tree" role="tree" @keydown="onKeydown">
+  <div
+    ref="root"
+    class="vd-tree"
+    role="tree"
+    :data-animated="animated ? 'true' : 'false'"
+    @keydown="onKeydown"
+  >
     <VdTreeNode
       v-for="(node, i) in tree"
       :key="node.id ?? i"
       :node="node"
       :checkbox="!!checkbox"
+      :animated="animated"
+      :duration="duration"
       @toggle="onToggle"
       @check="onCheck"
     />

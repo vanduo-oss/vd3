@@ -321,7 +321,7 @@
   white-space: nowrap;
   color: var(--vd-navbar-text-color);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-navbar-brand a {
@@ -366,7 +366,7 @@
   padding: 0.5rem 1rem;
   color: var(--vd-navbar-link-color);
   text-decoration: none;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition: color var(--vd-duration-233) var(--vd-ease-out), background-color var(--vd-duration-233) var(--vd-ease-out);
   display: flex;
   align-items: center;
   line-height: 1;
@@ -410,7 +410,7 @@
   height: 2px;
   background-color: var(--vd-navbar-text-color);
   border-radius: 10px;
-  transition: all 0.3s ease;
+  transition: all var(--vd-duration-377) var(--vd-ease-in-out);
   transform-origin: center;
 }
 
@@ -450,7 +450,8 @@
 
 /* Mobile Menu Overlay */
 .vd-navbar-overlay {
-  display: none;
+  display: block;
+  visibility: hidden;
   position: fixed;
   top: 0;
   left: 0;
@@ -459,12 +460,17 @@
   background-color: var(--vd-navbar-mobile-overlay-bg);
   z-index: 999;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  pointer-events: none;
+  transition: opacity var(--vd-duration-233) var(--vd-ease-in),
+              visibility 0s linear var(--vd-duration-233);
 }
 
 .vd-navbar-overlay.is-active {
-  display: block;
+  visibility: visible;
   opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--vd-duration-377) var(--vd-ease-out),
+              visibility 0s;
 }
 
 /* Navbar Variants - Dark */
@@ -593,7 +599,7 @@
   white-space: nowrap;
   background-color: transparent;
   border: 0;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--vd-duration-233) var(--vd-ease-out), color var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-navbar-dropdown-item:hover,
@@ -696,7 +702,8 @@
     align-items: flex-start;
     padding: 4rem 1.5rem 1.5rem;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-    transition: clip-path 0.3s ease, visibility 0.3s;
+    transition: clip-path var(--vd-duration-233) var(--vd-ease-in),
+                visibility 0s linear var(--vd-duration-233);
     z-index: 1000;
     overflow-y: auto;
   }
@@ -712,6 +719,8 @@
     visibility: visible;
     pointer-events: auto;
     clip-path: inset(0);
+    transition: clip-path var(--vd-duration-377) var(--vd-ease-out),
+                visibility 0s;
   }
   
   .vd-navbar-dark .vd-navbar-menu {

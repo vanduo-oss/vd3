@@ -21,6 +21,9 @@
   --vd-tab-border: var(--vd-border-color);
   --vd-tab-border-active: var(--vd-color-primary);
   --vd-tab-bg-hover: var(--vd-bg-secondary);
+
+  /* Tab Motion */
+  --vd-tabs-duration: var(--vd-duration-144);
 }
 
 /* Dark Theme Overrides */
@@ -71,7 +74,9 @@
   border: none;
   border-bottom: var(--vd-tab-border-width) solid transparent;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--vd-duration-144) var(--vd-ease-out),
+              border-color var(--vd-duration-144) var(--vd-ease-out),
+              background-color var(--vd-duration-144) var(--vd-ease-out);
   white-space: nowrap;
 }
 
@@ -118,7 +123,7 @@
 /* Fade Animation */
 .vd-tabs-fade .vd-tab-pane {
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-tabs-fade .vd-tab-pane.is-active {
@@ -345,7 +350,9 @@
   border: none;
   border-bottom: var(--vd-tab-border-width) solid transparent;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  transition: color var(--vd-duration-144) var(--vd-ease-out),
+              border-color var(--vd-duration-144) var(--vd-ease-out),
+              background-color var(--vd-duration-144) var(--vd-ease-out);
   white-space: nowrap;
 }
 
@@ -366,6 +373,10 @@
 
 .vd-tab-panels {
   padding-top: 1rem;
+}
+
+.vd-tab-panel-content {
+  display: block;
 }
 
 @media (prefers-reduced-motion: reduce) {

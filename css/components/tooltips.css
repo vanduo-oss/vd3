@@ -80,7 +80,7 @@
   opacity: 0;
   pointer-events: none;
   max-width: var(--vd-tooltip-max-width);
-  transition: opacity var(--vd-transition-duration-base) var(--vd-transition-ease);
+  transition: opacity var(--vd-duration-144) var(--vd-ease-in-out);
 }
 
 .vd-tooltip-glass {

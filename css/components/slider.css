@@ -62,7 +62,7 @@
   border-radius: 50%;
   background-color: var(--vd-slider-thumb-bg);
   box-shadow: var(--vd-shadow-sm);
-  transition: transform 0.1s ease;
+  transition: transform var(--vd-duration-89) var(--vd-ease-out);
 }
 
 .vd-slider::-webkit-slider-thumb:active {

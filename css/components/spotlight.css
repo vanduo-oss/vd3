@@ -39,7 +39,7 @@
   height: 100vh;
   z-index: var(--vd-spotlight-z-index);
   pointer-events: auto;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--vd-duration-377) var(--vd-ease-out);
 }
 
 /* ========== Tooltip ========== */
@@ -93,7 +93,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 0.8125rem;
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-spotlight-btn:hover {
@@ -133,6 +133,6 @@
   box-shadow: 0 0 0 var(--vd-spotlight-highlight-padding) rgba(13, 110, 253, 0.25),
               0 0 0 9999px var(--vd-spotlight-overlay-bg);
   /* Animate geometry between steps so focus tracks the current target. */
-  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease,
+  transition: top var(--vd-duration-233) var(--vd-ease-out), left var(--vd-duration-233) var(--vd-ease-out), width var(--vd-duration-233) var(--vd-ease-out), height var(--vd-duration-233) var(--vd-ease-out),
     border-radius 0.25s ease;
 }

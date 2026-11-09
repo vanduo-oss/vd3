@@ -2,12 +2,11 @@ import { readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
 // Library artifacts, not a prediction of a consumer's tree-shaken application.
-// Baseline after dropping bundled text fonts.
-// Measured: 627211/97470, 494946/73064, 333670/81928 bytes (raw/gzip).
+// Baseline after adding Fibonacci motion system (v1.9.0).
 const budgets = [
   ["vd3.min.css", 650000, 102000],
   ["vd3-core.min.css", 515000, 77000],
-  ["index.js", 345000, 84000],
+  ["index.js", 355000, 88000],
 ];
 for (const [name, rawLimit, gzipLimit] of budgets) {
   const bytes = readFileSync(new URL(`../dist/${name}`, import.meta.url));

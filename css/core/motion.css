@@ -1,0 +1,212 @@
+/**
+ * Vanduo Framework - Motion
+ * Fibonacci motion scale, golden-ratio easings, runtime mode switches,
+ * Vue <Transition> presets, and motion utility classes.
+ */
+
+:root {
+  /* ==========================================================================
+     Fibonacci Durations
+     ========================================================================== */
+  --vd-duration-0: 0ms;
+  --vd-duration-55: 55ms;
+  --vd-duration-89: 89ms;
+  --vd-duration-144: 144ms;
+  --vd-duration-233: 233ms;
+  --vd-duration-377: 377ms;
+  --vd-duration-610: 610ms;
+  --vd-duration-987: 987ms;
+
+  /* Semantic Duration Aliases */
+  --vd-duration-instant: var(--vd-duration-89);
+  --vd-duration-fast: var(--vd-duration-144);
+  --vd-duration-base: var(--vd-duration-233);
+  --vd-duration-slow: var(--vd-duration-377);
+  --vd-duration-slower: var(--vd-duration-610);
+  --vd-duration-slowest: var(--vd-duration-987);
+
+  /* ==========================================================================
+     Golden-Ratio Easing Curves
+     ========================================================================== */
+  --vd-ease-out: cubic-bezier(0.236, 1, 0.382, 1);
+  --vd-ease-in: cubic-bezier(0.618, 0, 0.764, 0);
+  --vd-ease-in-out: cubic-bezier(0.618, 0, 0.382, 1);
+  --vd-ease-linear: cubic-bezier(0, 0, 1, 1);
+
+  /* ==========================================================================
+     Motion Dimensions & Presets Defaults
+     ========================================================================== */
+  --vd-motion-shift: 0.5rem; /* 8px, fib */
+  --vd-motion-scale-from: 0.95;
+  --vd-motion-crossfade: var(--vd-duration-89);
+
+  /* Transition presets active duration and timing fallback */
+  --vd-transition-duration: var(--vd-duration-base);
+  --vd-transition-timing: var(--vd-ease-in-out);
+}
+
+/* ==========================================================================
+   Runtime Motion Modes (html[data-motion] / prefers-reduced-motion)
+   ========================================================================== */
+
+/* reduce: no spatial translation or expansion, gentle short crossfade */
+:root[data-motion="reduce"] {
+  --vd-motion-shift: 0px;
+  --vd-motion-scale-from: 1;
+  --vd-duration-144: var(--vd-motion-crossfade);
+  --vd-duration-233: var(--vd-motion-crossfade);
+  --vd-duration-377: var(--vd-motion-crossfade);
+  --vd-duration-610: var(--vd-motion-crossfade);
+  --vd-duration-987: var(--vd-motion-crossfade);
+  --vd-duration-fast: var(--vd-motion-crossfade);
+  --vd-duration-base: var(--vd-motion-crossfade);
+  --vd-duration-slow: var(--vd-motion-crossfade);
+  --vd-duration-slower: var(--vd-motion-crossfade);
+  --vd-duration-slowest: var(--vd-motion-crossfade);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion]),
+  :root[data-motion="auto"] {
+    --vd-motion-shift: 0px;
+    --vd-motion-scale-from: 1;
+    --vd-duration-144: var(--vd-motion-crossfade);
+    --vd-duration-233: var(--vd-motion-crossfade);
+    --vd-duration-377: var(--vd-motion-crossfade);
+    --vd-duration-610: var(--vd-motion-crossfade);
+    --vd-duration-987: var(--vd-motion-crossfade);
+    --vd-duration-fast: var(--vd-motion-crossfade);
+    --vd-duration-base: var(--vd-motion-crossfade);
+    --vd-duration-slow: var(--vd-motion-crossfade);
+    --vd-duration-slower: var(--vd-motion-crossfade);
+    --vd-duration-slowest: var(--vd-motion-crossfade);
+  }
+}
+
+/* off: all durations 0ms */
+:root[data-motion="off"] {
+  --vd-motion-shift: 0px;
+  --vd-motion-scale-from: 1;
+  --vd-duration-55: 0ms;
+  --vd-duration-89: 0ms;
+  --vd-duration-144: 0ms;
+  --vd-duration-233: 0ms;
+  --vd-duration-377: 0ms;
+  --vd-duration-610: 0ms;
+  --vd-duration-987: 0ms;
+  --vd-duration-instant: 0ms;
+  --vd-duration-fast: 0ms;
+  --vd-duration-base: 0ms;
+  --vd-duration-slow: 0ms;
+  --vd-duration-slower: 0ms;
+  --vd-duration-slowest: 0ms;
+  --vd-motion-crossfade: 0ms;
+  --vd-transition-duration: 0ms;
+}
+
+/* ==========================================================================
+   Vue <Transition> CSS Classes
+   ========================================================================== */
+
+@keyframes vd-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fade */
+.vd-fade-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out);
+}
+.vd-fade-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in);
+}
+.vd-fade-enter-from,
+.vd-fade-leave-to {
+  opacity: 0;
+}
+
+/* Scale */
+.vd-scale-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out),
+              scale var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out);
+}
+.vd-scale-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in),
+              scale var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in);
+}
+.vd-scale-enter-from,
+.vd-scale-leave-to {
+  opacity: 0;
+  scale: var(--vd-motion-scale-from);
+}
+
+/* Slide Up */
+.vd-slide-up-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out);
+}
+.vd-slide-up-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in);
+}
+.vd-slide-up-enter-from,
+.vd-slide-up-leave-to {
+  opacity: 0;
+  translate: 0 var(--vd-motion-shift);
+}
+
+/* Slide Down */
+.vd-slide-down-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out);
+}
+.vd-slide-down-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in);
+}
+.vd-slide-down-enter-from,
+.vd-slide-down-leave-to {
+  opacity: 0;
+  translate: 0 calc(var(--vd-motion-shift) * -1);
+}
+
+/* Slide Left */
+.vd-slide-left-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out);
+}
+.vd-slide-left-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in);
+}
+.vd-slide-left-enter-from,
+.vd-slide-left-leave-to {
+  opacity: 0;
+  translate: var(--vd-motion-shift) 0;
+}
+
+/* Slide Right */
+.vd-slide-right-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-out);
+}
+.vd-slide-right-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in),
+              translate var(--vd-transition-duration, var(--vd-duration-base)) var(--vd-ease-in);
+}
+.vd-slide-right-enter-from,
+.vd-slide-right-leave-to {
+  opacity: 0;
+  translate: calc(var(--vd-motion-shift) * -1) 0;
+}
+
+/* ==========================================================================
+   Motion Utility Classes
+   ========================================================================== */
+.vd-motion-instant { --vd-transition-duration: var(--vd-duration-instant); }
+.vd-motion-fast { --vd-transition-duration: var(--vd-duration-fast); }
+.vd-motion-base { --vd-transition-duration: var(--vd-duration-base); }
+.vd-motion-slow { --vd-transition-duration: var(--vd-duration-slow); }
+.vd-motion-slower { --vd-transition-duration: var(--vd-duration-slower); }
+.vd-motion-slowest { --vd-transition-duration: var(--vd-duration-slowest); }
+.vd-motion-none { --vd-transition-duration: 0ms; }

@@ -100,7 +100,7 @@
   cursor: pointer;
   font-size: 1rem;
   color: var(--vd-text-primary, #212529);
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-datepicker-prev:hover,
@@ -155,7 +155,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out), color var(--vd-duration-144) var(--vd-ease-out);
   padding: 0;
 }
 
@@ -221,7 +221,7 @@
   background: transparent;
   cursor: pointer;
   text-align: center;
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-datepicker-month-btn:hover,

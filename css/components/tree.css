@@ -51,7 +51,7 @@
   border-radius: 0.25rem;
   cursor: default;
   font-size: 0.875rem;
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-tree-node-content:hover {
@@ -72,7 +72,7 @@
   cursor: pointer;
   font-size: 0.625rem;
   color: var(--vd-text-muted, #6c757d);
-  transition: transform 0.2s ease;
+  transition: transform var(--vd-duration-233) var(--vd-ease-in-out);
   flex-shrink: 0;
 }
 
@@ -134,15 +134,18 @@
 
 /* ========== Children Container ========== */
 
-.vd-tree-children {
+.vd-tree:not([data-animated]) .vd-tree-children {
   display: none;
+}
+
+.vd-tree-children {
   list-style: none;
   padding: 0;
   margin: 0;
   padding-left: var(--vd-tree-indent);
 }
 
-.vd-tree-node.is-open > .vd-tree-children {
+.vd-tree:not([data-animated]) .vd-tree-node.is-open > .vd-tree-children {
   display: block;
 }
 

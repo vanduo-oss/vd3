@@ -35,7 +35,7 @@
   /* 8px */
 
   /* Button Transitions */
-  --vd-btn-transition: all 0.2s ease-in-out;
+  --vd-btn-transition: all var(--vd-duration-233) var(--vd-ease-in-out);
 
   /* Button Ring (opt-in .vd-btn-ring; Fibonacci gaps, constant stroke).
    * The stroke is px, not rem, matching --vd-border-width: a hairline is a

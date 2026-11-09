@@ -18,8 +18,8 @@
   --vd-collapsible-body-padding: 1.3125rem; /* 21px - fib */
   
   /* Collapsible Transitions */
-  --vd-collapsible-transition: height var(--vd-transition-duration-slow) var(--vd-transition-ease),
-                            opacity var(--vd-transition-duration-base) var(--vd-transition-ease);
+  --vd-collapsible-transition: grid-template-rows var(--vd-duration-233) var(--vd-ease-in-out),
+                            opacity var(--vd-duration-233) var(--vd-ease-in-out);
 }
 
 /* Dark Theme Overrides */
@@ -168,23 +168,29 @@
 /* Collapsible Body */
 .vd-collapsible-body,
 .accordion-body {
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
   overflow: hidden;
-  transition: var(--vd-collapsible-transition);
+  transition: grid-template-rows var(--vd-duration-233) var(--vd-ease-in),
+              opacity var(--vd-duration-233) var(--vd-ease-in);
   opacity: 0;
 }
 
-.vd-collapsible-item.is-open .vd-collapsible-body,
-.accordion-item.is-open .accordion-body {
-  max-height: 5000px;
+.vd-collapsible-item.is-open > .vd-collapsible-body,
+.accordion-item.is-open > .accordion-body {
+  grid-template-rows: 1fr;
   opacity: 1;
-  padding: var(--vd-collapsible-body-padding);
+  transition: grid-template-rows var(--vd-duration-377) var(--vd-ease-out),
+              opacity var(--vd-duration-377) var(--vd-ease-out);
   border-top: 1px solid var(--vd-collapsible-border-color);
 }
 
 /* Collapsible Content */
 .vd-collapsible-content,
 .accordion-content {
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--vd-collapsible-body-padding);
   color: var(--vd-text-primary);
   line-height: var(--vd-line-height-normal);
 }
@@ -276,8 +282,8 @@
   font-size: var(--vd-font-size-sm);
 }
 
-.vd-collapsible-sm .vd-collapsible-body,
-.accordion-sm .accordion-body {
+.vd-collapsible-sm .vd-collapsible-content,
+.accordion-sm .accordion-content {
   padding: calc(var(--vd-collapsible-body-padding) * 0.75);
 }
 
@@ -287,16 +293,15 @@
   font-size: var(--vd-font-size-lg);
 }
 
-.vd-collapsible-lg .vd-collapsible-body,
-.accordion-lg .accordion-body {
+.vd-collapsible-lg .vd-collapsible-content,
+.accordion-lg .accordion-content {
   padding: calc(var(--vd-collapsible-body-padding) * 1.25);
 }
 
 /* Accordion Mode (single open) */
 .accordion .accordion-item.is-open ~ .accordion-item.is-open .accordion-body {
-  max-height: 0;
+  grid-template-rows: 0fr;
   opacity: 0;
-  padding: 0;
 }
 
 .accordion .accordion-item.is-open ~ .accordion-item.is-open {
@@ -311,8 +316,8 @@
     font-size: var(--vd-font-size-sm);
   }
   
-  .vd-collapsible-body,
-  .accordion-body {
+  .vd-collapsible-content,
+  .accordion-content {
     padding: var(--vd-collapsible-padding-x);
   }
 }

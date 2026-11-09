@@ -9,7 +9,7 @@
   --vd-image-box-backdrop-blur: 8px;
 
   /* Image Box Transitions (Fibonacci-inspired timing) */
-  --vd-image-box-transition-duration: 0.3s;
+  --vd-image-box-transition-duration: var(--vd-duration-377);
   --vd-image-box-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Image Box Z-index */
@@ -233,7 +233,7 @@
   height: 100%;
   object-fit: cover;
   aspect-ratio: 4 / 3;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.15s ease;
+  transition: transform var(--vd-duration-233) var(--vd-ease-out), box-shadow var(--vd-duration-233) var(--vd-ease-out), outline var(--vd-duration-144) var(--vd-ease-out);
 }
 
 /* Active/selected state for gallery thumbnails */

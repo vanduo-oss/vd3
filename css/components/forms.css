@@ -1767,7 +1767,11 @@ select[multiple] option,
   left: 0;
   right: 0;
   z-index: 1000;
-  display: none;
+  display: block;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
   margin-top: 0.25rem;
   background-color: var(--vd-input-bg);
   border: 1px solid var(--vd-input-border-color);
@@ -1775,10 +1779,19 @@ select[multiple] option,
   box-shadow: var(--vd-shadow-lg);
   max-height: 300px;
   overflow-y: auto;
+  transition: opacity var(--vd-duration-89) var(--vd-ease-in),
+              transform var(--vd-duration-89) var(--vd-ease-in),
+              visibility 0s linear var(--vd-duration-89);
 }
 
 .custom-select-dropdown.is-open {
-  display: block;
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--vd-duration-144) var(--vd-ease-out),
+              transform var(--vd-duration-144) var(--vd-ease-out),
+              visibility 0s;
 }
 
 .custom-select-option {

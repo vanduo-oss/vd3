@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, watch } from "vue";
+import VdTransition, { type TransitionPreset } from "./VdTransition.vue";
 
 interface Props {
   modelValue: boolean;
@@ -7,6 +8,10 @@ interface Props {
   title?: string;
   closeOnBackdrop?: boolean;
   closeOnEsc?: boolean;
+  /** Whether slide animation is enabled (default true). */
+  animated?: boolean;
+  /** Custom duration in ms override. */
+  duration?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -14,12 +19,27 @@ const props = withDefaults(defineProps<Props>(), {
   title: "",
   closeOnBackdrop: true,
   closeOnEsc: true,
+  animated: true,
 });
 
 const emit = defineEmits<{
   "update:modelValue": [value: boolean];
   close: [];
 }>();
+
+const slidePreset = computed<TransitionPreset>(() => {
+  switch (props.placement) {
+    case "left":
+      return "slide-left";
+    case "top":
+      return "slide-down";
+    case "bottom":
+      return "slide-up";
+    case "right":
+    default:
+      return "slide-right";
+  }
+});
 
 const close = (): void => {
   emit("update:modelValue", false);
@@ -73,37 +93,41 @@ watch(
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="modelValue"
-      class="vd-sidenav-overlay is-visible"
-      @click="onBackdrop"
-    />
-    <aside
-      v-if="modelValue"
-      class="vd-sidenav"
-      :class="[`vd-sidenav-${placement}`, 'is-open']"
-      :aria-label="title || 'Side navigation'"
-    >
-      <header v-if="title || $slots.header" class="vd-sidenav-header">
-        <h3 v-if="title" class="vd-sidenav-title">
-          {{ title }}
-        </h3>
-        <slot name="header" />
-        <button
-          type="button"
-          class="vd-sidenav-close"
-          aria-label="Close"
-          @click="close"
-        >
-          &times;
-        </button>
-      </header>
-      <div class="vd-sidenav-body">
-        <slot />
-      </div>
-      <footer v-if="$slots.footer" class="vd-sidenav-footer">
-        <slot name="footer" />
-      </footer>
-    </aside>
+    <VdTransition name="fade" :animated="animated" :duration="duration">
+      <div
+        v-if="modelValue"
+        class="vd-sidenav-overlay is-visible"
+        @click="onBackdrop"
+      />
+    </VdTransition>
+    <VdTransition :name="slidePreset" :animated="animated" :duration="duration">
+      <aside
+        v-if="modelValue"
+        class="vd-sidenav"
+        :class="[`vd-sidenav-${placement}`, 'is-open']"
+        :aria-label="title || 'Side navigation'"
+      >
+        <header v-if="title || $slots.header" class="vd-sidenav-header">
+          <h3 v-if="title" class="vd-sidenav-title">
+            {{ title }}
+          </h3>
+          <slot name="header" />
+          <button
+            type="button"
+            class="vd-sidenav-close"
+            aria-label="Close"
+            @click="close"
+          >
+            &times;
+          </button>
+        </header>
+        <div class="vd-sidenav-body">
+          <slot />
+        </div>
+        <footer v-if="$slots.footer" class="vd-sidenav-footer">
+          <slot name="footer" />
+        </footer>
+      </aside>
+    </VdTransition>
   </Teleport>
 </template>

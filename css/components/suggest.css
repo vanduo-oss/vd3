@@ -78,7 +78,7 @@
 .vd-suggest-item {
   padding: var(--vd-suggest-item-padding);
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
   font-size: var(--vd-font-size-base, 1rem);
 }
 

@@ -140,7 +140,7 @@
   display: inline-flex;
   width: 1rem;
   height: 1rem;
-  transition: transform 0.2s ease;
+  transition: transform var(--vd-duration-233) var(--vd-ease-in-out);
 }
 
 .vd-code-snippet-toggle-icon::before {
@@ -151,6 +151,7 @@
   border-bottom: 2px solid currentColor;
   transform: rotate(-45deg);
   margin: auto;
+  transition: transform var(--vd-duration-233) var(--vd-ease-in-out);
 }
 
 /* Expanded state */
@@ -166,11 +167,12 @@
    Collapsible Content
    ========================================================================== */
 
-.vd-code-snippet-content {
+/* Static / non-animated fallback */
+.vd-code-snippet:not([data-animated]) .vd-code-snippet-content {
   display: none;
 }
 
-.vd-code-snippet-content[data-visible="true"],
+.vd-code-snippet:not([data-animated]) .vd-code-snippet-content[data-visible="true"],
 .vd-code-snippet:not([data-collapsible]) .vd-code-snippet-content {
   display: block;
 }
@@ -346,6 +348,7 @@
 
 .vd-code-snippet-pane.is-active {
   display: block;
+  animation: vd-fade-in var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-code-snippet-pane code {

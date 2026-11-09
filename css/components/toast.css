@@ -98,7 +98,7 @@
   pointer-events: auto;
   opacity: 0;
   transform: translateX(100%);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity var(--vd-duration-377) var(--vd-ease-out), transform var(--vd-duration-377) var(--vd-ease-out);
 }
 
 .vd-toast-glass {
@@ -204,7 +204,7 @@
   color: var(--vd-text-tertiary);
   cursor: pointer;
   opacity: 0.6;
-  transition: opacity 0.15s ease, background-color 0.15s ease;
+  transition: opacity var(--vd-duration-144) var(--vd-ease-out), background-color var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-toast-close:hover {
@@ -347,7 +347,7 @@
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .vd-toast {
-    transition: opacity 0.15s ease;
+    transition: opacity var(--vd-duration-144) var(--vd-ease-out);
     transform: none !important;
   }
 

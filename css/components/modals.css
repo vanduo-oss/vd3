@@ -26,8 +26,8 @@
   --vd-modal-backdrop-z-index: 1040;
   
   /* Modal Transitions */
-  --vd-modal-transition: opacity var(--vd-transition-duration-base) var(--vd-transition-ease);
-  --vd-modal-dialog-transition: transform var(--vd-transition-duration-base) var(--vd-transition-ease);
+  --vd-modal-transition: opacity var(--vd-duration-377) var(--vd-ease-in-out);
+  --vd-modal-dialog-transition: transform var(--vd-duration-377) var(--vd-ease-out);
 }
 
 /* Dark Theme Overrides */
@@ -365,6 +365,19 @@
 
 .vd-modal.vd-modal-open .vd-modal-panel {
   transform: scale(1);
+}
+
+.vd-fade-enter-from .vd-modal-panel,
+.vd-fade-leave-to .vd-modal-panel {
+  transform: scale(0.95);
+}
+
+.vd-fade-enter-active .vd-modal-panel {
+  transition: transform var(--vd-duration-377) var(--vd-ease-out);
+}
+
+.vd-fade-leave-active .vd-modal-panel {
+  transition: transform var(--vd-duration-233) var(--vd-ease-in);
 }
 
 /* Panel sizes (md = default width) */

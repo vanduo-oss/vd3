@@ -48,7 +48,7 @@
   font-weight: var(--vd-font-weight-medium);
   color: var(--vd-text-primary);
   text-align: left;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--vd-duration-144) var(--vd-ease-in-out);
 }
 
 .vd-accordion-header:hover {

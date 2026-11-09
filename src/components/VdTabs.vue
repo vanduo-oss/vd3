@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useId, type ComponentPublicInstance } from "vue";
+import VdTransition from "./VdTransition.vue";
 
 interface Tab {
   id: string;
@@ -9,9 +10,15 @@ interface Tab {
 interface Props {
   tabs: Tab[];
   modelValue: string;
+  /** Whether panel switch animation is enabled (default true). */
+  animated?: boolean;
+  /** Custom duration in ms override. */
+  duration?: number;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  animated: true,
+});
 
 const emit = defineEmits<{ "update:modelValue": [value: string] }>();
 
@@ -88,7 +95,16 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
       role="tabpanel"
       :aria-labelledby="tabButtonId(modelValue)"
     >
-      <slot />
+      <VdTransition
+        name="fade"
+        mode="out-in"
+        :animated="animated"
+        :duration="duration"
+      >
+        <div :key="modelValue" class="vd-tab-panel-content">
+          <slot />
+        </div>
+      </VdTransition>
     </div>
   </div>
 </template>

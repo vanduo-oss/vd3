@@ -28,7 +28,7 @@
   text-align: center;
   white-space: nowrap;
   background-color: var(--vd-progress-bar-bg);
-  transition: width 0.4s ease;
+  transition: width var(--vd-duration-377) var(--vd-ease-out);
   border-radius: var(--vd-progress-border-radius);
 }
 
@@ -148,7 +148,7 @@
   height: 100%;
   background-color: var(--vd-progress-bar-bg);
   border-radius: var(--vd-progress-border-radius);
-  transition: width 0.4s ease;
+  transition: width var(--vd-duration-377) var(--vd-ease-out);
 }
 
 /* Variant colors for the VdProgress fill */

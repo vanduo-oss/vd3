@@ -26,7 +26,7 @@
   --vd-flow-control-color: #fff;
 
   /* Flow Transitions */
-  --vd-flow-transition-duration: 0.5s;
+  --vd-flow-transition-duration: var(--vd-duration-610);
   --vd-flow-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Flow Border */
@@ -136,7 +136,7 @@
   color: var(--vd-flow-control-color);
   font-size: 1.125rem;
   cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
+  transition: background var(--vd-duration-233) var(--vd-ease-out), opacity var(--vd-duration-233) var(--vd-ease-out);
   opacity: 0;
 }
 
@@ -190,7 +190,7 @@
   border-radius: 50%;
   background: var(--vd-flow-indicator-bg);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background var(--vd-duration-233) var(--vd-ease-out), transform var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-flow-indicator:hover {

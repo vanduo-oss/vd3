@@ -7,8 +7,18 @@ import {
   type FontDef,
   type ThemeDefaults,
 } from "./composables/useTheme";
+import {
+  initMotion,
+  setMotion,
+  type MotionMode,
+} from "./composables/useMotion";
 
 export interface VanduoVueOptions {
+  /**
+   * Initial motion mode (default "auto" = follow OS). Stored user choice
+   * wins unless themePersistence=false.
+   */
+  motion?: MotionMode;
   /**
    * Site-specific theme default overrides, shallow-merged over the generic
    * generated baseline (e.g. `{ PRIMARY_DARK: "blue" }`). Applied
@@ -55,6 +65,11 @@ export const VanduoVue: Plugin<VanduoVueOptions> = {
     }
     if (options.themeDefaults) {
       setThemeDefaults(options.themeDefaults);
+    }
+    if (options.motion !== undefined) {
+      setMotion(options.motion);
+    } else {
+      initMotion();
     }
   },
 };

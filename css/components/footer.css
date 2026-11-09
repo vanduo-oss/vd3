@@ -79,7 +79,7 @@
   display: inline-block;
   color: var(--vd-footer-link-color);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--vd-duration-233) var(--vd-ease-out);
   margin-bottom: 0.5rem;
 }
 
@@ -259,7 +259,7 @@
   background-color: rgba(0, 0, 0, 0.05);
   color: var(--vd-footer-link-color);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all var(--vd-duration-233) var(--vd-ease-in-out);
 }
 
 .vd-footer-social-link:hover {
@@ -317,7 +317,7 @@
   padding: 0.375rem;
   border-radius: 0.5rem;
   background: rgba(0, 0, 0, 0.04);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--vd-duration-377) var(--vd-ease-in-out);
   text-decoration: none;
 }
 
@@ -352,7 +352,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--vd-duration-377) var(--vd-ease-in-out);
   text-decoration: none;
 }
 

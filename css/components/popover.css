@@ -45,7 +45,7 @@
   border-radius: var(--vd-popover-radius);
   box-shadow: var(--vd-popover-shadow);
   font-size: var(--vd-popover-font-size);
-  animation: vd-popover-enter 0.18s ease-out;
+  animation: vd-popover-enter var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-popover-panel[hidden] {

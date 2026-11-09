@@ -1,27 +1,29 @@
 /**
  * Vanduo Framework - Transitions
- * Transition utilities for animations and effects
+ * Transition utilities for animations and effects.
+ * Deprecated legacy variables now alias the Fibonacci motion system (core/motion.css).
  */
 
 :root {
-  /* Transition Durations */
-  --vd-transition-duration-fast: 150ms;
-  --vd-transition-duration-base: 200ms;
-  --vd-transition-duration-slow: 300ms;
-  --vd-transition-duration-slower: 400ms;
-  --vd-transition-duration-slowest: 500ms;
-  
-  /* Transition Timing Functions */
-  --vd-transition-ease: ease;
-  --vd-transition-ease-in: ease-in;
-  --vd-transition-ease-out: ease-out;
-  --vd-transition-ease-in-out: ease-in-out;
-  --vd-transition-linear: linear;
-  
-  /* Common Transitions */
-  --vd-transition-base: all var(--vd-transition-duration-base) var(--vd-transition-ease);
-  --vd-transition-fast: all var(--vd-transition-duration-fast) var(--vd-transition-ease);
-  --vd-transition-slow: all var(--vd-transition-duration-slow) var(--vd-transition-ease);
+  /* Transition Durations (Legacy aliases -> Fibonacci motion tokens) */
+  --vd-transition-duration-fast: var(--vd-duration-144);
+  --vd-transition-duration-base: var(--vd-duration-233);
+  --vd-transition-duration-slow: var(--vd-duration-377);
+  --vd-transition-duration-slower: var(--vd-duration-377);
+  --vd-transition-duration-slowest: var(--vd-duration-610);
+
+  /* Transition Timing Functions (Legacy aliases -> Golden-ratio easings) */
+  --vd-transition-ease: var(--vd-ease-in-out);
+  --vd-transition-ease-in: var(--vd-ease-in);
+  --vd-transition-ease-out: var(--vd-ease-out);
+  --vd-transition-ease-in-out: var(--vd-ease-in-out);
+  --vd-transition-linear: var(--vd-ease-linear);
+
+  /* Common Transitions (Full property shorthands) */
+  --vd-transition-all-base: all var(--vd-transition-duration-base) var(--vd-transition-ease);
+  --vd-transition-all-fast: all var(--vd-transition-duration-fast) var(--vd-transition-ease);
+  --vd-transition-all-slow: all var(--vd-transition-duration-slow) var(--vd-transition-ease);
+  --vd-transition-base: var(--vd-transition-all-base);
   --vd-transition-color: color var(--vd-transition-duration-base) var(--vd-transition-ease);
   --vd-transition-bg: background-color var(--vd-transition-duration-base) var(--vd-transition-ease);
   --vd-transition-border: border-color var(--vd-transition-duration-base) var(--vd-transition-ease);
@@ -33,12 +35,15 @@
 /* Transition Duration Utilities */
 .vd-transition-none { transition: none; }
 .vd-transition-fast {
-  transition: var(--vd-transition-fast);
+  transition: var(--vd-transition-all-fast);
   transition-duration: var(--vd-transition-duration-fast);
 }
-.vd-transition-base { transition-duration: var(--vd-transition-duration-base); }
+.vd-transition-base {
+  transition: var(--vd-transition-all-base);
+  transition-duration: var(--vd-transition-duration-base);
+}
 .vd-transition-slow {
-  transition: var(--vd-transition-slow);
+  transition: var(--vd-transition-all-slow);
   transition-duration: var(--vd-transition-duration-slow);
 }
 .vd-transition-slower { transition-duration: var(--vd-transition-duration-slower); }
@@ -75,25 +80,25 @@
 .vd-transition-bg { transition: var(--vd-transition-bg); }
 .vd-transition-border { transition: var(--vd-transition-border); }
 
-/* Delay Utilities */
+/* Delay Utilities (legacy ms steps + canonical Fibonacci steps) */
 .vd-transition-delay-none { transition-delay: 0ms; }
+.vd-transition-delay-55 { transition-delay: var(--vd-duration-55); }
 .vd-transition-delay-75 { transition-delay: 75ms; }
+.vd-transition-delay-89 { transition-delay: var(--vd-duration-89); }
 .vd-transition-delay-100 { transition-delay: 100ms; }
+.vd-transition-delay-144 { transition-delay: var(--vd-duration-144); }
 .vd-transition-delay-150 { transition-delay: 150ms; }
 .vd-transition-delay-200 { transition-delay: 200ms; }
+.vd-transition-delay-233 { transition-delay: var(--vd-duration-233); }
 .vd-transition-delay-300 { transition-delay: 300ms; }
+.vd-transition-delay-377 { transition-delay: var(--vd-duration-377); }
 .vd-transition-delay-500 { transition-delay: 500ms; }
+.vd-transition-delay-610 { transition-delay: var(--vd-duration-610); }
 .vd-transition-delay-700 { transition-delay: 700ms; }
 .vd-transition-delay-1000 { transition-delay: 1000ms; }
 
-/* Reduced Motion - Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+/*
+ * Note: Reduced-motion accessibility is managed in core/motion.css via targeted
+ * token remapping and data-motion modes (auto/full/reduce/off) without forcing
+ * indiscriminate 0.01ms resets across non-vd3 host elements.
+ */
