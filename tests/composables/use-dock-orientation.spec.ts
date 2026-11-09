@@ -4,7 +4,9 @@ import { enableAutoUnmount, mount, type VueWrapper } from "@vue/test-utils";
 import {
   DOCK_MORPH_MS,
   DOCK_NARROW_QUERY,
+  dockMorphCornerOf,
   useDockOrientation,
+  type DockCorner,
   type DockOrientation,
   type DockPlacement,
 } from "../../src/composables/useDockOrientation";
@@ -16,6 +18,7 @@ interface DockApi {
   placement: { value: DockPlacement };
   orientation: { value: DockOrientation };
   visualPhase: { value: string };
+  morphCorner: { value: DockCorner | null };
   isMorphing: { value: boolean };
   isNarrow: { value: boolean };
   dockClasses: { value: Record<string, boolean> };
@@ -467,5 +470,42 @@ describe("useDockOrientation", () => {
     wrapper.unmount();
     vi.advanceTimersByTime(DOCK_MORPH_MS.shrink + DOCK_MORPH_MS.grow);
     expect(api.orientation.value).toBe("horizontal");
+  });
+
+  describe("dockMorphCornerOf", () => {
+    it("maps adjacent transitions to shared corner anchors", () => {
+      expect(dockMorphCornerOf("bottom", "left")).toBe("bottom-left");
+      expect(dockMorphCornerOf("left", "bottom")).toBe("bottom-left");
+      expect(dockMorphCornerOf("left", "top")).toBe("top-left");
+      expect(dockMorphCornerOf("top", "left")).toBe("top-left");
+      expect(dockMorphCornerOf("top", "right")).toBe("top-right");
+      expect(dockMorphCornerOf("right", "top")).toBe("top-right");
+      expect(dockMorphCornerOf("right", "bottom")).toBe("bottom-right");
+      expect(dockMorphCornerOf("bottom", "right")).toBe("bottom-right");
+    });
+  });
+
+  it("pins morphCorner and classes during shrink and grow phases", () => {
+    const { api } = mountDock({ initialPlacement: "bottom" });
+    expect(api.morphCorner.value).toBeNull();
+    expect(api.dockClasses.value["vd-dock-corner-bottom-left"]).toBeUndefined();
+
+    api.playToPlacement("left");
+    expect(api.isMorphing.value).toBe(true);
+    expect(api.morphCorner.value).toBe("bottom-left");
+    expect(api.dockClasses.value["vd-dock-corner-bottom-left"]).toBe(true);
+    expect(api.visualPhase.value).toBe("square");
+
+    vi.advanceTimersByTime(DOCK_MORPH_MS.shrink);
+    expect(api.isMorphing.value).toBe(true);
+    expect(api.morphCorner.value).toBe("bottom-left");
+    expect(api.dockClasses.value["vd-dock-corner-bottom-left"]).toBe(true);
+    expect(api.placement.value).toBe("left");
+    expect(api.visualPhase.value).toBe("vertical");
+
+    vi.advanceTimersByTime(DOCK_MORPH_MS.grow);
+    expect(api.isMorphing.value).toBe(false);
+    expect(api.morphCorner.value).toBeNull();
+    expect(api.dockClasses.value["vd-dock-corner-bottom-left"]).toBeUndefined();
   });
 });

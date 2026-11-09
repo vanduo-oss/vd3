@@ -86,7 +86,7 @@
 
 .vd-dock-contained.is-horizontal {
   left: var(--vd-dock-inset);
-  right: var(--vd-dock-inset);
+  right: auto;
   width: calc(100% - 2 * var(--vd-dock-inset));
   transform: none;
 }
@@ -206,8 +206,40 @@
   flex-direction: column;
 }
 
-.vd-dock-edge-top.is-square,
-.vd-dock-edge-right.is-square {
+.vd-dock[class*="vd-dock-corner-"] {
+  transform: none;
+}
+
+.vd-dock.vd-dock-corner-bottom-left {
+  left: var(--vd-dock-inset);
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
+}
+
+.vd-dock.vd-dock-corner-top-left {
+  left: var(--vd-dock-inset);
+  right: auto;
+  top: var(--vd-dock-inset);
+  bottom: auto;
+}
+
+.vd-dock.vd-dock-corner-top-right {
+  left: auto;
+  right: var(--vd-dock-inset);
+  top: var(--vd-dock-inset);
+  bottom: auto;
+}
+
+.vd-dock.vd-dock-corner-bottom-right {
+  left: auto;
+  right: var(--vd-dock-inset);
+  top: auto;
+  bottom: var(--vd-dock-inset);
+}
+
+.vd-dock-edge-top.is-square:not([class*="vd-dock-corner-"]),
+.vd-dock-edge-right.is-square:not([class*="vd-dock-corner-"]) {
   left: auto;
   right: var(--vd-dock-inset);
   top: var(--vd-dock-inset);
@@ -217,9 +249,9 @@
 /*
  * Placement is the rest-geometry source of truth. A leftover is-vertical
  * (or is-horizontal) class must not keep a bottom/top dock as a side rail.
- * :not(.is-square) leaves the morph waypoint on the pair's origin corner.
+ * :not(.is-square, .is-morphing) leaves the morph waypoint on the pair's origin corner.
  */
-.vd-dock.vd-dock-edge-bottom:not(.is-square) {
+.vd-dock.vd-dock-edge-bottom:not(.is-square, .is-morphing) {
   left: 50%;
   right: auto;
   top: auto;
@@ -241,7 +273,7 @@
   flex-direction: column-reverse;
 }
 
-.vd-dock.vd-dock-edge-top:not(.is-square) {
+.vd-dock.vd-dock-edge-top:not(.is-square, .is-morphing) {
   left: 50%;
   right: auto;
   top: var(--vd-dock-inset);
@@ -255,7 +287,7 @@
   max-height: var(--vd-dock-height);
 }
 
-.vd-dock.vd-dock-edge-left:not(.is-square) {
+.vd-dock.vd-dock-edge-left:not(.is-square, .is-morphing) {
   left: var(--vd-dock-inset);
   right: auto;
   top: auto;
@@ -269,7 +301,7 @@
   max-height: calc(100% - 2 * var(--vd-dock-inset));
 }
 
-.vd-dock.vd-dock-edge-right:not(.is-square) {
+.vd-dock.vd-dock-edge-right:not(.is-square, .is-morphing) {
   left: auto;
   right: var(--vd-dock-inset);
   top: auto;
@@ -283,28 +315,51 @@
   max-height: calc(100% - 2 * var(--vd-dock-inset));
 }
 
-.vd-dock-contained.vd-dock-edge-bottom:not(.is-square),
-.vd-dock-contained.vd-dock-edge-top:not(.is-square) {
+.vd-dock-contained.vd-dock-edge-bottom:not(.is-square, .is-morphing) {
   left: var(--vd-dock-inset);
-  right: var(--vd-dock-inset);
+  right: auto;
+  top: auto;
+  bottom: var(--vd-dock-inset);
   width: calc(100% - 2 * var(--vd-dock-inset));
   transform: none;
 }
 
-.vd-dock-contained.vd-dock-edge-left:not(.is-square),
-.vd-dock-contained.vd-dock-edge-right:not(.is-square) {
+.vd-dock-contained.vd-dock-edge-top:not(.is-square, .is-morphing) {
+  left: var(--vd-dock-inset);
+  right: auto;
   top: var(--vd-dock-inset);
+  bottom: auto;
+  width: calc(100% - 2 * var(--vd-dock-inset));
+  transform: none;
+}
+
+.vd-dock-contained.vd-dock-edge-left:not(.is-square, .is-morphing) {
+  left: var(--vd-dock-inset);
+  right: auto;
+  top: auto;
   bottom: var(--vd-dock-inset);
   height: calc(100% - 2 * var(--vd-dock-inset));
   min-height: 0;
   max-height: none;
+  transform: none;
+}
+
+.vd-dock-contained.vd-dock-edge-right:not(.is-square, .is-morphing) {
+  left: auto;
+  right: var(--vd-dock-inset);
+  top: auto;
+  bottom: var(--vd-dock-inset);
+  height: calc(100% - 2 * var(--vd-dock-inset));
+  min-height: 0;
+  max-height: none;
+  transform: none;
 }
 
 .vd-dock-nav,
 .vd-dock-actions {
   transition:
-    opacity var(--vd-dock-content-in) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
-    transform var(--vd-dock-content-in) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1));
+    opacity var(--vd-dock-content-in) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)) 144ms,
+    transform var(--vd-dock-content-in) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)) 144ms;
 }
 
 .vd-dock.is-square .vd-dock-nav,
