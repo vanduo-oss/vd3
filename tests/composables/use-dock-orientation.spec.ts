@@ -252,6 +252,25 @@ describe("useDockOrientation", () => {
     expect(api.isMorphing.value).toBe(false);
   });
 
+  it("snaps when data-motion is off", () => {
+    document.documentElement.setAttribute("data-motion", "off");
+    const { api } = mountDock();
+    api.playTo("vertical");
+    expect(api.orientation.value).toBe("vertical");
+    expect(api.isMorphing.value).toBe(false);
+    document.documentElement.removeAttribute("data-motion");
+  });
+
+  it("overrides OS reduced motion when data-motion is full", () => {
+    stubMatchMedia({ reducedMotion: true });
+    document.documentElement.setAttribute("data-motion", "full");
+    const { api } = mountDock();
+    api.playTo("vertical");
+    expect(api.isMorphing.value).toBe(true);
+    expect(api.visualPhase.value).toBe("square");
+    document.documentElement.removeAttribute("data-motion");
+  });
+
   it("restores a persisted orientation on mount", () => {
     localStorage.setItem("vanduo-dock-orient", "vertical");
     const { api } = mountDock({ persist: true });

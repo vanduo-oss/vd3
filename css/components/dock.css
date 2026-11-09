@@ -9,8 +9,12 @@
   --vd-dock-inset: 1.3125rem; /* 21px fib */
   --vd-dock-radius: 1.25rem;
   --vd-dock-max-width: 1680px;
-  --vd-dock-morph: 480ms;
-  --vd-dock-morph-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --vd-dock-morph-shrink: var(--vd-duration-moderate, 377ms);
+  --vd-dock-morph-grow: var(--vd-duration-slow, 610ms);
+  --vd-dock-morph: var(--vd-dock-morph-shrink);
+  --vd-dock-morph-ease: var(--vd-ease-standard, cubic-bezier(0.2, 0, 0, 1));
+  --vd-dock-content-fade: var(--vd-duration-snappy, 144ms);
+  --vd-dock-content-in: var(--vd-duration-normal, 233ms);
   --vd-dock-z-index: 1000;
   --vd-dock-brand-size: 2.025rem;
   --vd-dock-brand-angle: 0deg;
@@ -65,7 +69,7 @@
 }
 
 .vd-dock.is-horizontal {
-  --vd-dock-morph: 720ms;
+  --vd-dock-morph: var(--vd-dock-morph-grow);
 
   left: 50%;
   right: auto;
@@ -83,7 +87,7 @@
 .vd-dock-contained.is-horizontal {
   left: var(--vd-dock-inset);
   right: var(--vd-dock-inset);
-  width: auto;
+  width: calc(100% - 2 * var(--vd-dock-inset));
   transform: none;
 }
 
@@ -104,7 +108,7 @@
 }
 
 .vd-dock.is-square {
-  --vd-dock-morph: 480ms;
+  --vd-dock-morph: var(--vd-dock-morph-shrink);
 
   left: var(--vd-dock-inset);
   right: auto;
@@ -118,11 +122,12 @@
   min-height: var(--vd-dock-height);
   padding: 0.5rem;
   justify-content: center;
+  align-items: center;
   gap: 0;
 }
 
 .vd-dock.is-vertical {
-  --vd-dock-morph: 720ms;
+  --vd-dock-morph: var(--vd-dock-morph-grow);
 
   left: var(--vd-dock-inset);
   right: auto;
@@ -282,7 +287,7 @@
 .vd-dock-contained.vd-dock-edge-top:not(.is-square) {
   left: var(--vd-dock-inset);
   right: var(--vd-dock-inset);
-  width: auto;
+  width: calc(100% - 2 * var(--vd-dock-inset));
   transform: none;
 }
 
@@ -290,20 +295,18 @@
 .vd-dock-contained.vd-dock-edge-right:not(.is-square) {
   top: var(--vd-dock-inset);
   bottom: var(--vd-dock-inset);
-  height: auto;
+  height: calc(100% - 2 * var(--vd-dock-inset));
   min-height: 0;
   max-height: none;
 }
 
-.vd-dock.is-morphing,
-.vd-dock.is-square {
-  justify-content: center;
-  align-items: center;
-  gap: 0;
+.vd-dock-nav,
+.vd-dock-actions {
+  transition:
+    opacity var(--vd-dock-content-in) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
+    transform var(--vd-dock-content-in) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1));
 }
 
-.vd-dock.is-morphing .vd-dock-nav,
-.vd-dock.is-morphing .vd-dock-actions,
 .vd-dock.is-square .vd-dock-nav,
 .vd-dock.is-square .vd-dock-actions {
   opacity: 0;
@@ -319,9 +322,15 @@
   padding: 0;
   overflow: hidden;
   flex: 0 0 0;
+  transform: scale(var(--vd-motion-scale-sm, 0.96));
+  transition:
+    opacity var(--vd-dock-content-fade) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
+    transform var(--vd-dock-content-fade) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
+    width 0ms linear var(--vd-dock-content-fade),
+    height 0ms linear var(--vd-dock-content-fade),
+    visibility 0ms linear var(--vd-dock-content-fade);
 }
 
-.vd-dock.is-morphing .vd-dock-brand,
 .vd-dock.is-square .vd-dock-brand {
   position: absolute;
   inset: 0;
@@ -415,9 +424,9 @@
   opacity: 0.72;
   transform: scale(0.94);
   transition:
-    opacity 0.18s ease,
-    transform 0.18s ease,
-    color 0.18s ease;
+    opacity var(--vd-duration-snappy, 144ms) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
+    transform var(--vd-duration-snappy, 144ms) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
+    color var(--vd-duration-fast, 89ms) ease;
 }
 
 .vd-dock-items-inline .vd-dock-item {
@@ -612,14 +621,31 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vd-dock {
+  :root:not([data-motion="full"]) .vd-dock {
     transition: none;
   }
 
-  .vd-dock-item {
+  :root:not([data-motion="full"]) .vd-dock-item {
     transition: none;
     transform: none;
   }
+}
+
+html[data-motion="off"] .vd-dock,
+html[data-motion="off"] .vd-dock-item,
+html[data-motion="off"] .vd-dock-nav,
+html[data-motion="off"] .vd-dock-actions {
+  transition: none !important;
+  transform: none !important;
+}
+
+html[data-motion="reduce"] .vd-dock {
+  --vd-dock-morph: var(--vd-duration-fast, 89ms);
+}
+
+html[data-motion="reduce"] .vd-dock-item {
+  transition: opacity var(--vd-duration-fast, 89ms) ease;
+  transform: none;
 }
 
 @media (max-width: 767px) {

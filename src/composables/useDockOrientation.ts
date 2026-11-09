@@ -14,7 +14,7 @@ export const DOCK_PLACEMENT_PAIR: Record<DockPlacement, DockPlacement> = {
   right: "top",
 };
 
-export const DOCK_MORPH_MS = { shrink: 480, grow: 720 } as const;
+export const DOCK_MORPH_MS = { shrink: 377, grow: 610 } as const;
 export const DOCK_NARROW_QUERY = "(max-width: 520px)";
 export const DOCK_ORIENT_SUFFIX = "dock-orient";
 
@@ -81,7 +81,18 @@ export function dockPlacementOf(
 }
 
 function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window === "undefined") return false;
+  const mode =
+    typeof document !== "undefined"
+      ? document.documentElement.getAttribute("data-motion")
+      : null;
+  if (mode === "off" || mode === "reduce") return true;
+  if (mode === "full") return false;
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
 }
 
 function resolveStorageKey(options: UseDockOrientationOptions): string | null {
@@ -144,6 +155,7 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
 
   let morphTimer: ReturnType<typeof setTimeout> | null = null;
   let narrowMql: MediaQueryList | null = null;
+  let targetPlacement: DockPlacement | null = null;
 
   const clearMorphTimer = (): void => {
     if (morphTimer != null) {
@@ -169,6 +181,7 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
   const snapToPlacement = (target: DockPlacement): void => {
     clearMorphTimer();
     isMorphing.value = false;
+    targetPlacement = null;
     applyRest(target);
   };
 
@@ -185,15 +198,16 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
       applyVisual(dockHorizontalOf(chosenPlacement));
       return;
     }
-    if (isMorphing.value) {
-      if (options?.interrupt) snapToPlacement(target);
-      return;
-    }
     if (
       placement.value === target &&
       visualPhase.value === dockOrientationOf(target)
     ) {
       writeStored(storageKey, target);
+      return;
+    }
+    if (isMorphing.value) {
+      if (targetPlacement === target) return;
+      if (options?.interrupt) snapToPlacement(target);
       return;
     }
     if (prefersReducedMotion()) {
@@ -202,12 +216,14 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     }
 
     isMorphing.value = true;
+    targetPlacement = target;
     visualPhase.value = "square";
     clearMorphTimer();
     morphTimer = setTimeout(() => {
       applyRest(target);
       morphTimer = setTimeout(() => {
         isMorphing.value = false;
+        targetPlacement = null;
         morphTimer = null;
       }, DOCK_MORPH_MS.grow);
     }, DOCK_MORPH_MS.shrink);
@@ -240,6 +256,7 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     if (event.matches) {
       clearMorphTimer();
       isMorphing.value = false;
+      targetPlacement = null;
       applyVisual(dockHorizontalOf(chosenPlacement));
       return;
     }
