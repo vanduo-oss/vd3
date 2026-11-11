@@ -14,4 +14,4 @@
 - [x] Add motion controls to `VdThemeCustomizer` and `tokens/customizer/options.json`
 - [x] Update version to 1.9.0, changelog, skills, and size budgets
 - [x] Verify vd3 test and build gates
-- [ ] Coordinated vd3-docs updates and tests
+- [x] Coordinated vd3-docs updates and tests
