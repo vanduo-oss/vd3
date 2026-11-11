@@ -11,8 +11,7 @@ in the repo) and SHALL re-export that surface so the package root exposes
 `PALETTE_OPTIONS`, `PRIMARY_COLORS`, `NEUTRAL_COLORS`, `RADIUS_OPTIONS`,
 `FONT_OPTIONS`, `THEME_MODES`, and the `ColorDef` / `FontDef` / `PaletteDef`
 / `ThemeDefaults` / `RadiusOption` / `ThemeMode` / `Palette` types with the
-old `@vanduo-oss/core` names. The data MUST be inlined into the built lib
-bundle — `dist/index.js` SHALL NOT import any module other than `vue`.
+old `@vanduo-oss/core` names.
 
 #### Scenario: root exposes the token-data surface
 
@@ -27,23 +26,17 @@ bundle — `dist/index.js` SHALL NOT import any module other than `vue`.
 - **WHEN** its bare module specifiers are inspected
 - **THEN** `vue` is the only one
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The data MUST be inlined into the built lib
+bundle — `dist/index.js` SHALL NOT import any module other than `vue`.
+
 ### Requirement: theme-preference-model
 
-The theme layer MUST carry the old vue package's preference model unchanged:
-`getThemeDefaults()` / `setThemeDefaults(overrides)` (shallow merge over the
-generated baseline, copy-on-read), `defaultPreference()`, `loadPreference()`
-(validating stored values against the option lists), `applyPreference()`
-(setting `data-palette`, `data-primary`, `data-neutral`, `data-radius`,
-`--vd-radius-scale`, and removing `data-font`/`data-theme` for the
-`system` values), `persistPreference()`, `defaultPrimary(theme)` (system
-scheme resolved via `prefers-color-scheme`), and `isDefaultPrimary()`.
-Storage SHALL default to the `vanduo-*` localStorage keys (`vanduo-palette`,
-`vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`,
-`vanduo-font-preference`, `vanduo-theme-preference`). The package MUST also
-export `getStoragePrefix()` / `setStoragePrefix(prefix)` so consumers MAY
-remap those six keys by replacing the `vanduo-` prefix (suffixes unchanged)
-before the theme model first reads storage. Every storage or DOM access MUST
-be client-guarded (SSR-safe, storage failures swallowed).
+The theme layer MUST carry the old vue package's preference model unchanged.
 
 #### Scenario: apply sets the attribute contract
 
@@ -79,6 +72,27 @@ be client-guarded (SSR-safe, storage failures swallowed).
 - **WHEN** `persistPreference()` writes a preference
 - **THEN** values land under `ts-school-palette` (and the other five
   `ts-school-*` keys), not under `vanduo-*`
+
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The theme layer MUST carry the old vue package's preference model unchanged:
+`getThemeDefaults()` / `setThemeDefaults(overrides)` (shallow merge over the
+generated baseline, copy-on-read), `defaultPreference()`, `loadPreference()`
+(validating stored values against the option lists), `applyPreference()`
+(setting `data-palette`, `data-primary`, `data-neutral`, `data-radius`,
+`--vd-radius-scale`, and removing `data-font`/`data-theme` for the
+`system` values), `persistPreference()`, `defaultPrimary(theme)` (system
+scheme resolved via `prefers-color-scheme`), and `isDefaultPrimary()`.
+Storage SHALL default to the `vanduo-*` localStorage keys (`vanduo-palette`,
+`vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`,
+`vanduo-font-preference`, `vanduo-theme-preference`). The package MUST also
+export `getStoragePrefix()` / `setStoragePrefix(prefix)` so consumers MAY
+remap those six keys by replacing the `vanduo-` prefix (suffixes unchanged)
+before the theme model first reads storage. Every storage or DOM access MUST
+be client-guarded (SSR-safe, storage failures swallowed).
 
 ### Requirement: theme-bridge
 
@@ -127,22 +141,7 @@ touch `window.Vanduo*` or import `@vanduo-oss/framework`.
 The theme layer MUST export `useThemePreference()` — a module-scope
 reactive singleton (useToast pattern; no pinia) that is the de-pinia'd
 replacement for vd2's theme store and the shared state behind
-`VdThemeSwitcher` and `VdThemeCustomizer`. It SHALL lazily initialize
-from `loadPreference()` on first client call (SSR-safe: no storage or DOM
-access at import time; the documented process-global caveat applies) and
-expose the six reactive preference fields (`palette`, `theme`, `primary`,
-`neutral`, `radius`, `font`) plus setter verbs mirroring vd2's store API
-— `setTheme`, `setPalette`, `setPrimary`, `setNeutral`, `setRadius`,
-`setFont`, and `reset` (restoring `defaultPreference()`). Every setter
-MUST route through the existing `applyPreference()` and
-`persistPreference()` so the `data-*` attribute contract and storage keys
-(default `vanduo-*`, or the configured `storagePrefix`) stay the single
-source of truth; `setTheme` SHALL re-derive
-the default primary per the existing `defaultPrimary` rules. While the
-preference is `system`, the singleton MUST track
-`prefers-color-scheme` changes and re-apply — the media listener is
-refcounted (attached with the first consumer mount, detached when the
-last unmounts).
+`VdThemeSwitcher` and `VdThemeCustomizer`.
 
 #### Scenario: singleton is shared
 
@@ -173,4 +172,26 @@ last unmounts).
 - **THEN** the preference is re-applied for the dark scheme (default
   primary re-derived), and after the last consumer unmounts the media
   listener is detached
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It SHALL lazily initialize
+from `loadPreference()` on first client call (SSR-safe: no storage or DOM
+access at import time; the documented process-global caveat applies) and
+expose the six reactive preference fields (`palette`, `theme`, `primary`,
+`neutral`, `radius`, `font`) plus setter verbs mirroring vd2's store API
+— `setTheme`, `setPalette`, `setPrimary`, `setNeutral`, `setRadius`,
+`setFont`, and `reset` (restoring `defaultPreference()`). Every setter
+MUST route through the existing `applyPreference()` and
+`persistPreference()` so the `data-*` attribute contract and storage keys
+(default `vanduo-*`, or the configured `storagePrefix`) stay the single
+source of truth; `setTheme` SHALL re-derive
+the default primary per the existing `defaultPrimary` rules. While the
+preference is `system`, the singleton MUST track
+`prefers-color-scheme` changes and re-apply — the media listener is
+refcounted (attached with the first consumer mount, detached when the
+last unmounts).
 

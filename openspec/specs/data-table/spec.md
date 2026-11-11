@@ -13,8 +13,7 @@ search → sort → page (in that order), plus `total`, `totalPages`, `page`,
 `search`, `sort` (`{ key, dir }` where `dir` is `asc` | `desc` | `none`),
 and selection helpers (`selectedIds`, `toggle`, `toggleAll`,
 `allVisibleSelected`, `someVisibleSelected`). When `manual` is true, `viewRows`
-MUST equal the input `rows` (no client search/sort/page). The composable MUST
-be SSR-safe (no `window` / `document` at call time).
+MUST equal the input `rows` (no client search/sort/page).
 
 #### Scenario: client pipeline order
 
@@ -36,6 +35,14 @@ be SSR-safe (no `window` / `document` at call time).
 - **THEN** `selectedIds` SHALL contain `"a"` after the first call and not
   after the second
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The composable MUST
+be SSR-safe (no `window` / `document` at call time).
+
 ### Requirement: vd-empty-state-component
 
 The package root MUST export `VdEmptyState` with optional `icon`, `title`,
@@ -49,17 +56,7 @@ The package root MUST export `VdEmptyState` with optional `icon`, `title`,
 
 ### Requirement: vd-data-table-component
 
-The package root MUST export `VdDataTable`. It SHALL render `.vd-table` inside
-`.vd-data-table` / `.vd-data-table-scroll` / `.vd-table-responsive`, honour
-`striped` / `bordered` / `hover` / `sm` / `caption`, apply `columns[].variant`
-as `vd-table-{variant}` on the matching `th`, support `sortable` headers with
-`aria-sort`, named slots `cell-{key}` and `header-{key}`, `toolbar`, `empty`,
-`loading`, `footer`, `selectable` `'none' | 'single' | 'multiple'`,
-`v-model:sort`, `v-model:selected`, `v-model:page`, `v-model:search`, sticky
-header CSS, skeleton rows when `loading`, `VdEmptyState` when there are no
-view rows and not loading, and `VdPagination` in the footer when
-`totalPages > 1`. Emits MUST include `row-click`. `VdTable` MUST remain
-unmodified.
+The package root MUST export `VdDataTable`.
 
 #### Scenario: sort aria
 
@@ -84,3 +81,21 @@ unmodified.
 - **GIVEN** `VdTable` source
 - **WHEN** compared to the pre-change SFC
 - **THEN** its props, markup, and lack of slots/events SHALL be identical
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It SHALL render `.vd-table` inside
+`.vd-data-table` / `.vd-data-table-scroll` / `.vd-table-responsive`, honour
+`striped` / `bordered` / `hover` / `sm` / `caption`, apply `columns[].variant`
+as `vd-table-{variant}` on the matching `th`, support `sortable` headers with
+`aria-sort`, named slots `cell-{key}` and `header-{key}`, `toolbar`, `empty`,
+`loading`, `footer`, `selectable` `'none' | 'single' | 'multiple'`,
+`v-model:sort`, `v-model:selected`, `v-model:page`, `v-model:search`, sticky
+header CSS, skeleton rows when `loading`, `VdEmptyState` when there are no
+view rows and not loading, and `VdPagination` in the footer when
+`totalPages > 1`. Emits MUST include `row-click`. `VdTable` MUST remain
+unmodified.
+

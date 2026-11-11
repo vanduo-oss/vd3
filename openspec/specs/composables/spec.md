@@ -13,10 +13,7 @@ The package root MUST export the 18 pure composables carried from the old
 `useNavbarGlassScroll`, `useParallax`, `useScrollspy`, `useSidenav`,
 `useStepper`, `useSuggest`, `useTheme` (module), `useThemeBridge`,
 `useTimepicker`, `useTooltips`, `useWaypoint` — with identical option
-surfaces and behavior. All browser access SHALL occur inside
-`onMounted`/`onScopeDispose`-style lifecycle hooks or behind
-client guards so importing and calling during SSR is safe, and every
-listener/observer a composable installs MUST be removed on unmount.
+surfaces and behavior.
 
 #### Scenario: carried composables are exported
 
@@ -37,19 +34,21 @@ listener/observer a composable installs MUST be removed on unmount.
 - **WHEN** the harness unmounts
 - **THEN** the composable's listeners/observers are disconnected
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+All browser access SHALL occur inside
+`onMounted`/`onScopeDispose`-style lifecycle hooks or behind
+client guards so importing and calling during SSR is safe, and every
+listener/observer a composable installs MUST be removed on unmount.
+
 ### Requirement: toast-singleton
 
 `useToast` MUST be implemented as a module-scope `reactive()` singleton with
 no pinia import (pinia stays out of the peer dependencies), exposing the
-exact public API of the old pinia store: `useToastStore()` and `useToast()`
-returning `{ queue, show, dismiss, success, error, warning, info }`, the
-`ToastType` / `ToastPosition` / `ToastEntry` / `ToastOptions` types, the
-flexible `show()` signature (`show('msg')`, `show('msg', 'success', 3000)`,
-`show('msg', { … })`, `show({ message, … })` — each returning the entry id),
-and defaults mirroring `framework/js/components/toast.js`
-(`duration: 5000`, `position: "top-right"`, `dismissible: true`,
-`showProgress: true`, `solid: false`). The public API SHALL be locked by a
-type-level test committed BEFORE the rewrite lands.
+exact public API of the old pinia store.
 
 #### Scenario: type lock precedes the implementation
 
@@ -79,6 +78,23 @@ type-level test committed BEFORE the rewrite lands.
 - **WHEN** searched for `pinia`
 - **THEN** no import and no dependency/peer entry exists
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useToast` MUST be implemented as a module-scope `reactive()` singleton with
+no pinia import (pinia stays out of the peer dependencies), exposing the
+exact public API of the old pinia store: `useToastStore()` and `useToast()`
+returning `{ queue, show, dismiss, success, error, warning, info }`, the
+`ToastType` / `ToastPosition` / `ToastEntry` / `ToastOptions` types, the
+flexible `show()` signature (`show('msg')`, `show('msg', 'success', 3000)`,
+`show('msg', { … })`, `show({ message, … })` — each returning the entry id),
+and defaults mirroring `framework/js/components/toast.js`
+(`duration: 5000`, `position: "top-right"`, `dismissible: true`,
+`showProgress: true`, `solid: false`). The public API SHALL be locked by a
+type-level test committed BEFORE the rewrite lands.
+
 ### Requirement: composable-behavior-specs
 
 Every composable exported from the package root MUST have a jsdom behavior
@@ -99,13 +115,7 @@ The package root MUST export the 12 rewritten composables — `useDropdown`,
 `usePopover` — each preserving its old shim's public call signature
 (`useX(root: Ref<HTMLElement | null>)` remains a valid call). Extensions
 (an optional `options` argument, a returned controller) MUST be optional
-and documented. No file under `src/` SHALL reference a `window.Vanduo*`
-global, cast to a `Vanduo*` type, or import `@vanduo-oss/framework`; no
-composable SHALL install document-wide auto-init. All browser access MUST
-occur inside `onMounted`/`onScopeDispose`-style lifecycle hooks or behind
-client guards (SSR-safe under vite-ssg), and teardown MUST remove exactly
-the calling instance's listeners, observers, and generated DOM — never
-other instances' wiring.
+and documented.
 
 #### Scenario: rewritten composables are exported
 
@@ -135,6 +145,19 @@ other instances' wiring.
 - **THEN** the other harness's wiring keeps working (its listeners and
   state classes still respond)
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+No file under `src/` SHALL reference a `window.Vanduo*`
+global, cast to a `Vanduo*` type, or import `@vanduo-oss/framework`; no
+composable SHALL install document-wide auto-init. All browser access MUST
+occur inside `onMounted`/`onScopeDispose`-style lifecycle hooks or behind
+client guards (SSR-safe under vite-ssg), and teardown MUST remove exactly
+the calling instance's listeners, observers, and generated DOM — never
+other instances' wiring.
+
 ### Requirement: use-ripple-rewrite
 
 `useRipple` MUST reproduce `framework/js/components/ripple.js` (74 lines)
@@ -142,9 +165,7 @@ within the given root: every `.vd-ripple` / `[data-vd-ripple]` element
 gets `mousedown` and passive `touchstart` handlers that append a
 `.vd-ripple-wave` span sized to `max(width, height)` of the element and
 positioned so the wave centers on the pointer coordinates (element center
-when coordinates are unavailable). The wave SHALL remove itself on
-`animationend`, and teardown MUST remove the handlers and any lingering
-`.vd-ripple-wave` elements under the root.
+when coordinates are unavailable).
 
 #### Scenario: wave spawns at the pointer
 
@@ -166,22 +187,19 @@ when coordinates are unavailable). The wave SHALL remove itself on
 - **THEN** no `.vd-ripple-wave` remains and the trigger no longer spawns
   waves
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The wave SHALL remove itself on
+`animationend`, and teardown MUST remove the handlers and any lingering
+`.vd-ripple-wave` elements under the root.
+
 ### Requirement: use-search-registry
 
 `useSearch` MUST reproduce the `framework/js/components/search.js`
-(107 lines) source registry as a module-scope singleton: `register(source)`
-throws on a missing/empty `name`, a non-function `fetch`, or a duplicate
-`name`, and stores a frozen record with `label` defaulting to `name`,
-`icon` defaulting to `null`, and `limit` defaulting to `10`;
-`unregister(name)` returns a boolean; `list()` returns a frozen array;
-`query(text, { signal?, limitPerSource? })` trims the text, resolves
-immediately with empty per-source results for an empty query, otherwise
-fetches all sources in parallel (passing `{ signal, limit }`), coerces
-non-array results to `[]`, captures per-source errors as
-`{ results: [], error }`, and rethrows `AbortError`. The registry SHALL
-survive component unmount (process-global by design, SSR caveat
-documented). The shim signature `useSearch(root)` MUST keep working; the
-composable SHALL return the registry API.
+(107 lines) source registry as a module-scope singleton.
 
 #### Scenario: duplicate registration throws
 
@@ -209,18 +227,32 @@ composable SHALL return the registry API.
 - **WHEN** `list()` is read from a new caller
 - **THEN** the source is still registered
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useSearch` MUST reproduce the `framework/js/components/search.js`
+(107 lines) source registry as a module-scope singleton: `register(source)`
+throws on a missing/empty `name`, a non-function `fetch`, or a duplicate
+`name`, and stores a frozen record with `label` defaulting to `name`,
+`icon` defaulting to `null`, and `limit` defaulting to `10`;
+`unregister(name)` returns a boolean; `list()` returns a frozen array;
+`query(text, { signal?, limitPerSource? })` trims the text, resolves
+immediately with empty per-source results for an empty query, otherwise
+fetches all sources in parallel (passing `{ signal, limit }`), coerces
+non-array results to `[]`, captures per-source errors as
+`{ results: [], error }`, and rethrows `AbortError`. The registry SHALL
+survive component unmount (process-global by design, SSR caveat
+documented). The shim signature `useSearch(root)` MUST keep working; the
+composable SHALL return the registry API.
+
 ### Requirement: use-expanding-cards-rewrite
 
 `useExpandingCards` MUST reproduce
 `framework/js/components/expanding-cards.js` (148 lines) within the root's
 `.vd-expanding-cards` containers (skipping
-`data-vd-expanding-cards="manual"`): clicking a `.vd-expanding-card` makes
-it the single `is-active` card and focuses it; every card gets
-`tabindex="0"` (unless authored), `role="button"`, and `aria-pressed`
-mirroring `is-active` (kept in sync via a MutationObserver); ArrowLeft/
-ArrowRight (plus ArrowUp/ArrowDown only when the container is
-column-direction), Home, and End move activation among visible cards.
-Teardown MUST disconnect the observer and remove all handlers.
+`data-vd-expanding-cards="manual"`).
 
 #### Scenario: click activates exactly one card
 
@@ -241,26 +273,29 @@ Teardown MUST disconnect the observer and remove all handlers.
 - **WHEN** the composable mounts and a card is clicked
 - **THEN** no wiring occurred and no `is-active` toggling happens
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useExpandingCards` MUST reproduce
+`framework/js/components/expanding-cards.js` (148 lines) within the root's
+`.vd-expanding-cards` containers (skipping
+`data-vd-expanding-cards="manual"`): clicking a `.vd-expanding-card` makes
+it the single `is-active` card and focuses it; every card gets
+`tabindex="0"` (unless authored), `role="button"`, and `aria-pressed`
+mirroring `is-active` (kept in sync via a MutationObserver); ArrowLeft/
+ArrowRight (plus ArrowUp/ArrowDown only when the container is
+column-direction), Home, and End move activation among visible cards.
+Teardown MUST disconnect the observer and remove all handlers.
+
 ### Requirement: use-validate-rewrite
 
 `useValidate` MUST reproduce `framework/js/components/validate.js`
 (196 lines) for `[data-vd-validate]` / `.vd-validate` forms in the root:
 the ten rules (`required`, `email`, `url`, `number`, `min`, `max`,
 `minVal`, `maxVal`, `pattern` with the 100-char ReDoS cap, `match`) parsed
-from pipe-separated `data-vd-rules` with `:`-joined params, first failing
-rule wins; messages from `data-vd-msg-<rule>` overrides falling back to
-the built-in catalog with `{0}` substitution; modes `blur` (default) /
-`input` / `submit` from `data-vd-validate-mode` with the documented
-per-field override, blur mode revalidating on input once a field is
-marked; field state via `is-valid` / `is-invalid`, `aria-invalid`, and a
-generated `.vd-validate-error` (`role="alert"`, linked by
-`aria-describedby`); submit validating all fields, focusing the first
-invalid field, preventing submission when invalid, and always dispatching
-`validate:submit` with `{ valid }`. The `match` rule SHALL resolve by
-element id first and then by `[name]` (shim's documented extension). A
-returned controller with `validate(): boolean` and
-`addRule(name, validator, message?)` SHALL be documented as optional
-extensions.
+from pipe-separated `data-vd-rules` with `.
 
 #### Scenario: blur validation and error rendering
 
@@ -291,6 +326,30 @@ extensions.
 - **WHEN** both fields hold the same value and validation runs
 - **THEN** the rule passes
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useValidate` MUST reproduce `framework/js/components/validate.js`
+(196 lines) for `[data-vd-validate]` / `.vd-validate` forms in the root:
+the ten rules (`required`, `email`, `url`, `number`, `min`, `max`,
+`minVal`, `maxVal`, `pattern` with the 100-char ReDoS cap, `match`) parsed
+from pipe-separated `data-vd-rules` with `:`-joined params, first failing
+rule wins; messages from `data-vd-msg-<rule>` overrides falling back to
+the built-in catalog with `{0}` substitution; modes `blur` (default) /
+`input` / `submit` from `data-vd-validate-mode` with the documented
+per-field override, blur mode revalidating on input once a field is
+marked; field state via `is-valid` / `is-invalid`, `aria-invalid`, and a
+generated `.vd-validate-error` (`role="alert"`, linked by
+`aria-describedby`); submit validating all fields, focusing the first
+invalid field, preventing submission when invalid, and always dispatching
+`validate:submit` with `{ valid }`. The `match` rule SHALL resolve by
+element id first and then by `[name]` (shim's documented extension). A
+returned controller with `validate(): boolean` and
+`addRule(name, validator, message?)` SHALL be documented as optional
+extensions.
+
 ### Requirement: use-timeline-rewrite
 
 `useTimeline` MUST reproduce `framework/js/components/timeline.js`
@@ -299,13 +358,7 @@ root: per-item `--vd-timeline-reveal-delay` staggering (140 ms steps,
 index capped at 7); instant reveal of all items when
 `prefers-reduced-motion: reduce` matches or IntersectionObserver is
 unavailable; otherwise IO-driven `is-revealed` (rootMargin
-`0px 0px -10% 0px`, threshold 0.15, unobserve after reveal). Containers
-with `.vd-timeline-playback` SHALL instead start unrevealed and wire
-`[data-vd-timeline-prev|next|play|pause]` controls in the parent scope:
-next/prev reveal/unreveal the prefix boundary item, play steps every
-800 ms and auto-pauses at the end, buttons keep `disabled` /
-`aria-disabled` / `aria-pressed` state. Teardown MUST disconnect the
-observer and stop playback timers.
+`0px 0px -10% 0px`, threshold 0.15, unobserve after reveal).
 
 #### Scenario: staggered reveal on intersection
 
@@ -328,37 +381,26 @@ observer and stop playback timers.
 - **THEN** both items are revealed in order and the next button becomes
   `disabled` with `aria-disabled="true"` while prev is enabled
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Containers
+with `.vd-timeline-playback` SHALL instead start unrevealed and wire
+`[data-vd-timeline-prev|next|play|pause]` controls in the parent scope:
+next/prev reveal/unreveal the prefix boundary item, play steps every
+800 ms and auto-pauses at the end, buttons keep `disabled` /
+`aria-disabled` / `aria-pressed` state. Teardown MUST disconnect the
+observer and stop playback timers.
+
 ### Requirement: use-popover-rewrite
 
 `usePopover` MUST merge `framework/js/components/bubble.js` (211 lines)
 and `framework/js/components/popover.js` (294 lines) behind the shim's
 signature, wiring both markup contracts inside the root:
-
 1. **Attribute-built bubble** (`[data-vd-bubble]` / `[data-vd-popover]`
-   without a target attribute): builds a body-appended
-   `.vd-bubble-content` (`role="dialog"`, `aria-modal="false"`,
-   `data-placement`) with optional `.vd-bubble-header` + close button when
-   a title attribute is present, text content by default, and HTML content
-   only from `data-vd-bubble-html`/`data-vd-popover-html` passed through
-   `sanitizeHtml` (`allowStyle: false`; SVG only with the allow-svg
-   attribute). Trigger gets `aria-haspopup="dialog"`, `aria-expanded`,
-   `aria-controls`; click toggles (opening closes other bubbles);
-   placement from the placement attribute (default `bottom`) with viewport
-   clamping; outside-click (capture) and Escape close; `bubble:show` /
-   `bubble:hide` dispatch from the trigger.
-2. **Target-panel popover** (`.vd-popover-trigger` with
-   `data-vd-popover-target`): resolves the panel by selector, ensures
-   `.vd-popover-panel` class, id, `role="dialog"`, `aria-modal="false"`;
-   trigger modes from `data-vd-popover-trigger` (`click`, `hover` with the
-   80 ms leave grace, `focus` with related-target check; default
-   `click focus`); placement from `data-vd-popover-placement` (invalid →
-   `bottom`) with `data-placement` mirroring, viewport clamping, and
-   overflow flip on resize/scroll unless `data-vd-popover-flip="false"`;
-   Escape closes the open panel; `popover:show` / `popover:hide` dispatch
-   from the trigger.
-
-Teardown MUST remove generated bubble panels, restore trigger ARIA, and
-detach all document/window listeners this instance installed.
+without a target attribute).
 
 #### Scenario: bubble builds and toggles
 
@@ -397,25 +439,43 @@ detach all document/window listeners this instance installed.
 - **THEN** it closes, `aria-expanded` returns to `"false"`, and the hide
   event fires
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`usePopover` MUST merge `framework/js/components/bubble.js` (211 lines)
+and `framework/js/components/popover.js` (294 lines) behind the shim's
+signature, wiring both markup contracts inside the root:
+1. **Attribute-built bubble** (`[data-vd-bubble]` / `[data-vd-popover]`
+without a target attribute): builds a body-appended
+`.vd-bubble-content` (`role="dialog"`, `aria-modal="false"`,
+`data-placement`) with optional `.vd-bubble-header` + close button when
+a title attribute is present, text content by default, and HTML content
+only from `data-vd-bubble-html`/`data-vd-popover-html` passed through
+`sanitizeHtml` (`allowStyle: false`; SVG only with the allow-svg
+attribute). Trigger gets `aria-haspopup="dialog"`, `aria-expanded`,
+`aria-controls`; click toggles (opening closes other bubbles);
+placement from the placement attribute (default `bottom`) with viewport
+clamping; outside-click (capture) and Escape close; `bubble:show` /
+`bubble:hide` dispatch from the trigger.
+2. **Target-panel popover** (`.vd-popover-trigger` with
+`data-vd-popover-target`): resolves the panel by selector, ensures
+`.vd-popover-panel` class, id, `role="dialog"`, `aria-modal="false"`;
+trigger modes from `data-vd-popover-trigger` (`click`, `hover` with the
+80 ms leave grace, `focus` with related-target check; default
+`click focus`); placement from `data-vd-popover-placement` (invalid →
+`bottom`) with `data-placement` mirroring, viewport clamping, and
+overflow flip on resize/scroll unless `data-vd-popover-flip="false"`;
+Escape closes the open panel; `popover:show` / `popover:hide` dispatch
+from the trigger.
+Teardown MUST remove generated bubble panels, restore trigger ARIA, and
+detach all document/window listeners this instance installed.
+
 ### Requirement: use-flow-rewrite
 
 `useFlow` MUST reproduce `framework/js/components/flow.js` (264 lines) for
-`.vd-flow` / `.vd-carousel` elements in the root: slide transforms on
-`.vd-flow-track` (or `is-active` fading for `.vd-flow-fade`), looping per
-`data-vd-loop` (default true) with modulo wrap, region/carousel ARIA
-(`role="region"`, `aria-roledescription="carousel"`, default
-`aria-label`), per-slide group roles with "Slide i of n" labels and
-`aria-hidden` bookkeeping, a visually-hidden `aria-live="polite"` region
-announcing changes, prev/next controls, indicator dots (`role="tab"`,
-`aria-selected`, generated labels; bare `.vd-flow-indicators` buttons are
-upgraded with `.vd-flow-indicator` per the shim's bridge), ArrowLeft/
-ArrowRight keyboard on the focusable container, pointer/touch swipe with
-the 50 px threshold and `is-dragging` class, autoplay from
-`data-vd-autoplay` with `data-vd-interval` (default 5000 ms) pausing on
-mouseenter/focusin and resuming on mouseleave/focusout, and `flow:change`
-with `{ current, previous, total }`. A returned controller
-(`goTo`/`next`/`prev`) SHALL be documented as an optional extension.
-Teardown MUST stop autoplay and remove all listeners.
+`.vd-flow` / `.vd-carousel` elements in the root.
 
 #### Scenario: navigation updates slides, indicators, and ARIA
 
@@ -439,28 +499,34 @@ Teardown MUST stop autoplay and remove all listeners.
 - **WHEN** the pointer enters the carousel
 - **THEN** no further slide changes occur until the pointer leaves
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useFlow` MUST reproduce `framework/js/components/flow.js` (264 lines) for
+`.vd-flow` / `.vd-carousel` elements in the root: slide transforms on
+`.vd-flow-track` (or `is-active` fading for `.vd-flow-fade`), looping per
+`data-vd-loop` (default true) with modulo wrap, region/carousel ARIA
+(`role="region"`, `aria-roledescription="carousel"`, default
+`aria-label`), per-slide group roles with "Slide i of n" labels and
+`aria-hidden` bookkeeping, a visually-hidden `aria-live="polite"` region
+announcing changes, prev/next controls, indicator dots (`role="tab"`,
+`aria-selected`, generated labels; bare `.vd-flow-indicators` buttons are
+upgraded with `.vd-flow-indicator` per the shim's bridge), ArrowLeft/
+ArrowRight keyboard on the focusable container, pointer/touch swipe with
+the 50 px threshold and `is-dragging` class, autoplay from
+`data-vd-autoplay` with `data-vd-interval` (default 5000 ms) pausing on
+mouseenter/focusin and resuming on mouseleave/focusout, and `flow:change`
+with `{ current, previous, total }`. A returned controller
+(`goTo`/`next`/`prev`) SHALL be documented as an optional extension.
+Teardown MUST stop autoplay and remove all listeners.
+
 ### Requirement: use-tabs-rewrite
 
 `useTabs` MUST reach full parity with `framework/js/components/tabs.js`
 (317 lines) for tab containers in the root (superseding the old shim's
-subset). Container and link resolution MUST accept the donor's **dual
-selectors** as a non-breaking superset: `.vd-tabs, [data-tabs]` for the
-container scan, the ownership check, and the `show()` container lookup, and
-`.vd-tab-link, [data-tab]` for links (`linksOf` and the delegated
-click/keydown `closest()` lookup); panes already resolve via
-`.vd-tab-pane, [data-tab-pane]`. Class-based markup (`.vd-tabs` /
-`.vd-tab-link`) MUST keep wiring exactly as before; attribute-flavored markup
-(`[data-tabs]` / `[data-tab]`) now wires too. The behavior is otherwise
-unchanged: tablist ARIA (`role="tablist"` on `.vd-tab-list`, `role="tab"` +
-`aria-selected` + roving `tabindex` on the tab links, `role="tabpanel"` +
-`aria-labelledby` on the panes with generated ids and `aria-controls`
-back-links); pane resolution by `data-tab-pane`-attribute, then id, then
-index; activation on click (and Enter/Space) skipping `disabled` tabs,
-toggling `is-active` on tab and pane and dispatching `tab:change` with
-`{ tab, pane, tabId }`; keyboard navigation with ArrowLeft/ArrowRight
-(horizontal), ArrowUp/ArrowDown (`.vd-tabs-vertical`), Home/End — moving
-focus AND activation with wrap-around, skipping disabled tabs; and
-auto-activation of the first tab when none is `is-active` at mount.
+subset).
 
 #### Scenario: ARIA wiring at mount
 
@@ -494,6 +560,30 @@ auto-activation of the first tab when none is `is-active` at mount.
 - **WHEN** arrow navigation passes over it
 - **THEN** it is never focused or activated
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Container and link resolution MUST accept the donor's **dual
+selectors** as a non-breaking superset: `.vd-tabs, [data-tabs]` for the
+container scan, the ownership check, and the `show()` container lookup, and
+`.vd-tab-link, [data-tab]` for links (`linksOf` and the delegated
+click/keydown `closest()` lookup); panes already resolve via
+`.vd-tab-pane, [data-tab-pane]`. Class-based markup (`.vd-tabs` /
+`.vd-tab-link`) MUST keep wiring exactly as before; attribute-flavored markup
+(`[data-tabs]` / `[data-tab]`) now wires too. The behavior is otherwise
+unchanged: tablist ARIA (`role="tablist"` on `.vd-tab-list`, `role="tab"` +
+`aria-selected` + roving `tabindex` on the tab links, `role="tabpanel"` +
+`aria-labelledby` on the panes with generated ids and `aria-controls`
+back-links); pane resolution by `data-tab-pane`-attribute, then id, then
+index; activation on click (and Enter/Space) skipping `disabled` tabs,
+toggling `is-active` on tab and pane and dispatching `tab:change` with
+`{ tab, pane, tabId }`; keyboard navigation with ArrowLeft/ArrowRight
+(horizontal), ArrowUp/ArrowDown (`.vd-tabs-vertical`), Home/End — moving
+focus AND activation with wrap-around, skipping disabled tabs; and
+auto-activation of the first tab when none is `is-active` at mount.
+
 ### Requirement: use-spotlight-rewrite
 
 `useSpotlight` MUST reproduce `framework/js/components/spotlight.js`
@@ -501,19 +591,7 @@ auto-activation of the first tab when none is `is-active` at mount.
 steps (invalid JSON → console error, no tour; steps normalized to
 `{ target, title, description }` accepting `content` as a description
 alias and dropping step entries without a usable target) and start the
-tour on click. The active tour SHALL build a body-appended
-`.vd-spotlight-overlay` (`aria-hidden`) and `.vd-spotlight-tooltip`
-(`role="dialog"`, `aria-modal="true"`) with per-step title/description
-(ids wired to `aria-labelledby`/`aria-describedby`), a footer counter
-"i / n", and Back/Skip/Next/Done buttons; the step target gains
-`.vd-spotlight-target` and is scrolled into view; the tooltip tracks the
-target through scroll/resize and settle frames; Escape and overlay click
-stop the tour; starting while active stops the previous tour; stopping
-removes all generated DOM and classes, restores focus to the trigger, and
-dispatches `spotlight:end` with `{ completedSteps, total, completed }`;
-each step dispatches `spotlight:step`. A returned controller
-(`start(steps)`, `stop`, `next`, `prev`) SHALL be documented as an
-optional extension. Only one tour is active process-wide.
+tour on click.
 
 #### Scenario: trigger starts a tour
 
@@ -544,6 +622,25 @@ optional extension. Only one tour is active process-wide.
 - **WHEN** it is clicked
 - **THEN** no overlay is created
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The active tour SHALL build a body-appended
+`.vd-spotlight-overlay` (`aria-hidden`) and `.vd-spotlight-tooltip`
+(`role="dialog"`, `aria-modal="true"`) with per-step title/description
+(ids wired to `aria-labelledby`/`aria-describedby`), a footer counter
+"i / n", and Back/Skip/Next/Done buttons; the step target gains
+`.vd-spotlight-target` and is scrolled into view; the tooltip tracks the
+target through scroll/resize and settle frames; Escape and overlay click
+stop the tour; starting while active stops the previous tour; stopping
+removes all generated DOM and classes, restores focus to the trigger, and
+dispatches `spotlight:end` with `{ completedSteps, total, completed }`;
+each step dispatches `spotlight:step`. A returned controller
+(`start(steps)`, `stop`, `next`, `prev`) SHALL be documented as an
+optional extension. Only one tour is active process-wide.
+
 ### Requirement: use-dropdown-rewrite
 
 `useDropdown` MUST reproduce `framework/js/components/dropdown.js`
@@ -552,19 +649,7 @@ optional extension. Only one tour is active process-wide.
 `aria-hidden`); click toggling with `is-open` on both container and menu,
 opening closes other open dropdowns wired by this instance and focuses the
 first non-disabled item; closing restores focus to the toggle;
-outside-click closes; keyboard on the toggle: Enter/Space/ArrowDown open
-(ArrowDown/ArrowUp cycle item focus when open), Home/End jump, Escape
-closes with refocus, and printable keys drive a 500 ms typeahead buffer
-focusing the first item whose text starts with the buffer; item selection
-(click or Enter/Space) marks the item `active`/`is-active`, updates a
-button toggle's label to the item text, closes the menu, and dispatches
-`dropdown:select` with `{ item, value }` (`data-value` falling back to
-text); auto-placement toggling `vd-dropdown-menu-end` / `-start` / `-top`
-classes from viewport overflow while respecting explicit
-`vd-dropdown-dropup` / `-dropright` / `-dropleft` wrappers. Disabled items
-(`.disabled` / `.is-disabled`) MUST be excluded from focus and selection.
-A returned controller (`open`/`close`) SHALL be documented as an optional
-extension. This requirement is the behavior dependency of `VdMenu`.
+outside-click closes; keyboard on the toggle.
 
 #### Scenario: open, focus, and ARIA
 
@@ -592,27 +677,38 @@ extension. This requirement is the behavior dependency of `VdMenu`.
 - **WHEN** Escape is pressed
 - **THEN** the dropdown closes and focus returns to the toggle
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useDropdown` MUST reproduce `framework/js/components/dropdown.js`
+(369 lines) for `.vd-dropdown` containers in the root: toggle ARIA
+(`aria-haspopup`, `aria-expanded`) and menu ARIA (`role="menu"`,
+`aria-hidden`); click toggling with `is-open` on both container and menu,
+opening closes other open dropdowns wired by this instance and focuses the
+first non-disabled item; closing restores focus to the toggle;
+outside-click closes; keyboard on the toggle: Enter/Space/ArrowDown open
+(ArrowDown/ArrowUp cycle item focus when open), Home/End jump, Escape
+closes with refocus, and printable keys drive a 500 ms typeahead buffer
+focusing the first item whose text starts with the buffer; item selection
+(click or Enter/Space) marks the item `active`/`is-active`, updates a
+button toggle's label to the item text, closes the menu, and dispatches
+`dropdown:select` with `{ item, value }` (`data-value` falling back to
+text); auto-placement toggling `vd-dropdown-menu-end` / `-start` / `-top`
+classes from viewport overflow while respecting explicit
+`vd-dropdown-dropup` / `-dropright` / `-dropleft` wrappers. Disabled items
+(`.disabled` / `.is-disabled`) MUST be excluded from focus and selection.
+A returned controller (`open`/`close`) SHALL be documented as an optional
+extension. This requirement is the behavior dependency of `VdMenu`.
+
 ### Requirement: use-image-box-rewrite
 
 `useImageBox` MUST reproduce `framework/js/components/image-box.js`
 (417 lines): `[data-image-box]` triggers in the root gain
 `.vd-image-box-trigger`, click-to-open, `is-broken` marking on image
 error, and — for non-button/anchor triggers — `role="button"`,
-`tabindex="0"`, an enlarge `aria-label`, and Enter/Space activation. A
-single shared backdrop (`.vd-image-box-backdrop`, `role="dialog"`,
-`aria-modal="true"`, labelled, focusable) with container, image, close
-button (`aria-label`), and caption SHALL be lazily created in `body` and
-shared across instances (refcounted: removed when the last consumer
-unmounts). Opening resolves the source
-`data-image-box-full-src` → `data-image-box-src` → `src` → `href`
-(warn + abort when none), sets the caption from `data-image-box-caption`
-falling back to `alt` (hidden when empty), locks body scroll via
-`body-image-box-open` + `--vd-scrollbar-width`, adds `is-visible`, focuses
-the backdrop, and dispatches `imageBox:open` with `{ src }`. Closing —
-via backdrop/image/close-button click, Escape, or scrolling more than
-50 px from the opening scroll position — MUST unlock scroll, restore focus
-to the trigger, dispatch `imageBox:close`, and clear the image source
-after the transition.
+`tabindex="0"`, an enlarge `aria-label`, and Enter/Space activation.
 
 #### Scenario: open resolves the full-size source
 
@@ -636,43 +732,38 @@ after the transition.
 - **THEN** the trigger has `role="button"` and `tabindex="0"`, and the
   box opens
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+A
+single shared backdrop (`.vd-image-box-backdrop`, `role="dialog"`,
+`aria-modal="true"`, labelled, focusable) with container, image, close
+button (`aria-label`), and caption SHALL be lazily created in `body` and
+shared across instances (refcounted: removed when the last consumer
+unmounts). Opening resolves the source
+`data-image-box-full-src` → `data-image-box-src` → `src` → `href`
+(warn + abort when none), sets the caption from `data-image-box-caption`
+falling back to `alt` (hidden when empty), locks body scroll via
+`body-image-box-open` + `--vd-scrollbar-width`, adds `is-visible`, focuses
+the backdrop, and dispatches `imageBox:open` with `{ src }`. Closing —
+via backdrop/image/close-button click, Escape, or scrolling more than
+50 px from the opening scroll position — MUST unlock scroll, restore focus
+to the trigger, dispatch `imageBox:close`, and clear the image source
+after the transition.
+
 ### Requirement: use-draggable-rewrite
 
 `useDraggable` MUST reproduce `framework/js/components/draggable.js`
 (819 lines) within the root:
-
 - **Items** (`.vd-draggable` / `[data-draggable]`): ensure
-  `draggable="true"`, `tabindex="0"`, `role="option"`,
-  `aria-roledescription`, `aria-grabbed`; dragstart applies `is-dragging`
-  and `aria-grabbed="true"` and dispatches `draggable:start`; drag
-  dispatches `draggable:drag`; dragend applies a transient `is-dropped`
-  (removed after 300 ms), resets `aria-grabbed`, and dispatches
-  `draggable:end`. Item payload for drops is `data-draggable` falling back
-  to trimmed text.
-- **Containers** (`.vd-draggable-container`,
-  `.vd-draggable-container-vertical`): `role="listbox"` with a default
-  `aria-label`; items inside are auto-wired; dragover live-reorders the
-  dragged item by the sibling-midpoint rule (vertical containers compare
-  Y, horizontal X), ignoring the (0,0) end-of-drag coordinates.
-- **Drop zones** (`.vd-drop-zone`): `role="region"`,
-  `aria-dropeffect="move"`, default `aria-label`; dragenter adds
-  `is-drag-over`, dragleave removes it, drop removes it and dispatches
-  `draggable:drop` with the item's data and drop position.
-- **Touch fallback**: touchmove past a small threshold mirrors dragstart
-  (with `preventDefault` to suppress scrolling), moves a body-level
-  `.vd-drag-feedback` element with the pointer, live-toggles
-  `is-drag-over` on the zone under the touch point, and touchend performs
-  the drop/reorder and cleanup.
-- **Keyboard**: Enter/Space activates the item's click action;
-  ArrowUp/ArrowLeft and ArrowDown/ArrowRight move the item before/after
-  its draggable sibling, keep focus on it, and dispatch
-  `draggable:reorder` with the direction; Escape cancels an in-progress
-  drag state.
-
-Teardown MUST remove this instance's item/container/zone listeners and
-the feedback element when no instance remains. `makeDraggable(el, opts)` /
-`removeDraggable(el)` SHALL be documented as optional controller
-extensions.
+`draggable="true"`, `tabindex="0"`, `role="option"`,
+`aria-roledescription`, `aria-grabbed`; dragstart applies `is-dragging`
+and `aria-grabbed="true"` and dispatches `draggable:start`; drag
+dispatches `draggable:drag`; dragend applies a transient `is-dropped`
+(removed after 300 ms), resets `aria-grabbed`, and dispatches
+`draggable:end`.
 
 #### Scenario: drag lifecycle classes and events
 
@@ -702,21 +793,44 @@ extensions.
 - **THEN** the item moves before the first, keeps focus, and
   `draggable:reorder` fires with direction `up`
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Item payload for drops is `data-draggable` falling back
+to trimmed text.
+- **Containers** (`.vd-draggable-container`,
+`.vd-draggable-container-vertical`): `role="listbox"` with a default
+`aria-label`; items inside are auto-wired; dragover live-reorders the
+dragged item by the sibling-midpoint rule (vertical containers compare
+Y, horizontal X), ignoring the (0,0) end-of-drag coordinates.
+- **Drop zones** (`.vd-drop-zone`): `role="region"`,
+`aria-dropeffect="move"`, default `aria-label`; dragenter adds
+`is-drag-over`, dragleave removes it, drop removes it and dispatches
+`draggable:drop` with the item's data and drop position.
+- **Touch fallback**: touchmove past a small threshold mirrors dragstart
+(with `preventDefault` to suppress scrolling), moves a body-level
+`.vd-drag-feedback` element with the pointer, live-toggles
+`is-drag-over` on the zone under the touch point, and touchend performs
+the drop/reorder and cleanup.
+- **Keyboard**: Enter/Space activates the item's click action;
+ArrowUp/ArrowLeft and ArrowDown/ArrowRight move the item before/after
+its draggable sibling, keep focus on it, and dispatch
+`draggable:reorder` with the direction; Escape cancels an in-progress
+drag state.
+Teardown MUST remove this instance's item/container/zone listeners and
+the feedback element when no instance remains. `makeDraggable(el, opts)` /
+`removeDraggable(el)` SHALL be documented as optional controller
+extensions.
+
 ### Requirement: use-click-outside
 
 The package root MUST export `useClickOutside`, brought from
 `vd2/src/composables/useClickOutside.ts` (50 lines) with its signature
 preserved:
 `useClickOutside(refs: Ref<HTMLElement | null>[], handler: () => void,
-enabled: Ref<boolean>)`. While `enabled` is true it SHALL listen for
-capture-phase `pointerdown` on `document` and invoke `handler` when the
-event target is contained by none of the refs; the listener attach MUST
-be deferred a tick after `enabled` becomes true (**including when `enabled` is
-already true at mount** — the watch runs immediately so an instance created
-enabled attaches, not only on a false→true transition), so the activating click
-cannot immediately self-close, and it MUST detach when `enabled` flips
-false and on scope disposal. The composable MUST be SSR-safe (no document
-access when `enabled` is false or off-client).
+enabled: Ref<boolean>)`.
 
 #### Scenario: outside pointerdown fires the handler
 
@@ -746,6 +860,21 @@ access when `enabled` is false or off-client).
 - **WHEN** `enabled` flips false (or the owning scope unmounts)
 - **THEN** subsequent outside pointerdowns do not call the handler
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+While `enabled` is true it SHALL listen for
+capture-phase `pointerdown` on `document` and invoke `handler` when the
+event target is contained by none of the refs; the listener attach MUST
+be deferred a tick after `enabled` becomes true (**including when `enabled` is
+already true at mount** — the watch runs immediately so an instance created
+enabled attaches, not only on a false→true transition), so the activating click
+cannot immediately self-close, and it MUST detach when `enabled` flips
+false and on scope disposal. The composable MUST be SSR-safe (no document
+access when `enabled` is false or off-client).
+
 ### Requirement: use-doc-search
 
 The package root MUST export `useDocSearch`, porting the behavior core of
@@ -754,26 +883,7 @@ composable (DOM-scan index building is intentionally dropped): it accepts
 a document collection (`{ id, title, content?, category?, keywords?,
 href? }[]`, statically or as a ref) plus the donor's behavior options
 with the donor defaults — `minQueryLength: 2`, `maxResults: 10`,
-`debounceMs: 150`, `highlightTag: "mark"` (validated against a safe-tag
-whitelist), `keyboardShortcut: true` (Cmd/Ctrl+K focuses the bound
-input). It SHALL expose reactive `query`, `results`, `isOpen`, and
-`activeIndex`, and methods `search`, `open`, `close`, `navigate`,
-`select`. Search MUST debounce input, ignore queries shorter than
-`minQueryLength`, rank title matches above keyword matches above content
-matches, cap at `maxResults`, and highlight matches with HTML-escaped
-source text. Excerpting MUST align with the donor's `getExcerpt`: when a
-query term appears in the body, the excerpt is a window around the first
-content match. When no query term appears in the body — the metadata-only
-case where a document matched on title / category / keyword only, **including
-a document supplied with no `content` at all** — the excerpt SHALL be the
-leading window of the body (`content.substring(0, EXCERPT_LENGTH)`) with a
-trailing ellipsis appended only when the body exceeds `EXCERPT_LENGTH`, and
-an empty (or whitespace-only) body SHALL yield an empty excerpt. The branch
-MUST NOT emit the donor's degenerate bare `"..."` for an empty body, nor any
-broken/stray-ellipsis fragment. Keyboard behavior on the bound input:
-ArrowDown/ArrowUp move `activeIndex` (wrapping), Enter selects the active
-result, Escape closes. The global shortcut listener MUST attach on mount and
-detach on unmount.
+`debounceMs: 150`, `highlightTag.
 
 #### Scenario: ranking and cap
 
@@ -829,6 +939,38 @@ detach on unmount.
 - **THEN** Cmd/Ctrl+K no longer focuses anything and no document
   listeners from the instance remain
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The package root MUST export `useDocSearch`, porting the behavior core of
+`framework/js/components/doc-search.js` (1016 lines) as a data-driven
+composable (DOM-scan index building is intentionally dropped): it accepts
+a document collection (`{ id, title, content?, category?, keywords?,
+href? }[]`, statically or as a ref) plus the donor's behavior options
+with the donor defaults — `minQueryLength: 2`, `maxResults: 10`,
+`debounceMs: 150`, `highlightTag: "mark"` (validated against a safe-tag
+whitelist), `keyboardShortcut: true` (Cmd/Ctrl+K focuses the bound
+input). It SHALL expose reactive `query`, `results`, `isOpen`, and
+`activeIndex`, and methods `search`, `open`, `close`, `navigate`,
+`select`. Search MUST debounce input, ignore queries shorter than
+`minQueryLength`, rank title matches above keyword matches above content
+matches, cap at `maxResults`, and highlight matches with HTML-escaped
+source text. Excerpting MUST align with the donor's `getExcerpt`: when a
+query term appears in the body, the excerpt is a window around the first
+content match. When no query term appears in the body — the metadata-only
+case where a document matched on title / category / keyword only, **including
+a document supplied with no `content` at all** — the excerpt SHALL be the
+leading window of the body (`content.substring(0, EXCERPT_LENGTH)`) with a
+trailing ellipsis appended only when the body exceeds `EXCERPT_LENGTH`, and
+an empty (or whitespace-only) body SHALL yield an empty excerpt. The branch
+MUST NOT emit the donor's degenerate bare `"..."` for an empty body, nor any
+broken/stray-ellipsis fragment. Keyboard behavior on the bound input:
+ArrowDown/ArrowUp move `activeIndex` (wrapping), Enter selects the active
+result, Escape closes. The global shortcut listener MUST attach on mount and
+detach on unmount.
+
 ### Requirement: use-lazy-load
 
 The package root MUST export `useLazyLoad`, porting
@@ -836,19 +978,7 @@ The package root MUST export `useLazyLoad`, porting
 Low level: `observe(el, callback, { threshold?, rootMargin? })` fires the
 callback once when the element first intersects and auto-unobserves;
 `unobserve(el)` cancels; environments without IntersectionObserver fire
-the callback immediately. High level:
-`loadSection(url, container, { placeholder?, threshold?, rootMargin?,
-onLoaded?, onError? })` renders the placeholder (`"skeleton"` default or
-`"spinner"`, using the shipped skeleton/spinner classes; a custom HTML
-string is sanitized before injection), rejects non-https/non-relative
-URLs, fetches on first intersection with a 10-second abort timeout,
-injects the response through the existing `utils/sanitizeHtml`, and
-dispatches `lazysection:loading` / `lazysection:loaded` /
-`lazysection:error` (bubbling) on the container, rendering an inline
-error alert on failure. Root-scoped attribute wiring MUST be supported:
-`useLazyLoad(root)` wires `[data-vd-lazy]` elements inside the root using
-`data-vd-lazy` (URL) and `data-vd-lazy-placeholder`. All observers and
-timers MUST be released on scope disposal.
+the callback immediately.
 
 #### Scenario: observe fires once
 
@@ -882,6 +1012,25 @@ timers MUST be released on scope disposal.
 - **THEN** neither the script element nor the handler attribute exists in
   the container
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+High level:
+`loadSection(url, container, { placeholder?, threshold?, rootMargin?,
+onLoaded?, onError? })` renders the placeholder (`"skeleton"` default or
+`"spinner"`, using the shipped skeleton/spinner classes; a custom HTML
+string is sanitized before injection), rejects non-https/non-relative
+URLs, fetches on first intersection with a 10-second abort timeout,
+injects the response through the existing `utils/sanitizeHtml`, and
+dispatches `lazysection:loading` / `lazysection:loaded` /
+`lazysection:error` (bubbling) on the container, rendering an inline
+error alert on failure. Root-scoped attribute wiring MUST be supported:
+`useLazyLoad(root)` wires `[data-vd-lazy]` elements inside the root using
+`data-vd-lazy` (URL) and `data-vd-lazy-placeholder`. All observers and
+timers MUST be released on scope disposal.
+
 ### Requirement: use-grid
 
 The package root MUST export `useGrid` and `setGridSystem`, porting
@@ -890,20 +1039,7 @@ The package root MUST export `useGrid` and `setGridSystem`, porting
 the container's `data-layout-mode` (default `standard`); applying a mode
 toggles `vd-grid-standard`/`vd-grid-fibonacci`, keeps `data-layout-mode`
 and the region `aria-label` ("Grid layout: <mode> mode") in sync,
-dispatches `grid:modechange` with `{ container, mode }`, and — in
-browsers without `:has()` support — applies the donor's inline
-`grid-template-columns` Fibonacci fallback per row child count (1fr;
-1fr 1.618fr; 2fr 3fr 5fr; 1fr 2fr 3fr 5fr; equal columns beyond four),
-clearing inline styles when returning to standard. It SHALL return a
-reactive `mode` plus `toggle()` and `setMode(mode)` (invalid modes
-ignored), and unmount MUST remove the applied classes, attribute
-bookkeeping, and inline fallbacks. `setGridSystem(mode)` SHALL stamp the
-document-level default by setting `data-grid="fibonacci"` on `<html>` (or
-removing `data-grid` for `standard`), MUST be client-guarded and
-non-persisting, and is backed by `[data-grid="fibonacci"]` rules in
-`css/core/grid.css` that apply the Fibonacci templates to `.vd-row`s not
-inside an explicit `.vd-grid-standard` container (closest explicit
-container wins).
+dispatches `grid.
 
 #### Scenario: toggle round-trip
 
@@ -937,6 +1073,32 @@ container wins).
 - **THEN** rows inside the standard container use the 12-column template
   while outside rows use the Fibonacci template
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The package root MUST export `useGrid` and `setGridSystem`, porting
+`framework/js/components/grid.js` (290 lines). `useGrid(container,
+{ mode? })` SHALL manage one container: initial mode from the option or
+the container's `data-layout-mode` (default `standard`); applying a mode
+toggles `vd-grid-standard`/`vd-grid-fibonacci`, keeps `data-layout-mode`
+and the region `aria-label` ("Grid layout: <mode> mode") in sync,
+dispatches `grid:modechange` with `{ container, mode }`, and — in
+browsers without `:has()` support — applies the donor's inline
+`grid-template-columns` Fibonacci fallback per row child count (1fr;
+1fr 1.618fr; 2fr 3fr 5fr; 1fr 2fr 3fr 5fr; equal columns beyond four),
+clearing inline styles when returning to standard. It SHALL return a
+reactive `mode` plus `toggle()` and `setMode(mode)` (invalid modes
+ignored), and unmount MUST remove the applied classes, attribute
+bookkeeping, and inline fallbacks. `setGridSystem(mode)` SHALL stamp the
+document-level default by setting `data-grid="fibonacci"` on `<html>` (or
+removing `data-grid` for `standard`), MUST be client-guarded and
+non-persisting, and is backed by `[data-grid="fibonacci"]` rules in
+`css/core/grid.css` that apply the Fibonacci templates to `.vd-row`s not
+inside an explicit `.vd-grid-standard` container (closest explicit
+container wins).
+
 ### Requirement: keyboard-nav-lifecycle
 
 `useKeyboardNav(container, options)` MUST attach its `keydown` listener inside
@@ -966,17 +1128,7 @@ access when `window` is undefined).
 ### Requirement: timepicker-keyboard-selection
 
 `useTimepicker` MUST make the time listbox keyboard-operable from the (read-only)
-input, mirroring `useSuggest`: while the popup is open, ArrowDown/ArrowUp SHALL
-move a roving highlight across the `.vd-timepicker-item`s — adding
-`is-highlighted` to the highlighted item, setting the input's
-`aria-activedescendant` to that item's id, and scrolling it into view — and
-Enter SHALL select the highlighted option through the same per-item selection
-logic used for clicks (setting the value, marking `is-selected`/`aria-selected`,
-closing, and dispatching `timepicker:select` with `{ time, hours, minutes }`
-plus `change`). ArrowDown while closed SHALL open the popup; Escape SHALL close
-it. The input MUST expose `aria-controls` referencing the popup listbox, and
-closing MUST clear the roving state (`aria-activedescendant` and
-`is-highlighted`). All new listeners MUST be removed on unmount.
+input, mirroring `useSuggest`.
 
 #### Scenario: Arrow keys highlight and Enter selects
 
@@ -1001,6 +1153,24 @@ closing MUST clear the roving state (`aria-activedescendant` and
 - **THEN** the input's keydown handler is removed and the body-appended popup
   is detached
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`useTimepicker` MUST make the time listbox keyboard-operable from the (read-only)
+input, mirroring `useSuggest`: while the popup is open, ArrowDown/ArrowUp SHALL
+move a roving highlight across the `.vd-timepicker-item`s — adding
+`is-highlighted` to the highlighted item, setting the input's
+`aria-activedescendant` to that item's id, and scrolling it into view — and
+Enter SHALL select the highlighted option through the same per-item selection
+logic used for clicks (setting the value, marking `is-selected`/`aria-selected`,
+closing, and dispatching `timepicker:select` with `{ time, hours, minutes }`
+plus `change`). ArrowDown while closed SHALL open the popup; Escape SHALL close
+it. The input MUST expose `aria-controls` referencing the popup listbox, and
+closing MUST clear the roving state (`aria-activedescendant` and
+`is-highlighted`). All new listeners MUST be removed on unmount.
+
 ### Requirement: html-sanitizer
 
 The package root MUST export `sanitizeHtml(input, options?)` — a
@@ -1008,17 +1178,7 @@ dependency-free whitelist sanitizer and the library's only XSS guard for
 raw-HTML sinks (consumed by `usePopover`, `useTooltips`, `useLazyLoad`). It
 SHALL flatten any non-allow-listed element to its text content, keep only
 `http`/`https`/`mailto` on `<a href>` (removing `target`/`rel`), and strip
-event-handler and unknown attributes. The tag and attribute allowlists MUST be
-matched **case-insensitively** so allow-listed SVG survives under
-`allowSvg: true` — an HTML-mode `DOMParser` yields lowercase SVG node names, so
-`<svg>`/`<circle>`/`<path>` and their safe geometry attributes (`d`, `viewBox`,
-`cx`, `cy`, `r`, …) SHALL be kept while `<foreignObject>` and event handlers are
-dropped. `allowStyle` MUST default to `false`; when `true` it is a permit with a
-minimal CSS blocklist scrub only — the whole `style` attribute is dropped when
-its value contains `url(`, `expression(`, or `position: fixed|sticky` — and it
-MUST NOT be treated as a full CSS sanitizer. In a non-DOM (SSR) environment,
-where `DOMParser` is undefined, the function MUST fail closed and return
-HTML-escaped text.
+event-handler and unknown attributes.
 
 #### Scenario: unknown tags and handlers flatten to text
 
@@ -1061,6 +1221,23 @@ HTML-escaped text.
 - **WHEN** `sanitizeHtml('<b>hi</b><img onerror="a()">')` runs
 - **THEN** the result is HTML-escaped text (`&lt;b&gt;…`) with no live markup
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The tag and attribute allowlists MUST be
+matched **case-insensitively** so allow-listed SVG survives under
+`allowSvg: true` — an HTML-mode `DOMParser` yields lowercase SVG node names, so
+`<svg>`/`<circle>`/`<path>` and their safe geometry attributes (`d`, `viewBox`,
+`cx`, `cy`, `r`, …) SHALL be kept while `<foreignObject>` and event handlers are
+dropped. `allowStyle` MUST default to `false`; when `true` it is a permit with a
+minimal CSS blocklist scrub only — the whole `style` attribute is dropped when
+its value contains `url(`, `expression(`, or `position: fixed|sticky` — and it
+MUST NOT be treated as a full CSS sanitizer. In a non-DOM (SSR) environment,
+where `DOMParser` is undefined, the function MUST fail closed and return
+HTML-escaped text.
+
 ### Requirement: stepper-mount-quiet
 
 `useStepper` MUST apply the derived initial step (from the first `.is-active`
@@ -1068,8 +1245,7 @@ item, defaulting to index 0) on mount WITHOUT dispatching `stepper:change` —
 applying the starting step is not a user-visible change (its `current` would
 equal `previous`), so no event SHALL fire until an actual navigation
 (`next`/`prev`/`setStep`, or a click / Enter / Space on a
-`.vd-stepper-clickable` item). The initial paint MUST still mark
-`.is-completed`/`.is-active` and set `aria-current="step"` on the active item.
+`.vd-stepper-clickable` item).
 
 #### Scenario: no stepper:change on mount
 
@@ -1084,6 +1260,14 @@ equal `previous`), so no event SHALL fire until an actual navigation
 - **WHEN** `next()` (or a click on a clickable item) advances the step
 - **THEN** `stepper:change` fires with `{ current, previous, total }`
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The initial paint MUST still mark
+`.is-completed`/`.is-active` and set `aria-current="step"` on the active item.
+
 ### Requirement: use-tooltips-show-delay
 
 `useTooltips` MUST accept an optional second argument
@@ -1093,18 +1277,6 @@ that many milliseconds; when it is absent or `0`, the tooltip SHALL appear
 synchronously (the 1.6.0 behavior). A per-trigger `data-tooltip-delay`
 attribute (non-negative integer milliseconds) MUST override the option for
 that trigger.
-
-A pending show MUST be cancelled when the pointer leaves or focus moves off
-the trigger before the delay elapses, and on unmount, so a fast in-and-out
-never paints a tooltip.
-
-`useTooltips` MUST rescan its root for `[data-tooltip]` / `[data-tooltip-html]`
-triggers via `MutationObserver` (`childList`, `subtree`, and the
-`data-tooltip` / `data-tooltip-html` / `data-tooltip-delay` attribute filter),
-so triggers added or relabelled after mount are wired. Rescans MUST be
-idempotent — an already-wired trigger MUST NOT receive duplicate listeners —
-and every listener plus the observer MUST be detached on unmount. The observer
-MUST be guarded so SSR and jsdom-free environments do not throw.
 
 #### Scenario: delayed show
 
@@ -1134,18 +1306,25 @@ MUST be guarded so SSR and jsdom-free environments do not throw.
 - **WHEN** the pointer enters the new child and the delay elapses
 - **THEN** a `.vd-tooltip` exists with that child's text
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+A pending show MUST be cancelled when the pointer leaves or focus moves off
+the trigger before the delay elapses, and on unmount, so a fast in-and-out
+never paints a tooltip.
+`useTooltips` MUST rescan its root for `[data-tooltip]` / `[data-tooltip-html]`
+triggers via `MutationObserver` (`childList`, `subtree`, and the
+`data-tooltip` / `data-tooltip-html` / `data-tooltip-delay` attribute filter),
+so triggers added or relabelled after mount are wired. Rescans MUST be
+idempotent — an already-wired trigger MUST NOT receive duplicate listeners —
+and every listener plus the observer MUST be detached on unmount. The observer
+MUST be guarded so SSR and jsdom-free environments do not throw.
+
 ### Requirement: image-box-gallery-and-theme-bridge
 
-`useImageBox` MUST return `{ open, close, next, prev, refresh }`. It MUST keep
-an author-supplied `aria-label`, trap Tab inside the open dialog via
-`useFocusTrap` without stealing the initial backdrop focus, and step triggers
-that share a root and `data-image-box-group` with previous/next controls,
-arrow keys, and `imageBox:change` detail `{ index, total, src, trigger }`.
-`refresh()` MUST wire `[data-image-box]` nodes added after mount.
-
-`useThemeBridge(mode, { syncDarkClass: true })` MUST mirror the resolved scheme
-onto `document.documentElement` class `dark`, including `system` following
-`prefers-color-scheme`.
+`useImageBox` MUST return `{ open, close, next, prev, refresh }`.
 
 #### Scenario: grouped gallery steps without leaving the group
 
@@ -1158,6 +1337,21 @@ onto `document.documentElement` class `dark`, including `system` following
 - **GIVEN** `useThemeBridge` with `syncDarkClass: true` and mode `dark`
 - **WHEN** the host mounts and the mode changes to `light`
 - **THEN** `html` gains then loses class `dark`, and `data-theme` matches
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It MUST keep
+an author-supplied `aria-label`, trap Tab inside the open dialog via
+`useFocusTrap` without stealing the initial backdrop focus, and step triggers
+that share a root and `data-image-box-group` with previous/next controls,
+arrow keys, and `imageBox:change` detail `{ index, total, src, trigger }`.
+`refresh()` MUST wire `[data-image-box]` nodes added after mount.
+`useThemeBridge(mode, { syncDarkClass: true })` MUST mirror the resolved scheme
+onto `document.documentElement` class `dark`, including `system` following
+`prefers-color-scheme`.
 
 ### Requirement: use-dock-brand-spin
 
@@ -1176,34 +1370,7 @@ MUST snap the angle to `0deg` instead of animating.
 
 The package root MUST export `useDockOrientation`: an instance-scoped morph
 state machine. Each call SHALL create its own `orientation`, `visualPhase`,
-`isMorphing`, `isNarrow`, and `placement` refs. Two concurrent instances MUST NOT share
-those refs.
-
-`playTo(target)` SHALL: force horizontal and return when narrow; ignore the
-call while `isMorphing`; no-op (aside from optional persist write) when
-already at the target rest; snap when `prefers-reduced-motion: reduce`;
-otherwise set `visualPhase` to `square` for 480ms, then set `visualPhase`
-and `orientation` to `target` and clear `isMorphing` after 720ms.
-
-`toggle` SHALL play to the paired placement (`bottom` ↔ `left`, `top` ↔
-`right`) when toggle is allowed.
-
-Options: `narrowQuery` (default `(max-width: 520px)`), `persist` (default
-false), `storageKey`, `initial` (default `"horizontal"` → placement
-`"bottom"`), `initialPlacement`. When `persist` is
-true the storage key SHALL be `getStoragePrefix() + "dock-orient"` unless
-`storageKey` is set. Persist SHALL write the placement string (`bottom` |
-`top` | `left` | `right`) and MUST still restore legacy `"horizontal"` /
-`"vertical"` values as `"bottom"` / `"left"`. Restore from storage happens in
-`onMounted` with no animation. Browser access MUST NOT run at setup.
-
-`dockClasses` SHALL map `visualPhase` / `isMorphing` / `placement` to
-`is-horizontal`, `is-square`, `is-vertical`, `is-morphing`, and
-`vd-dock-edge-{placement}`.
-
-Narrow viewports MUST force the pair's horizontal edge (`left` → `bottom`,
-`right` → `top`) without writing storage. Widening MUST restore the last
-chosen or stored edge.
+`isMorphing`, `isNarrow`, and `placement` refs.
 
 #### Scenario: square waypoint
 
@@ -1236,6 +1403,35 @@ chosen or stored edge.
 - **GIVEN** `persist: true` and `getStoragePrefix()` of `"app-"`
 - **WHEN** orientation becomes `"vertical"`
 - **THEN** `localStorage` SHALL contain `app-dock-orient` = `"left"`
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Two concurrent instances MUST NOT share
+those refs.
+`playTo(target)` SHALL: force horizontal and return when narrow; ignore the
+call while `isMorphing`; no-op (aside from optional persist write) when
+already at the target rest; snap when `prefers-reduced-motion: reduce`;
+otherwise set `visualPhase` to `square` for 480ms, then set `visualPhase`
+and `orientation` to `target` and clear `isMorphing` after 720ms.
+`toggle` SHALL play to the paired placement (`bottom` ↔ `left`, `top` ↔
+`right`) when toggle is allowed.
+Options: `narrowQuery` (default `(max-width: 520px)`), `persist` (default
+false), `storageKey`, `initial` (default `"horizontal"` → placement
+`"bottom"`), `initialPlacement`. When `persist` is
+true the storage key SHALL be `getStoragePrefix() + "dock-orient"` unless
+`storageKey` is set. Persist SHALL write the placement string (`bottom` |
+`top` | `left` | `right`) and MUST still restore legacy `"horizontal"` /
+`"vertical"` values as `"bottom"` / `"left"`. Restore from storage happens in
+`onMounted` with no animation. Browser access MUST NOT run at setup.
+`dockClasses` SHALL map `visualPhase` / `isMorphing` / `placement` to
+`is-horizontal`, `is-square`, `is-vertical`, `is-morphing`, and
+`vd-dock-edge-{placement}`.
+Narrow viewports MUST force the pair's horizontal edge (`left` → `bottom`,
+`right` → `top`) without writing storage. Widening MUST restore the last
+chosen or stored edge.
 
 ### Requirement: use-table-state-export
 
@@ -1272,9 +1468,7 @@ options?: UseLiquidGradientOptions)` MUST scan descendants with
 `.vd-liquid-gradient`, locate or create a
 `.vd-liquid-gradient-canvas` child, and drive each with
 `createLiquidGradient`. Browser APIs SHALL only run inside
-`onMounted`/`onUnmounted` (or equivalent) so SSR import is safe. Every
-listener, observer, and rAF the composable installs MUST be removed on
-unmount, and each engine MUST be `destroy()`ed.
+`onMounted`/`onUnmounted` (or equivalent) so SSR import is safe.
 
 #### Scenario: exported from package root
 
@@ -1316,3 +1510,13 @@ unmount, and each engine MUST be `destroy()`ed.
 - **WHEN** `syncThemeColors` runs
 - **THEN** shader colors update from those tokens (primary + neutral mix
   differs for light vs dark)
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Every
+listener, observer, and rAF the composable installs MUST be removed on
+unmount, and each engine MUST be `destroy()`ed.
+
