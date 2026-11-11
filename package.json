@@ -68,7 +68,7 @@
   "scripts": {
     "build": "node scripts/clean-dist.mjs && node scripts/build-tokens.mjs && node scripts/check-motion-tokens.mjs && node scripts/build-css.mjs && vite build && vue-tsc -p tsconfig.build.json && node scripts/check-class-coverage.mjs",
     "prepack": "pnpm run build",
-    "release": "pnpm run build && pnpm publish",
+    "release": "pnpm run build && pnpm publish --provenance",
     "build:tokens": "node scripts/build-tokens.mjs",
     "build:css": "node scripts/build-css.mjs",
     "check:classes": "node scripts/check-class-coverage.mjs",

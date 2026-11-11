@@ -307,9 +307,9 @@ guaranteed-built `dist/`. `publishConfig.access` MUST be `"public"`.
 
 - **GIVEN** `.npmrc` sets `ignore-scripts=true` and `dist/` is gitignored
 - **WHEN** the maintainer runs `pnpm run release`
-- **THEN** the full `build` runs before `pnpm publish`, so the tarball's `dist/`
-  is freshly built (never empty) even though `prepack` is skipped by the
-  ignore-scripts policy
+- **THEN** the full `build` runs before `pnpm publish --provenance`, so the
+  tarball's `dist/` is freshly built (never empty) even though `prepack` is
+  skipped by the ignore-scripts policy, and the publish requests npm provenance
 
 #### Scenario: no legacy SVG webfont in the tarball
 
@@ -334,7 +334,7 @@ Because the
 hardened `.npmrc` sets `ignore-scripts=true` (which skips lifecycle scripts —
 including `prepack`/`prepublishOnly` — during `pnpm publish`), the release flow
 MUST NOT rely on an implicit pack-time build alone: a `release` script MUST
-explicitly run the full `build` before `pnpm publish`, and a `prepack` build MUST
+explicitly run the full `build` before `pnpm publish --provenance`, and a `prepack` build MUST
 also be declared for environments where lifecycle scripts run. The published
 tarball MUST contain a freshly built `dist/` (never an empty `dist/` produced
 from a clean checkout where `dist/` is gitignored). The tarball MUST NOT ship the
