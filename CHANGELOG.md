@@ -17,7 +17,8 @@ tracks the package only — never docs-site content.
 
 ### Changed
 
-- Retokened 70+ hardcoded transition durations across `css/components` and `css/effects` to Fibonacci tokens and golden easing curves.
+- Retokened 190+ hardcoded transition durations across `css/components` and `css/effects` to Fibonacci tokens and golden easing curves.
+- **Dock 4-corner waypoint morph.** Placement changes travel through a square waypoint anchored by `dockMorphCornerOf` on the shared corner of the two edges (bottom-left, top-left, top-right, or bottom-right), with fallbacks for non-adjacent pairs. Shrink is 377ms and grow is 610ms (`DOCK_MORPH_MS`), using `--vd-duration-slow` and `--vd-duration-slower`. `data-motion="reduce"`, `data-motion="off"`, and `prefers-reduced-motion` snap to the target edge.
 - Replaced legacy `*` reduced-motion duration override in `reset.css` with token-based mode switches (`[data-motion="reduce|off"]`).
 - Maintained backward compatibility for legacy `--vd-transition-*` CSS properties.
 
