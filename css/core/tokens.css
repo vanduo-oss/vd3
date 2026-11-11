@@ -294,11 +294,12 @@
   --vd-surface-min-height: 12rem;
 
   /* ============================================
-   * TRANSITION TOKENS
+   * TRANSITION TOKENS (Deprecated aliases -> Fibonacci motion tokens)
+   * Prefer --vd-duration-* and --vd-ease-* from core/motion.css.
    * ============================================ */
-  --vd-transition-fast: 150ms ease;
-  --vd-transition-normal: 250ms ease;
-  --vd-transition-slow: 350ms ease;
+  --vd-transition-fast: var(--vd-duration-144) var(--vd-ease-in-out);
+  --vd-transition-normal: var(--vd-duration-233) var(--vd-ease-in-out);
+  --vd-transition-slow: var(--vd-duration-377) var(--vd-ease-in-out);
 
   /* ============================================
    * Z-INDEX TOKENS

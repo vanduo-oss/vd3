@@ -231,7 +231,7 @@
   z-index: 9999;
   opacity: 0.9;
   transform: none;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-drag-feedback.hidden {
@@ -291,7 +291,7 @@
 
 .vd-draggable.is-dropped,
 .vd-draggable-item.is-dropped {
-  animation: vd-drag-drop 0.3s ease;
+  animation: vd-drag-drop var(--vd-duration-233) var(--vd-ease-out);
 }
 
 /* High Contrast / Forced Colors Mode */

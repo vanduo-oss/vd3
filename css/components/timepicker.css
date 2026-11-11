@@ -61,7 +61,7 @@
   cursor: pointer;
   font-size: 0.875rem;
   text-align: center;
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
   font-variant-numeric: tabular-nums;
 }
 

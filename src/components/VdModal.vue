@@ -8,6 +8,7 @@ import {
   watch,
 } from "vue";
 import VdIcon from "./VdIcon.vue";
+import VdTransition from "./VdTransition.vue";
 import { useFocusTrap } from "../composables/useFocusTrap";
 
 interface Props {
@@ -17,6 +18,10 @@ interface Props {
   closeOnBackdrop?: boolean;
   /** Frosted glass panel + backdrop (`.vd-modal-glass` / `.vd-modal-glass-backdrop`). */
   glass?: boolean;
+  /** Whether animation is enabled (default true). */
+  animated?: boolean;
+  /** Custom duration in ms override. */
+  duration?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   size: "md",
   closeOnBackdrop: true,
   glass: false,
+  animated: true,
 });
 
 // Teleport is not a DOM node — fallthrough attrs must be bound on the dialog root.
@@ -39,6 +45,15 @@ const { activate, deactivate } = useFocusTrap(panel);
 
 // The element focused before the dialog opened, restored on close.
 let previouslyFocused: HTMLElement | null = null;
+
+const restoreFocus = (): void => {
+  previouslyFocused?.focus();
+  previouslyFocused = null;
+};
+
+const onAfterLeave = (): void => {
+  restoreFocus();
+};
 
 const sizeClass = computed(() => `vd-modal-panel-${props.size}`);
 
@@ -82,8 +97,7 @@ watch(
     } else {
       removeKeydown();
       deactivate();
-      previouslyFocused?.focus();
-      previouslyFocused = null;
+      restoreFocus();
     }
   },
   { immediate: true },
@@ -95,43 +109,50 @@ onScopeDispose(removeKeydown);
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="open"
-      class="vd-modal vd-modal-open"
-      :class="{ 'vd-modal-glass': glass }"
-      v-bind="$attrs"
-      role="dialog"
-      aria-modal="true"
-      :aria-label="title || 'Dialog'"
-      data-vd-modal
+    <VdTransition
+      name="fade"
+      :animated="animated"
+      :duration="duration"
+      @after-leave="onAfterLeave"
     >
       <div
-        class="vd-modal-backdrop"
-        :class="{ 'vd-modal-glass-backdrop': glass }"
-        @click="onBackdrop"
-      />
-      <div ref="panel" :class="['vd-modal-panel', sizeClass]" tabindex="-1">
-        <header v-if="title || $slots.header" class="vd-modal-header">
-          <h2 v-if="title" class="vd-modal-title">
-            {{ title }}
-          </h2>
-          <slot name="header" />
-          <button
-            type="button"
-            class="vd-btn vd-btn-ghost vd-btn-icon"
-            aria-label="Close"
-            @click="close"
-          >
-            <VdIcon name="x" />
-          </button>
-        </header>
-        <div class="vd-modal-body">
-          <slot />
+        v-if="open"
+        class="vd-modal vd-modal-open"
+        :class="{ 'vd-modal-glass': glass }"
+        v-bind="$attrs"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="title || 'Dialog'"
+        data-vd-modal
+      >
+        <div
+          class="vd-modal-backdrop"
+          :class="{ 'vd-modal-glass-backdrop': glass }"
+          @click="onBackdrop"
+        />
+        <div ref="panel" :class="['vd-modal-panel', sizeClass]" tabindex="-1">
+          <header v-if="title || $slots.header" class="vd-modal-header">
+            <h2 v-if="title" class="vd-modal-title">
+              {{ title }}
+            </h2>
+            <slot name="header" />
+            <button
+              type="button"
+              class="vd-btn vd-btn-ghost vd-btn-icon"
+              aria-label="Close"
+              @click="close"
+            >
+              <VdIcon name="x" />
+            </button>
+          </header>
+          <div class="vd-modal-body">
+            <slot />
+          </div>
+          <footer v-if="$slots.footer" class="vd-modal-footer">
+            <slot name="footer" />
+          </footer>
         </div>
-        <footer v-if="$slots.footer" class="vd-modal-footer">
-          <slot name="footer" />
-        </footer>
       </div>
-    </div>
+    </VdTransition>
   </Teleport>
 </template>

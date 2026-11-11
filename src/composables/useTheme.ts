@@ -161,6 +161,8 @@ export const setThemePersistence = (enabled: boolean): void => {
   themePersistence = enabled;
 };
 
+export const getThemePersistence = (): boolean => themePersistence;
+
 /**
  * Current theme-preference localStorage prefix. Defaults to `vanduo-`.
  * Call `setStoragePrefix` (or `app.use(VanduoVue, { storagePrefix })`) before

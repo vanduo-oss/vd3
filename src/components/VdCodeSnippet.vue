@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useId, type ComponentPublicInstance } from "vue";
 import VdIcon from "./VdIcon.vue";
+import VdExpandTransition from "./VdExpandTransition.vue";
 
 const TAB_ORDER = [
   { key: "html", label: "HTML" },
@@ -32,6 +33,10 @@ interface Props {
   defaultOpen?: boolean;
   toggleLabel?: string;
   collapsible?: boolean;
+  /** Whether unfold/collapse animations are enabled (default true). */
+  animated?: boolean;
+  /** Explicit duration in ms. If omitted, uses adaptive Fibonacci duration. */
+  duration?: number;
   /**
    * Optional highlighter. When set, the return value is injected with
    * `v-html`. The function MUST return escaped HTML. Copy always uses
@@ -49,6 +54,7 @@ const props = withDefaults(defineProps<Props>(), {
   defaultOpen: false,
   toggleLabel: "View Code",
   collapsible: true,
+  animated: true,
 });
 
 const langs = computed<Lang[]>(() => {
@@ -157,6 +163,7 @@ const onCopy = async (code: string): Promise<void> => {
     class="vd-code-snippet"
     v-bind="collapsible ? { 'data-collapsible': true } : {}"
     :data-expanded="chromeExpanded ? 'true' : 'false'"
+    :data-animated="animated ? 'true' : 'false'"
   >
     <button
       v-if="collapsible"
@@ -168,60 +175,66 @@ const onCopy = async (code: string): Promise<void> => {
       <span class="vd-code-snippet-toggle-icon"></span>
       <span>{{ toggleLabel }}</span>
     </button>
-    <div
-      class="vd-code-snippet-content"
-      :data-visible="chromeExpanded ? 'true' : 'false'"
+    <VdExpandTransition
+      :animated="collapsible && animated"
+      :duration="duration"
     >
-      <div class="vd-code-snippet-header">
-        <div class="vd-code-snippet-tabs" role="tablist">
+      <div
+        v-show="chromeExpanded"
+        class="vd-code-snippet-content"
+        :data-visible="chromeExpanded ? 'true' : 'false'"
+      >
+        <div class="vd-code-snippet-header">
+          <div class="vd-code-snippet-tabs" role="tablist">
+            <button
+              v-for="(l, index) in langs"
+              :id="tabId(l.key)"
+              :key="l.key"
+              :ref="(el) => setTabBtn(el, index)"
+              class="vd-code-snippet-tab"
+              :class="{ 'is-active': active === l.key }"
+              :data-lang="l.key"
+              type="button"
+              role="tab"
+              :aria-selected="active === l.key"
+              :aria-controls="paneId(l.key)"
+              :tabindex="active === l.key ? 0 : -1"
+              @click="active = l.key"
+              @keydown="onTabKeydown($event, index)"
+            >
+              {{ l.label }}
+            </button>
+          </div>
           <button
-            v-for="(l, index) in langs"
-            :id="tabId(l.key)"
-            :key="l.key"
-            :ref="(el) => setTabBtn(el, index)"
-            class="vd-code-snippet-tab"
-            :class="{ 'is-active': active === l.key }"
-            :data-lang="l.key"
+            v-if="copyable"
             type="button"
-            role="tab"
-            :aria-selected="active === l.key"
-            :aria-controls="paneId(l.key)"
-            :tabindex="active === l.key ? 0 : -1"
-            @click="active = l.key"
-            @keydown="onTabKeydown($event, index)"
+            class="vd-code-snippet-copy"
+            :class="{ 'is-copied': copied }"
+            :aria-label="copied ? 'Copied' : 'Copy code'"
+            @click="onCopy(activeCode)"
           >
-            {{ l.label }}
+            <span class="vd-code-snippet-copy-icon"></span>
+            <span class="vd-code-snippet-copy-text">{{
+              copied ? "Copied" : "Copy"
+            }}</span>
           </button>
         </div>
-        <button
-          v-if="copyable"
-          type="button"
-          class="vd-code-snippet-copy"
-          :class="{ 'is-copied': copied }"
-          :aria-label="copied ? 'Copied' : 'Copy code'"
-          @click="onCopy(activeCode)"
-        >
-          <span class="vd-code-snippet-copy-icon"></span>
-          <span class="vd-code-snippet-copy-text">{{
-            copied ? "Copied" : "Copy"
-          }}</span>
-        </button>
+        <div class="vd-code-snippet-body">
+          <!-- highlight() MUST return escaped HTML; default path interpolates. -->
+          <pre
+            v-for="l in panes"
+            :id="paneId(l.key)"
+            :key="l.key"
+            class="vd-code-snippet-pane"
+            :class="{ 'is-active': active === l.key }"
+            :data-lang="l.key"
+            role="tabpanel"
+            :aria-labelledby="tabId(l.key)"
+            :tabindex="chromeExpanded && active === l.key ? 0 : -1"
+          ><code v-if="l.html != null" v-html="l.html" /><code v-else>{{ l.code }}</code></pre>
+        </div>
       </div>
-      <div class="vd-code-snippet-body">
-        <!-- highlight() MUST return escaped HTML; default path interpolates. -->
-        <pre
-          v-for="l in panes"
-          :id="paneId(l.key)"
-          :key="l.key"
-          class="vd-code-snippet-pane"
-          :class="{ 'is-active': active === l.key }"
-          :data-lang="l.key"
-          role="tabpanel"
-          :aria-labelledby="tabId(l.key)"
-          :tabindex="chromeExpanded && active === l.key ? 0 : -1"
-        ><code v-if="l.html != null" v-html="l.html" /><code v-else>{{ l.code }}</code></pre>
-      </div>
-    </div>
+    </VdExpandTransition>
   </div>
   <figure
     v-else

@@ -30,6 +30,9 @@
   --vd-alert-info-bg: var(--vd-color-info-alpha-10);
   --vd-alert-info-border: var(--vd-color-info);
   --vd-alert-info-text: var(--vd-text-info);
+
+  /* Alert Motion */
+  --vd-alert-duration: var(--vd-duration-233);
 }
 
 /* Dark Theme Overrides */
@@ -60,6 +63,10 @@
   border-radius: var(--vd-alert-border-radius);
   font-size: var(--vd-font-size-base);
   line-height: var(--vd-line-height-normal);
+}
+
+.vd-alert.is-dismissing {
+  pointer-events: none;
 }
 
 /* Alert Variants */
@@ -151,7 +158,7 @@
   border: none;
   cursor: pointer;
   opacity: 0.5;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--vd-duration-144) var(--vd-ease-out);
   color: inherit;
   font-size: 1.25rem;
   line-height: 1;
@@ -270,7 +277,7 @@
   opacity: 0.5;
   color: inherit;
   line-height: 1;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-alert-dismiss:hover {

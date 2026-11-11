@@ -1,0 +1,26 @@
+{
+  "$description": "Fibonacci motion scale: each step ≈ φ × the previous. Golden-ratio easings.",
+  "duration": {
+    "0": { "$type": "duration", "$value": "0ms" },
+    "55": { "$type": "duration", "$value": "55ms" },
+    "89": { "$type": "duration", "$value": "89ms" },
+    "144": { "$type": "duration", "$value": "144ms" },
+    "233": { "$type": "duration", "$value": "233ms" },
+    "377": { "$type": "duration", "$value": "377ms" },
+    "610": { "$type": "duration", "$value": "610ms" },
+    "987": { "$type": "duration", "$value": "987ms" },
+    "instant": { "$type": "duration", "$value": "{duration.89}" },
+    "fast": { "$type": "duration", "$value": "{duration.144}" },
+    "base": { "$type": "duration", "$value": "{duration.233}" },
+    "slow": { "$type": "duration", "$value": "{duration.377}" },
+    "slower": { "$type": "duration", "$value": "{duration.610}" },
+    "slowest": { "$type": "duration", "$value": "{duration.987}" }
+  },
+  "ease": {
+    "out": { "$type": "cubicBezier", "$value": [0.236, 1, 0.382, 1] },
+    "in": { "$type": "cubicBezier", "$value": [0.618, 0, 0.764, 0] },
+    "in-out": { "$type": "cubicBezier", "$value": [0.618, 0, 0.382, 1] },
+    "linear": { "$type": "cubicBezier", "$value": [0, 0, 1, 1] }
+  }
+}
+

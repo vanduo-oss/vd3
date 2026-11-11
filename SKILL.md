@@ -82,25 +82,27 @@ Components are named imports; the plugin does not register them. See the
 
 **Layout primitives:** `VdBox`, `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`.
 
-**Components A–F:** `VdAccordion`, `VdAlert`, `VdAuthCard`, `VdAvatar`, `VdBadge`, `VdBreadcrumb`, `VdButton`, `VdButtonGroup`, `VdCard`, `VdCheckbox`, `VdCheckboxGroup`, `VdChip`, `VdCodeSnippet`, `VdCollection`, `VdCustomSelect`, `VdDataTable`, `VdDocSearch`, `VdDock`, `VdDockItem`, `VdEmptyState`, `VdFab`, `VdFlow`, `VdFooter`, `VdForgotPassword`.
+**Components A–F:** `VdAccordion`, `VdAlert`, `VdAuthCard`, `VdAvatar`, `VdBadge`, `VdBreadcrumb`, `VdButton`, `VdButtonGroup`, `VdCard`, `VdCheckbox`, `VdCheckboxGroup`, `VdChip`, `VdCodeSnippet`, `VdCollection`, `VdCustomSelect`, `VdDataTable`, `VdDocSearch`, `VdDock`, `VdDockItem`, `VdEmptyState`, `VdExpandTransition`, `VdFab`, `VdFlow`, `VdFooter`, `VdForgotPassword`.
 
 **Components G–P:** `VdGlobalSearch`, `VdIcon`, `VdImageBox`, `VdImageItem`, `VdInput`, `VdLogin`, `VdMenu`, `VdModal`, `VdNavbar`, `VdOffcanvas`, `VdOtpInput`, `VdPagination`, `VdPreloader`, `VdProgress`.
 
-**Components R–T:** `VdRadioGroup`, `VdRating`, `VdSelect`, `VdSeparator`, `VdSidenav`, `VdSignUp`, `VdSkeleton`, `VdSlider`, `VdSpinner`, `VdSwitch`, `VdTable`, `VdTabs`, `VdThemeCustomizer`, `VdThemeSwitcher`, `VdToast`, `VdToastContainer`, `VdTooltip`, `VdTransfer`, `VdTree`, `VdTreeNode`.
+**Components R–T:** `VdRadioGroup`, `VdRating`, `VdSelect`, `VdSeparator`, `VdSidenav`, `VdSignUp`, `VdSkeleton`, `VdSlider`, `VdSpinner`, `VdSwitch`, `VdTable`, `VdTabs`, `VdThemeCustomizer`, `VdThemeSwitcher`, `VdToast`, `VdToastContainer`, `VdTransition`, `VdTooltip`, `VdTransfer`, `VdTree`, `VdTreeNode`.
 
-**40 composable modules** (module names, not a claim that each exports a same-named function):
+**41 composable modules** (module names, not a claim that each exports a same-named function):
 
-`useAffix.ts`, `useClickOutside.ts`, `useDatepicker.ts`, `useDocSearch.ts`, `useGlobalSearch.ts`, `useDockBrandSpin.ts`, `useDockOrientation.ts`, `useDraggable.ts`, `useDropdown.ts`, `useExpandingCards.ts`, `useFlow.ts`, `useFocusTrap.ts`, `useGlass.ts`, `useGrid.ts`, `useImageBox.ts`, `useKeyboardNav.ts`, `useLazyLoad.ts`, `useLiquidGradient.ts`, `useMorph.ts`, `useMorphBadges.ts`, `useNavbarGlassScroll.ts`, `useParallax.ts`, `usePopover.ts`, `useRipple.ts`, `useScrollspy.ts`, `useSearch.ts`, `useSidenav.ts`, `useSpotlight.ts`, `useStepper.ts`, `useSuggest.ts`, `useTableState.ts`, `useTabs.ts`, `useTheme.ts`, `useThemeBridge.ts`, `useTimeline.ts`, `useTimepicker.ts`, `useToast.ts`, `useTooltips.ts`, `useValidate.ts`, `useWaypoint.ts`.
+`useAffix.ts`, `useClickOutside.ts`, `useDatepicker.ts`, `useDocSearch.ts`, `useGlobalSearch.ts`, `useDockBrandSpin.ts`, `useDockOrientation.ts`, `useDraggable.ts`, `useDropdown.ts`, `useExpandingCards.ts`, `useFlow.ts`, `useFocusTrap.ts`, `useGlass.ts`, `useGrid.ts`, `useImageBox.ts`, `useKeyboardNav.ts`, `useLazyLoad.ts`, `useLiquidGradient.ts`, `useMorph.ts`, `useMorphBadges.ts`, `useMotion.ts`, `useNavbarGlassScroll.ts`, `useParallax.ts`, `usePopover.ts`, `useRipple.ts`, `useScrollspy.ts`, `useSearch.ts`, `useSidenav.ts`, `useSpotlight.ts`, `useStepper.ts`, `useSuggest.ts`, `useTableState.ts`, `useTabs.ts`, `useTheme.ts`, `useThemeBridge.ts`, `useTimeline.ts`, `useTimepicker.ts`, `useToast.ts`, `useTooltips.ts`, `useValidate.ts`, `useWaypoint.ts`.
 
 **Theme functions:** `useThemePreference()`, `useThemeBridge()`, `setThemeDefaults`,
 `getThemeDefaults`, `setFontOptions`, `getFontOptions`, `setStoragePrefix`,
 `getStoragePrefix`, `loadPreference`, `applyPreference`, `persistPreference`.
 The module named useTheme does not export a same-named callable.
 
+**Motion functions:** `useReducedMotion()`, `setMotion`, `getMotion`, `fibDurationForHeight`, `motionMode`.
+
 Theme attributes on `<html>` are `data-palette`, `data-primary`, `data-neutral`,
-`data-radius`, `data-theme`, and `data-font`. They resolve to `--vd-*` properties.
+`data-radius`, `data-theme`, `data-font`, and `data-motion`. They resolve to `--vd-*` properties.
 Storage keys default to the `vanduo-` prefix; preferences include palette,
-primary-color, neutral-color, radius, theme-preference and font-preference.
+primary-color, neutral-color, radius, theme-preference, font-preference, and motion.
 Filled surfaces use `--vd-text-on-primary`, `--vd-text-on-primary-hover`, and
 `--vd-text-on-status`. Preserve these when customizing bright fills.
 

@@ -14,7 +14,40 @@ export const DOCK_PLACEMENT_PAIR: Record<DockPlacement, DockPlacement> = {
   right: "top",
 };
 
-export const DOCK_MORPH_MS = { shrink: 480, grow: 720 } as const;
+export type DockCorner =
+  "bottom-left" | "top-left" | "top-right" | "bottom-right";
+
+export function dockMorphCornerOf(
+  from: DockPlacement,
+  to: DockPlacement,
+): DockCorner {
+  if (
+    (from === "bottom" && to === "left") ||
+    (from === "left" && to === "bottom")
+  ) {
+    return "bottom-left";
+  }
+  if ((from === "left" && to === "top") || (from === "top" && to === "left")) {
+    return "top-left";
+  }
+  if (
+    (from === "top" && to === "right") ||
+    (from === "right" && to === "top")
+  ) {
+    return "top-right";
+  }
+  if (
+    (from === "right" && to === "bottom") ||
+    (from === "bottom" && to === "right")
+  ) {
+    return "bottom-right";
+  }
+  if (from === "top" || to === "top") return "top-left";
+  if (from === "right" || to === "right") return "top-right";
+  return "bottom-left";
+}
+
+export const DOCK_MORPH_MS = { shrink: 377, grow: 610 } as const;
 export const DOCK_NARROW_QUERY = "(max-width: 520px)";
 export const DOCK_ORIENT_SUFFIX = "dock-orient";
 
@@ -81,7 +114,18 @@ export function dockPlacementOf(
 }
 
 function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window === "undefined") return false;
+  const mode =
+    typeof document !== "undefined"
+      ? document.documentElement.getAttribute("data-motion")
+      : null;
+  if (mode === "off" || mode === "reduce") return true;
+  if (mode === "full") return false;
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
 }
 
 function resolveStorageKey(options: UseDockOrientationOptions): string | null {
@@ -144,6 +188,8 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
 
   let morphTimer: ReturnType<typeof setTimeout> | null = null;
   let narrowMql: MediaQueryList | null = null;
+  let targetPlacement: DockPlacement | null = null;
+  const morphCorner = ref<DockCorner | null>(null);
 
   const clearMorphTimer = (): void => {
     if (morphTimer != null) {
@@ -169,6 +215,8 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
   const snapToPlacement = (target: DockPlacement): void => {
     clearMorphTimer();
     isMorphing.value = false;
+    targetPlacement = null;
+    morphCorner.value = null;
     applyRest(target);
   };
 
@@ -185,15 +233,16 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
       applyVisual(dockHorizontalOf(chosenPlacement));
       return;
     }
-    if (isMorphing.value) {
-      if (options?.interrupt) snapToPlacement(target);
-      return;
-    }
     if (
       placement.value === target &&
       visualPhase.value === dockOrientationOf(target)
     ) {
       writeStored(storageKey, target);
+      return;
+    }
+    if (isMorphing.value) {
+      if (targetPlacement === target) return;
+      if (options?.interrupt) snapToPlacement(target);
       return;
     }
     if (prefersReducedMotion()) {
@@ -202,12 +251,16 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     }
 
     isMorphing.value = true;
+    targetPlacement = target;
+    morphCorner.value = dockMorphCornerOf(placement.value, target);
     visualPhase.value = "square";
     clearMorphTimer();
     morphTimer = setTimeout(() => {
       applyRest(target);
       morphTimer = setTimeout(() => {
         isMorphing.value = false;
+        targetPlacement = null;
+        morphCorner.value = null;
         morphTimer = null;
       }, DOCK_MORPH_MS.grow);
     }, DOCK_MORPH_MS.shrink);
@@ -240,6 +293,8 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     if (event.matches) {
       clearMorphTimer();
       isMorphing.value = false;
+      targetPlacement = null;
+      morphCorner.value = null;
       applyVisual(dockHorizontalOf(chosenPlacement));
       return;
     }
@@ -266,6 +321,9 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     "is-square": visualPhase.value === "square",
     "is-vertical": visualPhase.value === "vertical",
     "is-morphing": isMorphing.value,
+    ...(morphCorner.value
+      ? { [`vd-dock-corner-${morphCorner.value}`]: true }
+      : {}),
     [`vd-dock-edge-${placement.value}`]: true,
   }));
 
@@ -288,6 +346,7 @@ export function useDockOrientation(options: UseDockOrientationOptions = {}) {
     placement: placement as Ref<DockPlacement>,
     orientation: orientation as Ref<DockOrientation>,
     visualPhase: visualPhase as Ref<DockVisualPhase>,
+    morphCorner: morphCorner as Ref<DockCorner | null>,
     isMorphing: isMorphing as Ref<boolean>,
     isNarrow: isNarrow as Ref<boolean>,
     dockClasses,

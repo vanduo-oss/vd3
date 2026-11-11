@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { useFocusTrap } from "../composables/useFocusTrap";
+import VdTransition, { type TransitionPreset } from "./VdTransition.vue";
 
 interface Props {
   modelValue: boolean;
@@ -8,6 +16,10 @@ interface Props {
   title?: string;
   closeOnBackdrop?: boolean;
   closeOnEsc?: boolean;
+  /** Whether slide animation is enabled (default true). */
+  animated?: boolean;
+  /** Custom duration in ms override. */
+  duration?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -15,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
   title: "",
   closeOnBackdrop: true,
   closeOnEsc: true,
+  animated: true,
 });
 
 const emit = defineEmits<{
@@ -24,6 +37,20 @@ const emit = defineEmits<{
 
 const panel = ref<HTMLElement | null>(null);
 const { activate, deactivate } = useFocusTrap(panel);
+
+const slidePreset = computed<TransitionPreset>(() => {
+  switch (props.placement) {
+    case "left":
+      return "slide-left";
+    case "top":
+      return "slide-down";
+    case "bottom":
+      return "slide-up";
+    case "right":
+    default:
+      return "slide-right";
+  }
+});
 
 // The element focused before the panel opened, restored on close.
 let previouslyFocused: HTMLElement | null = null;
@@ -93,38 +120,42 @@ watch(
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="modelValue"
-      class="vd-sidenav-overlay is-visible"
-      @click="onBackdrop"
-    />
-    <aside
-      v-if="modelValue"
-      ref="panel"
-      class="vd-offcanvas"
-      :class="[`vd-offcanvas-${placement}`, 'is-open']"
-      role="dialog"
-      aria-modal="true"
-      :aria-label="title || 'Off-canvas panel'"
-      tabindex="-1"
-    >
-      <header v-if="title || $slots.header" class="vd-sidenav-header">
-        <h3 v-if="title" class="vd-sidenav-title">
-          {{ title }}
-        </h3>
-        <slot name="header" />
-        <button
-          type="button"
-          class="vd-sidenav-close"
-          aria-label="Close"
-          @click="close"
-        >
-          &times;
-        </button>
-      </header>
-      <div class="vd-sidenav-body">
-        <slot />
-      </div>
-    </aside>
+    <VdTransition name="fade" :animated="animated" :duration="duration">
+      <div
+        v-if="modelValue"
+        class="vd-sidenav-overlay is-visible"
+        @click="onBackdrop"
+      />
+    </VdTransition>
+    <VdTransition :name="slidePreset" :animated="animated" :duration="duration">
+      <aside
+        v-if="modelValue"
+        ref="panel"
+        class="vd-offcanvas"
+        :class="[`vd-offcanvas-${placement}`, 'is-open']"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="title || 'Off-canvas panel'"
+        tabindex="-1"
+      >
+        <header v-if="title || $slots.header" class="vd-sidenav-header">
+          <h3 v-if="title" class="vd-sidenav-title">
+            {{ title }}
+          </h3>
+          <slot name="header" />
+          <button
+            type="button"
+            class="vd-sidenav-close"
+            aria-label="Close"
+            @click="close"
+          >
+            &times;
+          </button>
+        </header>
+        <div class="vd-sidenav-body">
+          <slot />
+        </div>
+      </aside>
+    </VdTransition>
   </Teleport>
 </template>

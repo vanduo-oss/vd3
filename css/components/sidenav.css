@@ -28,7 +28,7 @@
   --vd-sidenav-overlay-z-index: 1030;
   
   /* Sidenav Transitions */
-  --vd-sidenav-transition: transform var(--vd-transition-duration-slow) var(--vd-transition-ease);
+  --vd-sidenav-transition: transform var(--vd-duration-377) var(--vd-ease-out);
 }
 
 /* Dark Theme Overrides */
@@ -54,7 +54,7 @@
   height: 100vh;
   background-color: var(--vd-sidenav-overlay-bg);
   opacity: 0;
-  transition: opacity var(--vd-transition-duration-base) var(--vd-transition-ease);
+  transition: opacity var(--vd-duration-377) var(--vd-ease-in-out);
   pointer-events: none;
 }
 
@@ -398,5 +398,37 @@
     margin-left: 0;
     margin-right: 0;
   }
+}
+
+/* ==========================================================================
+   Vue Transition Hooks for Sidenav and Offcanvas
+   ========================================================================== */
+
+.vd-slide-left-enter-from.vd-sidenav,
+.vd-slide-left-leave-to.vd-sidenav,
+.vd-slide-left-enter-from.vd-offcanvas,
+.vd-slide-left-leave-to.vd-offcanvas {
+  transform: translateX(-100%);
+}
+
+.vd-slide-right-enter-from.vd-sidenav-right,
+.vd-slide-right-leave-to.vd-sidenav-right,
+.vd-slide-right-enter-from.vd-offcanvas-right,
+.vd-slide-right-leave-to.vd-offcanvas-right {
+  transform: translateX(100%);
+}
+
+.vd-slide-down-enter-from.vd-sidenav-top,
+.vd-slide-down-leave-to.vd-sidenav-top,
+.vd-slide-down-enter-from.vd-offcanvas-top,
+.vd-slide-down-leave-to.vd-offcanvas-top {
+  transform: translateY(-100%);
+}
+
+.vd-slide-up-enter-from.vd-sidenav-bottom,
+.vd-slide-up-leave-to.vd-sidenav-bottom,
+.vd-slide-up-enter-from.vd-offcanvas-bottom,
+.vd-slide-up-leave-to.vd-offcanvas-bottom {
+  transform: translateY(100%);
 }
 

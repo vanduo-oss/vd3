@@ -181,7 +181,7 @@ p {
 a {
   color: var(--vd-color-primary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--vd-duration-233) var(--vd-ease-out);
 }
 
 a:hover {

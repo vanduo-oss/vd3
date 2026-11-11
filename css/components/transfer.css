@@ -102,7 +102,7 @@
   padding: 0.3125rem 0.8125rem; /* 5px 13px - fib */
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background 0.15s ease;
+  transition: background var(--vd-duration-144) var(--vd-ease-out);
   gap: 0.5rem;
 }
 

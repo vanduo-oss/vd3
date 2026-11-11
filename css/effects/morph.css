@@ -87,7 +87,7 @@
       transparent 80%);
   transform: translate(-50%, -50%);
   opacity: 0;
-  animation: vd-morph-expand2 var(--vd-morph-duration) var(--vd-morph-easing) 0.08s forwards;
+  animation: vd-morph-expand2 var(--vd-morph-duration) var(--vd-morph-easing) var(--vd-duration-89) forwards;
 }
 
 @keyframes vd-morph-expand {
@@ -167,8 +167,8 @@
 }
 
 .vd-morph.is-morphing .vd-morph-shine {
-  animation: vd-morph-shine var(--vd-morph-duration) var(--vd-morph-easing) 0.03s
-    forwards;
+  animation: vd-morph-shine var(--vd-morph-duration) var(--vd-morph-easing)
+    var(--vd-duration-55) forwards;
 }
 
 @keyframes vd-morph-shine {
@@ -227,7 +227,7 @@
   opacity: 0;
   transform: scale(0.94) translateY(-2px);
   filter: blur(3px);
-  transition-duration: 0.18s;
+  transition-duration: var(--vd-duration-144);
   transition-delay: 0s;
 }
 
@@ -235,7 +235,7 @@
   opacity: 1;
   transform: scale(1) translateY(0);
   filter: blur(0);
-  transition-duration: 0.26s;
+  transition-duration: var(--vd-duration-233);
   transition-delay: 0.14s;
 }
 

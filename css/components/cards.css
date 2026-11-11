@@ -78,7 +78,7 @@
 .vd-card-elevated,
 .vd-card {
   box-shadow: var(--vd-card-shadow-elevated);
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow var(--vd-duration-233) var(--vd-ease-out);
   /* Fix Safari disappearing bug during transform transitions */
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -275,7 +275,7 @@
 
 /* Card Glow Effect */
 .vd-card-glow {
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow var(--vd-duration-377) var(--vd-ease-out), border-color var(--vd-duration-377) var(--vd-ease-out);
   border-color: var(--vd-card-border-color);
 }
 
@@ -288,7 +288,7 @@
 a.vd-card {
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--vd-duration-233) var(--vd-ease-out), box-shadow var(--vd-duration-233) var(--vd-ease-out);
 }
 
 a.vd-card:hover {
@@ -327,7 +327,7 @@ a.vd-card:active {
 /* @vanduo-oss/vue VdCard :interactive (additive; added in 1.6.1) */
 .vd-card-interactive {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--vd-duration-233) var(--vd-ease-out), box-shadow var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-card-interactive:hover {

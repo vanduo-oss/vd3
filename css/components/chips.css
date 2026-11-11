@@ -20,6 +20,9 @@
   --vd-chip-bg: var(--vd-bg-secondary);
   --vd-chip-text: var(--vd-text-primary);
   --vd-chip-border: var(--vd-border-color);
+
+  /* Chip Motion */
+  --vd-chip-duration: var(--vd-duration-144);
 }
 
 /* Dark Theme Overrides */
@@ -48,7 +51,13 @@
   border-radius: var(--vd-chip-border-radius);
   white-space: nowrap;
   vertical-align: middle;
-  transition: var(--vd-transition-base);
+  transition: background-color var(--vd-duration-144) var(--vd-ease-out),
+              color var(--vd-duration-144) var(--vd-ease-out),
+              border-color var(--vd-duration-144) var(--vd-ease-out);
+}
+
+.vd-chip.is-dismissing {
+  pointer-events: none;
 }
 
 /* Chip Sizes */
@@ -208,7 +217,7 @@ button.tag:focus-visible {
   border-radius: 50%;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-chip-close:hover,

@@ -41,7 +41,7 @@
   font-size: var(--vd-rating-size);
   color: var(--vd-rating-inactive-color);
   cursor: pointer;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: color var(--vd-duration-144) var(--vd-ease-out), transform var(--vd-duration-144) var(--vd-ease-out);
   user-select: none;
   border: none;
   background: none;

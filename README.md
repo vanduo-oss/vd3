@@ -6,7 +6,7 @@
 
 Vanduo UI for Vue 3: design tokens, CSS, and typed `Vd*` components. Sole peer: `vue >=3.3`. No Pinia.
 
-**Status: 1.8.2.** Long guides live at [vd3.vanduo.dev](https://vd3.vanduo.dev/). Agents use [SKILL.md](./SKILL.md). Release notes are in [CHANGELOG.md](./CHANGELOG.md).
+**Status: 1.9.0.** Long guides live at [vd3.vanduo.dev](https://vd3.vanduo.dev/). Agents use [SKILL.md](./SKILL.md). Release notes are in [CHANGELOG.md](./CHANGELOG.md).
 
 ## Install
 
@@ -45,14 +45,14 @@ import { VdButton, VdCard } from "@vanduo-oss/vd3";
 
 Named exports only.
 
-- **64 components** — 57 `Vd*` components plus 7 layout primitives (`VdBox`, `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
-- **40 composable modules** — the theme API (`setThemeDefaults`, `useThemeBridge`, and the `useThemePreference` singleton), plus form, overlay, motion, and layout helpers. `sanitizeHtml` is exported too.
+- **66 components** — 59 `Vd*` components plus 7 layout primitives (`VdBox`, `VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`).
+- **41 composable modules** — the theme API (`setThemeDefaults`, `useThemeBridge`, and the `useThemePreference` singleton), motion system (`useMotion`), plus form, overlay, and layout helpers. `sanitizeHtml` is exported too.
 
 Per-component props are in [SKILL.md](./SKILL.md) and the [docs](https://vd3.vanduo.dev/).
 
-## Theming
+## Theming and Motion
 
-`applyPreference` and `useThemePreference` set six attributes on `<html>`: `data-palette`, `data-primary`, `data-neutral`, `data-radius`, `data-theme`, `data-font`. CSS resolves those into `--vd-*` custom properties. Preferences persist as `vanduo-palette`, `vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`, `vanduo-theme-preference`, and `vanduo-font-preference`. `storagePrefix` (or `setStoragePrefix`) changes that prefix. There is no migration between prefixes. Apps that share one module instance share theme state.
+`applyPreference` and `useThemePreference` set seven attributes on `<html>`: `data-palette`, `data-primary`, `data-neutral`, `data-radius`, `data-theme`, `data-font`, and `data-motion`. CSS resolves those into `--vd-*` custom properties. Preferences persist as `vanduo-palette`, `vanduo-primary-color`, `vanduo-neutral-color`, `vanduo-radius`, `vanduo-theme-preference`, `vanduo-font-preference`, and `vanduo-motion`. `storagePrefix` (or `setStoragePrefix`) changes that prefix. There is no migration between prefixes. Apps that share one module instance share theme state.
 
 Text fonts are not bundled. `data-font` selects a stack; the host supplies `@font-face`, or stays on `system`. Pass `fontOptions` before the theme model reads storage, and include the default font key. `family` and `mono` write `--vd-font-family-sans` / `--vd-font-family-base` and `--vd-font-family-mono`. Omit them to keep the `[data-font]` rules.
 

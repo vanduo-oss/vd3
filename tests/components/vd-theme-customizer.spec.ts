@@ -23,6 +23,7 @@ const ROOT_ATTRS = [
   "data-radius",
   "data-font",
   "data-theme",
+  "data-motion",
 ];
 
 function cleanRoot(): void {
@@ -288,6 +289,41 @@ describe("VdThemeCustomizer show-palette prop", () => {
     expect(q(".tc-palette-group")).toBeNull();
     // Other sections still render.
     expect(q(".tc-color-grid")).not.toBeNull();
+  });
+});
+
+describe("VdThemeCustomizer motion control", () => {
+  it("renders the motion section by default with auto/full/reduce/off", async () => {
+    mountCustomizer();
+    expect(q(".tc-motion-group")).not.toBeNull();
+    const btns = document.querySelectorAll(".tc-motion-btn");
+    expect(btns.length).toBe(4);
+
+    const reduceBtn = q('.tc-motion-btn[data-motion="reduce"]')!;
+    reduceBtn.click();
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-motion")).toBe("reduce");
+    expect(window.localStorage.getItem("vanduo-motion")).toBe("reduce");
+    expect(reduceBtn.classList.contains("is-active")).toBe(true);
+
+    const offBtn = q('.tc-motion-btn[data-motion="off"]')!;
+    offBtn.click();
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-motion")).toBe("off");
+    expect(window.localStorage.getItem("vanduo-motion")).toBe("off");
+    expect(offBtn.classList.contains("is-active")).toBe(true);
+
+    const autoBtn = q('.tc-motion-btn[data-motion="auto"]')!;
+    autoBtn.click();
+    await nextTick();
+    expect(document.documentElement.getAttribute("data-motion")).toBeNull();
+    expect(window.localStorage.getItem("vanduo-motion")).toBeNull();
+    expect(autoBtn.classList.contains("is-active")).toBe(true);
+  });
+
+  it("omits the motion section when show-motion is false", () => {
+    mountCustomizer({ showMotion: false });
+    expect(q(".tc-motion-group")).toBeNull();
   });
 });
 

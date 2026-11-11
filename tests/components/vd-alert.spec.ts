@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import VdAlert from "../../src/components/VdAlert.vue";
 
@@ -63,5 +63,47 @@ describe("VdAlert", () => {
     await dismiss.trigger("click");
     expect(wrapper.emitted("dismiss")).toHaveLength(1);
     expect(wrapper.emitted("dismiss")?.[0]).toEqual([]);
+  });
+
+  it("plays WAAPI exit animation when animate is available", async () => {
+    let onFinishCallback: (() => void) | undefined;
+    const animateMock = vi.fn().mockImplementation(() => {
+      const anim = {
+        set onfinish(cb: () => void) {
+          onFinishCallback = cb;
+        },
+        set oncancel(_cb: () => void) {
+          // noop
+        },
+      };
+      return anim;
+    });
+
+    const wrapper = mount(VdAlert, {
+      props: { dismissible: true, animated: true },
+    });
+
+    wrapper.element.animate =
+      animateMock as unknown as typeof Element.prototype.animate;
+
+    const dismiss = wrapper.get("button.vd-alert-dismiss");
+    await dismiss.trigger("click");
+
+    expect(wrapper.classes()).toContain("is-dismissing");
+    expect(animateMock).toHaveBeenCalledTimes(1);
+    // dismiss not emitted until onfinish fires
+    expect(wrapper.emitted("dismiss")).toBeUndefined();
+
+    onFinishCallback?.();
+    expect(wrapper.emitted("dismiss")).toHaveLength(1);
+  });
+
+  it("emits dismiss immediately when animated is false", async () => {
+    const wrapper = mount(VdAlert, {
+      props: { dismissible: true, animated: false },
+    });
+
+    await wrapper.get("button.vd-alert-dismiss").trigger("click");
+    expect(wrapper.emitted("dismiss")).toHaveLength(1);
   });
 });

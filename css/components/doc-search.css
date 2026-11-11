@@ -77,7 +77,7 @@
   font-size: 1.125rem;
   pointer-events: none;
   z-index: 1;
-  transition: color 0.15s ease;
+  transition: color var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-doc-search-input:focus ~ .vd-doc-search-icon,
@@ -97,7 +97,7 @@ input.vd-doc-search-input {
   background-color: var(--vd-doc-search-input-bg);
   border: 1px solid var(--vd-doc-search-input-border);
   border-radius: var(--vd-doc-search-input-radius);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color var(--vd-duration-144) var(--vd-ease-out), box-shadow var(--vd-duration-144) var(--vd-ease-out);
   appearance: none;
 }
 
@@ -163,7 +163,7 @@ input.vd-doc-search-input {
   max-height: var(--vd-doc-search-results-max-height);
   overflow-y: auto;
   overflow-x: hidden;
-  animation: doc-search-fade-in 0.15s ease;
+  animation: doc-search-fade-in var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-doc-search-results.is-open {
@@ -187,7 +187,7 @@ input.vd-doc-search-input {
   gap: 0.75rem;
   padding: var(--vd-doc-search-result-padding);
   cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: background-color var(--vd-duration-89) var(--vd-ease-out);
   text-decoration: none;
   color: inherit;
 }

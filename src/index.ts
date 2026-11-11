@@ -1,7 +1,7 @@
 // @vanduo-oss/vd3 — Vanduo UI for Vue 3. Tree-shakeable named exports.
 // Standalone: no IIFE runtime, no `loadVanduoRuntime`.
 
-export const VD3_VERSION = "1.8.2";
+export const VD3_VERSION = "1.9.0";
 
 // ── Plugin ───────────────────────────────────────────────────
 export { VanduoVue } from "./plugin";
@@ -28,6 +28,7 @@ export { default as VdGlobalSearch } from "./components/VdGlobalSearch.vue";
 export { default as VdDock } from "./components/VdDock.vue";
 export { default as VdDockItem } from "./components/VdDockItem.vue";
 export { default as VdEmptyState } from "./components/VdEmptyState.vue";
+export { default as VdExpandTransition } from "./components/VdExpandTransition.vue";
 export { default as VdFab } from "./components/VdFab.vue";
 export { default as VdFlow } from "./components/VdFlow.vue";
 export { default as VdFooter } from "./components/VdFooter.vue";
@@ -63,6 +64,8 @@ export { default as VdToast } from "./components/VdToast.vue";
 export { default as VdToastContainer } from "./components/VdToastContainer.vue";
 export { default as VdTooltip } from "./components/VdTooltip.vue";
 export { default as VdTransfer } from "./components/VdTransfer.vue";
+export { default as VdTransition } from "./components/VdTransition.vue";
+export type { TransitionPreset } from "./components/VdTransition.vue";
 export { default as VdTree } from "./components/VdTree.vue";
 export { default as VdTreeNode } from "./components/VdTreeNode.vue";
 
@@ -96,6 +99,7 @@ export * from "./composables/useLazyLoad";
 export * from "./composables/useLiquidGradient";
 export * from "./composables/useMorph";
 export * from "./composables/useMorphBadges";
+export * from "./composables/useMotion";
 export * from "./composables/useNavbarGlassScroll";
 export * from "./composables/useParallax";
 export * from "./composables/usePopover";

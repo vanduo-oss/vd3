@@ -32,6 +32,7 @@ const themeGeneratedDir = resolve(root, "src", "theme", "generated");
 // scales plus an active layer with a runtime [data-palette] switch.
 const TOKEN_FILES = [
   "primitive/scale.tokens.json",
+  "primitive/motion.tokens.json",
   "semantic/color.tokens.json",
 ];
 const OC_COLOR_FILE = "primitive/color.tokens.json";
@@ -49,9 +50,13 @@ const flatten = (node, path, out) => {
   for (const [key, child] of Object.entries(node)) {
     if (key.startsWith("$")) continue;
     if (child && typeof child === "object" && "$value" in child) {
+      const raw =
+        Array.isArray(child.$value) && child.$type === "cubicBezier"
+          ? `cubic-bezier(${child.$value.join(", ")})`
+          : String(child.$value);
       out.push({
         name: "--vd-" + [...path, key].join("-"),
-        raw: String(child.$value),
+        raw,
         type: child.$type ?? "other",
       });
     } else if (child && typeof child === "object") {
@@ -249,6 +254,7 @@ const DEFAULTS = {
   RADIUS: opts.defaults.radius,
   FONT: opts.defaults.font,
   THEME: opts.defaults.theme,
+  MOTION: opts.defaults.motion ?? "auto",
 };
 const union = (values) => values.map((v) => JSON.stringify(v)).join(" | ");
 const paletteKeys = opts.palettes.map((p) => p.key);
@@ -279,6 +285,7 @@ const tokensDataTs =
   "}\n\n" +
   `export type RadiusOption = ${union(opts.radius)};\n\n` +
   `export type ThemeMode = ${union(opts.themeModes)};\n\n` +
+  `export type MotionModeOption = ${union(opts.motionModes ?? ["auto", "full", "reduce", "off"])};\n\n` +
   `export type Palette = ${union(paletteKeys)};\n\n` +
   "export interface ThemeDefaults {\n" +
   "  readonly PALETTE: Palette;\n" +
@@ -288,6 +295,7 @@ const tokensDataTs =
   "  readonly RADIUS: RadiusOption;\n" +
   "  readonly FONT: string;\n" +
   "  readonly THEME: ThemeMode;\n" +
+  "  readonly MOTION: MotionModeOption;\n" +
   "}\n\n" +
   `export const PALETTE_OPTIONS: readonly PaletteDef[] = ${JSON.stringify(opts.palettes, null, 2)};\n\n` +
   `export const PRIMARY_COLORS: readonly ColorDef[] = ${JSON.stringify(opts.primary, null, 2)};\n\n` +
@@ -295,6 +303,23 @@ const tokensDataTs =
   `export const RADIUS_OPTIONS: readonly RadiusOption[] = ${JSON.stringify(opts.radius)};\n\n` +
   `export const FONT_OPTIONS: readonly FontDef[] = ${JSON.stringify(opts.fonts, null, 2)};\n\n` +
   `export const THEME_MODES: readonly ThemeMode[] = ${JSON.stringify(opts.themeModes)};\n\n` +
+  `export const MOTION_MODES: readonly MotionModeOption[] = ${JSON.stringify(opts.motionModes ?? ["auto", "full", "reduce", "off"])};\n\n` +
+  "export const MOTION_DURATIONS = {\n" +
+  "  0: 0,\n" +
+  "  55: 55,\n" +
+  "  89: 89,\n" +
+  "  144: 144,\n" +
+  "  233: 233,\n" +
+  "  377: 377,\n" +
+  "  610: 610,\n" +
+  "  987: 987,\n" +
+  "  instant: 89,\n" +
+  "  fast: 144,\n" +
+  "  base: 233,\n" +
+  "  slow: 377,\n" +
+  "  slower: 610,\n" +
+  "  slowest: 987,\n" +
+  "} as const;\n\n" +
   `export const DEFAULTS: ThemeDefaults = ${JSON.stringify(DEFAULTS, null, 2)};\n\n` +
   `export const tokens: Readonly<Record<string, string>> = ${JSON.stringify(resolvedTokens, null, 2)};\n`;
 

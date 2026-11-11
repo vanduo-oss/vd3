@@ -2,6 +2,11 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useClickOutside } from "../composables/useClickOutside";
 import {
+  motionMode,
+  setMotion,
+  type MotionMode,
+} from "../composables/useMotion";
+import {
   useThemePreference,
   getFontOptions,
   getThemeDefaults,
@@ -47,6 +52,10 @@ interface Props {
    */
   showFont?: boolean;
   /**
+   * Render the motion mode buttons (auto/full/reduce/off). `panel` only.
+   */
+  showMotion?: boolean;
+  /**
    * Fonts offered in the select. Unset uses the active catalog
    * (`fontOptions` / generated `FONT_OPTIONS`). When set, this also becomes
    * the catalog `loadPreference` accepts, including optional `family` / `mono`
@@ -80,6 +89,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   showPalette: true,
   showFont: true,
+  showMotion: true,
   variant: "panel",
   swatches: undefined,
   direction: "auto",
@@ -169,7 +179,18 @@ const setPrimary = (primary: string): void => applyPrimary(primary);
 const setNeutral = (neutral: string): void => theme.setNeutral(neutral);
 const setRadius = (radius: RadiusOption): void => theme.setRadius(radius);
 const setFont = (font: string): void => theme.setFont(font);
-const reset = (): void => theme.reset();
+const setMotionMode = (mode: MotionMode): void => setMotion(mode);
+const reset = (): void => {
+  theme.reset();
+  setMotion("auto");
+};
+
+const MOTION_MODES: readonly { key: MotionMode; name: string }[] = [
+  { key: "auto", name: "Auto" },
+  { key: "full", name: "Full" },
+  { key: "reduce", name: "Reduce" },
+  { key: "off", name: "Off" },
+];
 
 const resetPanelPosition = (): void => {
   const panel = panelRef.value;
@@ -618,6 +639,23 @@ defineExpose({ open, close, toggle });
                   {{ f.name }}
                 </option>
               </select>
+            </div>
+
+            <div v-if="showMotion" class="tc-section">
+              <label class="tc-label">Motion</label>
+              <div class="tc-motion-group">
+                <button
+                  v-for="m in MOTION_MODES"
+                  :key="m.key"
+                  type="button"
+                  class="tc-motion-btn"
+                  :class="{ 'is-active': motionMode === m.key }"
+                  :data-motion="m.key"
+                  @click="setMotionMode(m.key)"
+                >
+                  {{ m.name }}
+                </button>
+              </div>
             </div>
           </div>
           <div class="tc-footer">

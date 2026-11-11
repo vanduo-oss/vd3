@@ -63,7 +63,7 @@
   );
   pointer-events: none;
   z-index: 1;
-  transition: opacity var(--vd-transition-normal, 0.25s ease);
+  transition: opacity var(--vd-transition-normal, var(--vd-duration-233) var(--vd-ease-out));
 }
 
 .vd-glass::after,
@@ -93,7 +93,7 @@
   opacity: var(--vd-glass-noise-opacity);
   pointer-events: none;
   z-index: 2;
-  transition: opacity var(--vd-transition-normal, 0.25s ease);
+  transition: opacity var(--vd-transition-normal, var(--vd-duration-233) var(--vd-ease-out));
 }
 
 .vd-glass > *,

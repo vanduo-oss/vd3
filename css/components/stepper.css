@@ -75,7 +75,7 @@
   font-weight: 600;
   font-size: 0.875rem;
   z-index: 1;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: background var(--vd-duration-233) var(--vd-ease-out), border-color var(--vd-duration-233) var(--vd-ease-out), color var(--vd-duration-233) var(--vd-ease-out);
   counter-increment: step;
 }
 
@@ -173,7 +173,7 @@
 
 .vd-stepper-clickable .vd-stepper-circle:hover {
   transform: scale(1.1);
-  transition: transform 0.15s ease;
+  transition: transform var(--vd-duration-144) var(--vd-ease-out);
 }
 
 /* ========== Animated reveal (opt-in; mirrors timeline) ========== */

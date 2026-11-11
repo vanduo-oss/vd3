@@ -105,4 +105,9 @@ describe("VdTabs", () => {
     const panels = factory().get(".vd-tab-panels");
     expect(panels.get(".panel").text()).toBe("Panel body");
   });
+
+  it("supports animated=false without breaking panel rendering", () => {
+    const wrapper = factory({ animated: false });
+    expect(wrapper.get(".vd-tab-panels .panel").text()).toBe("Panel body");
+  });
 });

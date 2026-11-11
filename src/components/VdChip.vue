@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import { useReducedMotion } from "../composables/useMotion";
 import type { StatusVariant } from "../types";
 
 type Size = "sm" | "md" | "lg";
@@ -11,25 +13,75 @@ interface Props {
   dismissible?: boolean;
   avatar?: string;
   clickable?: boolean;
+  /** Whether animation is enabled (default true). */
+  animated?: boolean;
+  /** Custom duration in ms override. */
+  duration?: number;
 }
 
-const emit = defineEmits<{
-  dismiss: [];
-  click: [event: MouseEvent | KeyboardEvent];
-}>();
-
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   variant: "primary",
   size: "md",
   outline: false,
   dismissible: false,
   avatar: "",
   clickable: false,
+  animated: true,
 });
+
+const emit = defineEmits<{
+  dismiss: [];
+  click: [event: MouseEvent | KeyboardEvent];
+}>();
+
+const chipEl = ref<HTMLElement | null>(null);
+const { reduced, off } = useReducedMotion();
+const dismissing = ref(false);
+let dismissHandled = false;
+
+const emitDismiss = (): void => {
+  if (dismissHandled) return;
+  dismissHandled = true;
+  emit("dismiss");
+};
 
 const onDismiss = (event: MouseEvent): void => {
   event.stopPropagation();
-  emit("dismiss");
+  if (!props.animated || off.value) {
+    emitDismiss();
+    return;
+  }
+  const el = chipEl.value;
+  if (!el || typeof el.animate !== "function") {
+    emitDismiss();
+    return;
+  }
+  dismissing.value = true;
+  const ms = props.duration ?? (reduced.value ? 89 : 144);
+  const style = window.getComputedStyle(el);
+  const easing =
+    style.getPropertyValue("--vd-ease-in").trim() ||
+    "cubic-bezier(0.618, 0, 0.764, 0)";
+
+  if (reduced.value) {
+    const anim = el.animate([{ opacity: "1" }, { opacity: "0" }], {
+      duration: ms,
+      easing: "linear",
+    });
+    anim.onfinish = emitDismiss;
+    anim.oncancel = emitDismiss;
+    return;
+  }
+
+  const anim = el.animate(
+    [
+      { opacity: "1", transform: "scale(1)" },
+      { opacity: "0", transform: "scale(0.85)" },
+    ],
+    { duration: ms, easing },
+  );
+  anim.onfinish = emitDismiss;
+  anim.oncancel = emitDismiss;
 };
 
 const onClick = (event: MouseEvent): void => {
@@ -47,6 +99,7 @@ const onKeydown = (event: KeyboardEvent): void => {
 
 <template>
   <span
+    ref="chipEl"
     class="vd-chip"
     :class="[
       `vd-chip-${variant}`,
@@ -55,6 +108,7 @@ const onKeydown = (event: KeyboardEvent): void => {
         'vd-chip-outline': outline,
         'vd-chip-dismissible': dismissible,
         'vd-chip-clickable': clickable,
+        'is-dismissing': dismissing,
       },
     ]"
     :role="clickable ? 'button' : undefined"
@@ -69,6 +123,7 @@ const onKeydown = (event: KeyboardEvent): void => {
       type="button"
       class="vd-chip-close"
       aria-label="Dismiss"
+      :disabled="dismissing"
       @click="onDismiss"
     >
       &times;

@@ -93,18 +93,14 @@ textarea:not([rows]) {
     scroll-margin-block: 5ex;
 }
 
-/* Remove all animations, transitions and smooth scroll for users that prefer reduced motion */
+/* Reduced motion defaults: scroll behavior is handled here; component
+   transitions and keyframes are governed by core/motion.css tokens. */
 @media (prefers-reduced-motion: reduce) {
     html:focus-within {
         scroll-behavior: auto;
     }
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    * {
         scroll-behavior: auto !important;
     }
 }

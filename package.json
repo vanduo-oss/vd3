@@ -1,6 +1,6 @@
 {
   "name": "@vanduo-oss/vd3",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "Vanduo UI for Vue 3 — design system and component library (the vd3 line)",
   "type": "module",
   "homepage": "https://github.com/vanduo-oss/vd3#readme",
@@ -66,12 +66,13 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "node scripts/clean-dist.mjs && node scripts/build-tokens.mjs && node scripts/build-css.mjs && vite build && vue-tsc -p tsconfig.build.json && node scripts/check-class-coverage.mjs",
+    "build": "node scripts/clean-dist.mjs && node scripts/build-tokens.mjs && node scripts/check-motion-tokens.mjs && node scripts/build-css.mjs && vite build && vue-tsc -p tsconfig.build.json && node scripts/check-class-coverage.mjs",
     "prepack": "pnpm run build",
-    "release": "pnpm run build && pnpm publish",
+    "release": "pnpm run build && pnpm publish --provenance",
     "build:tokens": "node scripts/build-tokens.mjs",
     "build:css": "node scripts/build-css.mjs",
     "check:classes": "node scripts/check-class-coverage.mjs",
+    "check:motion": "node scripts/check-motion-tokens.mjs",
     "gen:fib": "node scripts/generate-fib-palette.mjs",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint . --max-warnings 0",

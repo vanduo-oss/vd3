@@ -244,7 +244,7 @@
 a.vd-avatar,
 button.vd-avatar {
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform var(--vd-duration-144) var(--vd-ease-out), box-shadow var(--vd-duration-144) var(--vd-ease-out);
 }
 
 a.vd-avatar:hover,

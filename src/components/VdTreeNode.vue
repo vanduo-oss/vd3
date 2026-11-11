@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import VdExpandTransition from "./VdExpandTransition.vue";
 
 /** A single recursive tree node — see VdTree.vue for the data model and events. */
 export interface TreeNode {
@@ -11,7 +12,15 @@ export interface TreeNode {
   children?: TreeNode[];
 }
 
-const props = defineProps<{ node: TreeNode; checkbox: boolean }>();
+const props = withDefaults(
+  defineProps<{
+    node: TreeNode;
+    checkbox: boolean;
+    animated?: boolean;
+    duration?: number;
+  }>(),
+  { animated: true },
+);
 const emit = defineEmits<{
   (e: "toggle", node: TreeNode): void;
   (e: "check", node: TreeNode, checked: boolean): void;
@@ -65,15 +74,23 @@ const onCheck = (e: Event): void => {
       <span class="vd-tree-label" tabindex="-1">{{ node.label }}</span>
     </div>
 
-    <ul v-if="hasChildren" class="vd-tree-children" role="group">
-      <VdTreeNode
-        v-for="(child, i) in node.children"
-        :key="child.id ?? i"
-        :node="child"
-        :checkbox="checkbox"
-        @toggle="(n) => emit('toggle', n)"
-        @check="(n, c) => emit('check', n, c)"
-      />
-    </ul>
+    <VdExpandTransition
+      v-if="hasChildren"
+      :animated="animated"
+      :duration="duration"
+    >
+      <ul v-show="node.open" class="vd-tree-children" role="group">
+        <VdTreeNode
+          v-for="(child, i) in node.children"
+          :key="child.id ?? i"
+          :node="child"
+          :checkbox="checkbox"
+          :animated="animated"
+          :duration="duration"
+          @toggle="(n) => emit('toggle', n)"
+          @check="(n, c) => emit('check', n, c)"
+        />
+      </ul>
+    </VdExpandTransition>
   </li>
 </template>

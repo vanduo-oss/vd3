@@ -45,7 +45,7 @@ body > .vd-theme-customizer-panel {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  transition: opacity var(--vd-duration-233) var(--vd-ease-out), transform var(--vd-duration-233) var(--vd-ease-out), visibility var(--vd-duration-233) var(--vd-ease-out);
 }
 
 body > .vd-theme-customizer-panel.is-open {
@@ -113,7 +113,7 @@ body > .vd-theme-customizer-panel.is-open {
   border: 2px solid transparent;
   border-radius: calc(var(--vd-radius-scale, 0.25) * 0.5rem);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .tc-color-swatch:hover {
@@ -148,7 +148,7 @@ body > .vd-theme-customizer-panel.is-open {
   border: 1px solid var(--vd-border-color);
   border-radius: calc(var(--vd-radius-scale, 0.25) * 0.5rem);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .tc-neutral-swatch::before {
@@ -181,12 +181,14 @@ body > .vd-theme-customizer-panel.is-open {
 }
 
 /* Radius Group */
-.tc-radius-group {
+.tc-radius-group,
+.tc-motion-group {
   display: flex;
   gap: 0;
 }
 
-.tc-radius-btn {
+.tc-radius-btn,
+.tc-motion-btn {
   flex: 1;
   display: flex;
   align-items: center;
@@ -198,33 +200,39 @@ body > .vd-theme-customizer-panel.is-open {
   font-size: var(--vd-font-size-xs);
   font-weight: var(--vd-font-weight-medium);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
-.tc-radius-btn:first-child {
+.tc-radius-btn:first-child,
+.tc-motion-btn:first-child {
   border-radius: calc(var(--vd-radius-scale, 0.25) * 0.5rem) 0 0 calc(var(--vd-radius-scale, 0.25) * 0.5rem);
 }
 
-.tc-radius-btn:last-child {
+.tc-radius-btn:last-child,
+.tc-motion-btn:last-child {
   border-radius: 0 calc(var(--vd-radius-scale, 0.25) * 0.5rem) calc(var(--vd-radius-scale, 0.25) * 0.5rem) 0;
 }
 
-.tc-radius-btn:not(:first-child) {
+.tc-radius-btn:not(:first-child),
+.tc-motion-btn:not(:first-child) {
   margin-left: -1px;
 }
 
-.tc-radius-btn:hover {
+.tc-radius-btn:hover,
+.tc-motion-btn:hover {
   background-color: var(--vd-bg-secondary);
   z-index: 1;
 }
 
-.tc-radius-btn:focus-visible {
+.tc-radius-btn:focus-visible,
+.tc-motion-btn:focus-visible {
   outline: 2px solid var(--vd-color-primary);
   outline-offset: 1px;
   z-index: 2;
 }
 
-.tc-radius-btn.is-active {
+.tc-radius-btn.is-active,
+.tc-motion-btn.is-active {
   background-color: var(--vd-bg-dark);
   border-color: var(--vd-bg-dark);
   color: var(--vd-text-inverse);
@@ -249,7 +257,7 @@ body > .vd-theme-customizer-panel.is-open {
   font-size: var(--vd-font-size-xs);
   font-weight: var(--vd-font-weight-medium);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .tc-palette-btn:first-child {
@@ -292,7 +300,7 @@ body > .vd-theme-customizer-panel.is-open {
   color: var(--vd-text-primary);
   font-size: var(--vd-font-size-sm);
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  transition: border-color var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .tc-font-select:hover {
@@ -323,7 +331,7 @@ body > .vd-theme-customizer-panel.is-open {
   color: var(--vd-text-primary);
   font-size: var(--vd-font-size-xs);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .tc-mode-btn:first-child {
@@ -382,7 +390,7 @@ body > .vd-theme-customizer-panel.is-open {
   border-radius: var(--vd-btn-border-radius);
   color: var(--vd-text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-theme-customizer-trigger:hover {
@@ -427,7 +435,7 @@ body > .vd-theme-customizer-panel.is-open {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  transition: opacity var(--vd-duration-233) var(--vd-ease-out), transform var(--vd-duration-233) var(--vd-ease-out), visibility var(--vd-duration-233) var(--vd-ease-out);
 }
 
 .vd-theme-customizer-panel.is-open {
@@ -499,7 +507,7 @@ body > .vd-theme-customizer-panel.is-open {
   border: 1px solid var(--vd-border-color);
   border-radius: var(--vd-btn-border-radius);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
   text-align: left;
 }
 
@@ -576,7 +584,7 @@ body > .vd-theme-customizer-panel.is-open {
   font-size: var(--vd-font-size-xs);
   font-weight: var(--vd-font-weight-medium);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .customizer-radius-btn:first-child {
@@ -652,7 +660,7 @@ body > .vd-theme-customizer-panel.is-open {
   color: var(--vd-text-primary);
   font-size: var(--vd-font-size-xs);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .customizer-mode-btn:first-child {
@@ -754,7 +762,7 @@ body > .vd-theme-customizer-panel.is-open {
     border-radius: 0;
     transform: none;
     opacity: 1;
-    transition: right 0.3s ease, visibility 0.3s ease;
+    transition: right var(--vd-duration-377) var(--vd-ease-out), visibility var(--vd-duration-377) var(--vd-ease-out);
   }
 
   .vd-theme-customizer-panel.is-open,
@@ -810,7 +818,7 @@ body > .vd-theme-customizer-panel.is-open {
     z-index: calc(var(--vd-customizer-z-index) - 1);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity var(--vd-duration-377) var(--vd-ease-out), visibility var(--vd-duration-377) var(--vd-ease-out);
   }
 
   .vd-theme-customizer-overlay.is-active {
@@ -881,7 +889,7 @@ body > .vd-theme-customizer-panel.is-open {
   color: var(--vd-text-muted);
   font-size: var(--vd-font-size-xs);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .customizer-reset:hover {
@@ -970,7 +978,7 @@ body > .vd-theme-customizer-panel.is-open {
   color: var(--vd-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.25s ease;
+  transition: color var(--vd-duration-233) var(--vd-ease-out);
 }
 
 /* Color dot on the outer (far) edge of each blade. */

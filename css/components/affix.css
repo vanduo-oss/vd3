@@ -7,7 +7,7 @@
 :root {
   --vd-affix-top-offset: 0;
   --vd-affix-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --vd-affix-transition: box-shadow 0.2s ease, background-color 0.2s ease;
+  --vd-affix-transition: box-shadow var(--vd-duration-233) var(--vd-ease-in-out), background-color var(--vd-duration-233) var(--vd-ease-in-out);
   --vd-affix-z-index: 1020;
 }
 

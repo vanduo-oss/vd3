@@ -7,22 +7,7 @@ The 64 exported Vue components: carryover SFCs, layout primitives, and later add
 
 ### Requirement: carried-component-surface
 
-The package root MUST export the 38 carried SFC components (`VdAccordion`,
-`VdAlert`, `VdAvatar`, `VdBadge`, `VdButton`, `VdButtonGroup`, `VdCard`,
-`VdCheckboxGroup`, `VdChip`, `VdCodeSnippet`, `VdCollection`,
-`VdCustomSelect`, `VdFlow`, `VdIcon`, `VdInput`, `VdMenu`, `VdModal`,
-`VdOffcanvas`, `VdPagination`, `VdPreloader`, `VdProgress`,
-`VdRadioGroup`, `VdRating`, `VdSelect`, `VdSeparator`, `VdSidenav`,
-`VdSkeleton`, `VdSlider`, `VdSpinner`, `VdSwitch`, `VdTable`, `VdTabs`,
-`VdToast`, `VdToastContainer`, `VdTooltip`, `VdTransfer`, `VdTree`,
-`VdTreeNode`) and the 7 layout primitives (`VdBox`, `VdCenter`, `VdCover`,
-`VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`), carried from the old
-`@vanduo-oss/vue` package with identical props, emits, slots, and rendered
-`vd-*` markup. `VdMenu` — deferred by `vd3-carryover` because it imported
-the delegating `useDropdown` — is un-deferred by this change: it carries
-byte-faithful from the donor except that its `useDropdown` import resolves
-to the pure vd3 rewrite. The shared `StatusVariant` type (`danger`
-canonical) and the `TreeNode` type SHALL be re-exported from the root.
+The package root MUST export the 38 carried SFC components.
 
 #### Scenario: barrel exports the carried surface
 
@@ -44,6 +29,28 @@ canonical) and the `TreeNode` type SHALL be re-exported from the root.
 - **GIVEN** the carried `src/components/**` sources
 - **WHEN** they are searched for `window.Vanduo` or `Vanduo*` global casts
 - **THEN** no match exists
+
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The package root MUST export the 38 carried SFC components (`VdAccordion`,
+`VdAlert`, `VdAvatar`, `VdBadge`, `VdButton`, `VdButtonGroup`, `VdCard`,
+`VdCheckboxGroup`, `VdChip`, `VdCodeSnippet`, `VdCollection`,
+`VdCustomSelect`, `VdFlow`, `VdIcon`, `VdInput`, `VdMenu`, `VdModal`,
+`VdOffcanvas`, `VdPagination`, `VdPreloader`, `VdProgress`,
+`VdRadioGroup`, `VdRating`, `VdSelect`, `VdSeparator`, `VdSidenav`,
+`VdSkeleton`, `VdSlider`, `VdSpinner`, `VdSwitch`, `VdTable`, `VdTabs`,
+`VdToast`, `VdToastContainer`, `VdTooltip`, `VdTransfer`, `VdTree`,
+`VdTreeNode`) and the 7 layout primitives (`VdBox`, `VdCenter`, `VdCover`,
+`VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`), carried from the old
+`@vanduo-oss/vue` package with identical props, emits, slots, and rendered
+`vd-*` markup. `VdMenu` — deferred by `vd3-carryover` because it imported
+the delegating `useDropdown` — is un-deferred by this change: it carries
+byte-faithful from the donor except that its `useDropdown` import resolves
+to the pure vd3 rewrite. The shared `StatusVariant` type (`danger`
+canonical) and the `TreeNode` type SHALL be re-exported from the root.
 
 ### Requirement: toast-stack-components
 
@@ -109,19 +116,7 @@ component renders lacks an exact selector in the bundle, or when a dynamic
 ### Requirement: vd-menu-component
 
 `VdMenu` MUST render the donor contract from the old vue repo (68-line
-SFC): a `.vd-dropdown` root containing a
-`button.vd-btn.vd-btn-secondary.vd-dropdown-toggle` with
-`aria-haspopup="menu"` showing the `label` prop, and a
-`.vd-dropdown-menu[role="menu"]` (gaining `.vd-dropdown-menu-end` when
-`align="end"`) rendering `items` — divider entries as
-`.vd-dropdown-divider[role="separator"]`, others as
-`a.vd-dropdown-item[role="menuitem"]` with `is-disabled` class and
-`aria-disabled` for disabled items. Selecting a non-disabled,
-non-divider item SHALL emit `select` with `item.value ?? item.label`,
-preventing default navigation when the item has no `href`. Open/close,
-outside-click, keyboard navigation, and typeahead behavior MUST come from
-the rewritten `useDropdown` wired on the root — the component SHALL NOT
-duplicate that logic.
+SFC).
 
 #### Scenario: donor markup renders
 
@@ -153,6 +148,26 @@ duplicate that logic.
   provided by `useDropdown`, with no duplicated open/close logic in the
   SFC
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`VdMenu` MUST render the donor contract from the old vue repo (68-line
+SFC): a `.vd-dropdown` root containing a
+`button.vd-btn.vd-btn-secondary.vd-dropdown-toggle` with
+`aria-haspopup="menu"` showing the `label` prop, and a
+`.vd-dropdown-menu[role="menu"]` (gaining `.vd-dropdown-menu-end` when
+`align="end"`) rendering `items` — divider entries as
+`.vd-dropdown-divider[role="separator"]`, others as
+`a.vd-dropdown-item[role="menuitem"]` with `is-disabled` class and
+`aria-disabled` for disabled items. Selecting a non-disabled,
+non-divider item SHALL emit `select` with `item.value ?? item.label`,
+preventing default navigation when the item has no `href`. Open/close,
+outside-click, keyboard navigation, and typeahead behavior MUST come from
+the rewritten `useDropdown` wired on the root — the component SHALL NOT
+duplicate that logic.
+
 ### Requirement: vd-breadcrumb-component
 
 `VdBreadcrumb` MUST be a markup-only component honoring the
@@ -162,11 +177,7 @@ duplicate that logic.
 (`{ label, href?, current? }[]`) or a default slot. Link items render an
 `a.vd-breadcrumb-link`; the current item (explicit `current: true` or the
 last item by default) renders with `.vd-breadcrumb-current` and
-`aria-current="page"` and no link. A `separator` prop (`slash` default,
-`chevron`, `arrow`, `dot`, `pipe`) SHALL map to
-`vd-breadcrumb-separator-<value>` and a `size` prop (`sm`/`lg`) to
-`vd-breadcrumb-sm`/`-lg` on the list. The component MUST NOT install any
-listeners.
+`aria-current="page"` and no link.
 
 #### Scenario: items render with a current page
 
@@ -182,6 +193,17 @@ listeners.
 - **WHEN** the list element is inspected
 - **THEN** it carries `vd-breadcrumb-separator-chevron` and
   `vd-breadcrumb-sm`
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+A `separator` prop (`slash` default,
+`chevron`, `arrow`, `dot`, `pipe`) SHALL map to
+`vd-breadcrumb-separator-<value>` and a `size` prop (`sm`/`lg`) to
+`vd-breadcrumb-sm`/`-lg` on the list. The component MUST NOT install any
+listeners.
 
 ### Requirement: vd-footer-component
 
@@ -210,19 +232,7 @@ listeners.
 
 ### Requirement: vd-fab-component
 
-`VdFab` MUST honor the `css/components/fab.css` contract: a
-`button.vd-fab` (default slot for the icon; `aria-label` required via
-prop when the content is icon-only) with `size` (`sm`/`lg`), `variant`
-(`secondary`/`success`/`danger`; `danger` canonical with `error` accepted
-as alias per the package's `StatusVariant` vocabulary), `glass`,
-`extended`, and `position` (`bottom-right` default rendering
-`vd-fab-fixed`; `bottom-left`, `top-right`, `top-left`, `center`;
-`static` renders no positioning class) mapping to the corresponding
-`vd-fab-*` classes, and a `click` emit. When `actions` slot content is
-provided the component SHALL render the `.vd-fab-menu` speed-dial
-arrangement: the trigger toggles `is-open` on the menu root and mirrors
-it with `aria-expanded`, `.vd-fab-actions` wraps the slot, and Escape or
-an outside pointerdown (via `useClickOutside`) closes the menu.
+`VdFab` MUST honor the `css/components/fab.css` contract.
 
 #### Scenario: props map to classes
 
@@ -245,6 +255,25 @@ an outside pointerdown (via `useClickOutside`) closes the menu.
 - **WHEN** a pointerdown lands outside the menu root
 - **THEN** `is-open` is removed
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`VdFab` MUST honor the `css/components/fab.css` contract: a
+`button.vd-fab` (default slot for the icon; `aria-label` required via
+prop when the content is icon-only) with `size` (`sm`/`lg`), `variant`
+(`secondary`/`success`/`danger`; `danger` canonical with `error` accepted
+as alias per the package's `StatusVariant` vocabulary), `glass`,
+`extended`, and `position` (`bottom-right` default rendering
+`vd-fab-fixed`; `bottom-left`, `top-right`, `top-left`, `center`;
+`static` renders no positioning class) mapping to the corresponding
+`vd-fab-*` classes, and a `click` emit. When `actions` slot content is
+provided the component SHALL render the `.vd-fab-menu` speed-dial
+arrangement: the trigger toggles `is-open` on the menu root and mirrors
+it with `aria-expanded`, `.vd-fab-actions` wraps the slot, and Escape or
+an outside pointerdown (via `useClickOutside`) closes the menu.
+
 ### Requirement: vd-navbar-component
 
 `VdNavbar` MUST reproduce the `framework/js/components/navbar.js`
@@ -253,18 +282,7 @@ an outside pointerdown (via `useClickOutside`) closes the menu.
 slots plus a `.vd-navbar-toggle` burger. Toggling MUST add/remove
 `is-open` on the menu and `is-active` on the toggle, create/activate a
 `.vd-navbar-overlay`, lock body scroll via `body-navbar-open`, and keep
-`aria-expanded` (toggle) / `aria-hidden` (menu) in sync. The open menu
-SHALL close on Escape, on outside click, on overlay click, and
-(debounced) when the viewport resizes to at least the breakpoint resolved
-from `--vd-breakpoint-lg` (fallback 992). Below the breakpoint, clicking
-a `.vd-navbar-dropdown` parent link SHALL toggle `is-open` on its
-`.vd-navbar-dropdown-menu` instead of navigating; closing the menu closes
-open submenus. For `variant` `glass`/`transparent` the component MUST
-delegate scrolled-state handling (`vd-navbar-scrolled` past
-`scroll-threshold` prop or the navbar's own height) to the carried
-`useNavbarGlassScroll` composable and SHALL NOT duplicate that logic.
-Unmount MUST remove the overlay, the body class, and all
-document/window listeners.
+`aria-expanded` (toggle) / `aria-hidden` (menu) in sync.
 
 #### Scenario: mobile toggle round-trip
 
@@ -294,6 +312,24 @@ document/window listeners.
 - **THEN** `body-navbar-open` is gone and the generated overlay is
   removed from the DOM
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The open menu
+SHALL close on Escape, on outside click, on overlay click, and
+(debounced) when the viewport resizes to at least the breakpoint resolved
+from `--vd-breakpoint-lg` (fallback 992). Below the breakpoint, clicking
+a `.vd-navbar-dropdown` parent link SHALL toggle `is-open` on its
+`.vd-navbar-dropdown-menu` instead of navigating; closing the menu closes
+open submenus. For `variant` `glass`/`transparent` the component MUST
+delegate scrolled-state handling (`vd-navbar-scrolled` past
+`scroll-threshold` prop or the navbar's own height) to the carried
+`useNavbarGlassScroll` composable and SHALL NOT duplicate that logic.
+Unmount MUST remove the overlay, the body class, and all
+document/window listeners.
+
 ### Requirement: vd-theme-switcher-component
 
 `VdThemeSwitcher` MUST port `framework/js/components/theme-switcher.js`
@@ -301,24 +337,7 @@ document/window listeners.
 theme-preference singleton (which persists to `vanduo-theme-preference`
 and applies/removes `data-theme` per the existing `theme-preference-model`
 requirement) — the component SHALL NOT touch localStorage or
-`document.documentElement` directly. In menu mode (default) it renders
-the `.vd-theme-switcher[data-theme-ui="menu"]` contract: a
-`.vd-theme-switcher-toggle` (`aria-expanded`, `aria-label` "Theme: X",
-Phosphor icon `ph-desktop`/`ph-sun`/`ph-moon` for the active mode) and a
-`.vd-theme-switcher-menu` of `menuitemradio` options
-(`data-theme-value`, `is-active` + `aria-checked` on the active mode)
-supporting click, Enter/Space, ArrowDown/ArrowUp cycling, and outside-click
-close. Focus management MUST match the donor: **opening the menu** by click,
-Enter, or Space (in addition to the existing ArrowDown-to-open path) SHALL
-move focus into the menu — to the active `menuitemradio`, or the first option
-when none is active (donor `openMenu`); **pressing Escape while the menu is
-open** — whether the key is handled on the toggle or within the menu — SHALL
-close the menu AND return focus to the `.vd-theme-switcher-toggle` button
-(donor `handleMenuKeydown`), so focus is never stranded on the now-hidden
-menu. With `menu=false` it renders the cycle button unchanged: each
-activation advances system → light → dark → system, and it manages no menu
-focus. While the preference is `system`, a `prefers-color-scheme` change
-SHALL re-apply the effective theme (via the singleton's media listener).
+`document.documentElement` directly.
 
 #### Scenario: menu selection applies and persists
 
@@ -366,68 +385,35 @@ SHALL re-apply the effective theme (via the singleton's media listener).
 - **THEN** the customizer's reactive state reflects `dark` without a
   reload (shared singleton)
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+In menu mode (default) it renders
+the `.vd-theme-switcher[data-theme-ui="menu"]` contract: a
+`.vd-theme-switcher-toggle` (`aria-expanded`, `aria-label` "Theme: X",
+Phosphor icon `ph-desktop`/`ph-sun`/`ph-moon` for the active mode) and a
+`.vd-theme-switcher-menu` of `menuitemradio` options
+(`data-theme-value`, `is-active` + `aria-checked` on the active mode)
+supporting click, Enter/Space, ArrowDown/ArrowUp cycling, and outside-click
+close. Focus management MUST match the donor: **opening the menu** by click,
+Enter, or Space (in addition to the existing ArrowDown-to-open path) SHALL
+move focus into the menu — to the active `menuitemradio`, or the first option
+when none is active (donor `openMenu`); **pressing Escape while the menu is
+open** — whether the key is handled on the toggle or within the menu — SHALL
+close the menu AND return focus to the `.vd-theme-switcher-toggle` button
+(donor `handleMenuKeydown`), so focus is never stranded on the now-hidden
+menu. With `menu=false` it renders the cycle button unchanged: each
+activation advances system → light → dark → system, and it manages no menu
+focus. While the preference is `system`, a `prefers-color-scheme` change
+SHALL re-apply the effective theme (via the singleton's media listener).
+
 ### Requirement: vd-theme-customizer-component
 
 `VdThemeCustomizer` MUST be the promotion of
 `vd2/src/overlays/VdThemeCustomizer.vue` (236 lines), de-pinia'd onto the
-theme-preference singleton: a `.vd-theme-customizer` root with the
-paint-roller trigger (`aria-label`, `aria-expanded`), a body-teleported
-`.vd-theme-customizer-overlay` and `.vd-theme-customizer-panel`
-(`role="dialog"`, labelled, `is-open` state, positioned under the trigger
-on desktop widths and reset on mobile), and `tc-*` sections rendering
-`PRIMARY_COLORS` swatches, `NEUTRAL_COLORS` swatches, `RADIUS_OPTIONS`
-buttons, and the `FONT_OPTIONS` select — each control marking the active
-value and writing through the singleton's setters (font selection covers
-the absorbed `font-switcher.js` capability: `data-font` application with
-removal for `system`, `vanduo-font-preference` persistence). A
-**`show-palette` prop (default `false`)** SHALL additionally render the
-`PALETTE_OPTIONS` section wired to `setPalette` when true. The panel MUST
-close on Escape, on overlay click, and on outside pointerdown via
-`useClickOutside` (trigger excluded); it SHALL open on the
-`vd:open-customizer` window event and expose `open`/`close`/`toggle`. The
-reset control MUST restore the singleton defaults. All window listeners
-are removed on unmount.
-
-A **`variant` prop (`panel` | `swatches`, default `panel`)** SHALL select the
-presentation. `panel` is the behavior described above and MUST be unchanged.
-
-`swatches` SHALL render a body-teleported `.vd-theme-customizer-fan`
-(`role="listbox"`, labelled) of `.tc-fan-item` blades (`role="option"`,
-`aria-selected`, `aria-label` from the color name, `data-color`) in place of
-the overlay and panel, and the trigger SHALL use the `ph-swatches` icon
-instead of `ph-paint-roller`. The trigger element, its classes, and
-`data-theme-customizer-trigger` MUST be identical across variants. Each blade
-MUST carry a `.tc-fan-label` and a `.tc-fan-swatch` whose
-`--vd-swatch-color` is the color value. The swatches variant owns **primary
-only** — it MUST NOT render palette, neutral, radius, font, or reset controls.
-
-The fan MUST be hinged at the trigger center: the fan root is positioned in
-fixed coordinates at that point and each blade is rotated to its own fan angle
-and pushed out along its own axis, so all blades pivot around one origin. The
-fan MUST fit itself inside the viewport by shrinking the arc (from 120° down to
-a 30° floor) and tilting the base angle so every blade tip stays on screen, and
-MUST re-fit on resize, on scroll, and when `direction` changes.
-
-A **`swatches` prop (`readonly string[]`)** SHALL restrict the offered blades to
-those `PRIMARY_COLORS` keys, preserving `PRIMARY_COLORS` order; unset offers all
-of `PRIMARY_COLORS`, and unknown keys MUST be ignored.
-
-A **`direction` prop (`auto` | `up` | `down` | `left` | `right`, default
-`auto`)** SHALL set the fan axis and apply `.fan-{direction}` to the fan root.
-`auto` MUST resolve from the trigger rect by fanning away from the nearest
-viewport edge, and MUST re-resolve on reposition.
-
-A **`preview` prop (default true)** SHALL apply a blade's hue on pointer enter
-and restore the value captured at open time when the pointer leaves the fan or
-the fan closes without a selection. With `preview` false, only an explicit
-selection SHALL change the hue.
-
-An optional **`primary` prop** SHALL switch the component into controlled mode.
-When bound, the active value MUST be read from the prop, every change
-(preview, restore, and commit) MUST be emitted as `update:primary`, and the
-component MUST NOT call the singleton's `setPrimary`. When unbound, the
-component MUST read `prefs.primary` and write `setPrimary` as before. Controlled
-mode MUST apply to both variants.
+theme-preference singleton.
 
 #### Scenario: swatch writes through the theme layer
 
@@ -507,23 +493,69 @@ mode MUST apply to both variants.
 - **THEN** the singleton returns to `defaultPreference()` values and the
   `data-*` attributes reflect them
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`VdThemeCustomizer` MUST be the promotion of
+`vd2/src/overlays/VdThemeCustomizer.vue` (236 lines), de-pinia'd onto the
+theme-preference singleton: a `.vd-theme-customizer` root with the
+paint-roller trigger (`aria-label`, `aria-expanded`), a body-teleported
+`.vd-theme-customizer-overlay` and `.vd-theme-customizer-panel`
+(`role="dialog"`, labelled, `is-open` state, positioned under the trigger
+on desktop widths and reset on mobile), and `tc-*` sections rendering
+`PRIMARY_COLORS` swatches, `NEUTRAL_COLORS` swatches, `RADIUS_OPTIONS`
+buttons, and the `FONT_OPTIONS` select — each control marking the active
+value and writing through the singleton's setters (font selection covers
+the absorbed `font-switcher.js` capability: `data-font` application with
+removal for `system`, `vanduo-font-preference` persistence). A
+**`show-palette` prop (default `false`)** SHALL additionally render the
+`PALETTE_OPTIONS` section wired to `setPalette` when true. The panel MUST
+close on Escape, on overlay click, and on outside pointerdown via
+`useClickOutside` (trigger excluded); it SHALL open on the
+`vd:open-customizer` window event and expose `open`/`close`/`toggle`. The
+reset control MUST restore the singleton defaults. All window listeners
+are removed on unmount.
+A **`variant` prop (`panel` | `swatches`, default `panel`)** SHALL select the
+presentation. `panel` is the behavior described above and MUST be unchanged.
+`swatches` SHALL render a body-teleported `.vd-theme-customizer-fan`
+(`role="listbox"`, labelled) of `.tc-fan-item` blades (`role="option"`,
+`aria-selected`, `aria-label` from the color name, `data-color`) in place of
+the overlay and panel, and the trigger SHALL use the `ph-swatches` icon
+instead of `ph-paint-roller`. The trigger element, its classes, and
+`data-theme-customizer-trigger` MUST be identical across variants. Each blade
+MUST carry a `.tc-fan-label` and a `.tc-fan-swatch` whose
+`--vd-swatch-color` is the color value. The swatches variant owns **primary
+only** — it MUST NOT render palette, neutral, radius, font, or reset controls.
+The fan MUST be hinged at the trigger center: the fan root is positioned in
+fixed coordinates at that point and each blade is rotated to its own fan angle
+and pushed out along its own axis, so all blades pivot around one origin. The
+fan MUST fit itself inside the viewport by shrinking the arc (from 120° down to
+a 30° floor) and tilting the base angle so every blade tip stays on screen, and
+MUST re-fit on resize, on scroll, and when `direction` changes.
+A **`swatches` prop (`readonly string[]`)** SHALL restrict the offered blades to
+those `PRIMARY_COLORS` keys, preserving `PRIMARY_COLORS` order; unset offers all
+of `PRIMARY_COLORS`, and unknown keys MUST be ignored.
+A **`direction` prop (`auto` | `up` | `down` | `left` | `right`, default
+`auto`)** SHALL set the fan axis and apply `.fan-{direction}` to the fan root.
+`auto` MUST resolve from the trigger rect by fanning away from the nearest
+viewport edge, and MUST re-resolve on reposition.
+A **`preview` prop (default true)** SHALL apply a blade's hue on pointer enter
+and restore the value captured at open time when the pointer leaves the fan or
+the fan closes without a selection. With `preview` false, only an explicit
+selection SHALL change the hue.
+An optional **`primary` prop** SHALL switch the component into controlled mode.
+When bound, the active value MUST be read from the prop, every change
+(preview, restore, and commit) MUST be emitted as `update:primary`, and the
+component MUST NOT call the singleton's `setPrimary`. When unbound, the
+component MUST read `prefs.primary` and write `setPrimary` as before. Controlled
+mode MUST apply to both variants.
+
 ### Requirement: vd-doc-search-component
 
 `VdDocSearch` MUST render the `.vd-doc-search` markup contract from
-`doc-search.js` (1016 lines) as a thin shell over `useDocSearch`: an
-input wrapper with `.vd-doc-search-input` carrying combobox ARIA
-(`role="combobox"`, `aria-autocomplete="list"`, `aria-controls`,
-`aria-expanded`, `aria-activedescendant` tracking the active option) and
-a `.vd-doc-search-results` listbox that gains `is-open` when open,
-rendering `.vd-doc-search-result` options (`role="option"`,
-`aria-selected`, `is-active` on the active one) with icon, highlighted
-title, excerpt, and category, plus the empty state
-(`.vd-doc-search-empty`) and footer hints (`.vd-doc-search-footer`).
-Selecting a result (click or Enter) SHALL emit `select` with the result
-and close the listbox. The component MUST pass its props (`data`,
-`min-query-length`, `max-results`, `debounce-ms`, `placeholder`,
-`keyboard-shortcut`) through to the composable and take all behavior from
-it.
+`doc-search.js` (1016 lines) as a thin shell over `useDocSearch`.
 
 #### Scenario: results render with ARIA
 
@@ -547,18 +579,34 @@ it.
 - **WHEN** the search settles
 - **THEN** the `.vd-doc-search-empty` block renders instead of options
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`VdDocSearch` MUST render the `.vd-doc-search` markup contract from
+`doc-search.js` (1016 lines) as a thin shell over `useDocSearch`: an
+input wrapper with `.vd-doc-search-input` carrying combobox ARIA
+(`role="combobox"`, `aria-autocomplete="list"`, `aria-controls`,
+`aria-expanded`, `aria-activedescendant` tracking the active option) and
+a `.vd-doc-search-results` listbox that gains `is-open` when open,
+rendering `.vd-doc-search-result` options (`role="option"`,
+`aria-selected`, `is-active` on the active one) with icon, highlighted
+title, excerpt, and category, plus the empty state
+(`.vd-doc-search-empty`) and footer hints (`.vd-doc-search-footer`).
+Selecting a result (click or Enter) SHALL emit `select` with the result
+and close the listbox. The component MUST pass its props (`data`,
+`min-query-length`, `max-results`, `debounce-ms`, `placeholder`,
+`keyboard-shortcut`) through to the composable and take all behavior from
+it.
+
 ### Requirement: vd-tree-cascade-default
 
 `VdTree` MUST declare its `cascade` prop with
 `withDefaults(defineProps<…>(), { cascade: true })` so the documented
 default (parent check cascades to children) actually applies — replacing
 the inherited `props.cascade ?? true` expression, which was dead code
-because Vue casts an absent optional boolean prop to `false`. This is a
-**documented behavior change** relative to the old `@vanduo-oss/vue`
-donor and the carried implementation: mounting `VdTree` with `checkbox`
-and without a `cascade` binding now cascades; consumers that relied on
-the buggy non-cascading default MUST pass `:cascade="false"`. The change
-SHALL be called out in the changelog and migration notes.
+because Vue casts an absent optional boolean prop to `false`.
 
 #### Scenario: default now cascades
 
@@ -574,6 +622,18 @@ SHALL be called out in the changelog and migration notes.
 - **WHEN** the parent's checkbox is checked
 - **THEN** the children remain unchecked
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+This is a
+**documented behavior change** relative to the old `@vanduo-oss/vue`
+donor and the carried implementation: mounting `VdTree` with `checkbox`
+and without a `cascade` binding now cascades; consumers that relied on
+the buggy non-cascading default MUST pass `:cascade="false"`. The change
+SHALL be called out in the changelog and migration notes.
+
 ### Requirement: modal-focus-management
 
 `VdModal` MUST manage focus for its `role="dialog"`/`aria-modal="true"` panel
@@ -581,10 +641,7 @@ via the existing `useFocusTrap` composable: on open it SHALL record the
 previously-focused element, move focus into the panel (first focusable, or the
 panel itself when none), and trap Tab/Shift+Tab so focus cycles within the
 panel; on close it SHALL deactivate the trap and restore focus to the recorded
-element. The `window` `keydown` (Escape) handler MUST be removed unconditionally
-on teardown via `onBeforeUnmount`/`onScopeDispose` (SSR-guarded), so a modal
-unmounted while open cannot leak a global handler that hijacks Escape. All
-browser access stays inside lifecycle hooks (SSR-safe).
+element.
 
 #### Scenario: Tab focus is trapped within the panel
 
@@ -606,6 +663,16 @@ browser access stays inside lifecycle hooks (SSR-safe).
 - **WHEN** it is unmounted without closing and Escape is dispatched on `window`
 - **THEN** no `close` or `update:open` is emitted (the global handler was
   detached)
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The `window` `keydown` (Escape) handler MUST be removed unconditionally
+on teardown via `onBeforeUnmount`/`onScopeDispose` (SSR-guarded), so a modal
+unmounted while open cannot leak a global handler that hijacks Escape. All
+browser access stays inside lifecycle hooks (SSR-safe).
 
 ### Requirement: offcanvas-dialog-scroll-lock
 
@@ -631,14 +698,7 @@ permanently unscrollable. Browser access stays inside lifecycle hooks.
 
 ### Requirement: tabs-aria-keyboard
 
-`VdTabs` MUST implement the WAI-ARIA tabs pattern: `role="tablist"` on the tab
-buttons' direct parent (`.vd-tab-list`, not the outer wrapper); each tab a
-`role="tab"` with a stable `id`, `aria-controls` referencing the panel, and a
-roving `tabindex` (`0` on the active tab, `-1` on the rest); the panel container
-a `role="tabpanel"` with an `id` and `aria-labelledby` referencing the active
-tab. `@keydown` ArrowLeft/ArrowRight (wrapping), Home, and End MUST move both
-selection (emitting `update:modelValue`) and DOM focus to the target tab. Click
-selection is unchanged.
+`VdTabs` MUST implement the WAI-ARIA tabs pattern.
 
 #### Scenario: ARIA wiring and roving tabindex
 
@@ -655,6 +715,20 @@ selection is unchanged.
 - **WHEN** ArrowRight (then ArrowLeft wrapping, Home, End) are pressed
 - **THEN** `update:modelValue` emits the target tab id and DOM focus moves to
   that tab button
+
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`VdTabs` MUST implement the WAI-ARIA tabs pattern: `role="tablist"` on the tab
+buttons' direct parent (`.vd-tab-list`, not the outer wrapper); each tab a
+`role="tab"` with a stable `id`, `aria-controls` referencing the panel, and a
+roving `tabindex` (`0` on the active tab, `-1` on the rest); the panel container
+a `role="tabpanel"` with an `id` and `aria-labelledby` referencing the active
+tab. `@keydown` ArrowLeft/ArrowRight (wrapping), Home, and End MUST move both
+selection (emitting `update:modelValue`) and DOM focus to the target tab. Click
+selection is unchanged.
 
 ### Requirement: custom-select-active-descendant
 
@@ -707,8 +781,7 @@ size modifier `vd-modal-panel-<size>` derived from a `size` prop whose type is
 `"sm" | "md" | "lg" | "xl"` (default `"md"`). Each size modifier SHALL resolve the
 panel's max width from the corresponding `--vd-modal-width-*` token, and every
 size modifier the component can render MUST have a matching selector in the
-shipped CSS (enforced by the class-coverage gate). Widening the union is additive
-and MUST NOT change the default or the `sm` / `md` / `lg` behavior.
+shipped CSS (enforced by the class-coverage gate).
 
 #### Scenario: size maps to a panel width class
 
@@ -721,6 +794,14 @@ and MUST NOT change the default or the `sm` / `md` / `lg` behavior.
 - **GIVEN** a `VdModal` rendered without a `size` prop
 - **WHEN** the panel element is inspected
 - **THEN** it carries `vd-modal-panel-md`
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Widening the union is additive
+and MUST NOT change the default or the `sm` / `md` / `lg` behavior.
 
 ### Requirement: VdGlobalSearch command palette
 
@@ -754,11 +835,7 @@ The composable SHALL accept a `GlobalSearchAdapter` with async `search(query, { 
 the dock background from the tint hue (the 1.6.0 behavior). `accent` MUST add
 `.vd-dock-tint-accent` alongside `.vd-dock-tint-{hue}` so the pill renders as
 constant ink while `--vd-dock-tint` stays set for items and the `#brand` slot
-to consume. An out-of-range `tintMode` MUST fall back to `surface`, and
-`tintMode="accent"` without a `tint` MUST be a no-op.
-
-The package root MUST export `DOCK_TINT_MODES` and `DockTintMode` alongside
-the other `DOCK_*` constants and types.
+to consume.
 
 #### Scenario: accent tint keeps the hue but not the surface
 
@@ -774,41 +851,20 @@ the other `DOCK_*` constants and types.
 - **THEN** the root carries `vd-dock-tint-blue` and does not carry
   `vd-dock-tint-accent`
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+An out-of-range `tintMode` MUST fall back to `surface`, and
+`tintMode="accent"` without a `tint` MUST be a no-op.
+The package root MUST export `DOCK_TINT_MODES` and `DockTintMode` alongside
+the other `DOCK_*` constants and types.
+
 ### Requirement: vd-dock-component
 
 The package root MUST export `VdDock`: a slot-driven glass dock (`#brand`,
-default items, `#actions`) rendered as `<nav class="vd-dock">`. It SHALL
-support `v-model:orientation` (`horizontal` | `vertical`), `v-model:placement`
-(`bottom` | `top` | `left` | `right`, default `bottom`), `position`
-(`fixed` | `contained`, default `fixed`), `dark` (default true), `tint`
-(`red` | `orange` | `yellow` | `green` | `teal` | `blue` | `violet` | `pink`),
-`glass` (Seemore steps `1` | `2` | `3` | `5` | `8` | `13` | `21` | `34`,
-default `34`), `radius` (dock-own scale, default `1.25`), `itemLayout`
-(`stack` | `inline`, default `stack`), `brandToggles` (default true),
-`persist` (default false), `cycle` (`pair` | `edges`, default `pair`), and
-`label` (default `"Primary"`).
-
-Brand click SHALL toggle orientation when `brandToggles` is true and the
-viewport is not narrow. The brand control MUST set `aria-pressed` when
-orientation is vertical and MUST be disabled when toggle is unavailable.
-The root MUST apply `.vd-glass` plus `.vd-glass-{glass}` and phase classes
-`is-horizontal` | `is-square` | `is-vertical` | `is-morphing` and
-`vd-dock-edge-{bottom|top|left|right}`. Brand click SHALL toggle the opposite
-axis of the current pair (`bottom` ↔ `left`, `top` ↔ `right`) when
-`cycle` is `pair` (the default). When `cycle` is `edges`, brand click SHALL
-walk `bottom` → `left` → `top` → `right` → `bottom`. Default `toggle()`
-MUST remain the pair morph.
-
-`position="contained"` MUST use absolute positioning relative to the nearest
-positioned ancestor. `position="fixed"` MUST attach to the viewport.
-
-`--vd-dock-radius` MUST default to `1.25rem` and MUST NOT read
-`--vd-radius-scale`. Allowed radius values: `0.5`, `0.75`, `1`, `1.25`,
-`1.5`, `2`, `9999`. The global theme `RadiusOption` list MUST remain capped
-at `0.5`.
-
-The component MUST NOT bake an oola / ū mark. Brand content is the `#brand`
-slot. The component MUST NOT pad the document.
+default items, `#actions`) rendered as `<nav class="vd-dock">`.
 
 #### Scenario: default chrome classes
 
@@ -858,6 +914,40 @@ slot. The component MUST NOT pad the document.
 - **WHEN** orientation changes
 - **THEN** `localStorage` MUST NOT receive a `*-dock-orient` key
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It SHALL
+support `v-model:orientation` (`horizontal` | `vertical`), `v-model:placement`
+(`bottom` | `top` | `left` | `right`, default `bottom`), `position`
+(`fixed` | `contained`, default `fixed`), `dark` (default true), `tint`
+(`red` | `orange` | `yellow` | `green` | `teal` | `blue` | `violet` | `pink`),
+`glass` (Seemore steps `1` | `2` | `3` | `5` | `8` | `13` | `21` | `34`,
+default `34`), `radius` (dock-own scale, default `1.25`), `itemLayout`
+(`stack` | `inline`, default `stack`), `brandToggles` (default true),
+`persist` (default false), `cycle` (`pair` | `edges`, default `pair`), and
+`label` (default `"Primary"`).
+Brand click SHALL toggle orientation when `brandToggles` is true and the
+viewport is not narrow. The brand control MUST set `aria-pressed` when
+orientation is vertical and MUST be disabled when toggle is unavailable.
+The root MUST apply `.vd-glass` plus `.vd-glass-{glass}` and phase classes
+`is-horizontal` | `is-square` | `is-vertical` | `is-morphing` and
+`vd-dock-edge-{bottom|top|left|right}`. Brand click SHALL toggle the opposite
+axis of the current pair (`bottom` ↔ `left`, `top` ↔ `right`) when
+`cycle` is `pair` (the default). When `cycle` is `edges`, brand click SHALL
+walk `bottom` → `left` → `top` → `right` → `bottom`. Default `toggle()`
+MUST remain the pair morph.
+`position="contained"` MUST use absolute positioning relative to the nearest
+positioned ancestor. `position="fixed"` MUST attach to the viewport.
+`--vd-dock-radius` MUST default to `1.25rem` and MUST NOT read
+`--vd-radius-scale`. Allowed radius values: `0.5`, `0.75`, `1`, `1.25`,
+`1.5`, `2`, `9999`. The global theme `RadiusOption` list MUST remain capped
+at `0.5`.
+The component MUST NOT bake an oola / ū mark. Brand content is the `#brand`
+slot. The component MUST NOT pad the document.
+
 ### Requirement: vd-dock-item-component
 
 The package root MUST export `VdDockItem`: a `button.vd-dock-item` with an
@@ -880,20 +970,6 @@ with the docs-widget markup (toggle, header tablist, panes) instead of the
 simple `figure > pre` contract. Tab order SHALL be HTML → Shell → CSS →
 JavaScript → Vue → JSON, omitting empty props. Labels SHALL be `HTML`,
 `Shell`, `CSS`, `JavaScript`, `Vue`, `JSON`.
-
-Chrome mode SHALL accept `defaultOpen` (default false), `toggleLabel`
-(default `"View Code"`), `collapsible` (default true), and `copyable`
-(default true). `data-collapsible` MUST be omitted when `collapsible` is
-false so CSS presence selectors hide the toggle and show content. The
-toggle MUST set `aria-expanded`. Tabs MUST use `role="tablist"`,
-`role="tab"`, `aria-selected`, and `aria-controls` pointing at the
-matching pane. Panes MUST use `role="tabpanel"` and `aria-labelledby`.
-Arrow Left/Right and Home/End MUST move the active tab. The active pane MUST have
-`tabindex="0"` when expanded and `tabindex="-1"` otherwise (axe
-`scrollable-region-focusable`). Copy MUST write the **raw** active-tab
-source, never highlighted HTML. Exactly one copy button MAY render.
-
-When both `code` and a tab prop are set, chrome mode MUST win.
 
 #### Scenario: tab order and labels
 
@@ -926,6 +1002,24 @@ When both `code` and a tab prop are set, chrome mode MUST win.
 - **THEN** the root SHALL be `div.vd-code-snippet` and MUST NOT be a
   `figure`
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Chrome mode SHALL accept `defaultOpen` (default false), `toggleLabel`
+(default `"View Code"`), `collapsible` (default true), and `copyable`
+(default true). `data-collapsible` MUST be omitted when `collapsible` is
+false so CSS presence selectors hide the toggle and show content. The
+toggle MUST set `aria-expanded`. Tabs MUST use `role="tablist"`,
+`role="tab"`, `aria-selected`, and `aria-controls` pointing at the
+matching pane. Panes MUST use `role="tabpanel"` and `aria-labelledby`.
+Arrow Left/Right and Home/End MUST move the active tab. The active pane MUST have
+`tabindex="0"` when expanded and `tabindex="-1"` otherwise (axe
+`scrollable-region-focusable`). Copy MUST write the **raw** active-tab
+source, never highlighted HTML. Exactly one copy button MAY render.
+When both `code` and a tab prop are set, chrome mode MUST win.
+
 ### Requirement: vd-code-snippet-highlight-hook
 
 `VdCodeSnippet` MAY accept `highlight?: (code: string, language: string) =>
@@ -934,9 +1028,7 @@ code }}`) so markup in the source cannot become DOM. When present, the
 return value MUST be injected with `v-html`. The function MUST return
 escaped HTML. Copy MUST still use the raw source. In chrome mode the
 `language` argument SHALL be the tab key (`html`, `js`, `vue`, …), not a
-cbun language id. The component MUST NOT accept a parallel
-`highlightedHtml` string prop and MUST NOT import `@vanduo-oss/vd3-cbun`
-or `highlight.js`.
+cbun language id.
 
 #### Scenario: default path escapes
 
@@ -952,6 +1044,15 @@ or `highlight.js`.
 - **WHEN** the active pane and copy button are used
 - **THEN** the pane SHALL contain the hook’s HTML nodes and clipboard
   write SHALL receive the raw source
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The component MUST NOT accept a parallel
+`highlightedHtml` string prop and MUST NOT import `@vanduo-oss/vd3-cbun`
+or `highlight.js`.
 
 ### Requirement: vd-code-snippet-simple-mode-unchanged
 
@@ -974,11 +1075,6 @@ single fat (2px) primary outline at rest, and a scheme-aware hover fill
 (black in light, primary in dark). `VdButton` SHALL accept `variant="ink"`
 and emit that class. The variant MUST NOT alter `.vd-btn-outline*`,
 `.vd-btn-ghost*`, or `.vd-btn-ring` rendering.
-
-Light-scheme hover is an intentional white-on-black surface and MUST use
-`--vd-color-white` (not `--vd-text-on-primary`, which is on-fill ink and is
-black on the default indigo rest fill). Dark-scheme hover MUST use
-`--vd-text-on-primary` on the solid primary fill.
 
 #### Scenario: VdButton exposes the variant
 
@@ -1028,6 +1124,16 @@ black on the default indigo rest fill). Dark-scheme hover MUST use
   sibling gap from `.vd-btn > * + *`
 - **AND** the visible label SHALL remain vertically centered in the
   control
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Light-scheme hover is an intentional white-on-black surface and MUST use
+`--vd-color-white` (not `--vd-text-on-primary`, which is on-fill ink and is
+black on the default indigo rest fill). Dark-scheme hover MUST use
+`--vd-text-on-primary` on the solid primary fill.
 
 ### Requirement: vd-checkbox-component
 
@@ -1091,8 +1197,7 @@ be omitted and only the inner stack rendered.
 `id`, a `VdSeparator` labelled "or" when providers exist, and slots `extra`
 (inside the form) and `links`. Submit SHALL emit `{ identifier, password,
 remember }` and MUST NOT perform network I/O. Parent-provided `error` /
-`message` SHALL render via `VdAlert`. Credential fields MUST NOT set
-`autocomplete="off"`.
+`message` SHALL render via `VdAlert`.
 
 #### Scenario: submit payload
 
@@ -1112,6 +1217,14 @@ remember }` and MUST NOT perform network I/O. Parent-provided `error` /
 - **WHEN** the inputs are inspected
 - **THEN** the identifier SHALL have `autocomplete="email"` and the password
   SHALL have `autocomplete="current-password"`
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Credential fields MUST NOT set
+`autocomplete="off"`.
 
 ### Requirement: vd-sign-up-component
 

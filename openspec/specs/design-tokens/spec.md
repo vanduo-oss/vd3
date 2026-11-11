@@ -11,9 +11,7 @@ The repo MUST hold the DTCG token sources in `tokens/`, carried verbatim from
 the old core repo: `primitive/color.tokens.json` (Open Color palette),
 `primitive/color.fib.tokens.json` (generated Fibonacci palette, committed),
 `primitive/scale.tokens.json`, `semantic/color.tokens.json`, and
-`customizer/options.json`. Every DTCG leaf SHALL carry a non-empty `$type`
-and `$value`, every `{dot.path}` token reference SHALL resolve to an existing
-token, and every customizer default SHALL reference a declared option.
+`customizer/options.json`.
 
 #### Scenario: token sources are well-formed
 
@@ -30,6 +28,15 @@ token, and every customizer default SHALL reference a declared option.
 - **THEN** every default names an existing option, and the palette list
   includes both `open-color` and `fibonacci`
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Every DTCG leaf SHALL carry a non-empty `$type`
+and `$value`, every `{dot.path}` token reference SHALL resolve to an existing
+token, and every customizer default SHALL reference a declared option.
+
 ### Requirement: token-build-generator
 
 `scripts/build-tokens.mjs` MUST generate all token-derived artifacts using
@@ -38,9 +45,7 @@ deterministic — running the generator twice SHALL produce byte-identical
 files. Its artifact set is: `css/core/generated/colors-fib-base.css`,
 `css/core/generated/colors-palette.css`, `dist/tokens.json`, and
 `src/theme/generated/tokens.data.ts` (it SHALL NOT emit `dist/tokens.js` or
-`dist/tokens.d.ts` — the typed data ships inlined in the lib bundle). It
-SHALL create missing output directories (`dist/`, `css/core/generated/`,
-`src/theme/generated/`) itself so it can run first on a clean checkout.
+`dist/tokens.d.ts` — the typed data ships inlined in the lib bundle).
 
 #### Scenario: deterministic emit
 
@@ -64,6 +69,15 @@ SHALL create missing output directories (`dist/`, `css/core/generated/`,
 - **THEN** neither `tokens.js` nor `tokens.d.ts` exists (only `tokens.json`
   remains as a data artifact)
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It
+SHALL create missing output directories (`dist/`, `css/core/generated/`,
+`src/theme/generated/`) itself so it can run first on a clean checkout.
+
 ### Requirement: generated-color-partials
 
 The generator MUST emit `css/core/generated/colors-fib-base.css` (raw
@@ -72,11 +86,7 @@ and `css/core/generated/colors-palette.css` (the active `--vd-*` layer
 defaulting to Open Color, plus `[data-palette="fibonacci"]` and
 `[data-palette="open-color"]` switch blocks). The emitted rule bodies SHALL
 be byte-identical to the partials the old pipeline generated into
-`framework/css/core/` — only the banner comment may differ. The files are
-build output: they SHALL be gitignored and SHALL NOT be edited by hand.
-Every custom property emitted MUST use the `--vd-` prefix, and every `var()`
-reference in the pair of files MUST resolve to a property defined within
-them.
+`framework/css/core/` — only the banner comment may differ.
 
 #### Scenario: palette switch blocks exist
 
@@ -102,6 +112,17 @@ them.
 - **WHEN** both are compared ignoring the leading banner comment
 - **THEN** the remaining content is byte-identical
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The files are
+build output: they SHALL be gitignored and SHALL NOT be edited by hand.
+Every custom property emitted MUST use the `--vd-` prefix, and every `var()`
+reference in the pair of files MUST resolve to a property defined within
+them.
+
 ### Requirement: token-data-module
 
 The generator MUST emit `src/theme/generated/tokens.data.ts` — a
@@ -111,13 +132,7 @@ surface of the old `@vanduo-oss/core` package: `PALETTE_OPTIONS`,
 `THEME_MODES`, `DEFAULTS`, and `tokens`, typed via the `ColorDef`,
 `FontDef`, `PaletteDef`, and `ThemeDefaults` interfaces and the
 `RadiusOption`, `ThemeMode`, and `Palette` unions derived from the
-customizer options. `DEFAULTS.PALETTE` SHALL be `open-color`, and the
-`tokens` map SHALL contain only fully-resolved literal values (no `{ref}`
-placeholders), with active-scale entries equal to their Open Color literals
-for shared families. The module is consumed by `useTheme` and re-exported
-from the package root, which SHALL be the only supported JS import surface
-for token data (excluded from ESLint/Prettier as generated output, included
-in typecheck as source).
+customizer options.
 
 #### Scenario: export surface parity
 
@@ -141,6 +156,19 @@ in typecheck as source).
 - **WHEN** `DEFAULTS` and `tokens` are imported from the package root
 - **THEN** they match the generated module's values without any deep
   `dist/` import
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+`DEFAULTS.PALETTE` SHALL be `open-color`, and the
+`tokens` map SHALL contain only fully-resolved literal values (no `{ref}`
+placeholders), with active-scale entries equal to their Open Color literals
+for shared families. The module is consumed by `useTheme` and re-exported
+from the package root, which SHALL be the only supported JS import surface
+for token data (excluded from ESLint/Prettier as generated output, included
+in typecheck as source).
 
 ### Requirement: tokens-json-artifact
 
@@ -188,24 +216,7 @@ The test suite MUST include a value-sync gate that guards the two independent
 copies of the `--vd-*` custom properties against drift: the hand-authored
 `css/core/tokens.css` (the values that ship in `dist/vd3.min.css`) and the
 DTCG-derived token data in `src/theme/generated/tokens.data.ts` (byte-identical
-to `dist/tokens.json`'s `cssVariables`). The gate SHALL be dependency-free
-(regex parsing only), run as part of `pnpm test`, and:
-
-- Parse every `--vd-<name>: <value>;` declaration from the `:root` default layer
-  of the shipped CSS — `css/core/tokens.css` plus the generated
-  `colors-fib-base.css` and `colors-palette.css` partials — and resolve each
-  `var(--vd-x)` chain down to a literal using that combined map.
-- For every `--vd-*` present in BOTH the resolved CSS map and the DTCG token
-  data, assert the two literals are equal after whitespace/case normalization.
-- Treat a `--vd-*` present in `css/core/tokens.css` but ABSENT from the DTCG
-  token data as intentionally CSS-only and exempt it from the value comparison,
-  BUT require it to match a small, documented CSS-only allowlist so a new,
-  unexplained CSS-only property still fails the gate.
-
-The gate SHALL NOT require completeness in either direction (it does not demand
-every DTCG token appear in the CSS, nor every CSS token have a DTCG source); it
-asserts agreement on the intersection plus the CSS-only allowlist tripwire. It
-MUST change no token value, no `--vd-*` custom property, and no `VD3_VERSION`.
+to `dist/tokens.json`'s `cssVariables`).
 
 #### Scenario: overlapping tokens agree
 
@@ -234,29 +245,38 @@ MUST change no token value, no `--vd-*` custom property, and no `VD3_VERSION`.
   token resolved to a literal (no dangling `var()`), so a broken parse or a
   missing generated partial fails the gate instead of passing silently
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The gate SHALL be dependency-free
+(regex parsing only), run as part of `pnpm test`, and:
+- Parse every `--vd-<name>: <value>;` declaration from the `:root` default layer
+of the shipped CSS — `css/core/tokens.css` plus the generated
+`colors-fib-base.css` and `colors-palette.css` partials — and resolve each
+`var(--vd-x)` chain down to a literal using that combined map.
+- For every `--vd-*` present in BOTH the resolved CSS map and the DTCG token
+data, assert the two literals are equal after whitespace/case normalization.
+- Treat a `--vd-*` present in `css/core/tokens.css` but ABSENT from the DTCG
+token data as intentionally CSS-only and exempt it from the value comparison,
+BUT require it to match a small, documented CSS-only allowlist so a new,
+unexplained CSS-only property still fails the gate.
+The gate SHALL NOT require completeness in either direction (it does not demand
+every DTCG token appear in the CSS, nor every CSS token have a DTCG source); it
+asserts agreement on the intersection plus the CSS-only allowlist tripwire. It
+MUST change no token value, no `--vd-*` custom property, and no `VD3_VERSION`.
+
 ### Requirement: on-fill-foreground-tokens
 
 The semantic token source and `css/core/tokens.css` MUST define three on-fill
 foregrounds:
-
 - `--vd-text-on-primary` — ink on a rest primary fill
 - `--vd-text-on-primary-hover` — ink on a primary-dark / hover fill
 - `--vd-text-on-status` — ink on secondary, success, warning, error, and info
-  fills
-
+fills
 `:root` defaults MUST be black / white / black respectively (matching default
-indigo: rest step 5 fails 4.5:1 against white; hover step 7 passes). Hue and
-theme overrides MUST be token-driven (`html[data-primary="…"]` and
-`[data-theme="dark"]`) so components do not special-case hues.
-
-Bright primaries (yellow, orange, lime, and any other rest fill that fails
-4.5:1 against white) MUST resolve `--vd-text-on-primary` to black or
-near-black in both light and dark. Dark theme MUST NOT reset a bright fill's
-on-primary ink to white. Light `data-primary="black"` MAY use white ink.
-`--vd-text-inverse` MUST remain the dark-surface inverse token and MUST NOT
-be the on-fill contract.
-
-Consumers MAY override the three custom properties for custom primaries.
+indigo: rest step 5 fails 4.5:1 against white; hover step 7 passes).
 
 #### Scenario: default indigo rest uses dark ink
 
@@ -276,3 +296,20 @@ Consumers MAY override the three custom properties for custom primaries.
 - **GIVEN** the shipped success, warning, error, info, and secondary fills
 - **WHEN** `--vd-text-on-status` is resolved
 - **THEN** it is black or near-black and each pair meets ≥4.5:1
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Hue and
+theme overrides MUST be token-driven (`html[data-primary="…"]` and
+`[data-theme="dark"]`) so components do not special-case hues.
+Bright primaries (yellow, orange, lime, and any other rest fill that fails
+4.5:1 against white) MUST resolve `--vd-text-on-primary` to black or
+near-black in both light and dark. Dark theme MUST NOT reset a bright fill's
+on-primary ink to white. Light `data-primary="black"` MAY use white ink.
+`--vd-text-inverse` MUST remain the dark-surface inverse token and MUST NOT
+be the on-fill contract.
+Consumers MAY override the three custom properties for custom primaries.
+

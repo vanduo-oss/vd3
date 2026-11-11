@@ -69,7 +69,7 @@
 .vd-breadcrumb-item > a {
   color: var(--vd-breadcrumb-link-color);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--vd-duration-144) var(--vd-ease-out);
 }
 
 .vd-breadcrumb-link:hover,

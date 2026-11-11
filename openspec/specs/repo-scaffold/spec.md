@@ -11,14 +11,7 @@ package (version tracked in `package.json` / `VD3_VERSION`), MIT-licensed, `type
 **consumer-friendly** node floor (`node >=20.19.0`) — the development/CI
 toolchain node (24) is pinned by `packageManager` and
 `.github/workflows/ci.yml`, not by an `engines` constraint imposed on installers
-of the compiled library. It MUST set `publishConfig: { "access": "public" }` so
-the scoped package publishes public. It SHALL declare `vue >=3.3.0` as the only
-peer dependency (pinia is deliberately dropped in the vd3 line) and SHALL expose
-the exports map `"."` (types/import/require from `dist/`), `"./css"`,
-`"./css/core"`, `"./highlight"` (types/import/require), `"./tokens.json"`, and `"./package.json"`. It MUST include the
-scripts `build`, `typecheck`, `lint`, `format`, `format:check`, `stylelint`,
-`test`, `prepack` (runs `build`), and `release` (builds then publishes). The
-exported `VD3_VERSION` constant in `src/index.ts` MUST equal the `version` field.
+of the compiled library.
 
 #### Scenario: documented scripts are listed
 
@@ -46,6 +39,20 @@ exported `VD3_VERSION` constant in `src/index.ts` MUST equal the `version` field
 - **GIVEN** `src/index.ts` exporting `VD3_VERSION`
 - **WHEN** `tests/smoke.spec.ts` runs
 - **THEN** `VD3_VERSION` equals the `version` field of `package.json`
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It MUST set `publishConfig: { "access": "public" }` so
+the scoped package publishes public. It SHALL declare `vue >=3.3.0` as the only
+peer dependency (pinia is deliberately dropped in the vd3 line) and SHALL expose
+the exports map `"."` (types/import/require from `dist/`), `"./css"`,
+`"./css/core"`, `"./highlight"` (types/import/require), `"./tokens.json"`, and `"./package.json"`. It MUST include the
+scripts `build`, `typecheck`, `lint`, `format`, `format:check`, `stylelint`,
+`test`, `prepack` (runs `build`), and `release` (builds then publishes). The
+exported `VD3_VERSION` constant in `src/index.ts` MUST equal the `version` field.
 
 ### Requirement: hardened-install-policy
 
@@ -93,10 +100,7 @@ shape, including the `innerHTML` assignment guard) with ignores for `dist`,
 `css/core/generated`, `src/theme/generated`, `openspec`, and `.claude`;
 Prettier check over `src` and `tests` (excluding `src/theme/generated`);
 Stylelint over `css/**/*.css`; `vue-tsc --noEmit` strict typecheck; and
-Vitest in jsdom mode running `tests/**/*.spec.ts`. Every gate SHALL pass on
-a fresh clone after the token bootstrap (`pnpm build:tokens`), which
-generates the `src/theme/generated/tokens.data.ts` module the source tree
-imports.
+Vitest in jsdom mode running `tests/**/*.spec.ts`.
 
 #### Scenario: all gates green on a fresh clone
 
@@ -120,6 +124,16 @@ imports.
 - **THEN** the file is untracked-invisible (gitignored) and neither lint
   gate inspects it
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Every gate SHALL pass on
+a fresh clone after the token bootstrap (`pnpm build:tokens`), which
+generates the `src/theme/generated/tokens.data.ts` module the source tree
+imports.
+
 ### Requirement: continuous-integration
 
 The repo MUST include `.github/workflows/ci.yml` with SHA-pinned actions, a
@@ -128,9 +142,7 @@ paths-ignore, pnpm 10.28.2 and node 26 (with `cache: pnpm` on the node setup),
 running in order: install (`--frozen-lockfile`), `pnpm audit
 --audit-level=moderate` (security `overrides` live in
 `pnpm-workspace.yaml`), build:tokens (bootstraps the generated theme-data
-module the gates need), lint, format:check, stylelint, typecheck, test:coverage,
-build, test:size, test:skills, check:classes. Dependabot SHALL manage only the pinned GitHub Actions
-(weekly, grouped).
+module the gates need), lint, format.
 
 #### Scenario: CI runs every gate
 
@@ -156,28 +168,26 @@ build, test:size, test:skills, check:classes. Dependabot SHALL manage only the p
   may select patched versions, but unavailable patches MUST NOT be described
   as a clean audit
 
+#### Scenario: Full contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The repo MUST include `.github/workflows/ci.yml` with SHA-pinned actions, a
+least-privilege token (`permissions: contents: read`), markdown
+paths-ignore, pnpm 10.28.2 and node 26 (with `cache: pnpm` on the node setup),
+running in order: install (`--frozen-lockfile`), `pnpm audit
+--audit-level=moderate` (security `overrides` live in
+`pnpm-workspace.yaml`), build:tokens (bootstraps the generated theme-data
+module the gates need), lint, format:check, stylelint, typecheck, test:coverage,
+build, test:size, test:skills, check:classes. Dependabot SHALL manage only the pinned GitHub Actions
+(weekly, grouped).
+
 ### Requirement: release-ready-documentation
 
 The repo MUST ship a `README.md` that documents the actually-exported surface
 of `@vanduo-oss/vd3` for a consuming developer, accurate against `package.json`
-and `src/index.ts`. It SHALL contain an install step (`pnpm add @vanduo-oss/vd3`),
-a usage step showing the three real integration points — importing the
-stylesheet with `import "@vanduo-oss/vd3/css"`, registering the plugin with
-`app.use(VanduoVue)` (optionally `app.use(VanduoVue, { themeDefaults })`), and
-rendering a `Vd*` component — and an overview of the shipped inventory (the 64
-exported components: 57 `Vd*` components plus the 7 layout primitives `VdBox`,
-`VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`; and the
-40 composable modules including the theme layer and the `useThemePreference`
-singleton). It MUST document the theming contract (the `data-palette` /
-`-primary` / `-neutral` / `-radius` / `-theme` / `-font` attributes, `--vd-*`
-custom properties, `vanduo-*` localStorage keys, and the `./css` / `./css/core`
-/ `./tokens.json` subpath exports), an SSR note distinguishing client-guarded static rendering from shared module
-state (theme, toast and defaults are not isolated between requests/apps), and a security
-note stating zero runtime dependencies beyond the `vue >=3.3` peer (no pinia),
-the hardened `.npmrc` posture, MIT licensing, and the bundled
-`THIRD-PARTY-LICENSES`. Every documented name, count, import specifier, and
-export subpath MUST match what the package actually exports; no unexported or
-non-existent API may be documented as available.
+and `src/index.ts`.
 
 #### Scenario: install and usage are accurate and complete
 
@@ -213,6 +223,30 @@ non-existent API may be documented as available.
 - **THEN** it does not describe already-archived work (e.g. `vd3-rewrites`) as
   upcoming, and any pre-release note does not contradict the install steps
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+It SHALL contain an install step (`pnpm add @vanduo-oss/vd3`),
+a usage step showing the three real integration points — importing the
+stylesheet with `import "@vanduo-oss/vd3/css"`, registering the plugin with
+`app.use(VanduoVue)` (optionally `app.use(VanduoVue, { themeDefaults })`), and
+rendering a `Vd*` component — and an overview of the shipped inventory (the 64
+exported components: 57 `Vd*` components plus the 7 layout primitives `VdBox`,
+`VdCenter`, `VdCover`, `VdFrame`, `VdInline`, `VdStack`, `VdSwitcher`; and the
+40 composable modules including the theme layer and the `useThemePreference`
+singleton). It MUST document the theming contract (the `data-palette` /
+`-primary` / `-neutral` / `-radius` / `-theme` / `-font` attributes, `--vd-*`
+custom properties, `vanduo-*` localStorage keys, and the `./css` / `./css/core`
+/ `./tokens.json` subpath exports), an SSR note distinguishing client-guarded static rendering from shared module
+state (theme, toast and defaults are not isolated between requests/apps), and a security
+note stating zero runtime dependencies beyond the `vue >=3.3` peer (no pinia),
+the hardened `.npmrc` posture, MIT licensing, and the bundled
+`THIRD-PARTY-LICENSES`. Every documented name, count, import specifier, and
+export subpath MUST match what the package actually exports; no unexported or
+non-existent API may be documented as available.
+
 ### Requirement: agent-skill-reference
 
 The repo MUST ship a `SKILL.md` in Agent-Skills format — a YAML frontmatter
@@ -220,18 +254,7 @@ block with a `name` key and a single-line `description` key ("Use when …"),
 followed by the reference body — that gives an LLM/agent enough to build a UI
 with the package without reading source. The `description` MUST describe the
 shipped, installable package (it MUST NOT frame the package as an unbuilt
-"pre-release scaffold" whose API is still "upcoming"). The body SHALL document
-the same real install (`pnpm add @vanduo-oss/vd3`, `import "@vanduo-oss/vd3/css"`,
-`app.use(VanduoVue)`), the component/composable inventory grouped for
-scanability (the 64 components incl. the 7 named layout primitives, and the
-40 composable modules incl. the theme API and the `useThemePreference`
-singleton), the theming contract (`data-*` attributes, `--vd-*` custom
-properties, `vanduo-*` storage keys, and the `./css` / `./css/core` /
-`./tokens.json` exports), and the SSR posture (client-guarded browser access,
-static rendering support, shared module state limitations,
-`useThemePreference` lazy client init). It MUST NOT reference
-`window.Vanduo*` globals, IIFE loading, or a `loadVanduoRuntime` runtime — the
-package is pure Vue.
+"pre-release scaffold" whose API is still "upcoming").
 
 #### Scenario: frontmatter is valid Agent-Skills format
 
@@ -250,23 +273,28 @@ package is pure Vue.
   inventory (matching `src/index.ts`), the theming contract, and the SSR note
   — with no reference to `window.Vanduo*`, IIFE loading, or `loadVanduoRuntime`
 
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+The body SHALL document
+the same real install (`pnpm add @vanduo-oss/vd3`, `import "@vanduo-oss/vd3/css"`,
+`app.use(VanduoVue)`), the component/composable inventory grouped for
+scanability (the 64 components incl. the 7 named layout primitives, and the
+40 composable modules incl. the theme API and the `useThemePreference`
+singleton), the theming contract (`data-*` attributes, `--vd-*` custom
+properties, `vanduo-*` storage keys, and the `./css` / `./css/core` /
+`./tokens.json` exports), and the SSR posture (client-guarded browser access,
+static rendering support, shared module state limitations,
+`useThemePreference` lazy client init). It MUST NOT reference
+`window.Vanduo*` globals, IIFE loading, or a `loadVanduoRuntime` runtime — the
+package is pure Vue.
+
 ### Requirement: release-publish-configuration
 
 The package MUST be publishable to npm as a public scoped package with a
-guaranteed-built `dist/`. `publishConfig.access` MUST be `"public"`. Because the
-hardened `.npmrc` sets `ignore-scripts=true` (which skips lifecycle scripts —
-including `prepack`/`prepublishOnly` — during `pnpm publish`), the release flow
-MUST NOT rely on an implicit pack-time build alone: a `release` script MUST
-explicitly run the full `build` before `pnpm publish`, and a `prepack` build MUST
-also be declared for environments where lifecycle scripts run. The published
-tarball MUST contain a freshly built `dist/` (never an empty `dist/` produced
-from a clean checkout where `dist/` is gitignored). The tarball MUST NOT ship the
-legacy Phosphor SVG webfont fallbacks (`Phosphor.svg`, `Phosphor-Fill.svg`): they
-are the last entry in each `@font-face` `src:` chain after woff2/woff/ttf and are
-fetched by no supported browser, so the `src:` chains MUST NOT reference
-`format("svg")` and the woff2/woff/ttf formats MUST remain. The `CHANGELOG.md`
-MUST carry a dated release entry for the published version (the first public
-release MUST NOT ship as `## Unreleased` only).
+guaranteed-built `dist/`. `publishConfig.access` MUST be `"public"`.
 
 #### Scenario: scoped package publishes public
 
@@ -279,9 +307,9 @@ release MUST NOT ship as `## Unreleased` only).
 
 - **GIVEN** `.npmrc` sets `ignore-scripts=true` and `dist/` is gitignored
 - **WHEN** the maintainer runs `pnpm run release`
-- **THEN** the full `build` runs before `pnpm publish`, so the tarball's `dist/`
-  is freshly built (never empty) even though `prepack` is skipped by the
-  ignore-scripts policy
+- **THEN** the full `build` runs before `pnpm publish --provenance`, so the
+  tarball's `dist/` is freshly built (never empty) even though `prepack` is
+  skipped by the ignore-scripts policy, and the publish requests npm provenance
 
 #### Scenario: no legacy SVG webfont in the tarball
 
@@ -296,4 +324,24 @@ release MUST NOT ship as `## Unreleased` only).
 - **GIVEN** `CHANGELOG.md` at publish time
 - **WHEN** its top release entry is read
 - **THEN** it is a dated `## 1.0.0 — 2026-07-13` heading, not `## Unreleased`
+
+#### Scenario: Extended contract
+
+- **WHEN** the remaining contract for this requirement is applied
+- **THEN** the following behavior holds
+
+Because the
+hardened `.npmrc` sets `ignore-scripts=true` (which skips lifecycle scripts —
+including `prepack`/`prepublishOnly` — during `pnpm publish`), the release flow
+MUST NOT rely on an implicit pack-time build alone: a `release` script MUST
+explicitly run the full `build` before `pnpm publish --provenance`, and a `prepack` build MUST
+also be declared for environments where lifecycle scripts run. The published
+tarball MUST contain a freshly built `dist/` (never an empty `dist/` produced
+from a clean checkout where `dist/` is gitignored). The tarball MUST NOT ship the
+legacy Phosphor SVG webfont fallbacks (`Phosphor.svg`, `Phosphor-Fill.svg`): they
+are the last entry in each `@font-face` `src:` chain after woff2/woff/ttf and are
+fetched by no supported browser, so the `src:` chains MUST NOT reference
+`format("svg")` and the woff2/woff/ttf formats MUST remain. The `CHANGELOG.md`
+MUST carry a dated release entry for the published version (the first public
+release MUST NOT ship as `## Unreleased` only).
 

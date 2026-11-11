@@ -3,6 +3,25 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.9.0 — 2026-11-09
+
+### Added
+
+- **Fibonacci & Golden-ratio motion system** — lightweight built-in animation system with tokenized durations matching literal Fibonacci values in milliseconds (`55, 89, 144, 233, 377, 610, 987ms`) and golden easing curves (`--vd-ease-out`, `--vd-ease-in`, `--vd-ease-in-out`, `--vd-ease-linear`).
+- **`VdExpandTransition` component** — WAAPI height/opacity accordion-style expand transition with adaptive Fibonacci duration selection based on content height (`fibDurationForHeight`), cancellation handling, and reduced-motion fallback.
+- **`VdTransition` component** — preset wrapper around Vue `<Transition>` supporting presets `fade`, `scale`, `slide-up`, `slide-down`, `slide-left`, `slide-right`.
+- **`useMotion` composable** — reactive motion mode management (`auto`, `full`, `reduce`, `off`) with SSR-safe hydration, localStorage persistence, and `useReducedMotion()`.
+- **Motion controls in `VdThemeCustomizer`** — segmented buttons for Auto, Full, Reduce, and Off modes; configurable via `showMotion` prop.
+- **Smooth transitions enabled by default across components** — `VdAccordion`, `VdCodeSnippet`, `VdTree`, `VdModal`, `VdOffcanvas`, `VdSidenav`, `VdAlert`, `VdChip`, `VdTabs`, `VdNavbar`, `VdMenu`, `VdCustomSelect`, `VdThemeSwitcher`, and `VdFab`.
+- **`scripts/check-motion-tokens.mjs`** — build guard enforcing that transition durations use `--vd-duration-*` tokens rather than un-tokenized literal values.
+
+### Changed
+
+- Retokened 190+ hardcoded transition durations across `css/components` and `css/effects` to Fibonacci tokens and golden easing curves.
+- **Dock 4-corner waypoint morph.** Placement changes travel through a square waypoint anchored by `dockMorphCornerOf` on the shared corner of the two edges (bottom-left, top-left, top-right, or bottom-right), with fallbacks for non-adjacent pairs. Shrink is 377ms and grow is 610ms (`DOCK_MORPH_MS`), using `--vd-duration-slow` and `--vd-duration-slower`. `data-motion="reduce"`, `data-motion="off"`, and `prefers-reduced-motion` snap to the target edge.
+- Replaced legacy `*` reduced-motion duration override in `reset.css` with token-based mode switches (`[data-motion="reduce|off"]`).
+- Maintained backward compatibility for legacy `--vd-transition-*` CSS properties.
+
 ## 1.8.2 — 2026-11-04
 
 ### Changed

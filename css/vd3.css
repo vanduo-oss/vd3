@@ -16,6 +16,7 @@
 @import url('core/generated/colors-palette.css');
 @import url('core/typography.css');
 @import url('core/tokens.css');
+@import url('core/motion.css');
 @import url('core/grid.css');
 
 /* Layer 1.5: Layout primitives (Box, Stack, Inline, Center).
