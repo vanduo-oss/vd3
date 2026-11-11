@@ -9,12 +9,12 @@
   --vd-dock-inset: 1.3125rem; /* 21px fib */
   --vd-dock-radius: 1.25rem;
   --vd-dock-max-width: 1680px;
-  --vd-dock-morph-shrink: var(--vd-duration-moderate, 377ms);
-  --vd-dock-morph-grow: var(--vd-duration-slow, 610ms);
+  --vd-dock-morph-shrink: var(--vd-duration-slow, 377ms);
+  --vd-dock-morph-grow: var(--vd-duration-slower, 610ms);
   --vd-dock-morph: var(--vd-dock-morph-shrink);
-  --vd-dock-morph-ease: var(--vd-ease-standard, cubic-bezier(0.2, 0, 0, 1));
-  --vd-dock-content-fade: var(--vd-duration-snappy, 144ms);
-  --vd-dock-content-in: var(--vd-duration-normal, 233ms);
+  --vd-dock-morph-ease: var(--vd-ease-out, cubic-bezier(0.236, 1, 0.382, 1));
+  --vd-dock-content-fade: var(--vd-duration-fast, 144ms);
+  --vd-dock-content-in: var(--vd-duration-base, 233ms);
   --vd-dock-z-index: 1000;
   --vd-dock-brand-size: 2.025rem;
   --vd-dock-brand-angle: 0deg;
@@ -479,9 +479,9 @@
   opacity: 0.72;
   transform: scale(0.94);
   transition:
-    opacity var(--vd-duration-snappy, 144ms) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
-    transform var(--vd-duration-snappy, 144ms) var(--vd-ease-out, cubic-bezier(0, 0, 0.2, 1)),
-    color var(--vd-duration-fast, 89ms) ease;
+    opacity var(--vd-duration-fast, 144ms) var(--vd-ease-out, cubic-bezier(0.236, 1, 0.382, 1)),
+    transform var(--vd-duration-fast, 144ms) var(--vd-ease-out, cubic-bezier(0.236, 1, 0.382, 1)),
+    color var(--vd-duration-instant, 89ms) ease;
 }
 
 .vd-dock-items-inline .vd-dock-item {
@@ -695,11 +695,11 @@ html[data-motion="off"] .vd-dock-actions {
 }
 
 html[data-motion="reduce"] .vd-dock {
-  --vd-dock-morph: var(--vd-duration-fast, 89ms);
+  --vd-dock-morph: var(--vd-duration-instant, 89ms);
 }
 
 html[data-motion="reduce"] .vd-dock-item {
-  transition: opacity var(--vd-duration-fast, 89ms) ease;
+  transition: opacity var(--vd-duration-instant, 89ms) ease;
   transform: none;
 }
 
