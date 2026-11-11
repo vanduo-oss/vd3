@@ -15,10 +15,7 @@ export const DOCK_PLACEMENT_PAIR: Record<DockPlacement, DockPlacement> = {
 };
 
 export type DockCorner =
-  | "bottom-left"
-  | "top-left"
-  | "top-right"
-  | "bottom-right";
+  "bottom-left" | "top-left" | "top-right" | "bottom-right";
 
 export function dockMorphCornerOf(
   from: DockPlacement,
@@ -30,10 +27,7 @@ export function dockMorphCornerOf(
   ) {
     return "bottom-left";
   }
-  if (
-    (from === "left" && to === "top") ||
-    (from === "top" && to === "left")
-  ) {
+  if ((from === "left" && to === "top") || (from === "top" && to === "left")) {
     return "top-left";
   }
   if (
