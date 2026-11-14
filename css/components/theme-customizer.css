@@ -134,8 +134,8 @@ body > .vd-theme-customizer-panel.is-open {
 /* Neutral Color Grid */
 .tc-neutral-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0.375rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
 }
 
 .tc-neutral-swatch {
@@ -143,6 +143,8 @@ body > .vd-theme-customizer-panel.is-open {
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 0.5rem 0.25rem;
   background: transparent;
   border: 1px solid var(--vd-border-color);
@@ -293,14 +295,28 @@ body > .vd-theme-customizer-panel.is-open {
 /* Font Select */
 .tc-font-select {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem calc(0.75rem + var(--vd-select-arrow-size, 16px) + 0.5rem)
+    0.5rem 0.75rem;
   background-color: var(--vd-bg-primary);
   border: 1px solid var(--vd-border-color);
   border-radius: calc(var(--vd-radius-scale, 0.25) * 0.5rem);
   color: var(--vd-text-primary);
   font-size: var(--vd-font-size-sm);
+  line-height: var(--vd-line-height-normal, 1.5);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   cursor: pointer;
   transition: border-color var(--vd-duration-144) var(--vd-ease-out);
+}
+
+.tc-font-select::picker-icon {
+  display: none;
+  content: none;
+}
+
+.tc-font-select::-ms-expand {
+  display: none;
 }
 
 .tc-font-select:hover {
@@ -543,9 +559,9 @@ body > .vd-theme-customizer-panel.is-open {
   text-overflow: ellipsis;
 }
 
-/* Neutral swatches - 6 columns */
+/* Neutral swatches - 3 columns × 2 rows */
 .customizer-neutral-colors {
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .customizer-neutral-colors .customizer-swatch {
@@ -715,7 +731,8 @@ body > .vd-theme-customizer-panel.is-open {
 [data-theme="dark"] .customizer-mode-btn.is-active,
 [data-theme="dark"] .tc-radius-btn.is-active,
 [data-theme="dark"] .tc-palette-btn.is-active,
-[data-theme="dark"] .tc-mode-btn.is-active {
+[data-theme="dark"] .tc-mode-btn.is-active,
+[data-theme="dark"] .tc-motion-btn.is-active {
   background-color: var(--vd-gray-2);
   border-color: var(--vd-gray-2);
   color: var(--vd-gray-9);
@@ -732,15 +749,105 @@ body > .vd-theme-customizer-panel.is-open {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
 
-  :root:not([data-theme]) .customizer-radius-btn.is-active,
-  :root:not([data-theme]) .customizer-mode-btn.is-active,
-  :root:not([data-theme]) .tc-radius-btn.is-active,
-  :root:not([data-theme]) .tc-palette-btn.is-active,
-  :root:not([data-theme]) .tc-mode-btn.is-active {
+  :root:not([data-theme="light"]) .customizer-radius-btn.is-active,
+  :root:not([data-theme="light"]) .customizer-mode-btn.is-active,
+  :root:not([data-theme="light"]) .tc-radius-btn.is-active,
+  :root:not([data-theme="light"]) .tc-palette-btn.is-active,
+  :root:not([data-theme="light"]) .tc-mode-btn.is-active,
+  :root:not([data-theme="light"]) .tc-motion-btn.is-active {
     background-color: var(--vd-gray-2);
     border-color: var(--vd-gray-2);
     color: var(--vd-gray-9);
   }
+}
+
+/* ==========================================================================
+   Fibonacci Palette Swatch Overrides
+   ========================================================================== */
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="red"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="red"] .tc-fan-swatch {
+  background-color: var(--vd-fib-red-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="orange"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="orange"] .tc-fan-swatch {
+  background-color: var(--vd-fib-orange-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="amber"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="amber"] .tc-fan-swatch {
+  background-color: var(--vd-fib-amber-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="yellow"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="yellow"] .tc-fan-swatch {
+  background-color: var(--vd-fib-yellow-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="lime"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="lime"] .tc-fan-swatch {
+  background-color: var(--vd-fib-lime-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="green"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="green"] .tc-fan-swatch {
+  background-color: var(--vd-fib-green-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="emerald"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="emerald"] .tc-fan-swatch {
+  background-color: var(--vd-fib-emerald-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="teal"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="teal"] .tc-fan-swatch {
+  background-color: var(--vd-fib-teal-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="cyan"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="cyan"] .tc-fan-swatch {
+  background-color: var(--vd-fib-cyan-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="sky"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="sky"] .tc-fan-swatch {
+  background-color: var(--vd-fib-sky-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="blue"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="blue"] .tc-fan-swatch {
+  background-color: var(--vd-fib-blue-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="indigo"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="indigo"] .tc-fan-swatch {
+  background-color: var(--vd-fib-indigo-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="violet"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="violet"] .tc-fan-swatch {
+  background-color: var(--vd-fib-violet-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="purple"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="purple"] .tc-fan-swatch {
+  background-color: var(--vd-fib-purple-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="fuchsia"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="fuchsia"] .tc-fan-swatch {
+  background-color: var(--vd-fib-fuchsia-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="pink"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="pink"] .tc-fan-swatch {
+  background-color: var(--vd-fib-pink-6);
+}
+
+[data-palette="fibonacci"] .tc-color-swatch[data-color="rose"],
+[data-palette="fibonacci"] .tc-fan-item[data-color="rose"] .tc-fan-swatch {
+  background-color: var(--vd-fib-rose-6);
 }
 
 /* ==========================================================================

@@ -12,6 +12,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const formsPath = resolve(root, "css/components/forms.css");
+const customizerCssPath = resolve(root, "css/components/theme-customizer.css");
 
 const CARET_LONGHANDS = [
   "background-repeat: no-repeat",
@@ -71,6 +72,26 @@ describe("native select chevron longhands (authored)", () => {
   it("multi-select still clears the caret image", () => {
     const body = ruleBody(forms, "select[multiple].vd-input,");
     expect(body).toContain("background-image: none");
+  });
+
+  it("suppresses native webkit/picker-icon indicators on forms and customizer selects", () => {
+    const selectBody = ruleBody(forms, "select.vd-input,\nselect,");
+    expect(selectBody).toContain("-webkit-appearance: none;");
+    expect(selectBody).toContain("appearance: none;");
+    const pickerBody = ruleBody(forms, "select.vd-input::picker-icon,");
+    expect(pickerBody).toContain("display: none;");
+    expect(pickerBody).toContain("content: none;");
+
+    const customizerCss = readFileSync(customizerCssPath, "utf8");
+    const fontSelectBody = ruleBody(customizerCss, ".tc-font-select {");
+    expect(fontSelectBody).toContain("-webkit-appearance: none;");
+    expect(fontSelectBody).toContain("appearance: none;");
+    expect(fontSelectBody).toContain("--vd-select-arrow-size");
+    const fontPickerBody = ruleBody(
+      customizerCss,
+      ".tc-font-select::picker-icon",
+    );
+    expect(fontPickerBody).toContain("display: none;");
   });
 });
 

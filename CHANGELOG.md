@@ -3,6 +3,19 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.9.1 — 2026-11-14
+
+### Changed
+
+- **Fibonacci palette upgrade** — scaled chromatic OKLCH peak chroma by phi (`1.618`), shifted `red` / `danger` / `error` from orange-red (`27deg`) to crimson (`20deg`), added per-hue cusp-anchored step-6 lightness (`targetL6ForHue`) so warm/mid hues (`orange`–`sky`) remain vivid while preserving >= 4.5:1 WCAG contrast, and generated native Fibonacci 10-step scales (`--vd-fib-<hue>-0..9`) for all 17 chromatic customizer hues (`rose`, `amber`, `emerald`, `sky`, `purple`, `fuchsia`, and the original 11).
+
+### Fixed
+
+- **Fibonacci dark neutral scale calibration** — added a dedicated `NEUTRAL_L_RAMP` (`0.980` → `0.180`) for neutral scales (`gray`, `slate`, `charcoal`, `zinc`, `neutral`, `stone`) so Fibonacci dark-mode backgrounds (`step 9`, `#0e1214`–`#14110f`) and surfaces/borders (`step 7–8`) match Open Color obsidian dark tones without greyish washout while maintaining >= 4.5:1 `--vd-text-secondary` contrast.
+- **Theme Customizer layout, contrast & swatch sync** — changed `.tc-neutral-grid` / `.customizer-neutral-colors` to a `3 × 2` grid (`repeat(3, minmax(0, 1fr))`) with `min-width: 0` to eliminate horizontal overflow; added dark-mode active state contrast rules for `.tc-motion-btn.is-active`; synced customizer color swatches and fan items to `--vd-fib-<hue>-6` when `[data-palette="fibonacci"]` is active; updated light-mode `--vd-text-on-primary-hover` ink for Fibonacci `amber`, `yellow`, and `lime`.
+- **Dock `data-motion="off"` centering & resting scale** — scoped `html[data-motion="off"]` `transform: none !important` to `.vd-dock-nav, .vd-dock-actions` and stopped clearing resting `.vd-dock-item` `transform` under `reduce`, `off`, and `prefers-reduced-motion: reduce`, suppressing only hover/focus magnification so `.vd-dock` retains its centering and dock items never jump in size when toggling motion modes.
+- **Native select indicator & customizer font-select chevron spacing** — added `-webkit-appearance: none`, `-moz-appearance: none`, `::picker-icon { display: none; content: none; }`, and `::-ms-expand { display: none; }` on native `<select>` controls and `.tc-font-select`, plus right chevron padding and `line-height` on `.tc-font-select` so WebKit/Chromium webviews render a single right-aligned chevron at normal single-line height.
+
 ## 1.9.0 — 2026-11-09
 
 ### Added

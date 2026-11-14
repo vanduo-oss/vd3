@@ -2,10 +2,10 @@ import { readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
 // Library artifacts, not a prediction of a consumer's tree-shaken application.
-// Baseline after adding Fibonacci motion system (v1.9.0).
+// Baseline after adding full 17-hue Fibonacci scales & customizer sync (v1.9.1).
 const budgets = [
-  ["vd3.min.css", 650000, 102000],
-  ["vd3-core.min.css", 515000, 77000],
+  ["vd3.min.css", 670000, 104000],
+  ["vd3-core.min.css", 535000, 79000],
   ["index.js", 355000, 88000],
 ];
 for (const [name, rawLimit, gzipLimit] of budgets) {

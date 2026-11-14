@@ -141,6 +141,9 @@ const authoredColors = readFileSync(
 );
 const primaryValue = (prefix, hue, step) => {
   if (hue === "primary") return paletteLiterals[prefix].get(`primary-${step}`);
+  if (prefix === "fib" && paletteLiterals.fib.has(`${hue}-${step}`)) {
+    return paletteLiterals.fib.get(`${hue}-${step}`);
+  }
   const block = authoredColors
     .split(`html[data-primary="${hue}"] {`)[1]
     ?.split("}")[0];
@@ -166,11 +169,20 @@ const primaryHues = readJson("customizer/options.json").primary.map(
   (item) => item.key,
 );
 const primaryRgbCss = primaryHues
-  .map(
-    (hue) =>
+  .map((hue) => {
+    const fibScaleLines =
+      hue !== "black" && paletteLiterals.fib.has(`${hue}-0`)
+        ? Array.from(
+            { length: 10 },
+            (_, step) =>
+              `  --vd-primary-${step}: var(--vd-fib-${hue}-${step});`,
+          )
+        : [];
+    return (
       `html[data-primary="${hue}"] {\n${primaryRgb("oc", hue).join("\n")}\n}\n` +
-      `html[data-palette="fibonacci"][data-primary="${hue}"] {\n${primaryRgb("fib", hue).join("\n")}\n}\n`,
-  )
+      `html[data-palette="fibonacci"][data-primary="${hue}"] {\n${[...fibScaleLines, ...primaryRgb("fib", hue)].join("\n")}\n}\n`
+    );
+  })
   .join("\n");
 
 const activeLines = fibSuffixes.map((s) =>
