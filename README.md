@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../vd3-ui-logo/vd3-ui-lockup-dark.svg" alt="VD3 UI" width="360">
+</p>
+
 # @vanduo-oss/vd3
 
 <a href="https://snyk.io/?utm_source=open-source&utm_medium=pg-ptr&utm_campaign=ref-2501-osp&utm_content=pg-cta"><img src="https://raw.githubusercontent.com/vanduo-oss/vd3/main/assets/scanned-by-snyk.png" alt="Scanned by Snyk" width="206" height="141"></a>
