@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../vd3-ui-logo/vd3-ui-lockup-dark.svg" alt="VD3 UI" width="360">
+  <img src="https://raw.githubusercontent.com/vanduo-oss/vd3/main/assets/vd3-ui-lockup-dark.svg" alt="VD3 UI" width="360">
 </p>
 
 # @vanduo-oss/vd3
