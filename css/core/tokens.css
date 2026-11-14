@@ -342,16 +342,19 @@ html[data-primary="blue"] {
   --vd-text-on-primary-hover: var(--vd-color-black);
 }
 
-/* Fibonacci step-7 fills are darker than Open Color; their hover ink is white. */
+/* Fibonacci step-7 fills are darker than Open Color; their hover ink is white,
+ * except bright yellow-green cusp hues (amber, yellow, lime) which need dark ink. */
 html[data-palette="fibonacci"][data-primary="red"],
 html[data-palette="fibonacci"][data-primary="orange"],
-html[data-palette="fibonacci"][data-primary="yellow"],
-html[data-palette="fibonacci"][data-primary="lime"],
 html[data-palette="fibonacci"][data-primary="green"],
 html[data-palette="fibonacci"][data-primary="teal"],
 html[data-palette="fibonacci"][data-primary="cyan"],
 html[data-palette="fibonacci"][data-primary="blue"] {
   --vd-text-on-primary-hover: var(--vd-color-white);
+}
+
+html[data-palette="fibonacci"][data-primary="amber"] {
+  --vd-text-on-primary-hover: var(--vd-color-black);
 }
 
 /* ============================================

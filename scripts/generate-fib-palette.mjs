@@ -170,20 +170,14 @@ const targetL6ForHue = (hDeg, peakC, neutral = false) => {
     const distFromYellow = Math.min(Math.abs(h - 95), 360 - Math.abs(h - 95));
     const warmLift = Math.max(0, 1 - distFromYellow / 55) * 0.16;
     let L6 = 0.65 + warmLift;
-    while (
-      L6 < 0.85 &&
-      contrast(oklchToHex(L6, peakC, h), "#1a1d20") < 4.55
-    ) {
+    while (L6 < 0.85 && contrast(oklchToHex(L6, peakC, h), "#1a1d20") < 4.55) {
       L6 += 0.002;
     }
     return L6;
   }
-  let L6 = 0.57;
-  while (
-    L6 > 0.45 &&
-    contrast(oklchToHex(L6, peakC, h), "#ffffff") < 4.55
-  ) {
-    L6 -= 0.002;
+  let L6 = 0.594;
+  while (L6 > 0.45 && contrast(oklchToHex(L6, peakC, h), "#ffffff") < 4.55) {
+    L6 -= 0.001;
   }
   return L6;
 };
