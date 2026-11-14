@@ -686,11 +686,18 @@
   }
 }
 
+/* Off stops motion. The dock element's transform is its resting placement
+   (translateX/Y(-50%)), so clearing it would slide the pill off center. */
 html[data-motion="off"] .vd-dock,
 html[data-motion="off"] .vd-dock-item,
 html[data-motion="off"] .vd-dock-nav,
 html[data-motion="off"] .vd-dock-actions {
   transition: none !important;
+}
+
+html[data-motion="off"] .vd-dock-item,
+html[data-motion="off"] .vd-dock-nav,
+html[data-motion="off"] .vd-dock-actions {
   transform: none !important;
 }
 
