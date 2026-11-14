@@ -682,12 +682,17 @@
 
   :root:not([data-motion="full"]) .vd-dock-item {
     transition: none;
-    transform: none;
+  }
+
+  :root:not([data-motion="full"])
+    .vd-dock-item:not(.is-active):is(:hover, :focus-visible) {
+    transform: scale(0.94);
   }
 }
 
-/* Off stops motion. The dock element's transform is its resting placement
-   (translateX/Y(-50%)), so clearing it would slide the pill off center. */
+/* Off stops motion. Resting element transforms (.vd-dock placement and idle
+   .vd-dock-item scale) are static layout/hierarchy, so only morph/hover motion
+   is suppressed. */
 html[data-motion="off"] .vd-dock,
 html[data-motion="off"] .vd-dock-item,
 html[data-motion="off"] .vd-dock-nav,
@@ -695,10 +700,14 @@ html[data-motion="off"] .vd-dock-actions {
   transition: none !important;
 }
 
-html[data-motion="off"] .vd-dock-item,
 html[data-motion="off"] .vd-dock-nav,
 html[data-motion="off"] .vd-dock-actions {
   transform: none !important;
+}
+
+html[data-motion="off"]
+  .vd-dock-item:not(.is-active):is(:hover, :focus-visible) {
+  transform: scale(0.94);
 }
 
 html[data-motion="reduce"] .vd-dock {
@@ -707,7 +716,11 @@ html[data-motion="reduce"] .vd-dock {
 
 html[data-motion="reduce"] .vd-dock-item {
   transition: opacity var(--vd-duration-instant, 89ms) ease;
-  transform: none;
+}
+
+html[data-motion="reduce"]
+  .vd-dock-item:not(.is-active):is(:hover, :focus-visible) {
+  transform: scale(0.94);
 }
 
 @media (max-width: 767px) {

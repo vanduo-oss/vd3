@@ -118,4 +118,37 @@ describe("Fibonacci palette generator", () => {
       ).toBeGreaterThanOrEqual(4.5);
     }
   });
+
+  it("neutral dark-mode surfaces stay obsidian dark while preserving AA text contrast", () => {
+    const fib = families(readJson(fibPath));
+    for (const family of [
+      "gray",
+      "slate",
+      "charcoal",
+      "zinc",
+      "neutral",
+      "stone",
+    ]) {
+      const darkBg = fib[family]["9"].$value;
+      const darkTextPrimary = fib[family]["2"].$value;
+      const darkTextSecondary = fib[family]["5"].$value;
+      const lightTextSecondary = fib[family]["7"].$value;
+      expect(
+        contrast("#ffffff", darkBg),
+        `${family}-9 (${darkBg}) is too light for dark mode`,
+      ).toBeGreaterThanOrEqual(16);
+      expect(
+        contrast(darkBg, darkTextPrimary),
+        `${family}-2 on ${family}-9 contrast too low`,
+      ).toBeGreaterThanOrEqual(12);
+      expect(
+        contrast(darkBg, darkTextSecondary),
+        `${family}-5 on ${family}-9 contrast too low`,
+      ).toBeGreaterThanOrEqual(4.5);
+      expect(
+        contrast("#ffffff", lightTextSecondary),
+        `${family}-7 on white contrast too low`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+  });
 });

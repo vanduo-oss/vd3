@@ -1,9 +1,17 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import { h, nextTick } from "vue";
 import VdDock from "../../src/components/VdDock.vue";
 import VdDockItem from "../../src/components/VdDockItem.vue";
 import { DOCK_MORPH_MS } from "../../src/composables/useDockOrientation";
+
+const dockCssPath = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../css/components/dock.css",
+);
 
 enableAutoUnmount(afterEach);
 
@@ -416,5 +424,19 @@ describe("VdDock", () => {
     expect(
       withChild.get("button.vd-dock-item").attributes("data-tooltip"),
     ).toBe("Home");
+  });
+
+  it("preserves resting .vd-dock-item scale across reduce and off motion modes", () => {
+    const css = readFileSync(dockCssPath, "utf8");
+    expect(css).not.toMatch(
+      /html\[data-motion="off"\]\s+\.vd-dock-item,[\s\S]{0,120}?transform:\s*none/,
+    );
+    expect(css).toContain('html[data-motion="off"] .vd-dock-nav,');
+    expect(css).not.toMatch(
+      /html\[data-motion="reduce"\]\s+\.vd-dock-item\s*\{[^}]*transform:\s*none/,
+    );
+    expect(css).toMatch(
+      /\.vd-dock-item:not\(\.is-active\):is\(:hover,\s*:focus-visible\)\s*\{\s*transform:\s*scale\(0\.94\)/,
+    );
   });
 });

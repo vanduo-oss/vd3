@@ -295,14 +295,28 @@ body > .vd-theme-customizer-panel.is-open {
 /* Font Select */
 .tc-font-select {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem calc(0.75rem + var(--vd-select-arrow-size, 16px) + 0.5rem)
+    0.5rem 0.75rem;
   background-color: var(--vd-bg-primary);
   border: 1px solid var(--vd-border-color);
   border-radius: calc(var(--vd-radius-scale, 0.25) * 0.5rem);
   color: var(--vd-text-primary);
   font-size: var(--vd-font-size-sm);
+  line-height: var(--vd-line-height-normal, 1.5);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   cursor: pointer;
   transition: border-color var(--vd-duration-144) var(--vd-ease-out);
+}
+
+.tc-font-select::picker-icon {
+  display: none;
+  content: none;
+}
+
+.tc-font-select::-ms-expand {
+  display: none;
 }
 
 .tc-font-select:hover {

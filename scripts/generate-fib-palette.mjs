@@ -85,6 +85,12 @@ const FAMILIES = {
 const BASE_L_RAMP = [
   0.972, 0.93, 0.872, 0.806, 0.732, 0.66, 0.586, 0.5, 0.41, 0.32,
 ];
+// Neutral scales carry almost zero chroma, so steps 7..9 double as dark-mode
+// surfaces and borders without hue-shift clipping; match Open Color's deep
+// obsidian dark steps (~0.18 at step 9) while keeping step 5 >= 4.5:1 on dark.
+const NEUTRAL_L_RAMP = [
+  0.98, 0.948, 0.902, 0.832, 0.725, 0.62, 0.505, 0.39, 0.275, 0.18,
+];
 // Chroma multiplier per step — peaks at round(9/phi) = 6 (the "main" shade).
 const C_RAMP = [0.18, 0.38, 0.62, 0.82, 0.94, 1.0, 1.0, 0.92, 0.78, 0.62];
 const MAIN_STEP = Math.round(9 / PHI); // 6
@@ -201,7 +207,7 @@ const buildRampForL6 = (L6) => {
 /** Full 0..9 scale for a family. */
 const scaleFor = ({ hue, chroma, neutral }) => {
   const L6 = targetL6ForHue(hue, chroma, Boolean(neutral));
-  const ramp = neutral ? BASE_L_RAMP : buildRampForL6(L6);
+  const ramp = neutral ? NEUTRAL_L_RAMP : buildRampForL6(L6);
   return ramp.map((L, i) => oklchToHex(L, chroma * C_RAMP[i], hue));
 };
 

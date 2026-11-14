@@ -1670,8 +1670,22 @@ select,
   border: var(--vd-input-border-width) solid var(--vd-input-border-color);
   border-radius: var(--vd-input-border-radius);
   transition: var(--vd-input-transition);
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   cursor: pointer;
+}
+
+/* Hide Chromium/Edge built-in select picker indicator so only the custom chevron renders */
+select.vd-input::picker-icon,
+select::picker-icon {
+  display: none;
+  content: none;
+}
+
+select.vd-input::-ms-expand,
+select::-ms-expand {
+  display: none;
 }
 
 select.vd-input:focus,
