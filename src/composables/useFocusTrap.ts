@@ -9,10 +9,15 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
-/** Check whether an element is visible (not hidden via CSS or attributes). */
+/** Check whether an element is visible (not hidden via CSS, attributes, or inactive tab panes). */
 const isVisible = (el: HTMLElement): boolean => {
-  if (el.hasAttribute("hidden")) return false;
-  if (el.getAttribute("aria-hidden") === "true") return false;
+  if (
+    el.closest(
+      '.vd-tab-pane:not(.is-active), [inert], [hidden], [aria-hidden="true"]',
+    )
+  ) {
+    return false;
+  }
   const style = getComputedStyle(el);
   if (style.visibility === "hidden" || style.display === "none") return false;
   return true;

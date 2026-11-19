@@ -14,20 +14,31 @@
   --vd-modal-header-padding: 1.3125rem;
   --vd-modal-body-padding: 1.3125rem;
   --vd-modal-footer-padding: 1.3125rem;
+  --vd-modal-viewport-margin: var(--vd-space-fib-21, 1.3125rem);
 
-  /* Modal Sizes (all Fibonacci numbers) */
-  --vd-modal-width-sm: 233px;   /* fib(13) */
-  --vd-modal-width: 377px;      /* fib(14) */
-  --vd-modal-width-lg: 610px;   /* fib(15) */
-  --vd-modal-width-xl: 987px;   /* fib(16) */
+  /* Modal Golden Ratio & Viewport Bounds */
+  --vd-modal-golden-ratio: 1.618034;
+  --vd-modal-max-height: min(
+    95dvh,
+    calc(100dvh - (2 * min(var(--vd-modal-viewport-margin), 2.5dvh)))
+  );
+
+  /* Modal Sizes (Fibonacci widths + 2xl 95% viewport golden) */
+  --vd-modal-width-sm: 377px;   /* fib(14), golden height 233px */
+  --vd-modal-width: 610px;      /* fib(15), golden height 377px */
+  --vd-modal-width-lg: 987px;   /* fib(16), golden height 610px */
+  --vd-modal-width-xl: 1280px;  /* extra-large */
+  --vd-modal-width-2xl: min(95dvw, calc(95dvh * var(--vd-modal-golden-ratio)));
   
   /* Modal Z-index */
   --vd-modal-z-index: 1050;
   --vd-modal-backdrop-z-index: 1040;
   
-  /* Modal Transitions */
-  --vd-modal-transition: opacity var(--vd-duration-377) var(--vd-ease-in-out);
-  --vd-modal-dialog-transition: transform var(--vd-duration-377) var(--vd-ease-out);
+  /* Modal Transitions (Fibonacci motion system) */
+  --vd-modal-enter-duration: var(--vd-duration-233);
+  --vd-modal-leave-duration: var(--vd-duration-144);
+  --vd-modal-transition: opacity var(--vd-modal-enter-duration) var(--vd-ease-out);
+  --vd-modal-dialog-transition: transform var(--vd-modal-enter-duration) var(--vd-ease-out);
 }
 
 /* Dark Theme Overrides */
@@ -49,6 +60,8 @@
   z-index: var(--vd-modal-backdrop-z-index);
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
+  overscroll-behavior: contain;
   background-color: var(--vd-modal-backdrop-bg);
   opacity: 0;
   transition: var(--vd-modal-transition);
@@ -82,8 +95,12 @@
   display: none;
   width: 100%;
   height: 100%;
+  padding: min(var(--vd-modal-viewport-margin), 2.5dvh)
+    min(var(--vd-modal-viewport-margin), 2.5dvw);
+  box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
   outline: 0;
   opacity: 0;
   transition: var(--vd-modal-transition);
@@ -100,9 +117,13 @@
 /* Modal Dialog */
 .vd-modal-dialog {
   position: relative;
-  width: min(calc(100% - 3.5rem), var(--vd-modal-dialog-max-width));
-  margin: 1.75rem auto;
+  width: min(
+    calc(100dvw - (2 * min(var(--vd-modal-viewport-margin), 2.5dvw))),
+    var(--vd-modal-dialog-max-width)
+  );
+  margin: auto;
   max-width: var(--vd-modal-dialog-max-width);
+  max-height: var(--vd-modal-max-height);
   pointer-events: none;
   transform: scale(0.95);
   transition: var(--vd-modal-dialog-transition);
@@ -119,6 +140,8 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-height: 100%;
+  overflow: hidden;
   pointer-events: auto;
   background-color: var(--vd-modal-bg);
   background-clip: padding-box;
@@ -129,14 +152,6 @@
 }
 
 .vd-modal-glass .vd-modal-content {
-  /* Step-13 overlay defaults — light frost, not opaque chrome */
-  --vd-glass-blur: 16px;
-  --vd-glass-saturate: 2.05;
-  --vd-glass-bg-opacity: 0.42;
-  --vd-glass-border-alpha: 0.4;
-  --vd-glass-highlight-alpha: 0.32;
-  --vd-glass-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
-
   background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
   border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
   box-shadow: var(--vd-glass-shadow);
@@ -150,7 +165,8 @@
 /* Modal Header */
 .vd-modal-header {
   display: flex;
-  align-items: flex-start;
+  flex-shrink: 0;
+  align-items: center;
   justify-content: space-between;
   padding: var(--vd-modal-header-padding);
   border-bottom: 1px solid var(--vd-modal-border-color);
@@ -201,15 +217,20 @@
 .vd-modal-body {
   position: relative;
   flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--vd-modal-body-padding);
 }
 
 /* Modal Footer */
 .vd-modal-footer {
   display: flex;
-  flex-wrap: wrap;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-end;
+  margin-top: auto;
   padding: var(--vd-modal-footer-padding);
   border-top: 1px solid var(--vd-modal-border-color);
   border-bottom-left-radius: calc(var(--vd-btn-border-radius-lg) - 1px);
@@ -235,6 +256,11 @@
 .vd-modal-dialog.vd-modal-xl,
 .vd-modal-xl .vd-modal-dialog {
   --vd-modal-dialog-max-width: var(--vd-modal-width-xl);
+}
+
+.vd-modal-dialog.vd-modal-2xl,
+.vd-modal-2xl .vd-modal-dialog {
+  --vd-modal-dialog-max-width: var(--vd-modal-width-2xl);
 }
 
 .vd-modal-fullscreen .vd-modal-dialog {
@@ -345,12 +371,26 @@
 
 /* Panel merges .vd-modal-dialog (sizing/positioning) + .vd-modal-content (box) */
 .vd-modal-panel {
+  --vd-modal-effective-width: min(
+    calc(100dvw - (2 * min(var(--vd-modal-viewport-margin), 2.5dvw))),
+    var(--vd-modal-dialog-max-width)
+  );
+
   position: relative;
   display: flex;
   flex-direction: column;
-  width: min(calc(100% - 3.5rem), var(--vd-modal-dialog-max-width));
+  width: var(--vd-modal-effective-width);
   max-width: var(--vd-modal-dialog-max-width);
-  margin: 1.75rem auto;
+  max-height: var(--vd-modal-max-height);
+  min-height: max(
+    var(--vd-modal-stable-min-height, 0px),
+    min(
+      var(--vd-modal-max-height),
+      calc(var(--vd-modal-effective-width) / var(--vd-modal-golden-ratio))
+    )
+  );
+  margin: auto;
+  overflow: hidden;
   pointer-events: auto;
   background-color: var(--vd-modal-bg);
   background-clip: padding-box;
@@ -367,24 +407,31 @@
   transform: scale(1);
 }
 
-.vd-fade-enter-from .vd-modal-panel,
-.vd-fade-leave-to .vd-modal-panel {
-  transform: scale(0.95);
-}
-
-.vd-fade-enter-active .vd-modal-panel {
-  transition: transform var(--vd-duration-377) var(--vd-ease-out);
-}
-
-.vd-fade-leave-active .vd-modal-panel {
-  transition: transform var(--vd-duration-233) var(--vd-ease-in);
-}
-
 /* Panel sizes (md = default width) */
 .vd-modal-panel-sm { --vd-modal-dialog-max-width: var(--vd-modal-width-sm); }
 .vd-modal-panel-md { --vd-modal-dialog-max-width: var(--vd-modal-width); }
 .vd-modal-panel-lg { --vd-modal-dialog-max-width: var(--vd-modal-width-lg); }
 .vd-modal-panel-xl { --vd-modal-dialog-max-width: var(--vd-modal-width-xl); }
+
+.vd-modal-panel-2xl {
+  --vd-modal-dialog-max-width: var(--vd-modal-width-2xl);
+  --vd-modal-max-height: 95dvh;
+  --vd-modal-effective-width: min(95dvw, calc(95dvh * var(--vd-modal-golden-ratio)));
+
+  min-height: max(
+    var(--vd-modal-stable-min-height, 0px),
+    min(95dvh, calc(95dvw / var(--vd-modal-golden-ratio)))
+  );
+}
+
+/* Customization opt-outs for Golden Ratio & Stable Tab Height */
+.vd-modal-auto-height .vd-modal-panel {
+  min-height: var(--vd-modal-stable-min-height, 0);
+}
+
+.vd-modal-dynamic-height .vd-modal-panel {
+  --vd-modal-stable-min-height: initial;
+}
 
 /* Glass variant — light frosted panel (Seemore), not dark opaque chrome */
 .vd-modal-glass {
@@ -431,22 +478,64 @@
   z-index: 2;
 }
 
-[data-theme="dark"] .vd-modal-glass .vd-modal-panel,
-[data-theme="dark"] .vd-modal-glass .vd-modal-content {
-  /* Keep a luminous frost wash even in dark theme */
+/* Vue <VdTransition name="fade"> enter/leave rules (override .vd-modal-open specificity) */
+.vd-modal.vd-modal-open.vd-fade-enter-from,
+.vd-modal.vd-modal-open.vd-fade-leave-to {
+  opacity: 0;
+}
+
+.vd-modal.vd-fade-enter-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-modal-enter-duration))
+    var(--vd-ease-out);
+}
+
+.vd-modal.vd-fade-leave-active {
+  transition: opacity var(--vd-transition-duration, var(--vd-modal-leave-duration))
+    var(--vd-ease-in);
+  pointer-events: none;
+}
+
+.vd-modal.vd-modal-open.vd-fade-enter-from .vd-modal-panel,
+.vd-modal.vd-modal-open.vd-modal-glass.vd-fade-enter-from .vd-modal-panel {
+  transform: translateZ(0) scale(var(--vd-motion-scale-from, 0.95));
+}
+
+.vd-modal.vd-modal-open.vd-fade-leave-to .vd-modal-panel,
+.vd-modal.vd-modal-open.vd-modal-glass.vd-fade-leave-to .vd-modal-panel {
+  transform: translateZ(0)
+    scale(calc(1 - ((1 - var(--vd-motion-scale-from, 0.95)) * 0.4)));
+}
+
+.vd-modal.vd-fade-enter-active .vd-modal-panel {
+  transition: transform var(--vd-transition-duration, var(--vd-modal-enter-duration))
+    var(--vd-ease-out);
+}
+
+.vd-modal.vd-fade-leave-active .vd-modal-panel {
+  transition: transform var(--vd-transition-duration, var(--vd-modal-leave-duration))
+    var(--vd-ease-in);
+}
+
+[data-theme="dark"] .vd-modal-glass {
+  /* Keep a luminous frost wash on the root so inline --vd-glass-* overrides win */
   --vd-glass-bg-opacity: 0.18;
   --vd-glass-border-alpha: 0.34;
+}
 
+[data-theme="dark"] .vd-modal-glass .vd-modal-panel,
+[data-theme="dark"] .vd-modal-glass .vd-modal-content {
   background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
   border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .vd-modal-glass .vd-modal-panel,
-  :root:not([data-theme]) .vd-modal-glass .vd-modal-content {
+  :root:not([data-theme]) .vd-modal-glass {
     --vd-glass-bg-opacity: 0.18;
     --vd-glass-border-alpha: 0.34;
+  }
 
+  :root:not([data-theme]) .vd-modal-glass .vd-modal-panel,
+  :root:not([data-theme]) .vd-modal-glass .vd-modal-content {
     background: rgba(255, 255, 255, var(--vd-glass-bg-opacity));
     border-color: rgba(255, 255, 255, var(--vd-glass-border-alpha));
   }
@@ -467,9 +556,19 @@
 }
 
 @media (max-width: 575.98px) {
+  .vd-modal {
+    --vd-modal-viewport-margin: 0.5rem;
+  }
+
   .vd-modal-panel {
-    margin: 0.5rem;
-    width: calc(100% - 1rem);
+    margin: auto;
+    width: var(--vd-modal-effective-width);
     max-width: calc(100% - 1rem);
+  }
+}
+
+@media (max-width: 359.98px) {
+  .vd-modal-footer {
+    flex-wrap: wrap;
   }
 }
