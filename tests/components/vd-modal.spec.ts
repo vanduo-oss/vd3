@@ -42,7 +42,7 @@ describe("VdModal", () => {
     wrapper.unmount();
   });
 
-  it.each(["sm", "md", "lg", "xl"] as const)(
+  it.each(["sm", "md", "lg", "xl", "2xl"] as const)(
     "maps size=%s to vd-modal-panel-%s",
     (size) => {
       const wrapper = factory({ size });
@@ -59,6 +59,20 @@ describe("VdModal", () => {
       "vd-modal-panel-md",
     );
     wrapper.unmount();
+  });
+
+  it("enables golden ratio and stable height by default and allows opting out", () => {
+    const defaults = factory();
+    const defaultModal = defaults.get(".vd-modal");
+    expect(defaultModal.classes()).not.toContain("vd-modal-auto-height");
+    expect(defaultModal.classes()).not.toContain("vd-modal-dynamic-height");
+    defaults.unmount();
+
+    const optedOut = factory({ golden: false, stableHeight: false });
+    const customModal = optedOut.get(".vd-modal");
+    expect(customModal.classes()).toContain("vd-modal-auto-height");
+    expect(customModal.classes()).toContain("vd-modal-dynamic-height");
+    optedOut.unmount();
   });
 
   it("applies glass classes when glass=true", () => {
@@ -209,6 +223,34 @@ describe("VdModal", () => {
       new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }),
     );
     expect(document.activeElement).toBe(footBtn);
+
+    wrapper.unmount();
+  });
+
+  it("skips focusable controls inside inactive .vd-tab-pane elements", async () => {
+    const wrapper = mount(VdModal, {
+      props: { open: true, title: "Tabbed" },
+      slots: {
+        default: `
+          <div class="vd-tab-content">
+            <div class="vd-tab-pane is-active"><button id="active-btn">Active</button></div>
+            <div class="vd-tab-pane"><button id="hidden-btn">Hidden</button></div>
+          </div>
+        `,
+      },
+      global: { stubs: { teleport: true } },
+      attachTo: document.body,
+    });
+    await wrapper.vm.$nextTick();
+
+    const closeBtn = wrapper.get("button[aria-label='Close']")
+      .element as HTMLElement;
+    const activeBtn = wrapper.get("#active-btn").element as HTMLElement;
+
+    // Tab from activeBtn should wrap back to closeBtn, skipping #hidden-btn.
+    activeBtn.focus();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+    expect(document.activeElement).toBe(closeBtn);
 
     wrapper.unmount();
   });

@@ -108,7 +108,7 @@
 
 /* Tab Content */
 .vd-tab-content {
-  padding-top: 1rem;
+  padding-top: var(--vd-space-fib-21, 1.3125rem);
 }
 
 /* Tab Pane */
@@ -118,6 +118,30 @@
 
 .vd-tab-pane.is-active {
   display: block;
+}
+
+/* Stable-height grid stacking (prevents height jumping inside modals or .vd-tabs-stable) */
+.vd-tabs-stable .vd-tab-content,
+.vd-modal:not(.vd-modal-dynamic-height) .vd-tab-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.vd-tabs-stable .vd-tab-pane,
+.vd-modal:not(.vd-modal-dynamic-height) .vd-tab-pane {
+  grid-area: 1 / 1;
+  display: block;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.vd-tabs-stable .vd-tab-pane.is-active,
+.vd-modal:not(.vd-modal-dynamic-height) .vd-tab-pane.is-active {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
 }
 
 /* Fade Animation */

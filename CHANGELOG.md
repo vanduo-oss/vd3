@@ -3,6 +3,25 @@
 All notable changes to `@vanduo-oss/vd3` are documented here. This file
 tracks the package only — never docs-site content.
 
+## 1.9.2 — 2026-11-19
+
+### Added
+
+- **`2xl` viewport-bounded Golden Ratio modal tier** — added `size="2xl"` (`min(95dvw, 95dvh × φ)`) on `VdModal` along with `.vd-modal-panel-2xl`, `.vd-modal-2xl`, and `--vd-modal-width-2xl` so near-fullscreen dialogs expand to 95% of the limiting viewport axis while preserving the 1.618:1 landscape frame.
+- **Default `golden` and `stableHeight` modal props** — `VdModal` enforces landscape Golden Ratio minimum proportions (`golden = true`, opt out via `:golden="false"` / `.vd-modal-auto-height`) and prevents height jumping across tab switches (`stableHeight = true`, opt out via `:stable-height="false"` / `.vd-modal-dynamic-height`) using `ResizeObserver` floor tracking (`--vd-modal-stable-min-height`).
+- **CSS Grid stable tab-pane stacking** — added `.vd-tabs-stable .vd-tab-content` and `.vd-modal:not(.vd-modal-dynamic-height) .vd-tab-content` grid stacking rules in `tabs.css` so tabbed dialogs immediately size to their tallest tab pane on open.
+
+### Changed
+
+- **Fibonacci modal width ladder & viewport fit** — shifted default modal sizes up one Fibonacci step (`sm: 377px`, `md: 610px`, `lg: 987px`, `xl: 1280px`) with landscape Golden Ratio minimum heights, viewport-clamped `--vd-modal-max-height`, safe `margin: auto` flex centering, pinned header and side-by-side `.vd-modal-footer` actions (`flex-wrap: nowrap` above `360px`), and scrollable `.vd-modal-body` with `overscroll-behavior: contain` on the modal, backdrop, and body.
+- **Tab content breathing room** — updated `.vd-tab-content` `padding-top` to `var(--vd-space-fib-21, 1.3125rem)` (`21px`).
+
+### Fixed
+
+- **Immediate Fibonacci modal close transition** — resolved the selector specificity collision where `.vd-modal.vd-modal-open` (`opacity: 1`) overrode `.vd-fade-leave-to` (`opacity: 0`), removing the frozen close pause and fading out immediately over `--vd-modal-leave-duration` (`144ms` / `--vd-duration-144`, `pointer-events: none`) with `--vd-motion-scale-from`-aware reduced motion support.
+- **Dark-mode glass modal CSS variable inheritance** — moved dark-theme `--vd-glass-bg-opacity` and `--vd-glass-border-alpha` defaults onto `.vd-modal-glass` so inline `--vd-glass-*` overrides bound on the root inherit cleanly into `.vd-modal-panel` and `.vd-modal-glass-backdrop`.
+- **Tab-aware focus trap visibility** — updated `useFocusTrap` `isVisible()` to ignore focusable elements inside inactive `.vd-tab-pane:not(.is-active)` panes and `[inert]` ancestors.
+
 ## 1.9.1 — 2026-11-14
 
 ### Changed
